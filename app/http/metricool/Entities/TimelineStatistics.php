@@ -5,6 +5,14 @@ namespace Metricool\Http\Metricool\Entities;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
 
+/**
+ * API responses for the timeline statistics contain of array entries where each
+ * entry reflects a timestamp and its corresponding value for the metric.
+ * Example: [
+ *  "1752170400000",
+ *  "981.0"
+ * ]
+ */
 class TimelineStatistics
 {
     use isFilterable;
@@ -48,6 +56,9 @@ class TimelineStatistics
         ];
     }
 
+    /**
+     * Fetch and return the timeline statistics data plainly from the API.
+     */
     public function get(): array
     {
         return $this->client->get($this->endpoint);

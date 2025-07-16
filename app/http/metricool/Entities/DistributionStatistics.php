@@ -5,6 +5,11 @@ namespace Metricool\Http\Metricool\Entities;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
 
+/**
+ * API responses for distribution statistics include data on how various metrics
+ * are distributed. Such as page views by country, referrer pages, or traffic
+ * sources.
+ */
 class DistributionStatistics
 {
     use isFilterable;
@@ -47,6 +52,9 @@ class DistributionStatistics
         ];
     }
 
+    /**
+     * Fetch and return the distribution statistics data plainly from the API.
+     */
     public function get(): array
     {
         return $this->client->get($this->endpoint);

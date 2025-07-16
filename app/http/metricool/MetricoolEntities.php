@@ -60,6 +60,9 @@ class MetricoolEntities
         return new Entities\Scheduler($this->client);
     }
 
+    /**
+     * Easy access to the UserSettings entity.
+     */
     public function userSettings(): Entities\UserSettings
     {
         return new Entities\UserSettings($this->client);
