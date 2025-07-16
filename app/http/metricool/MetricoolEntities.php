@@ -45,6 +45,14 @@ class MetricoolEntities
     }
 
     /**
+     * Easy access to the real time entities via the RealTimeFacade.
+     */
+    public function realtime(): Entities\RealTimeFacade
+    {
+        return new Entities\RealTimeFacade($this->client);
+    }
+
+    /**
      * Easy access to the Scheduler entity.
      */
     public function scheduler(): Entities\Scheduler
