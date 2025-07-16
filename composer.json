@@ -1,0 +1,55 @@
+{
+    "name": "really-simple-plugins/metricool",
+    "version": "2.0.0",
+    "description": "Allows you to track your users and readers using metricool.com",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "homepage": "https://metricool.com/",
+    "authors": [
+        {
+            "name": "Really Simple Plugins",
+            "email": "beheer@really-simple-plugins.com",
+            "homepage": "https://really-simple-plugins.com/",
+            "role": "Organisation"
+        }
+    ],
+    "require": {
+        "php": ">=7.4, <=8.3",
+        "adbario/php-dot-notation": "*",
+        "automattic/jetpack-autoloader": "^5",
+        "guzzlehttp/guzzle": "^7.9",
+        "nesbot/carbon": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Metricool\\Http\\": "app/http",
+            "Metricool\\Traits\\": "app/traits",
+            "Metricool\\Managers\\": "app/managers",
+            "Metricool\\Services\\": "app/services",
+            "Metricool\\Providers\\": "app/providers",
+            "Metricool\\Interfaces\\": "app/interfaces",
+            "Metricool\\Exceptions\\": "app/exceptions",
+            "Metricool\\Helpers\\": "app/support/helpers",
+            "Metricool\\Utility\\": "app/support/utility",
+            "Metricool\\Controllers\\": "app/controllers",
+            "Metricool\\Builders\\": "app/support/builders",
+            "Metricool\\Http\\Endpoints\\": "app/http/endpoints",
+            "Metricool\\Http\\Metricool\\": "app/http/metricool"
+        },
+        "files": [
+            "app/App.php",
+            "app/Plugin.php",
+            "helpers.php"
+        ]
+    },
+    "config": {
+        "optimize-autoloader": true,
+        "sort-packages": true,
+        "platform": {
+            "php": "7.4"
+        },
+        "allow-plugins": {
+            "automattic/jetpack-autoloader": true
+        }
+    }
+}
