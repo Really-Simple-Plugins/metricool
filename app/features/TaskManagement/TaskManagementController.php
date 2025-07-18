@@ -44,6 +44,10 @@ class TaskManagementController implements FeatureInterface
     {
         // Add new tasks here
         $pluginTasks = [
+            new Tasks\TwitterTask(),
+            new Tasks\LinkedInTask(),
+            new Tasks\HistoricalDataTask(),
+            new Tasks\FirstConnectionTask(),
         ];
 
         return array_filter($pluginTasks, function ($task) {

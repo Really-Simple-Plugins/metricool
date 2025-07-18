@@ -7,14 +7,6 @@ if (!defined('ABSPATH')) {
 }
 
 return [
-    'DashboardManagement' => [
-        'enabled' => true,
-        'inScope' => is_admin(), // todo - add a check like "is on dashboard page"
-        'pro' => false,
-        'dependencies' => [
-            '\Metricool\Features\DashboardManagement\Menu\MenuFacade',
-        ],
-    ],
     'Onboarding' => [
         'enabled' => FeatureHelper::isEnabled('onboarding'),
         'inScope' => is_admin() || metricool_is_wp_json_request(),

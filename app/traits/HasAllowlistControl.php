@@ -59,12 +59,6 @@ trait HasAllowlistControl
             return false;
         }
 
-        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
-        if (defined('CUSTOM_POSTMAN_AUTHORIZATION') && stripos($authHeader, 'Bearer ') === 0) {
-            $bearerToken = substr($authHeader, 7);
-            return hash_equals(CUSTOM_POSTMAN_AUTHORIZATION, $bearerToken);
-        }
-
         return is_user_logged_in() && current_user_can('metricool_manage');
     }
 

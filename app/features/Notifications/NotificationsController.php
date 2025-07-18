@@ -43,6 +43,7 @@ class NotificationsController implements FeatureInterface
     {
         // Add new notices here
         $pluginNotices = [
+            new Notices\FirstConnectionNotice(),
         ];
 
         return array_filter($pluginNotices, function ($notice) {
