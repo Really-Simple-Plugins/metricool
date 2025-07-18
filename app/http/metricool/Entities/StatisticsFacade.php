@@ -3,6 +3,7 @@
 namespace Metricool\Http\Metricool\Entities;
 
 use Metricool\Http\Metricool\MetricoolClient;
+use Metricool\Http\Metricool\Traits\isFilterable;
 
 /**
  * Facade to access various statistics entities in Metricool.

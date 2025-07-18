@@ -45,7 +45,7 @@ class UserSettings
     /**
      * @inheritDoc
      */
-    protected function getFillable(): array
+    public function getFillable(): array
     {
         return $this->fillable;
     }

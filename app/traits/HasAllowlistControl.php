@@ -59,16 +59,10 @@ trait HasAllowlistControl
             return false;
         }
 
-        // If the callback URL is still active, we need to allow access so the
-        // Metricool callback can execute
-        $expires = get_option('metricool_callback_url_expires');
-        $callbackUrl = get_option('metricool_callback_url', '');
-
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $requestUriContainsCallbackUrl = strpos($_SERVER['REQUEST_URI'], 'company_registration/' . $callbackUrl) !== false;
-
-        if ($expires > time() && !empty($callbackUrl) && $requestUriContainsCallbackUrl) {
-            return true;
+        $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        if (defined('CUSTOM_POSTMAN_AUTHORIZATION') && stripos($authHeader, 'Bearer ') === 0) {
+            $bearerToken = substr($authHeader, 7);
+            return hash_equals(CUSTOM_POSTMAN_AUTHORIZATION, $bearerToken);
         }
 
         return is_user_logged_in() && current_user_can('metricool_manage');

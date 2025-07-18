@@ -9,6 +9,22 @@ namespace Metricool\Http\Metricool\Traits;
 trait isFilterable
 {
     /**
+     * The filters to be applied to the endpoint.
+     */
+    protected array $filters = [];
+
+    /**
+     * Indicates if the endpoint has been filtered.
+     */
+    protected bool $filtered = false;
+
+    /**
+     * Indicates if the endpoint requires filters to be applied. If set to
+     * false, the endpoint can be used without filters.
+     */
+    protected bool $requiresFilter = false;
+
+    /**
      * Define the accepted filters for this entity. The keys are the filter
      * names and the values are regex patterns to validate them.
      * @example [
@@ -48,6 +64,8 @@ trait isFilterable
                 sanitize_text_field($filter),
                 $this->endpoint
             );
+
+            $this->filtered = true;
         }
 
         return $this;

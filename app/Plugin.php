@@ -173,6 +173,11 @@ class Plugin
     public function registerEndpoints(): void
     {
         $this->endpointManager->registerEndpoints([
+            new Http\Endpoints\ConnectedBrandsEndpoint(),
+            new Http\Endpoints\SubscriptionEndpoint(),
+            new Http\Endpoints\UserSettingsEndpoint(),
+            new Http\Endpoints\StatisticsEndpoint(),
+            new Http\Endpoints\RealtimeEndpoint(),
         ]);
     }
 

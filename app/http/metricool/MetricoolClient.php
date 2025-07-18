@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * @todo Add error handling either with try-catches here, in the resources or
@@ -17,9 +18,9 @@ class MetricoolClient
     private string $apiUrl = 'https://app.metricool.com/api/';
     private string $stagingApiUrl = 'https://app.metricool.com/api/'; // todo
     private bool $testing = false;
-    private string $userToken;
-    private string $blogId;
-    private string $userId;
+    private string $userToken = '';
+    private string $blogId = '';
+    private string $userId = '';
     protected array $middleWares = [];
 
     public function setUserId(string $userId): void
@@ -32,9 +33,19 @@ class MetricoolClient
         return $this->userId;
     }
 
+    public function hasUserId(): bool
+    {
+        return !empty($this->userId);
+    }
+
     public function setBlogId(string $blogId): void
     {
         $this->blogId = $blogId;
+    }
+
+    public function hasBlogId(): string
+    {
+        return !empty($this->blogId);
     }
 
     public function setUserToken(string $userToken): void
@@ -42,14 +53,19 @@ class MetricoolClient
         $this->userToken = $userToken;
     }
 
-    public function isTesting(): bool
+    public function hasUserToken(): bool
     {
-        return $this->testing;
+        return !empty($this->userToken);
     }
 
     public function setTesting(bool $testing): void
     {
         $this->testing = $testing;
+    }
+
+    public function isTesting(): bool
+    {
+        return $this->testing;
     }
 
     public function insertMiddleWare($middleWare)
@@ -64,7 +80,12 @@ class MetricoolClient
 
     public function isConnected(): bool
     {
-        return $this->client instanceof Client;
+        return ($this->client instanceof Client);
+    }
+
+    public function hasAuthentication(): bool
+    {
+        return $this->hasUserToken() && $this->hasUserId() && $this->hasBlogId();
     }
 
     private function client(): CLient
@@ -72,8 +93,6 @@ class MetricoolClient
         if ($this->client) {
             return $this->client;
         }
-
-        $this->validate();
 
         $handlerStack = HandlerStack::create();
         foreach ($this->middleWares as $middleWare) {
@@ -94,36 +113,57 @@ class MetricoolClient
         return $this->client;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function get(string $endpoint)
     {
         return $this->request('GET', $endpoint);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function post(string $endpoint, array $body)
     {
         return $this->request('POST', $endpoint, $body);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function put(string $endpoint, array $body)
     {
         return $this->request('PUT', $endpoint, $body);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function patch(string $endpoint, string $body)
     {
         return $this->request('PATCH', $endpoint, $body);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function delete($endpoint)
     {
         return $this->request('DELETE', $endpoint);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function request(string $method, string $endpoint, $body = null)
     {
-        $response = $this->client()->send(
+        $this->validate();
+
+        $response = $this->client->send(
             new Request($method, $this->formatUrl($endpoint), [], $body)
         );
+
         return $this->parseResponse($response);
     }
 
@@ -134,36 +174,46 @@ class MetricoolClient
     }
 
     /**
-     * Add user_id and blog_id to the URL as part of the authentication.
+     * Add userId and blogId to the URL as part of the authentication. When the
+     * userId and blogId are not set, they will not be added to the URL, which
+     * can still result in a successful request if the userToken is set and
+     * valid.
      */
     private function formatUrl(string $url): string
     {
         $baseUri = $this->isTesting() ? $this->stagingApiUrl : $this->apiUrl;
 
-        return add_query_arg([
-            'user_id' => $this->userId,
-            'blog_id' => $this->blogId,
-        ], trailingslashit($baseUri) . $url);
+        $queryArguments = array_filter([
+            'userId' => $this->userId,
+            'blogId' => $this->blogId,
+        ]);
+
+        return add_query_arg($queryArguments, trailingslashit($baseUri) . $url);
     }
 
     /**
      * Validate if all prerequisites are met to use the client. We need at least
-     * the user token, user ID and blog ID to be set before we can make any
-     * requests.
+     * the user token to be set before we can make any requests.
      * @throws \InvalidArgumentException
      */
-    private function validate(): void
+    public function validate(): void
     {
+        $validationErrors = [];
+
         if (empty($this->userToken)) {
-            throw new \InvalidArgumentException('User token is required to connect to Metricool API.');
+            $validationErrors[] = 'User token is required to connect to Metricool API.';
         }
 
-        if (empty($this->userId)) {
-            throw new \InvalidArgumentException('User ID is required to connect to Metricool API.');
+        if ($this->isConnected() === false) {
+            $validationErrors[] = 'Client is not connected to Metricool API.';
         }
 
-        if (empty($this->blogId)) {
-            throw new \InvalidArgumentException('Blog ID is required to connect to Metricool API.');
+        if (!empty($validationErrors)) {
+            throw new \InvalidArgumentException(
+                'Metricool Client is not setup correctly: ' . PHP_EOL .
+                implode(', ', $validationErrors)
+            );
         }
+
     }
 }

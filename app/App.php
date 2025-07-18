@@ -2,8 +2,8 @@
 namespace Metricool;
 
 use Adbar\Dot;
-use Metricool\Http\ApiClient;
 use Metricool\Helpers\Request;
+use Metricool\Http\Metricool\MetricoolEntities;
 
 final class App
 {
@@ -66,7 +66,7 @@ final class App
      * your IDE with code completion. For example; these return types are
      * provided by the {@see AppServiceProvider}
      *
-     * @return mixed|ApiClient|Request
+     * @return mixed|MetricoolEntities|Request
      * @throws \InvalidArgumentException If the key is not available in the providers
      */
     public static function provide($key)

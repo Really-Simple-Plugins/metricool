@@ -3,9 +3,14 @@
 namespace Metricool\Http\Metricool\Entities;
 
 use Metricool\Http\Metricool\MetricoolClient;
+use Metricool\Http\Metricool\Traits\IsSummable;
+use Metricool\Http\Metricool\Traits\IsCountable;
 
-class RealTimeStatistics
+class RealtimeStatistics
 {
+    use IsSummable;
+    use IsCountable;
+
     protected MetricoolClient $client;
     protected string $endpoint = 'stats/rt/';
 
@@ -50,16 +55,5 @@ class RealTimeStatistics
     public function get(): array
     {
         return $this->client->get($this->endpoint);
-    }
-
-    public function count(): int
-    {
-        return count($this->get());
-    }
-
-    public function sum(): int
-    {
-        $numericValues = array_filter($this->get(), 'is_numeric');
-        return array_sum($numericValues);
     }
 }

@@ -9,15 +9,9 @@ class MetricoolEntities
 {
     protected ?MetricoolClient $client = null;
 
-    /**
-     * MetricoolEntities constructor also validates if the Facade is setup
-     * correctly, see: {@see validate}
-     * @throws \Exception If the connection is not valid.
-     */
     public function __construct(MetricoolClient $client)
     {
         $this->client = $client;
-        $this->validate();
     }
 
     /**
@@ -45,19 +39,11 @@ class MetricoolEntities
     }
 
     /**
-     * Easy access to the real time entities via the RealTimeFacade.
+     * Easy access to the real time entities via the RealtimeFacade.
      */
-    public function realtime(): Entities\RealTimeFacade
+    public function realtime(): Entities\RealtimeFacade
     {
-        return new Entities\RealTimeFacade($this->client);
-    }
-
-    /**
-     * Easy access to the Scheduler entity.
-     */
-    public function scheduler(): Entities\Scheduler
-    {
-        return new Entities\Scheduler($this->client);
+        return new Entities\RealtimeFacade($this->client);
     }
 
     /**
@@ -69,14 +55,17 @@ class MetricoolEntities
     }
 
     /**
-     * Validate if the Entities can be used. Check for:
-     * - Connection to Metricool API
-     * @throws \Exception
+     * This magic method is called when a method is requested that does not
+     * exist on this class. It will try to call the method on the
+     * MetricoolClient instance, if not found, it will throw an exception.
+     * @throws \BadMethodCallException
      */
-    private function validate(): void
+    public function __call(string $name, array $arguments)
     {
-        if (!$this->client || !$this->client->isConnected()) {
-            throw new \Exception('Metricool client is not connected.');
+        if (method_exists($this->client, $name)) {
+            return $this->client->{$name}(...$arguments);
         }
+
+        throw new \BadMethodCallException("Method {$name} does not exist on MetricoolClient.");
     }
 }
