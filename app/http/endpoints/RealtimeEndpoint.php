@@ -44,7 +44,7 @@ class RealtimeEndpoint implements MultiEndpointInterface
      * is used for both endpoints in this route. When called without an
      * operation, it defaults to 'get'.
      *
-     * @example /wp-json/metricool/v1/realtime/countries (without operation)
+     * @example /wp-json/metricool/v1/realtime/countries (without operation = get)
      * @example /wp-json/metricool/v1/realtime/countries/get
      * @example /wp-json/metricool/v1/realtime/countries/count
      * @example /wp-json/metricool/v1/realtime/countries/sum
