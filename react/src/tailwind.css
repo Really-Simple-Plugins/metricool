@@ -1,0 +1,55 @@
+/* New way to load Tailwindcss */
+/* @import "tailwindcss"; */
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css";
+
+
+/**
+======================================
+Metricool Brand Style Guide
+======================================
+**/
+
+@theme {
+
+  /**
+  ======================================
+  Main Colors
+  ======================================
+  **/
+  /* Primary Gradient */
+  --color-primary-gradient: linear-gradient(90deg,rgba(198, 88, 128, 1) 0%, rgba(230, 167, 53, 1) 100%);
+
+  /* Primary Colors */
+  --color-primary: #C65880;
+  --color-primary-light: #EAB6C7;
+  --color-primary-dark: #895E8B;
+
+  /* Secondary Colors */
+  --color-secondary: #E6A735;
+  --color-secondary-light: #FEEBB9;
+  --color-secondary-dark: #B78427;
+
+  /* Tertiary Colors */
+  --color-tertiary: #5C90A8;
+  --color-tertiary-light: #72C9DA;
+  --color-tertiary-dark: #426B7D;
+
+  /**
+  ======================================
+  Support Colors
+  ======================================
+  **/
+  --color-light-green: #52C79F;
+  --color-uppsell: #F5C931;
+}
+
+/* Tailwind adds a base 'display: block' style on all imgs.
+This messes with some admin menu icons, so we overwrite it with 'initial'.
+Not overwriting for all imgs as Tailwind might rely on it under the hood. */
+#adminmenu .wp-menu-image img {
+  display: initial;
+}

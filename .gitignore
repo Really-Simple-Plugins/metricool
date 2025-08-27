@@ -70,6 +70,11 @@ sketch
 react/build
 react/build/*
 react/.npmrc
+react/node_modules
+react/.env
+react/.tanstack
+
+.idea
 
 *storybook.log
 
