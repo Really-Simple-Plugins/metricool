@@ -1,8 +1,8 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
-import { tanstackRouter } from '@tanstack/router-vite-plugin'
-import { resolve } from 'node:path';
+import { tanstackRouter } from '@tanstack/router-vite-plugin';
+// import { resolve } from 'node:path';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -26,8 +26,11 @@ export default defineConfig({
         },
     },
     resolve: {
-        alias: {
-            '@': resolve(__dirname, './src'),
-        },
+        alias: [
+            {find: '@/lib/utils.ts', replacement: './src/components/src/lib/utils.ts'},
+            {find: 'tailwind-merge', replacement: './src/components/node_modules/tailwind-merge/src/index.ts'},
+            {find: '@', replacement: './src'},
+        ],
+    dedupe: ["react", "react-dom"]
     },
 });
