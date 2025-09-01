@@ -1,10 +1,12 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { DashboardLayout } from "../layouts/DashboardLayout.tsx";
+import { GlobalContextProvider } from "../context/GlobalContext.tsx";
 
 export const Route = createRootRoute({
-    component: () => (
-        <DashboardLayout>
-            <Outlet/>
-        </DashboardLayout>
-    ),
+    component: () => {
+        return (
+            <GlobalContextProvider>
+                <Outlet/>
+            </GlobalContextProvider>
+        )
+    },
 });
