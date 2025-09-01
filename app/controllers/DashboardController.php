@@ -167,7 +167,7 @@ class DashboardController implements ControllerInterface
         wp_localize_script(
             'metricool-main-script',
             'metricool',
-            $this->localizedReactSettings([])
+            ['values' => $this->localizedReactSettings([])]
         );
     }
 
