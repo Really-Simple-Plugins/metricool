@@ -7,11 +7,14 @@ import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import './tailwind.css';
 
-
 // Import the generated route tree
 import { routeTree } from './routeTree.gen';
 
+// Create hashHistory so all routes are relative
+// to WordPress's route for the plugin
 const hashHistory = createHashHistory();
+
+// Create default queryClient
 const queryClient = new QueryClient();
 
 // Create a new router instance
@@ -22,6 +25,7 @@ const router = createRouter({
         queryClient,
     },
 });
+
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {
     interface Register {
@@ -29,6 +33,8 @@ declare module '@tanstack/react-router' {
     }
 }
 
+// Wait for DOMContentLoaded to render the app
+// to allow WordPress to load properly first
 document.addEventListener("DOMContentLoaded", () => {
     const container = document.getElementById("metricool_app");
     if (container) {
