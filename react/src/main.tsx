@@ -1,6 +1,8 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider, createRouter, createHashHistory } from '@tanstack/react-router';
+import { TanStackDevtools } from '@tanstack/react-devtools';
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import './tailwind.css';
 
 
@@ -22,7 +24,13 @@ document.addEventListener("DOMContentLoaded", () => {
     if (container) {
         createRoot(container).render(
             <StrictMode>
-                <RouterProvider router={router}/>
+                <RouterProvider router={router} />
+                    <TanStackDevtools plugins={[
+                        {
+                            name: 'TanStack Router',
+                            render: <TanStackRouterDevtoolsPanel router={router} />,
+                        },
+                    ]}/>
             </StrictMode>,
         );
     }

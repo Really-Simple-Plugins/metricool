@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "start": "concurrently 'tsc -b' 'vite build --watch'",
+    "start-devtools": "concurrently 'tsc -b' 'NODE_ENV=development vite build --mode development --watch'",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
