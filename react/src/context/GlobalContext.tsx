@@ -88,7 +88,7 @@ interface ReducerAction {
 const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalState => {
     switch (action.dispatchType) {
         case 'setMetricoolVariables': {
-            return { ...state, metricool: { ...action.change.metricool } };
+            return { ...state, metricool: { ...action.change.metricool, is_onboarding_completed: true } };
         }
         default: {
             throw new Error('Unknown action: ' + action.dispatchType);
