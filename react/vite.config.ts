@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
-import { tanstackRouter } from '@tanstack/router-vite-plugin';
-import { devtools } from '@tanstack/devtools-vite';
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import tailwindcss from "@tailwindcss/vite";
+import { tanstackRouter } from "@tanstack/router-vite-plugin";
+import { devtools } from "@tanstack/devtools-vite";
 // import { resolve } from 'node:path';
 
 // https://vite.dev/config/
@@ -16,12 +16,12 @@ export default defineConfig({
         tailwindcss(),
     ],
     build: {
-        outDir: './build',
+        outDir: "./build",
         emptyOutDir: true,
         manifest: true,
         sourcemap: false,
         rollupOptions: {
-            input: './src/main.tsx',
+            input: "./src/main.tsx",
         },
         modulePreload: {
             polyfill: false,
@@ -30,10 +30,10 @@ export default defineConfig({
     base: "./",
     resolve: {
         alias: [
-            { find: '@/lib/utils.ts', replacement: './src/components/src/lib/utils.ts' },
-            { find: '@/lib/utils', replacement: './src/components/src/lib/utils.ts' },
-            { find: 'tailwind-merge', replacement: './src/components/node_modules/tailwind-merge/src/index.ts' },
-            { find: '@', replacement: './src' },
+            { find: "@/lib/utils.ts", replacement: "./src/components/src/lib/utils.ts" },
+            { find: "@/lib/utils", replacement: "./src/components/src/lib/utils.ts" },
+            { find: "tailwind-merge", replacement: "./src/components/node_modules/tailwind-merge/src/index.ts" },
+            { find: "@", replacement: "./src" },
         ],
         dedupe: ["react", "react-dom"]
     },
