@@ -3,7 +3,6 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-vite-plugin";
 import { devtools } from "@tanstack/devtools-vite";
-// import { resolve } from 'node:path';
 
 // https://vite.dev/config/
 export default defineConfig({
