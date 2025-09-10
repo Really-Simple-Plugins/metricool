@@ -1,4 +1,5 @@
 import { clsx } from "clsx";
+import FlexContainer from "./FlexContainer.tsx";
 
 const iconColorMap = {
     "warning": "bg-(--rsp-warning)",
@@ -22,16 +23,16 @@ type ListItemProps = {
 const ListItem = ({ icon, iconColor, link, children, className }: React.ComponentProps<'div'> & ListItemProps) => {
 
     return (
-        <div className={"flex items-center justify-between"}>
-            <div className={"flex items-center"}>
+        <FlexContainer direction={"row"} className={"items-center justify-between"}>
+            <FlexContainer direction={"row"} className={"items-center !gap-2"}>
                 {icon === "circle" && (
-                    <div className={clsx("h-3 w-3 rounded-full mr-2", iconColor && iconColorMap[iconColor])}></div>)}
+                    <div className={clsx("h-3 w-3 rounded-full", iconColor && iconColorMap[iconColor])}></div>)}
                 <div className={clsx(className, "text-sm")}>
                     {children}
                 </div>
-            </div>
+            </FlexContainer>
             {link && (<span className={"text-sm underline cursor-pointer"}>{link}</span>)}
-        </div>
+        </FlexContainer>
     );
 };
 
