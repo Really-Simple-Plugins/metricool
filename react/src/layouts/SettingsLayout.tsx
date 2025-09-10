@@ -1,14 +1,13 @@
-import React from 'react';
-import { __ } from '@wordpress/i18n';
+import FlexContainer from "../custom/FlexContainer.tsx";
+import Header from "../custom/Header.tsx";
 
-export const SettingsLayout = ({ children }: { children?: React.ReactNode }) => {
+export const SettingsLayout = () => {
     return (
-        <div>
-            <div className='p-2 flex gap-2'>
-                {__('Settings', 'metricool')}
-            </div>
-            <hr/>
-            {children}
-        </div>
+        <FlexContainer direction={"column"} className={"h-full w-full"}>
+            <Header />
+            <FlexContainer direction={"row"} className={"px-4 w-full"}>
+
+            </FlexContainer>
+        </FlexContainer>
     );
 };
