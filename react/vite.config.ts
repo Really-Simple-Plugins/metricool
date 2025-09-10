@@ -27,6 +27,7 @@ export default defineConfig({
             polyfill: false,
         },
     },
+    base: "./",
     resolve: {
         alias: [
             {find: '@/lib/utils.ts', replacement: './src/components/src/lib/utils.ts'},
