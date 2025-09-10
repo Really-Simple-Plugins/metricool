@@ -31,6 +31,7 @@ export default defineConfig({
     resolve: {
         alias: [
             {find: '@/lib/utils.ts', replacement: './src/components/src/lib/utils.ts'},
+            {find: '@/lib/utils', replacement: './src/components/src/lib/utils.ts'},
             {find: 'tailwind-merge', replacement: './src/components/node_modules/tailwind-merge/src/index.ts'},
             {find: '@', replacement: './src'},
         ],
