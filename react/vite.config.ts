@@ -19,7 +19,7 @@ export default defineConfig({
         outDir: './build',
         emptyOutDir: true,
         manifest: true,
-        sourcemap: true,
+        sourcemap: false,
         rollupOptions: {
             input: './src/main.tsx',
         },
