@@ -47,11 +47,13 @@ export const SettingsLayout = () => {
                     </Card>
                 </FlexContainer>
                 <Card variant={"transparent"}>
-                    <CardHeader>
+                    <CardHeader className={"!gap-3"}>
                         <CardHeaderTitle>
                             {__("Notifications", "metricool")}
                         </CardHeaderTitle>
+                        <hr/>
                     </CardHeader>
+                    <div className={"text-gray-400 italic"}>{__("You currently have no notifications.", "metricool")}</div>
                 </Card>
             </FlexContainer>
         </FlexContainer>
