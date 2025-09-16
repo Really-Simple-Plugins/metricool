@@ -1,26 +1,27 @@
 import { Card, CardHeader, CardHeaderTitle } from "../components";
 import { __ } from "@wordpress/i18n";
 import FlexContainer from "./FlexContainer.tsx";
+import FormFooter from "./FormFooter.tsx";
 
 const AccountSettings = () => {
     return (
-        <>
-            <FlexContainer id={"account-settings"} direction={"column"} className={"md:min-w-[50%]"}>
-                <Card className={"h-[400px]"}>
+        <div className={"flex flex-col md:min-w-[50%]"}>
+            <FlexContainer direction={"column"}>
+                <Card className={"min-h-[400px]"}>
                     <CardHeader>
                         <CardHeaderTitle>
                             {__("Personal Information", "metricool")}
                         </CardHeaderTitle>
                     </CardHeader>
                 </Card>
-                <Card className={"h-[400px]"}>
+                <Card className={"min-h-[400px]"}>
                     <CardHeader>
                         <CardHeaderTitle>
                             {__("Preferences", "metricool")}
                         </CardHeaderTitle>
                     </CardHeader>
                 </Card>
-                <Card className={"h-[400px]"}>
+                <Card className={"min-h-[400px] rounded-t-md rounded-b-none"}>
                     <CardHeader>
                         <CardHeaderTitle>
                             {__("Monthly summary", "metricool")}
@@ -28,7 +29,8 @@ const AccountSettings = () => {
                     </CardHeader>
                 </Card>
             </FlexContainer>
-        </>
+            <FormFooter/>
+        </div>
     );
 };
 
