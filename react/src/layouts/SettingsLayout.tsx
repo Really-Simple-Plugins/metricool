@@ -9,7 +9,7 @@ export const SettingsLayout = () => {
     return (
         <FlexContainer direction={"column"} className={"h-full w-full"}>
             <Header />
-            <FlexContainer direction={"column"} className={"px-4 w-full justify-between md:flex-row"}>
+            <FlexContainer direction={"column"} className={"px-4 w-full justify-between md:flex-row items-start"}>
                 <Card>
                     <CardHeader>
                         <CardHeaderTitle>
