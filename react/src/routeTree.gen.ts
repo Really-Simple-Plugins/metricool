@@ -11,6 +11,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 
 const SettingsRouteLazyRouteImport = createFileRoute('/settings')()
 const IndexLazyRouteImport = createFileRoute('/')()
@@ -31,6 +32,11 @@ const IndexLazyRoute = IndexLazyRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => SettingsRouteLazyRoute,
+} as any)
 const SettingsConnectionsLazyRoute = SettingsConnectionsLazyRouteImport.update({
   id: '/connections',
   path: '/connections',
@@ -51,12 +57,13 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteLazyRouteWithChildren
   '/settings/account': typeof SettingsAccountLazyRoute
   '/settings/connections': typeof SettingsConnectionsLazyRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
-  '/settings': typeof SettingsRouteLazyRouteWithChildren
   '/settings/account': typeof SettingsAccountLazyRoute
   '/settings/connections': typeof SettingsConnectionsLazyRoute
+  '/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -64,18 +71,25 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteLazyRouteWithChildren
   '/settings/account': typeof SettingsAccountLazyRoute
   '/settings/connections': typeof SettingsConnectionsLazyRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/settings' | '/settings/account' | '/settings/connections'
+  fullPaths:
+    | '/'
+    | '/settings'
+    | '/settings/account'
+    | '/settings/connections'
+    | '/settings/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/settings' | '/settings/account' | '/settings/connections'
+  to: '/' | '/settings/account' | '/settings/connections' | '/settings'
   id:
     | '__root__'
     | '/'
     | '/settings'
     | '/settings/account'
     | '/settings/connections'
+    | '/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -99,6 +113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/': {
+      id: '/settings/'
+      path: '/'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof SettingsRouteLazyRoute
+    }
     '/settings/connections': {
       id: '/settings/connections'
       path: '/connections'
@@ -119,11 +140,13 @@ declare module '@tanstack/react-router' {
 interface SettingsRouteLazyRouteChildren {
   SettingsAccountLazyRoute: typeof SettingsAccountLazyRoute
   SettingsConnectionsLazyRoute: typeof SettingsConnectionsLazyRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 const SettingsRouteLazyRouteChildren: SettingsRouteLazyRouteChildren = {
   SettingsAccountLazyRoute: SettingsAccountLazyRoute,
   SettingsConnectionsLazyRoute: SettingsConnectionsLazyRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
 }
 
 const SettingsRouteLazyRouteWithChildren =
