@@ -37,7 +37,7 @@ const FormFooter = () => {
 
     return (
         <div className={clsx("sticky bottom-0 start-0 z-10 shadow-md bg-gray-50 w-full transition-all ease-in-out duration-200 rounded-none",
-            !isPageScrollable || scrollProgressPercent >= 88 && "rounded-b-md",
+            (!isPageScrollable || scrollProgressPercent >= 88) && "rounded-b-md",
         )}>
             {isPageScrollable && <ScrollProgressBar scrollProgress={scrollProgressPercent}/>}
             <FlexContainer direction={"row"} className={"justify-end items-center p-2"}>
