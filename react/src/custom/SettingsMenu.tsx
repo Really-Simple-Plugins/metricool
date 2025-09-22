@@ -6,7 +6,7 @@ import ListItem from "./ListItem.tsx";
 
 const SettingsMenu = () => {
     return (
-        <Card className={"sticky top-[3rem]"}>
+        <Card className={"md:sticky md:top-[3rem]"}>
             <CardHeader>
                 <CardHeaderTitle>
                     {__("Settings", "metricool")}
