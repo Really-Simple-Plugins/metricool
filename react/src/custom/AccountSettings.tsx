@@ -7,21 +7,21 @@ const AccountSettings = () => {
     return (
         <div className={"flex flex-col md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
-                <Card className={"min-h-[400px]"}>
+                <Card>
                     <CardHeader>
                         <CardHeaderTitle>
                             {__("Personal Information", "metricool")}
                         </CardHeaderTitle>
                     </CardHeader>
                 </Card>
-                <Card className={"min-h-[400px]"}>
+                <Card>
                     <CardHeader>
                         <CardHeaderTitle>
                             {__("Preferences", "metricool")}
                         </CardHeaderTitle>
                     </CardHeader>
                 </Card>
-                <Card className={"min-h-[400px] rounded-t-md rounded-b-none"}>
+                <Card className={"rounded-t-md rounded-b-none"}>
                     <CardHeader>
                         <CardHeaderTitle>
                             {__("Monthly summary", "metricool")}
