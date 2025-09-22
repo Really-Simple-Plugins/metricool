@@ -39,7 +39,7 @@ const AccountSettings = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className={"flex flex-col md:min-w-[50%]"}>
+        <form onSubmit={handleSubmit(onSubmit)} className={"flex flex-col min-w-full md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
                 <Card>
                     <CardHeader>
