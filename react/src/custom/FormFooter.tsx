@@ -41,7 +41,7 @@ const FormFooter = () => {
         )}>
             {isPageScrollable && <ScrollProgressBar scrollProgress={scrollProgressPercent}/>}
             <FlexContainer direction={"row"} className={"justify-end items-center p-2"}>
-                <Button variant={"black"}>Save changes</Button>
+                <Button type={"submit"} variant={"black"}>Save changes</Button>
             </FlexContainer>
         </div>
     );
