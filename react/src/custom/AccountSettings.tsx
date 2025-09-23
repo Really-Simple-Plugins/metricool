@@ -1,10 +1,22 @@
-import { Card, CardHeader, CardHeaderTitle, Input, Label, Select, SelectOption, Switch } from "../components";
+import {
+    Card,
+    CardHeader,
+    CardHeaderTitle,
+    Input,
+    Label,
+    Select,
+    SelectOption,
+    Switch,
+    Dialog,
+    Button
+} from "../components";
 import { __ } from "@wordpress/i18n";
 import FlexContainer from "./FlexContainer.tsx";
 import FormFooter from "./FormFooter.tsx";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
+import { useBlocker } from "@tanstack/react-router";
 
 /**
  * List of all timezones as strings. Used for validation and to map over for select options.
@@ -29,7 +41,7 @@ const formSchema = z.object({
 const AccountSettings = () => {
     const {
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isDirty },
         control,
     } = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -47,6 +59,13 @@ const AccountSettings = () => {
     const onSubmit = (values: z.infer<typeof formSchema>) => {
         console.log(values);
     };
+
+    //noinspection JSVoidFunctionReturnValueUsed - useBlocker is not void if withResolver is passed as option, but PHPStorm doesn't realise this
+    const { proceed, reset, status } = useBlocker({
+        shouldBlockFn: () => isDirty,
+        withResolver: true,
+        enableBeforeUnload: isDirty,
+    });
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={"flex flex-col min-w-full md:min-w-[50%]"}>
@@ -165,6 +184,16 @@ const AccountSettings = () => {
                 </Card>
             </FlexContainer>
             <FormFooter/>
+            {status === "blocked" && (
+                <Dialog open={status === "blocked"}>
+                    <p>{__("You have unsaved changes. Are you sure you want to leave?", "simplybook")}</p>
+                    <p>{__("Your changes will be lost.", "simplybook")}</p>
+                    <FlexContainer direction={"row"} className={" w-full justify-center"}>
+                        <Button variant={"black"} onClick={proceed}>{__("Leave", "metricool")}</Button>
+                        <Button variant={"black"} onClick={reset}>{__("Stay", "metricool")}</Button>
+                    </FlexContainer>
+                </Dialog>
+            )}
         </form>
     );
 };
