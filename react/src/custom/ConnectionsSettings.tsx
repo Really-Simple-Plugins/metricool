@@ -5,7 +5,7 @@ import AccountTile from "./AccountTile.tsx";
 
 const ConnectionsSettings = () => {
     return (
-        <div className={"flex flex-col md:min-w-[50%]"}>
+        <div className={"flex flex-col min-w-full md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
                 <Card>
                     <CardHeader>
