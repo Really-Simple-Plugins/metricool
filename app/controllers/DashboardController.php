@@ -258,6 +258,7 @@ class DashboardController implements ControllerInterface
                 'json_translations' => ($chunkTranslation['json_translations'] ?? []),
                 'is_onboarding_completed' => $this->onboarding_completed(),
                 'support' => App::env('metricool.support'),
+                'locale'=> str_replace("_", "-", get_user_locale()),
             ]
         );
     }
