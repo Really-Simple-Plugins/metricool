@@ -178,6 +178,9 @@ class Plugin
             new Http\Endpoints\UserSettingsEndpoint(),
             new Http\Endpoints\StatisticsEndpoint(),
             new Http\Endpoints\RealtimeEndpoint(),
+            new Http\Endpoints\RelatedPluginEndpoints(
+                new Services\RelatedPluginService()
+            ),
         ]);
     }
 
