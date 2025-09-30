@@ -1,5 +1,5 @@
 import { Card, CardHeader, CardHeaderTitle } from "../components";
-import { __, sprintf, _n } from "@wordpress/i18n";
+import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import { useState } from "react";
 import FlexContainer from "./FlexContainer.tsx";
@@ -54,7 +54,11 @@ const Progress = () => {
 
     const [activeTab, setActiveTab] = useState(1);
     const [displayedTasks, setDisplayedTasks] = useState(remainingTasks);
-    const tabs = [`${__("All Tasks", 'metricool')} (${tasks.length})`, `${__("Remaining Tasks", "metricool")} (${remainingTasks.length})`];
+    const tabs = [{
+        title: `${__("All Tasks", "metricool")} (${tasks.length})`
+    }, {
+        title: `${__("Remaining Tasks", "metricool")} (${remainingTasks.length})`
+    }];
     const onTabChange = (tabIndex: number) => {
         setActiveTab(tabIndex);
         setDisplayedTasks(tabIndex === 0 ? tasks : remainingTasks);
