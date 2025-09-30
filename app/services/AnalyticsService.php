@@ -18,7 +18,7 @@ class AnalyticsService
      * at least a start and an end date in Ymd format. Otherwise, a
      * 'stable' trend is returned,
      */
-    public function getTrend(TimelineStatistics $statistic, array $filters): string
+    public function getTrend(TimelineStatistics $statistic, array $filters = []): string
     {
         $cacheName = get_class($statistic) . ':' . $statistic->getMetric() . '#' . md5(json_encode($filters));
         if ($cache = wp_cache_get($cacheName, 'metricool')) {
@@ -27,9 +27,13 @@ class AnalyticsService
 
         $trend = self::TREND_STABLE;
 
-        // Check for mandatory period filters, return fallback if none provided
+        // Check for mandatory period filters
         if (empty($filters) || empty($filters['start']) || empty($filters['end'])) {
-            return $trend;
+            if (method_exists($statistic, 'getFilters') === false) {
+                return $trend;
+            }
+
+            $filters = $statistic->getFilters();
         }
 
         try {
@@ -75,8 +79,10 @@ class AnalyticsService
         // We do +1 to end the previous period one day before the current period
         $diffInDays = $start->diffInDays($end) + 1;
 
-        $previousStart = $start->copy()->subDays($diffInDays);
-        $previousEnd = $end->copy()->subDays($diffInDays);
+        // Previous end is one day before current start
+        $previousEnd = $start->copy()->subDay();
+
+        $previousStart = $start->copy()->subDays($diffInDays -1);
 
         return [
             'start' => $previousStart->format('Ymd'),
