@@ -77,6 +77,14 @@ class TimelineStatistics
             $this->filter($this->filters);
         }
 
-        return $this->client->get($this->endpoint);
+        $cacheName = 'timeline_statistics_' . $this->endpoint;
+        if ($cache = wp_cache_get($cacheName, 'metricool')) {
+            return $cache;
+        }
+
+        $response =  $this->client->get($this->endpoint);
+
+        wp_cache_set($cacheName, $response, 'metricool', MINUTE_IN_SECONDS);
+        return $response;
     }
 }
