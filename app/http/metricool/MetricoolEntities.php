@@ -17,47 +17,93 @@ class MetricoolEntities
     /**
      * Easy access to the ConnectedBrands entity.
      */
-    public function connectedBrands(): Entities\ConnectedBrands
+    public function connectedBrands(bool $useCache = true): Entities\ConnectedBrands
     {
-        return new Entities\ConnectedBrands($this->client);
+        $cacheName = 'metricool_entities_cache_connected_brands';
+        $cache = wp_cache_get($cacheName, 'metricool');
+        if ($useCache && !empty($cache)) {
+            return $cache;
+        }
+
+        $entity = new Entities\ConnectedBrands($this->client);
+        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
+
+        return $entity;
     }
 
     /**
      * Easy access to the Subscription entity.
      */
-    public function subscription(): Entities\Subscription
+    public function subscription(bool $useCache = true): Entities\Subscription
     {
-        return new Entities\Subscription($this->client);
+        $cacheName = 'metricool_entities_cache_subscription';
+        $cache = wp_cache_get($cacheName, 'metricool');
+        if ($useCache && !empty($cache)) {
+            return $cache;
+        }
+
+        $entity = new Entities\Subscription($this->client);
+        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
+
+        return $entity;
     }
 
     /**
      * Easy access to the statistic entities via the StatisticsFacade.
      */
-    public function statistics(): Entities\Facades\StatisticsFacade
+    public function statistics(bool $useCache = true): Entities\Facades\StatisticsFacade
     {
-        return new Entities\Facades\StatisticsFacade($this->client);
+        $cacheName = 'metricool_entities_cache_statistics_facade';
+        $cache = wp_cache_get($cacheName, 'metricool');
+        if ($useCache && !empty($cache)) {
+            return $cache;
+        }
+
+        $entity = new Entities\Facades\StatisticsFacade($this->client);
+        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
+
+        return $entity;
     }
 
     /**
      * Easy access to the real time entities via the RealtimeFacade.
      */
-    public function realtime(): Entities\Facades\RealtimeFacade
+    public function realtime(bool $useCache = true): Entities\Facades\RealtimeFacade
     {
-        return new Entities\Facades\RealtimeFacade($this->client);
+        $cacheName = 'metricool_entities_cache_realtime_facade';
+        $cache = wp_cache_get($cacheName, 'metricool');
+        if ($useCache && !empty($cache)) {
+            return $cache;
+        }
+
+        $entity = new Entities\Facades\RealtimeFacade($this->client);
+        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
+
+        return $entity;
     }
 
     /**
      * Easy access to the UserSettings entity.
      */
-    public function userSettings(): Entities\UserSettings
+    public function userSettings(bool $useCache = true): Entities\UserSettings
     {
-        return new Entities\UserSettings($this->client);
+        $cacheName = 'metricool_entities_cache_user_settings';
+        $cache = wp_cache_get($cacheName, 'metricool');
+        if ($useCache && !empty($cache)) {
+            return $cache;
+        }
+
+        $entity = new Entities\UserSettings($this->client);
+        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
+
+        return $entity;
     }
 
     /**
      * This magic method is called when a method is requested that does not
      * exist on this class. It will try to call the method on the
      * MetricoolClient instance, if not found, it will throw an exception.
+     *
      * @throws \BadMethodCallException
      */
     public function __call(string $name, array $arguments)
