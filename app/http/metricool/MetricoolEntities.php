@@ -33,17 +33,17 @@ class MetricoolEntities
     /**
      * Easy access to the statistic entities via the StatisticsFacade.
      */
-    public function statistics(): Entities\StatisticsFacade
+    public function statistics(): Entities\Facades\StatisticsFacade
     {
-        return new Entities\StatisticsFacade($this->client);
+        return new Entities\Facades\StatisticsFacade($this->client);
     }
 
     /**
      * Easy access to the real time entities via the RealtimeFacade.
      */
-    public function realtime(): Entities\RealtimeFacade
+    public function realtime(): Entities\Facades\RealtimeFacade
     {
-        return new Entities\RealtimeFacade($this->client);
+        return new Entities\Facades\RealtimeFacade($this->client);
     }
 
     /**

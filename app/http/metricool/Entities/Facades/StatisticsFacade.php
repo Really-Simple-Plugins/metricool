@@ -1,9 +1,10 @@
 <?php
 
-namespace Metricool\Http\Metricool\Entities;
+namespace Metricool\Http\Metricool\Entities\Facades;
 
 use Metricool\Http\Metricool\MetricoolClient;
-use Metricool\Http\Metricool\Traits\isFilterable;
+use Metricool\Http\Metricool\Entities\TimelineStatistics;
+use Metricool\Http\Metricool\Entities\DistributionStatistics;
 
 /**
  * Facade to access various statistics entities in Metricool.
