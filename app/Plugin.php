@@ -177,7 +177,13 @@ class Plugin
             new Http\Endpoints\SubscriptionEndpoint(),
             new Http\Endpoints\UserSettingsEndpoint(),
             new Http\Endpoints\StatisticsEndpoint(),
+            new Http\Endpoints\AnalyticsEndpoint(
+                new Services\AnalyticsService()
+            ),
             new Http\Endpoints\RealtimeEndpoint(),
+            new Http\Endpoints\RelatedPluginEndpoints(
+                new Services\RelatedPluginService()
+            ),
         ]);
     }
 
