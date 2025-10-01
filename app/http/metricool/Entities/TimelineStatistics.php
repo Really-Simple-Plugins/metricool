@@ -18,8 +18,9 @@ class TimelineStatistics
 {
     use isFilterable;
 
+    protected string $metric;
     protected MetricoolClient $client;
-    protected string $endpoint = 'stats/timeline/';
+    public string $endpoint = 'stats/timeline/';
 
     /**
      * The timeline statistics API is compatible with these metrics.
@@ -38,12 +39,14 @@ class TimelineStatistics
      */
     public function __construct(MetricoolClient $client, string $metric, bool $filterRequired = true)
     {
-        if (!in_array($metric, $this->compatibleMetrics)) {
-            throw new \InvalidArgumentException("Incompatible metric given: $metric");
+        $this->metric = $metric;
+
+        if (!in_array($this->metric, $this->compatibleMetrics)) {
+            throw new \InvalidArgumentException("Incompatible metric given: $this->metric");
         }
 
         $this->client = $client;
-        $this->endpoint .= $metric;
+        $this->endpoint .= $this->metric;
         $this->requiresFilter = $filterRequired;
 
         /**
@@ -70,6 +73,7 @@ class TimelineStatistics
 
     /**
      * Fetch and return the timeline statistics data plainly from the API.
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function get(): array
     {
@@ -77,6 +81,24 @@ class TimelineStatistics
             $this->filter($this->filters);
         }
 
-        return $this->client->get($this->endpoint);
+        $cacheName = 'timeline_statistics_' . $this->endpoint;
+        if ($cache = wp_cache_get($cacheName, 'metricool')) {
+            return $cache;
+        }
+
+        $response =  $this->client->get($this->endpoint);
+
+        wp_cache_set($cacheName, $response, 'metricool', MINUTE_IN_SECONDS);
+        return $response;
+    }
+
+    /**
+     * Return the metric that the current instance is used for. Useful for
+     * dynamic retrieval of the intent of the instance. For an example see:
+     * {@see \Metricool\Services\AnalyticsService::getTrend}
+     */
+    public function getMetric(): string
+    {
+        return $this->metric;
     }
 }

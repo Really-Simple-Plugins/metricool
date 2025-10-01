@@ -78,4 +78,12 @@ trait isFilterable
     {
         return preg_match($pregMatch, $filter) ? $filter : false;
     }
+
+    /**
+     * Method used to retrieve the filters used by the parent entity.
+     */
+    public function getFilters(): array
+    {
+        return $this->filters;
+    }
 }
