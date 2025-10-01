@@ -9,26 +9,29 @@ import HttpClient from "../api/HttpClient.tsx";
 
 interface GlobalContext {
     globalState: GlobalState,
+    metricool: typeof defaultMetricoolData,
     httpClient: GlobalState["httpClient"],
     dispatch: Dispatch<ReducerAction>,
 }
 
+const defaultMetricoolData = {
+    nonce: "",
+    x_wp_nonce: "",
+    ajax_url: "",
+    rest_url: "",
+    rest_namespace: "",
+    rest_version: "",
+    site_url: "",
+    assets_url: "",
+    json_translations: [],
+    is_onboarding_completed: false,
+    support: null,
+    locale: "",
+}
 
 interface GlobalState {
-    metricool: {
-        nonce?: string,
-        x_wp_nonce?: string,
-        ajax_url?: string,
-        rest_url?: string,
-        rest_namespace?: string,
-        rest_version?: string,
-        site_url?: string,
-        assets_url?: string,
-        json_translations?: string[],
-        is_onboarding_completed?: boolean,
-        support?: string | null,
-    };
-    httpClient: HttpClient | null,
+    metricool: typeof defaultMetricoolData;
+    httpClient: HttpClient | null;
 }
 
 /**
@@ -50,7 +53,7 @@ export const useGlobalContext = () => {
 };
 
 const initialGlobalState: GlobalState = {
-    metricool: {},
+    metricool: defaultMetricoolData,
     httpClient: null,
 };
 
@@ -78,7 +81,7 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 
     return (
         <GlobalContext.Provider
-            value={{ globalState, httpClient: globalState.httpClient, dispatch }}
+            value={{ globalState, metricool: globalState.metricool, httpClient: globalState.httpClient, dispatch }}
         >
             {children}
         </GlobalContext.Provider>
