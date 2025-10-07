@@ -181,7 +181,7 @@ class Plugin
                 new Services\AnalyticsService()
             ),
             new Http\Endpoints\RealtimeEndpoint(),
-            new Http\Endpoints\RelatedPluginEndpoints(
+            new Http\Endpoints\RelatedPluginsEndpoints(
                 new Services\RelatedPluginService()
             ),
         ]);
