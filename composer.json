@@ -26,6 +26,7 @@
             "Metricool\\Traits\\": "app/traits",
             "Metricool\\Managers\\": "app/managers",
             "Metricool\\Services\\": "app/services",
+            "Metricool\\Services\\Analytics\\": "app/services/analytics",
             "Metricool\\Providers\\": "app/providers",
             "Metricool\\Interfaces\\": "app/interfaces",
             "Metricool\\Exceptions\\": "app/exceptions",
