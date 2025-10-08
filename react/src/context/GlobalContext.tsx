@@ -73,7 +73,6 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
         // but the tsc complains it can't find it
         dispatch({ dispatchType: 'setMetricoolVariables', change: { metricool: { ...window.metricool.values } } });
         dispatch({ dispatchType: 'initialiseHttpClient'});
-
         // @ts-expect-error same as above
         // setting to undefined so it is no longer accessible in the devtools
         window.metricool = undefined;
@@ -112,7 +111,7 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
                 const httpClient: HttpClient = new HttpClient({
                     NONCE: state.metricool.nonce,
                     X_WP_NONCE: state.metricool.x_wp_nonce,
-                    MC_API_URL: MC_API_URL
+                    MC_API_URL: MC_API_URL,
                 })
                 return { ...state, httpClient: httpClient };
             }
