@@ -11,7 +11,7 @@ type AccountTileProps = {
 const AccountTile = ({ connected, accountType, accountName }: AccountTileProps) => {
     return (
         <div className={clsx("flex rounded-sm border-1 w-full min-h-[40px] px-1 items-center gap-2",
-            connected && "border-gray-300",
+            connected && "border-neutral-200",
             accountType === "twitter" && !connected && "border-(--color-twitter) bg-(--color-twitter)",
             accountType === "youtube" && !connected && "border-(--color-youtube) bg-(--color-youtube)",
             accountType === "linkedIn" && !connected && "border-(--color-linkedin) bg-(--color-linkedin)",
