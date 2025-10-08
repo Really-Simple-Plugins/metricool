@@ -1,12 +1,10 @@
 <?php
 namespace Metricool\Http\Endpoints;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Metricool\App;
 use Metricool\Services\Analytics\TimelineService;
 use Metricool\Services\Analytics\TrendService;
 use Metricool\Traits\HasRestAccess;
-use Metricool\Services\AnalyticsService;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Utility\ArrayUtility;
@@ -18,7 +16,8 @@ class AnalyticsEndpoint implements SingleEndpointInterface
 
     const ROUTE = 'analytics';
 
-    protected AnalyticsService $service;
+    protected trendService $trendService;
+    protected timelineService $timelineService;
 
     public function __construct(TrendService $trendService, TimelineService $timelineService)
     {
@@ -90,6 +89,9 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         $visitors = $statisticsModule->visitors()->filter($requestFilters)->get();
         $posts = $statisticsModule->posts()->filter($requestFilters)->get();
         $comments = $statisticsModule->comments()->filter($requestFilters)->get();
+
+        $statistics = ['pageViews', 'visits', 'visitors', 'posts', 'comments'];
+
 
         return [
             'totals' => [
