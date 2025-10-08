@@ -115,7 +115,7 @@ class TimelineStatistics
      */
     public function hydrate(array $response) : Collection
     {
-        // ASK: Collection dependency from illuminate, ok? could 
+        // ASK: Collection dependency from illuminate, ok? could
         return new Collection(array_map(function($row) {
             return new Statistic($row[0], $row[1]);
         }, $response));

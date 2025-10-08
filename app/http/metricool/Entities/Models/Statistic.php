@@ -11,7 +11,7 @@ class Statistic // <- name too generic?
 
     public function __construct(int $timestamp, float $value)
     {
-        $this->date = Carbon::createFromTimestamp($timestamp / SECOND_IN_MILLISECONDS);
+        $this->date = Carbon::createFromTimestamp($timestamp / 1000);
         $this->value = $value;
     }
 
