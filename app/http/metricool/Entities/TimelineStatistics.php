@@ -88,8 +88,11 @@ class TimelineStatistics
 
         $response = $this->client->get($this->endpoint);
 
-        // When this endpoint holds no data, Metricool return a result with non-standard output.
-        // Just return an empty response when only 1 row is found in the results
+        /**
+         * When this endpoint holds no data, Metricool returns a result with
+         * non-standard output. Just return an empty response when only 1 row is
+         * found in the results
+         */
         if (is_array($response) && count($response) == 1) {
             $response = [];
         }
