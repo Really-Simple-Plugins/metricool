@@ -1,13 +1,12 @@
 <?php
 namespace Metricool\Http\Endpoints;
 
+use Carbon\Carbon;
 use Metricool\App;
-use Metricool\Services\Analytics\TimelineService;
-use Metricool\Services\Analytics\TrendService;
+use Metricool\Services\AnalyticsService;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Utility\ArrayUtility;
 
 class AnalyticsEndpoint implements SingleEndpointInterface
 {
@@ -16,13 +15,11 @@ class AnalyticsEndpoint implements SingleEndpointInterface
 
     const ROUTE = 'analytics';
 
-    protected trendService $trendService;
-    protected timelineService $timelineService;
+    protected AnalyticsService $analyticsService;
 
-    public function __construct(TrendService $trendService, TimelineService $timelineService)
+    public function __construct(AnalyticsService $analyticsService)
     {
-        $this->trendService = $trendService;
-        $this->timelineService = $timelineService;
+        $this->analyticsService = $analyticsService;
     }
 
     /**
@@ -82,45 +79,55 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         $statisticsModule = App::provide('client')->statistics();
         $requestFilters = ($request->get_param('filters') ?: []);
 
-        $pageViews = $statisticsModule->pageViews()->filter($requestFilters)->get();
-        $visits = $statisticsModule->visits()->filter($requestFilters)->get();
-        $visitors = $statisticsModule->visitors()->filter($requestFilters)->get();
-        $posts = $statisticsModule->posts()->filter($requestFilters)->get();
-        $comments = $statisticsModule->comments()->filter($requestFilters)->get();
+        $pageViews = $statisticsModule->pageViews();
+        $visits = $statisticsModule->visits();
+        $visitors = $statisticsModule->visitors();
+        $posts = $statisticsModule->posts();
+        $comments = $statisticsModule->comments();
 
-        $statistics = ['pageViews', 'visits', 'visitors', 'posts', 'comments'];
+        // ASK: code style ok?
+        $startDate = isset($requestFilters['start']) ?
+            Carbon::createFromFormat('Ymd', $requestFilters['start']) :
+            Carbon::now()->subDays(30);
 
+        $endDate = isset($requestFilters['end']) ?
+            Carbon::createFromFormat('Ymd', $requestFilters['end']) :
+            Carbon::now()->subDays(30);
+
+        $this->analyticsService
+            ->setStartDate($startDate)
+            ->setEndDate($endDate)
+            ->addStatistic('pageViews', $pageViews)
+            ->addStatistic('visits', $visits)
+            ->addStatistic('visitors', $visitors)
+            ->addStatistic('posts', $posts)
+            ->addStatistic('comments', $comments);
 
         return [
             'totals' => [
                 'pageViews' => [
-                    'totalAmount' => ArrayUtility::sumValues(array_column($pageViews, 1)),
-                    'trend' => $this->trendService->getTrend($statisticsModule->pageViews(), $requestFilters),
+                    'totalAmount' => $this->analyticsService->getTotalAmount('pageViews'),
+                    //'trend' => $this->analyticsService->getTrend('pageViews'),
                 ],
                 'visits' => [
-                    'totalAmount' => ArrayUtility::sumValues(array_column($visits, 1)),
-                    'trend' => $this->trendService->getTrend($statisticsModule->visits(), $requestFilters),
+                    'totalAmount' => $this->analyticsService->getTotalAmount('visits'),
+                    //'trend' => $this->analyticsService->getTrend('visits'),
                 ],
                 'visitors' => [
-                    'totalAmount' => ArrayUtility::sumValues(array_column($visitors, 1)),
-                    'trend' => $this->trendService->getTrend($statisticsModule->visitors(), $requestFilters),
+                    'totalAmount' => $this->analyticsService->getTotalAmount('visitors'),
+                    //'trend' => $this->analyticsService->getTrend('visitors'),
                 ],
                 'posts' => [
-                    'totalAmount' => ArrayUtility::sumValues(array_column($posts, 1)),
-                    'trend' => $this->trendService->getTrend($statisticsModule->posts(), $requestFilters),
+                    'totalAmount' => $this->analyticsService->getTotalAmount('posts'),
+                    //'trend' => $this->analyticsService->getTrend('posts'),
                 ],
                 'comments' => [
-                    'totalAmount' => ArrayUtility::sumValues(array_column($comments, 1)),
-                    'trend' => $this->trendService->getTrend($statisticsModule->comments(), $requestFilters),
+                    'totalAmount' => $this->analyticsService->getTotalAmount('comments'),
+                    //'trend' => $this->analyticsService->getTrend('comments'),
                 ],
             ],
-            'timelineData' => $this->timelineService->createTimeLine([
-                'pageViews' => $pageViews,
-                'visits' => $visits,
-                'visitors' => $visitors,
-                'posts' => $posts,
-                'comments' => $comments,
-            ])
+            //'timelineData' => $this->analyticsService->createTimeLine()
         ];
+
     }
 }

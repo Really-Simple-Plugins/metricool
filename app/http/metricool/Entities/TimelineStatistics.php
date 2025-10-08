@@ -3,6 +3,8 @@
 namespace Metricool\Http\Metricool\Entities;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Metricool\Http\Metricool\Entities\Models\Statistic;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
 
@@ -74,8 +76,9 @@ class TimelineStatistics
     /**
      * Fetch and return the timeline statistics data plainly from the API.
      * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Collection<Statistic>
      */
-    public function get(): array
+    public function get(): Collection
     {
         if ($this->requiresFilter && $this->filtered === false) {
             $this->filter($this->filters);
@@ -94,11 +97,28 @@ class TimelineStatistics
          * found in the results
          */
         if (is_array($response) && count($response) == 1) {
-            $response = [];
+            // ASK: is early return preferred code style?
+            return new Collection([]);
         }
 
-        wp_cache_set($cacheName, $response, 'metricool', MINUTE_IN_SECONDS);
-        return $response;
+        $results = $this->hydrate($response);
+
+        wp_cache_set($cacheName, $results, 'metricool', MINUTE_IN_SECONDS);
+
+        return $results;
+    }
+
+    /**
+     * Hydrate results into Statistic models. Useful for converting data into
+     * Models in order to enhance the results with methods.
+     * @return Collection<Statistic>
+     */
+    public function hydrate(array $response) : Collection
+    {
+        // ASK: Collection dependency from illuminate, ok? could 
+        return new Collection(array_map(function($row) {
+            return new Statistic($row[0], $row[1]);
+        }, $response));
     }
 
     /**

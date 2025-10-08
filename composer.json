@@ -18,6 +18,7 @@
         "adbario/php-dot-notation": "*",
         "automattic/jetpack-autoloader": "^5",
         "guzzlehttp/guzzle": "^7.9",
+        "illuminate/collections": "^8.83",
         "nesbot/carbon": "*"
     },
     "autoload": {
