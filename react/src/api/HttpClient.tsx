@@ -26,6 +26,7 @@ class HttpClient {
      * @param route - The API route to be used.
      */
     constructor(settings: HttpClientSettings, route?: string,) {
+        console.log(settings.MC_API_URL);
         this.httpClientSettings = {
             NONCE: settings.NONCE,
             MC_API_URL: settings.MC_API_URL,
@@ -160,6 +161,23 @@ class HttpClient {
             ...this.payload,
             ...payload,
         };
+        return this;
+    }
+
+    /**
+     * Sets optional filters.
+     * @param filters - Object with filters to be set.
+     * @returns The HttpClient instance.
+     */
+    public setFilters(filters: Record<string, string>) {
+        if (!this.route || this.route === this.httpClientSettings.MC_API_URL) {
+            throw new Error(__("Route not set. Please use setRoute before using setFilters.", "metricool"));
+        }
+        const metricoolApiUrl = new URL(this.route);
+        Object.entries(filters).forEach(([filterKey, filterValue]) => {
+            metricoolApiUrl.searchParams.set(`filters[${filterKey}]`, filterValue);
+        });
+        this.route = metricoolApiUrl.toString();
         return this;
     }
 
