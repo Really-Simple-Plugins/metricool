@@ -29,7 +29,7 @@ class TimelineService
         foreach ($this->statistics as $metric => $timelineStatistic) {
             $statistics = $timelineStatistic->get();
             foreach ($statistics as $statistic) {
-                if (!$this->hasRow($statistic->timestamp)) {
+                if ($this->hasRow($statistic->timestamp) === false) {
                     $this->createRow($statistic->timestamp);
                 }
 
