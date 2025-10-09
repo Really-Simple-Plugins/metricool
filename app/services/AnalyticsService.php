@@ -49,8 +49,10 @@ class AnalyticsService
      */
     public function addStatistic(string $name, TimelineStatistics $statistics) : self
     {
-        $this->statistics[$name] = $statistics
-            ->filter(['start' => $this->startDate, 'end' => $this->endDate]);
+        $this->statistics[$name] = $statistics->filter([
+            'start' => $this->startDate,
+            'end' => $this->endDate
+        ]);
 
         return $this;
     }
