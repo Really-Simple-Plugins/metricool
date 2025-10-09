@@ -4,7 +4,6 @@ namespace Metricool\Services\Analytics;
 
 use Carbon\Carbon;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
-use Metricool\Utility\ArrayUtility;
 
 class TrendService
 {
@@ -38,8 +37,8 @@ class TrendService
 
         try {
             // Fetch data for current period and the previous period
-            $currentPeriodResponse = $statistic->filter($filters)->get();
-            $previousPeriodResponse = $statistic->filter(
+            $currentStatistics = $statistic->filter($filters)->get();
+            $previousStatistics = $statistic->filter(
                 $this->getPreviousPeriodFilters($filters)
             )->get();
         } catch (\Throwable $e) {
@@ -47,8 +46,8 @@ class TrendService
         }
 
         // Compare the sum of both periods
-        $statisticSumCurrentPeriod = ArrayUtility::sumValues(array_column($currentPeriodResponse, 1));
-        $statisticSumPreviousPeriod = ArrayUtility::sumValues(array_column($previousPeriodResponse, 1));
+        $statisticSumCurrentPeriod = $currentStatistics->sum('value');
+        $statisticSumPreviousPeriod = $previousStatistics->sum('value');
 
         if ($statisticSumCurrentPeriod > $statisticSumPreviousPeriod){
             $trend = self::TREND_UP;

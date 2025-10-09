@@ -107,23 +107,23 @@ class AnalyticsEndpoint implements SingleEndpointInterface
             'totals' => [
                 'pageViews' => [
                     'totalAmount' => $this->analyticsService->getTotalAmount('pageViews'),
-                    //'trend' => $this->analyticsService->getTrend('pageViews'),
+                    'trend' => $this->analyticsService->getTrend('pageViews'),
                 ],
                 'visits' => [
                     'totalAmount' => $this->analyticsService->getTotalAmount('visits'),
-                    //'trend' => $this->analyticsService->getTrend('visits'),
+                    'trend' => $this->analyticsService->getTrend('visits'),
                 ],
                 'visitors' => [
                     'totalAmount' => $this->analyticsService->getTotalAmount('visitors'),
-                    //'trend' => $this->analyticsService->getTrend('visitors'),
+                    'trend' => $this->analyticsService->getTrend('visitors'),
                 ],
                 'posts' => [
                     'totalAmount' => $this->analyticsService->getTotalAmount('posts'),
-                    //'trend' => $this->analyticsService->getTrend('posts'),
+                    'trend' => $this->analyticsService->getTrend('posts'),
                 ],
                 'comments' => [
                     'totalAmount' => $this->analyticsService->getTotalAmount('comments'),
-                    //'trend' => $this->analyticsService->getTrend('comments'),
+                    'trend' => $this->analyticsService->getTrend('comments'),
                 ],
             ],
             //'timelineData' => $this->analyticsService->createTimeLine()
