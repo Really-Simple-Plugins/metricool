@@ -109,13 +109,14 @@ class TimelineStatistics
     }
 
     /**
-     * Hydrate results into Statistic models. Useful for converting data into
-     * Models in order to enhance the results with methods.
+     * Creates a collection of \Metricool\Http\Metricool\Dto\Statistic objects for
+     * each result of the response. Usage can be seen here:
+     * {@see \Metricool\Services\AnalyticsService::getTotalAmount}
      * @return Collection<Statistic>
      */
     public function hydrate(array $response) : Collection
     {
-        // ASK: Collection dependency from illuminate, ok? could
+        // todo: use Storage for Collections
         return new Collection(array_map(function($row) {
             return new Statistic($row[0], $row[1]);
         }, $response));
