@@ -4,8 +4,8 @@ namespace Metricool\Http\Metricool\Entities;
 
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
-use Metricool\Http\Metricool\Entities\Models\Statistic;
 use Metricool\Http\Metricool\MetricoolClient;
+use Metricool\Http\Metricool\Dto\Statistic;
 use Metricool\Http\Metricool\Traits\isFilterable;
 
 /**

@@ -1,6 +1,6 @@
 <?php
 
-namespace Metricool\Http\Metricool\Entities\Models;
+namespace Metricool\Http\Metricool\Dto;
 
 class Statistic // ASK -> name too generic?
 {
