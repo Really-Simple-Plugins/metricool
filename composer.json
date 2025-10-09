@@ -36,7 +36,8 @@
             "Metricool\\Controllers\\": "app/controllers",
             "Metricool\\Builders\\": "app/support/builders",
             "Metricool\\Http\\Endpoints\\": "app/http/endpoints",
-            "Metricool\\Http\\Metricool\\": "app/http/metricool"
+            "Metricool\\Http\\Metricool\\": "app/http/metricool",
+            "Metricool\\Http\\Metricool\\DTO\\": "app/http/metricool/DTO"
         },
         "files": [
             "app/App.php",
