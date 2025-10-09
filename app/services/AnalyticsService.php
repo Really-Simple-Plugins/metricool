@@ -41,12 +41,13 @@ class AnalyticsService
     /**
      * Sets the metrics to be used in the analytics service
      * @param string $name
-     * @param TimelineStatistics $metric
+     * @param TimelineStatistics $statistics
      * @return self
      */
-    public function addStatistic(string $name, TimelineStatistics $metric) : self
+    public function addStatistic(string $name, TimelineStatistics $statistics) : self
     {
-        $this->statistics[$name] = $metric->filter(['start' => $this->startDate, 'end' => $this->endDate]);
+        $this->statistics[$name] = $statistics
+            ->filter(['start' => $this->startDate, 'end' => $this->endDate]);
 
         return $this;
     }
