@@ -17,23 +17,26 @@ class AnalyticsService
     /** @var TimelineStatistics[] $statistics */
     protected array $statistics = [];
 
-    public function __construct()
+    public function __construct(TrendService $trendService, TimelineService $timelineService)
     {
-        // dependency injection?
-        $this->trendService = new TrendService();
-        $this->timelineService = new TimelineService();
+        $this->trendService = $trendService;
+        $this->timelineService = $timelineService;
+
+        // set default start and end date
+        $this->startDate = Carbon::now();
+        $this->endDate = Carbon::now()->subDays(30);
     }
 
-    public function setStartDate(Carbon $startDate) : self
+    public function setStartDate(string $date, string $format = 'dmY') : self
     {
-        $this->startDate = $startDate;
+        $this->startDate = Carbon::createFromFormat($date, $format);
 
         return $this;
     }
 
-    public function setEndDate(Carbon $endDate) : self
+    public function setEndDate(string $date, string $format = 'dmY') : self
     {
-        $this->endDate = $endDate;
+        $this->endDate = Carbon::createFromFormat($date, $format);
 
         return $this;
     }
@@ -50,15 +53,6 @@ class AnalyticsService
             ->filter(['start' => $this->startDate, 'end' => $this->endDate]);
 
         return $this;
-    }
-
-    /**
-     * Gets all metrics
-     * @return TimelineStatistics[] $statistics
-     */
-    public function getStatistics() : array
-    {
-        return $this->statistics;
     }
 
     /**

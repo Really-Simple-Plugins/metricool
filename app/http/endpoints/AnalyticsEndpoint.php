@@ -2,6 +2,7 @@
 namespace Metricool\Http\Endpoints;
 
 use Carbon\Carbon;
+use GuzzleHttp\Exception\GuzzleException;
 use Metricool\App;
 use Metricool\Services\AnalyticsService;
 use Metricool\Traits\HasRestAccess;
@@ -60,8 +61,8 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     {
         try {
             $response = $this->buildResponse($request);
-        } catch (\Throwable $e) {
-            return $this->sendHttpErrorResponse(__('Failed to load analytics data', 'metricool'), $e->getMessage(), 500);
+        } catch (GuzzleException $e) {
+            return $this->sendHttpErrorResponse(esc_html__('Failed to load analytics data', 'metricool'), $e->getMessage(), 500);
         }
 
         return $this->sendHttpResponse($response);
@@ -85,19 +86,15 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         $posts = $statisticsModule->posts();
         $comments = $statisticsModule->comments();
 
-        // ASK: code style ok?
-        $startDate = isset($requestFilters['start']) ?
-            Carbon::createFromFormat('Ymd', $requestFilters['start']) :
-            Carbon::now()->subDays(30);
+        if (isset($requestFilters['start'])) {
+            $this->analyticsService->setStartDate($requestFilters['start'], 'dmY');
+        }
 
-        $endDate = isset($requestFilters['end']) ?
-            Carbon::createFromFormat('Ymd', $requestFilters['end']) :
-            Carbon::now()->subDays(30);
+        if (isset($requestFilters['end'])) {
+            $this->analyticsService->setEndDate($requestFilters['end'], 'dmY');
+        }
 
-        $this->analyticsService
-            ->setStartDate($startDate)
-            ->setEndDate($endDate)
-            ->addStatistic('pageViews', $pageViews)
+        $this->analyticsService->addStatistic('pageViews', $pageViews)
             ->addStatistic('visits', $visits)
             ->addStatistic('visitors', $visitors)
             ->addStatistic('posts', $posts)
@@ -126,7 +123,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
                     'trend' => $this->analyticsService->getTrend('comments'),
                 ],
             ],
-            'timelineData' => $this->analyticsService->createTimeLine()
+            'timelineData' => $this->analyticsService->createTimeline()
         ];
 
     }
