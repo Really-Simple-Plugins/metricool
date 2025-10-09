@@ -3,38 +3,69 @@
 namespace Metricool\Services\Analytics;
 
 use Carbon\Carbon;
+use Metricool\Http\Metricool\Entities\Models\Statistic;
+use Metricool\Http\Metricool\Entities\TimelineStatistics;
 
 class TimelineService
 {
+    public array $timeline = [];
+
     /**
      * Combines statistics within the same timestamp data into a timeline.
      * Useful for the dashboard charts.
+     * @param TimelineStatistics[] $timelineStatistics
+     * @return array
      */
-    public function createTimeLine($statistics): array
+    public function createTimeline(array $timelineStatistics): array
     {
-        $timeline = [];
-        $columns = array_keys($statistics);
-
-        // add all statistics to timeline
-        foreach ($statistics as $statistic => $results) {
-            foreach ($results as $result) {
-                if (!isset($timeline[$result[0]])) {
-                    // build a row
-                    foreach ($columns as $column) {
-                        $timeline[$result[0]][$column] = 0.0;
-                    }
+        foreach ($timelineStatistics as $timelineStatistic) {
+            $statistics = $timelineStatistic->get();
+            foreach ($statistics as $statistic) {
+                if (!$this->getRow($statistic->timestamp)) {
+                    $this->createRow($statistic->timestamp, $timelineStatistics);
                 }
-                // add data to row, 0 is timestamp, 1 is the value
-                $timeline[$result[0]][$statistic] = (float) $result[1];
+
+                $this->addMetricToRow($this->timeline[$statistic->timestamp], $timelineStatistic->getMetric(), $statistic);
             }
         }
 
-        // add formatted date to each
-        foreach ($timeline as $timestamp => &$line) {
-            $line['timestamp'] = $timestamp;
-            $line['date'] = Carbon::createFromTimestamp($timestamp / 1000)->format('j M');
+        return $this->getTimeline();
+    }
+
+    public function getTimeline() : array
+    {
+        return array_values($this->timeline);
+    }
+
+    protected function getRow($datestamp)
+    {
+        return $this->timeline[$datestamp] ?? null;
+    }
+
+    public function createRow($timestamp, $timelineStatistics)
+    {
+        $row = [
+            'timestamp' => $timestamp,
+            'date' => Carbon::createFromTimestamp($timestamp / 1000)->format('j M'), // todo: fix magic number
+        ];
+
+        // initialize properties for each metric
+        foreach ($timelineStatistics as $timelineStatistic) {
+            $row[$timelineStatistic->getMetric()] = 0.0;
         }
 
-        return array_values($timeline);
+        return $this->addRowToTimeline($timestamp,$row);
+    }
+
+    protected function addRowToTimeline($timestamp, $row)
+    {
+        $this->timeline[$timestamp] = $row;
+
+        return $this->timeline[$timestamp];
+    }
+
+    public function addMetricToRow(&$row, string $metric, Statistic $statistic) : void
+    {
+        $row[$metric] = $statistic->getValue();
     }
 }
