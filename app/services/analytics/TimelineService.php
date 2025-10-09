@@ -16,7 +16,7 @@ class TimelineService
      * @param TimelineStatistics[] $timelineStatistics
      * @return array
      */
-    public function createTimeline(array $timelineStatistics) : array
+    public function createTimeline(array $timelineStatistics): array
     {
         foreach ($timelineStatistics as $metric => $timelineStatistic) {
             $statistics = $timelineStatistic->get();
@@ -32,17 +32,17 @@ class TimelineService
         return $this->getTimeline();
     }
 
-    public function getTimeline() : array
+    public function getTimeline(): array
     {
         return array_values($this->timeline);
     }
 
-    protected function getRow($datestamp)
+    protected function getRow($datestamp): ?array
     {
         return $this->timeline[$datestamp] ?? null;
     }
 
-    public function createRow($timestamp, $timelineStatistics)
+    protected function createRow($timestamp, $timelineStatistics)
     {
         $row = [
             'timestamp' => $timestamp,
@@ -64,7 +64,7 @@ class TimelineService
         return $this->timeline[$timestamp];
     }
 
-    public function addMetricToRow(&$row, string $metric, Statistic $statistic) : void
+    protected function addMetricToRow(&$row, string $metric, Statistic $statistic): void
     {
         $row[$metric] = $statistic->getValue();
     }
