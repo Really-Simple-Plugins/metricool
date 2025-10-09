@@ -2,22 +2,26 @@
 
 namespace Metricool\Http\Metricool\Entities\Models;
 
-use Carbon\Carbon;
-
 class Statistic // ASK -> name too generic?
 {
-    public Carbon $date;
+    public int $timestamp;
     public float $value;
 
     public function __construct(int $timestamp, float $value)
     {
         // ASK -> time in constant
-        $this->date = Carbon::createFromTimestamp($timestamp / 1000);
+        $this->timestamp = $timestamp;
         $this->value = $value;
     }
 
-    public function formattedDateString() : string
+    public function getValue() : float
     {
-        return $this->date->format('j M');
+        return $this->value;
     }
+
+    public function getTimestamp() : int
+    {
+        return $this->timestamp;
+    }
+
 }
