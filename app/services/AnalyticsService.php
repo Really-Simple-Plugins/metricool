@@ -83,7 +83,8 @@ class AnalyticsService
      */
     public function createTimeline() : array
     {
-        return $this->timelineService->createTimeline($this->statistics);
+        return $this->timelineService->setStatistics($this->statistics)
+            ->build();
     }
 }
 

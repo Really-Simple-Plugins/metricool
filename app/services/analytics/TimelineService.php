@@ -9,20 +9,28 @@ use Metricool\Http\Metricool\Entities\TimelineStatistics;
 class TimelineService
 {
     public array $timeline = [];
+    protected array $statistics = [];
+
+    public function setStatistics(array $statistics): self
+    {
+        $this->statistics = $statistics;
+
+        return $this;
+    }
 
     /**
      * Combines statistics within the same timestamp data into a timeline.
      * Useful for the dashboard charts.
-     * @param TimelineStatistics[] $timelineStatistics
+     *
      * @return array
      */
-    public function createTimeline(array $timelineStatistics): array
+    public function build(): array
     {
-        foreach ($timelineStatistics as $metric => $timelineStatistic) {
+        foreach ($this->statistics as $metric => $timelineStatistic) {
             $statistics = $timelineStatistic->get();
             foreach ($statistics as $statistic) {
-                if (!$this->getRow($statistic->timestamp)) {
-                    $this->createRow($statistic->timestamp, $timelineStatistics);
+                if (!$this->hasRow($statistic->timestamp)) {
+                    $this->createRow($statistic->timestamp);
                 }
 
                 $this->addMetricToRow($this->timeline[$statistic->timestamp], $metric, $statistic);
@@ -42,7 +50,12 @@ class TimelineService
         return $this->timeline[$datestamp] ?? null;
     }
 
-    protected function createRow($timestamp, $timelineStatistics)
+    protected function hasRow($datestamp) : bool
+    {
+        return ($this->getRow($datestamp) !== null);
+    }
+
+    protected function createRow($timestamp): array
     {
         $row = [
             'timestamp' => $timestamp,
@@ -50,14 +63,14 @@ class TimelineService
         ];
 
         // initialize properties for each metric
-        foreach ($timelineStatistics as $metric => $timelineStatistic) {
+        foreach ($this->statistics as $metric => $timelineStatistic) {
             $row[$metric] = 0.0;
         }
 
         return $this->addRowToTimeline($timestamp,$row);
     }
 
-    protected function addRowToTimeline($timestamp, $row)
+    protected function addRowToTimeline($timestamp, $row): array
     {
         $this->timeline[$timestamp] = $row;
 
