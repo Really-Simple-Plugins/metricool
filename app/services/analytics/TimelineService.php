@@ -18,14 +18,14 @@ class TimelineService
      */
     public function createTimeline(array $timelineStatistics) : array
     {
-        foreach ($timelineStatistics as $timelineStatistic) {
+        foreach ($timelineStatistics as $metric => $timelineStatistic) {
             $statistics = $timelineStatistic->get();
             foreach ($statistics as $statistic) {
                 if (!$this->getRow($statistic->timestamp)) {
                     $this->createRow($statistic->timestamp, $timelineStatistics);
                 }
 
-                $this->addMetricToRow($this->timeline[$statistic->timestamp], $timelineStatistic->getMetric(), $statistic);
+                $this->addMetricToRow($this->timeline[$statistic->timestamp], $metric, $statistic);
             }
         }
 
@@ -50,8 +50,8 @@ class TimelineService
         ];
 
         // initialize properties for each metric
-        foreach ($timelineStatistics as $timelineStatistic) {
-            $row[$timelineStatistic->getMetric()] = 0.0;
+        foreach ($timelineStatistics as $metric => $timelineStatistic) {
+            $row[$metric] = 0.0;
         }
 
         return $this->addRowToTimeline($timestamp,$row);
