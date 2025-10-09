@@ -3,7 +3,7 @@
 namespace Metricool\Services\Analytics;
 
 use Carbon\Carbon;
-use Metricool\Http\Metricool\Entities\Models\Statistic;
+use Metricool\Http\Metricool\DTO\Statistic;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 
 class TimelineService
@@ -16,7 +16,7 @@ class TimelineService
      * @param TimelineStatistics[] $timelineStatistics
      * @return array
      */
-    public function createTimeline(array $timelineStatistics): array
+    public function createTimeline(array $timelineStatistics) : array
     {
         foreach ($timelineStatistics as $timelineStatistic) {
             $statistics = $timelineStatistic->get();
