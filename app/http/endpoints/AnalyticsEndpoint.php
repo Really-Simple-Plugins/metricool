@@ -1,7 +1,6 @@
 <?php
 namespace Metricool\Http\Endpoints;
 
-use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\App;
 use Metricool\Services\AnalyticsService;
