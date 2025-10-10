@@ -69,6 +69,8 @@ trait HasRestAccess
      */
     public function sendHttpErrorResponse(string $message = 'An error occurred', string $error = '', int $code = 500): \WP_REST_Response
     {
-        return $this->sendHttpResponse(['error' => WP_DEBUG ? $error : null], false, $message, $code);
+        return $this->sendHttpResponse([
+            'error' => (defined('WP_DEBUG') && WP_DEBUG ? $error : null)
+        ], false, $message, $code);
     }
 }
