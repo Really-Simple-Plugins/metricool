@@ -9,11 +9,11 @@ use Metricool\Http\Metricool\Entities\TimelineStatistics;
 class TimelineService
 {
     public array $timeline = [];
-    protected array $statistics = [];
+    protected array $metrics = [];
 
-    public function setStatistics(array $statistics): self
+    public function setMetrics(array $metrics): self
     {
-        $this->statistics = $statistics;
+        $this->metrics = $metrics;
 
         return $this;
     }
@@ -26,14 +26,14 @@ class TimelineService
      */
     public function build(): array
     {
-        foreach ($this->statistics as $metric => $timelineStatistic) {
-            $statistics = $timelineStatistic->get();
+        foreach ($this->metrics as $name => $metric) {
+            $statistics = $metric['results'];
             foreach ($statistics as $statistic) {
                 if ($this->hasRow($statistic->timestamp) === false) {
                     $this->createRow($statistic->timestamp);
                 }
 
-                $this->addMetricToRow($this->timeline[$statistic->timestamp], $metric, $statistic);
+                $this->addMetricToRow($this->timeline[$statistic->timestamp], $name, $statistic);
             }
         }
 
@@ -63,7 +63,7 @@ class TimelineService
         ];
 
         // initialize properties for each metric
-        foreach ($this->statistics as $metric => $timelineStatistic) {
+        foreach (array_keys($this->metrics) as $metric) {
             $row[$metric] = 0.0;
         }
 

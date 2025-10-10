@@ -93,11 +93,11 @@ class AnalyticsEndpoint implements SingleEndpointInterface
             $this->analyticsService->setEndDate($requestFilters['end'], 'dmY');
         }
 
-        $this->analyticsService->addStatistic('pageViews', $pageViews)
-            ->addStatistic('visits', $visits)
-            ->addStatistic('visitors', $visitors)
-            ->addStatistic('posts', $posts)
-            ->addStatistic('comments', $comments);
+        $this->analyticsService->loadMetric('pageViews', $pageViews)
+            ->loadMetric('visits', $visits)
+            ->loadMetric('visitors', $visitors)
+            ->loadMetric('posts', $posts)
+            ->loadMetric('comments', $comments);
 
         return [
             'totals' => [

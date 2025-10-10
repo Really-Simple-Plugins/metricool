@@ -3,6 +3,7 @@
 namespace Metricool\Services\Analytics;
 
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 
 class TrendService
@@ -17,7 +18,7 @@ class TrendService
      * at least a start and an end date in Ymd format. Otherwise, a
      * 'stable' trend is returned,
      */
-    public function getTrend(TimelineStatistics $statistic, array $filters = []): string
+    public function getTrend(TimelineStatistics $statistic, Collection $currentStatistics, $filters = []): string
     {
         $cacheName = get_class($statistic) . ':' . $statistic->getMetric() . '#' . md5(json_encode($filters));
         if ($cache = wp_cache_get($cacheName, 'metricool')) {
@@ -36,8 +37,6 @@ class TrendService
         }
 
         try {
-            // Fetch data for current period and the previous period
-            $currentStatistics = $statistic->filter($filters)->get();
             $previousStatistics = $statistic->filter(
                 $this->getPreviousPeriodFilters($filters)
             )->get();
