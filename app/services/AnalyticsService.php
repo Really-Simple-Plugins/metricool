@@ -16,7 +16,7 @@ class AnalyticsService
 
     protected TrendService $trendService;
     protected TimelineService $timelineService;
-
+    /** @var array<string, array{timelineStatistics: Collection<int, Statistic>, results: Collection<int, Statistic>}> */
     protected array $metrics = [];
 
     public function __construct(TrendService $trendService, TimelineService $timelineService)
@@ -56,7 +56,8 @@ class AnalyticsService
             'results' => $statistics->filter([
                     'start' => $this->startDate,
                     'end' => $this->endDate
-                ])->get()
+                ])
+                ->get()
         ];
 
         return $this;
@@ -98,7 +99,8 @@ class AnalyticsService
      */
     public function createTimeline(): array
     {
-        return $this->timelineService->setMetrics($this->metrics)->build();
+        return $this->timelineService->setMetrics($this->metrics)
+            ->build();
     }
 }
 
