@@ -41,7 +41,7 @@ const AccountTile = ({ connected, accountType, accountName }: AccountTileProps) 
                     </div>
                     <div className={"flex items-center gap-1"}>
                         <Button variant={"icon"} icon={"external-link"} iconPosition={"right"} iconClass={"size-3 text-white"}></Button>
-                        <Button variant={"icon"} icon={"pro"} iconPosition={"right"} iconClass={"size-2 p-0.5 bg-(--color-upsell) rounded-full"}></Button>
+                        <Button variant={"icon"} icon={"upsell"} iconPosition={"right"} iconClass={"size-2 p-0.5 bg-(--color-upsell) rounded-full"}></Button>
                     </div>
                 </div>
             )}
