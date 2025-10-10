@@ -102,22 +102,27 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         return [
             'totals' => [
                 'pageViews' => [
+                    'label' => esc_html__('Page views', 'metricool'),
                     'totalAmount' => $this->analyticsService->getTotalAmount('pageViews'),
                     'trend' => $this->analyticsService->getTrend('pageViews'),
                 ],
                 'visits' => [
+                    'label' => esc_html__('Visits', 'metricool'),
                     'totalAmount' => $this->analyticsService->getTotalAmount('visits'),
                     'trend' => $this->analyticsService->getTrend('visits'),
                 ],
                 'visitors' => [
+                    'label' => esc_html__('Visitors', 'metricool'),
                     'totalAmount' => $this->analyticsService->getTotalAmount('visitors'),
                     'trend' => $this->analyticsService->getTrend('visitors'),
                 ],
                 'posts' => [
+                    'label' => esc_html__('Posts', 'metricool'),
                     'totalAmount' => $this->analyticsService->getTotalAmount('posts'),
                     'trend' => $this->analyticsService->getTrend('posts'),
                 ],
                 'comments' => [
+                    'label' => esc_html__('Comments', 'metricool'),
                     'totalAmount' => $this->analyticsService->getTotalAmount('comments'),
                     'trend' => $this->analyticsService->getTrend('comments'),
                 ],
