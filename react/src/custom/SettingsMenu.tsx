@@ -20,8 +20,8 @@ const SettingsMenu = () => {
                     {__("Connections", "metricool")}
                 </Link>
                 <ListItem className={"text-md cursor-pointer hover:underline"} icon={"inline-external-link"} iconPosition={"right"}>{__("Affiliation Program", "metricool")}</ListItem>
-                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2 p-0.5"} iconPosition={"right"}>{__("User Management", "metricool")}</ListItem>
-                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2 p-0.5"} iconPosition={"right"}>{__("My Tasks", "metricool")}</ListItem>
+                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"}>{__("User Management", "metricool")}</ListItem>
+                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"}>{__("My Tasks", "metricool")}</ListItem>
             </FlexContainer>
         </Card>
     );
