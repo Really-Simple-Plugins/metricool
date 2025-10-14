@@ -6,6 +6,10 @@ use Carbon\Carbon;
 use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\DTO\TimelineStatistic;
 
+/**
+ * Builds a timeline from a collection of metrics and their corresponding statistics.
+ * @see AnalyticsService for usage example
+ */
 class TimelineResponseBuilder
 {
     public array $timeline = [];
@@ -15,8 +19,6 @@ class TimelineResponseBuilder
     /**
      * Combines statistics within the same timestamp data into a timeline.
      * Useful for the dashboard charts.
-     *
-     * @return array
      */
     public function build(): array
     {
@@ -37,7 +39,6 @@ class TimelineResponseBuilder
     /**
      * Sets the metrics that should be included in a timeline item
      * @param array<string, array{timelineStatistics: Collection<TimelineStatistic>, results: Collection<TimelineStatistic>}> $metrics
-     * @return self
      */
     public function setMetrics(array $metrics): self
     {
@@ -48,7 +49,6 @@ class TimelineResponseBuilder
 
     /**
      * Returns the timeline without preserving keys.
-     * @return array
      */
     public function getTimeline(): array
     {
@@ -57,8 +57,6 @@ class TimelineResponseBuilder
 
     /**
      * Returns a row on the given timestamp
-     * @param int $datestamp
-     * @return array|null
      */
     protected function getRow(int $datestamp): ?array
     {
@@ -67,8 +65,6 @@ class TimelineResponseBuilder
 
     /**
      * Checks if a row exists on the given timestamp
-     * @param $datestamp
-     * @return bool
      */
     protected function hasRow($datestamp) : bool
     {
@@ -77,8 +73,6 @@ class TimelineResponseBuilder
 
     /**
      * Creates a row for the given timestamp
-     * @param int $timestamp
-     * @return array
      */
     protected function createRow(int $timestamp): array
     {
@@ -99,9 +93,6 @@ class TimelineResponseBuilder
 
     /**
      * Inserts a row to the timeline
-     * @param $timestamp
-     * @param $row
-     * @return array
      */
     protected function addRowToTimeline($timestamp, $row): array
     {
@@ -112,9 +103,6 @@ class TimelineResponseBuilder
 
     /**
      * Adds a metric (Visits / PageViews / etc) to the row
-     * @param $row
-     * @param string $metric
-     * @param TimelineStatistic $statistic
      */
     protected function addMetricToRow(&$row, string $metric, TimelineStatistic $statistic): void
     {

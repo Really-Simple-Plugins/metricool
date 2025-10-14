@@ -13,8 +13,6 @@ class TimelineStatistic
 
     /**
      * Constructor to fill all the properties of the TimelineStatistic
-     * @param int $timestamp
-     * @param float $hits
      */
     public function __construct(int $timestamp, float $hits)
     {
@@ -24,7 +22,6 @@ class TimelineStatistic
 
     /**
      * Gets the hits
-     * @return float
      */
     public function getHits() : float
     {
@@ -33,7 +30,6 @@ class TimelineStatistic
 
     /**
      * Gets the timestamp
-     * @return int
      */
     public function getTimestamp() : int
     {

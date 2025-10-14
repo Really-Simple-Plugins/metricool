@@ -27,6 +27,9 @@ class AnalyticsService
         $this->endDate = Carbon::now();
     }
 
+    /*
+     * Sets the startDate for the metrics
+     */
     public function setStartDate(string $date, string $format = 'Ymd'): self
     {
         $this->startDate = Carbon::createFromFormat($format, $date);
@@ -34,6 +37,9 @@ class AnalyticsService
         return $this;
     }
 
+    /*
+     * Sets the endDate for the metrics
+     */
     public function setEndDate(string $date, string $format = 'Ymd'): self
     {
         $this->endDate = Carbon::createFromFormat($format, $date);
@@ -43,28 +49,21 @@ class AnalyticsService
 
     /**
      * Sets the metrics to be used in the analytics service
-     * @param string $metric
-     * @param TimelineStatistics $statistics
-     * @return self
+     * This will fetch the results from the API and store them
      */
     public function loadMetric(string $metric, TimelineStatistics $statistics): self
     {
-        try {
-            $this->metrics[$metric] = [
-                'timelineStatistics' => $statistics,
-                'results' => $statistics->filter($this->getFilters())
-                    ->get()
-            ];
-        } catch(\Throwable $e) {
-
-        }
+        $this->metrics[$metric] = [
+            'timelineStatistics' => $statistics,
+            'results' => $statistics->filter($this->getFilters())
+                ->get()
+        ];
 
         return $this;
     }
 
     /**
      * Creates the filters to be used in the timeline statistics
-     * @return array
      */
     public function getFilters(): array
     {
@@ -76,7 +75,6 @@ class AnalyticsService
 
     /**
      * Gets the results of a metric
-     * @param string $metric
      * @return Collection<int, TimelineStatistic>
      */
     public function getResults(string $metric) : Collection
@@ -86,8 +84,6 @@ class AnalyticsService
 
     /**
      * Gets the TimelineStatistics Entity of a metric
-     * @param string $metric
-     * @return TimelineStatistics
      */
     public function getTimelineStatistics(string $metric): TimelineStatistics
     {
@@ -96,8 +92,6 @@ class AnalyticsService
 
     /**
      * Sums the amount of hits of this metric
-     * @param string $metric
-     * @return float
      */
     public function getTotalAmount(string $metric): float
     {
@@ -107,8 +101,6 @@ class AnalyticsService
 
     /**
      * Returns the trend on the previous period
-     * @param string $metric
-     * @return string
      */
     public function getTrend(string $metric): string
     {
@@ -121,7 +113,6 @@ class AnalyticsService
 
     /**
      * Builds the timeline
-     * @return array
      */
     public function getTimelineData(): array
     {
