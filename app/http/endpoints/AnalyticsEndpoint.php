@@ -121,7 +121,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
                     'trend' => $this->analyticsService->getTrend('comments'),
                 ],
             ],
-            'timelineData' => $this->analyticsService->createTimeline()
+            'timelineData' => $this->analyticsService->getTimelineData()
         ];
 
     }

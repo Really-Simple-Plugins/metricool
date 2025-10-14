@@ -123,7 +123,7 @@ class AnalyticsService
      * Builds the timeline
      * @return array
      */
-    public function createTimeline(): array
+    public function getTimelineData(): array
     {
         return (new TimelineResponseBuilder())->setMetrics($this->metrics)
             ->build();
