@@ -92,8 +92,8 @@ class TimelineStatistics
          * non-standard output. Just return an empty response when only 1 row is
          * found in the results
          */
-        if (is_array($results) && count($results) == 1) {
-            $results = [];
+        if ($this->isEmptyResponse($results)) {
+           return new Collection([]);
         }
 
         if ($this->shouldHydrate) {
@@ -120,5 +120,10 @@ class TimelineStatistics
     public function getMetric(): string
     {
         return $this->metric;
+    }
+
+    protected function isEmptyResponse($response): bool
+    {
+        return empty($response) || (is_array($response) && count($response) === 1 && empty($response[1]));
     }
 }
