@@ -5,7 +5,7 @@ namespace Metricool\Services;
 use Carbon\Carbon;
 use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\Dto\Statistic;
-use Metricool\Services\Analytics\TimelineService;
+use Metricool\Builders\TimelineResponseBuilder;
 use Metricool\Services\Analytics\TrendService;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 
@@ -15,14 +15,12 @@ class AnalyticsService
     protected Carbon $endDate;
 
     protected TrendService $trendService;
-    protected TimelineService $timelineService;
     /** @var array<string, array{timelineStatistics: Collection<Statistic>, results: Collection<Statistic>}> */
     protected array $metrics = [];
 
-    public function __construct(TrendService $trendService, TimelineService $timelineService)
+    public function __construct(TrendService $trendService)
     {
         $this->trendService = $trendService;
-        $this->timelineService = $timelineService;
 
         // set default start and end date
         $this->startDate = Carbon::now()->subDays(30);
@@ -127,7 +125,7 @@ class AnalyticsService
      */
     public function createTimeline(): array
     {
-        return $this->timelineService->setMetrics($this->metrics)
+        return (new TimelineResponseBuilder())->setMetrics($this->metrics)
             ->build();
     }
 }
