@@ -36,7 +36,7 @@ class AnalyticsService
     }
 
     /*
-     * Sets the startDate for the metrics
+     * Sets the startDate for the metrics. Overrides the default startDate
      */
     public function setStartDate(string $date, string $format = 'Ymd'): self
     {
@@ -46,7 +46,7 @@ class AnalyticsService
     }
 
     /*
-     * Sets the endDate for the metrics
+     * Sets the endDate for the metrics. Overrides the default endDate
      */
     public function setEndDate(string $date, string $format = 'Ymd'): self
     {
