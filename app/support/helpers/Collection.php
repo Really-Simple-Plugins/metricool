@@ -10,16 +10,11 @@ class Collection implements IteratorAggregate
 {
     /**
      * The items contained in the collection.
-     *
-     * @var array
      */
     protected $items = [];
 
     /**
      * Create a new collection.
-     *
-     * @param  mixed  $items
-     * @return void
      */
     public function __construct($items = [])
     {
@@ -28,8 +23,6 @@ class Collection implements IteratorAggregate
 
     /**
      * Get all the items in the collection.
-     *
-     * @return array
      */
     public function all(): array
     {
@@ -38,9 +31,7 @@ class Collection implements IteratorAggregate
 
     /**
      * Get the sum of the given values.
-     *
      * @param  callable|string|null  $callback
-     * @return mixed
      */
     public function sum($callback = null)
     {
@@ -55,8 +46,6 @@ class Collection implements IteratorAggregate
 
     /**
      * Reduce the collection to a single value.
-     *
-     * @param  callable  $callback
      * @param  mixed  $initial
      * @return mixed
      */
@@ -85,23 +74,18 @@ class Collection implements IteratorAggregate
     /**
      * Filter items by the given key value pair.
      *
-     * @param  string  $key
      * @param  mixed  $operator
      * @param  mixed  $value
-     * @return static
      */
-    public function where($key, $operator = null, $value = null)
+    public function where(string $key, $operator = null, $value = null): self
     {
         return $this->filter($this->operatorForWhere(...func_get_args()));
     }
 
     /**
      * Run a map over each of the items.
-     *
-     * @param  callable  $callback
-     * @return static
      */
-    public function map(callable $callback): Collection
+    public function map(callable $callback): self
     {
         $keys = array_keys($this->items);
 
@@ -112,20 +96,16 @@ class Collection implements IteratorAggregate
 
     /**
      * Count the number of items in the collection.
-     *
-     * @return int
      */
-    public function count()
+    public function count(): int
     {
         return count($this->items);
     }
 
     /**
      * Get the collection of items as a plain array.
-     *
-     * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->map(function ($value) {
             return is_object($value) && method_exists('toArray', $value) ? $value->toArray() : $value;
@@ -181,8 +161,6 @@ class Collection implements IteratorAggregate
 
     /**
      * Make a function that returns what's passed to it.
-     *
-     * @return \Closure
      */
     protected function closure(): Closure
     {
@@ -193,10 +171,8 @@ class Collection implements IteratorAggregate
 
     /**
      * Get an iterator for the items.
-     *
-     * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator(): ArrayIterator
     {
         return new ArrayIterator($this->items);
     }
@@ -205,9 +181,8 @@ class Collection implements IteratorAggregate
      * Run a filter over each of the items.
      *
      * @param  callable|null  $callback
-     * @return static
      */
-    public function filter(callable $callback = null)
+    public function filter(callable $callback = null): self
     {
         if ($callback) {
             return new static(array_filter($this->items, $callback, ARRAY_FILTER_USE_BOTH));
@@ -219,12 +194,10 @@ class Collection implements IteratorAggregate
     /**
      * Get an operator checker callback.
      *
-     * @param  string  $key
      * @param  string|null  $operator
      * @param  mixed  $value
-     * @return \Closure
      */
-    protected function operatorForWhere($key, $operator, $value = null)
+    protected function operatorForWhere(string $key, string $operator = null, $value = null): Closure
     {
         if (func_num_args() === 1) {
             $value = true;
