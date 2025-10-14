@@ -16,7 +16,7 @@ class AnalyticsService
 
     protected TrendService $trendService;
     protected TimelineService $timelineService;
-    /** @var array<string, array{timelineStatistics: Collection<int, Statistic>, results: Collection<int, Statistic>}> */
+    /** @var array<string, array{timelineStatistics: Collection<Statistic>, results: Collection<Statistic>}> */
     protected array $metrics = [];
 
     public function __construct(TrendService $trendService, TimelineService $timelineService)
@@ -25,8 +25,8 @@ class AnalyticsService
         $this->timelineService = $timelineService;
 
         // set default start and end date
-        $this->startDate = Carbon::now();
-        $this->endDate = Carbon::now()->subDays(30);
+        $this->startDate = Carbon::now()->subDays(30);
+        $this->endDate = Carbon::now();
     }
 
     public function setStartDate(string $date, string $format = 'Ymd'): self
@@ -51,6 +51,7 @@ class AnalyticsService
      */
     public function loadMetric(string $metric, TimelineStatistics $statistics): self
     {
+        var_dump($this->getFilters());
         try {
             $this->metrics[$metric] = [
                 'timelineStatistics' => $statistics,
