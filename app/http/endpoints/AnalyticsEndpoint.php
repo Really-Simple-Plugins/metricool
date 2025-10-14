@@ -86,11 +86,11 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         $comments = $statisticsModule->comments();
 
         if (isset($requestFilters['start'])) {
-            $this->analyticsService->setStartDate($requestFilters['start'], 'dmY');
+            $this->analyticsService->setStartDate($requestFilters['start']);
         }
 
         if (isset($requestFilters['end'])) {
-            $this->analyticsService->setEndDate($requestFilters['end'], 'dmY');
+            $this->analyticsService->setEndDate($requestFilters['end']);
         }
 
         $this->analyticsService->loadMetric('pageViews', $pageViews)
