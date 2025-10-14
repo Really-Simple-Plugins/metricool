@@ -79,12 +79,6 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         $statisticsModule = App::provide('client')->statistics();
         $requestFilters = ($request->get_param('filters') ?: []);
 
-        $pageViews = $statisticsModule->pageViews();
-        $visits = $statisticsModule->visits();
-        $visitors = $statisticsModule->visitors();
-        $posts = $statisticsModule->posts();
-        $comments = $statisticsModule->comments();
-
         if (isset($requestFilters['start'])) {
             $this->analyticsService->setStartDate($requestFilters['start']);
         }
@@ -93,11 +87,11 @@ class AnalyticsEndpoint implements SingleEndpointInterface
             $this->analyticsService->setEndDate($requestFilters['end']);
         }
 
-        $this->analyticsService->loadMetric('pageViews', $pageViews)
-            ->loadMetric('visits', $visits)
-            ->loadMetric('visitors', $visitors)
-            ->loadMetric('posts', $posts)
-            ->loadMetric('comments', $comments);
+        $this->analyticsService->loadMetric('pageViews', $statisticsModule->pageViews())
+            ->loadMetric('visits', $statisticsModule->visits())
+            ->loadMetric('visitors', $statisticsModule->visitors())
+            ->loadMetric('posts', $statisticsModule->posts())
+            ->loadMetric('comments', $statisticsModule->comments());
 
         return [
             'totals' => [
