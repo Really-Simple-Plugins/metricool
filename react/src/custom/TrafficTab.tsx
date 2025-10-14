@@ -27,7 +27,7 @@ const TrafficTab = () => {
             {trafficData && (
                 <FlexContainer direction={"column"} className={"rounded-md bg-gray-50"}>
                     <FlexContainer direction={"column"} className={"rounded-md"}>
-                        {Object.entries(trafficData.data).map(([source, amount]) => (<div><span>{source}</span> : <span>{amount}</span></div>))}
+                        {/*{Object.entries(trafficData.data).map(([source, amount]) => (<div><span>{source}</span> : <span>{amount}</span></div>))}*/}
                     </FlexContainer>
                 </FlexContainer>
             )}
