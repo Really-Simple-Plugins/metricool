@@ -3,6 +3,7 @@
 namespace Metricool\Services;
 
 use Carbon\Carbon;
+use InvalidArgumentException;
 use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\Dto\TimelineStatistic;
 use Metricool\Builders\TimelineResponseBuilder;
@@ -50,6 +51,7 @@ class AnalyticsService
     /**
      * Sets the metrics to be used in the analytics service
      * This will fetch the results from the API and store them
+     * @throws
      */
     public function loadMetric(string $metric, TimelineStatistics $statistics): self
     {
@@ -76,9 +78,14 @@ class AnalyticsService
     /**
      * Gets the results of a metric
      * @return Collection<int, TimelineStatistic>
+     * @throws InvalidArgumentException
      */
     public function getResults(string $metric) : Collection
     {
+        if (array_key_exists($metric, $this->metrics)) {
+            throw new InvalidArgumentException("Incompatible metric given: $metric");
+        }
+
         return $this->metrics[$metric]['results'];
     }
 
@@ -87,6 +94,10 @@ class AnalyticsService
      */
     public function getTimelineStatistics(string $metric): TimelineStatistics
     {
+        if (array_key_exists($metric, $this->metrics)) {
+            throw new InvalidArgumentException("Incompatible metric given: $metric");
+        }
+
         return $this->metrics[$metric]['timelineStatistics'];
     }
 
