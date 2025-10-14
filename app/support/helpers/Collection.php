@@ -31,7 +31,7 @@ class Collection implements IteratorAggregate
 
     /**
      * Get the sum of the given values.
-     * @param  callable|string|null  $callback
+     * @param callable|string|null $callback
      */
     public function sum($callback = null)
     {
@@ -46,7 +46,7 @@ class Collection implements IteratorAggregate
 
     /**
      * Reduce the collection to a single value.
-     * @param  mixed  $initial
+     * @param mixed $initial
      * @return mixed
      */
     public function reduce(callable $callback, $initial = null)
@@ -63,7 +63,7 @@ class Collection implements IteratorAggregate
     /**
      * Return the default value of the given value.
      *
-     * @param  mixed  $value
+     * @param mixed $value
      * @return mixed
      */
     protected function value($value, ...$args)
@@ -74,8 +74,8 @@ class Collection implements IteratorAggregate
     /**
      * Filter items by the given key value pair.
      *
-     * @param  mixed  $operator
-     * @param  mixed  $value
+     * @param mixed $operator
+     * @param mixed $value
      */
     public function where(string $key, $operator = null, $value = null): self
     {
@@ -114,8 +114,7 @@ class Collection implements IteratorAggregate
 
     /**
      * Get a value retrieving callback.
-     *
-     * @param  callable|string|null  $value
+     * @param callable|string|null $value
      * @return callable
      */
     protected function valueRetriever($value): callable
@@ -125,14 +124,15 @@ class Collection implements IteratorAggregate
         };
     }
 
+
     /**
      * Get an item from an array or object using "dot" notation.
-     *
-     * @param  mixed  $target
-     * @param  string|array|int|null  $key
-     * @param  mixed  $default
+     * @param mixed $target
+     * @param string|array|int|null $key
+     * @param mixed $default
      * @return mixed
      */
+
     protected function get($target, $key, $default = null)
     {
         $key = is_array($key) ? $key : explode('.', $key);
@@ -179,8 +179,7 @@ class Collection implements IteratorAggregate
 
     /**
      * Run a filter over each of the items.
-     *
-     * @param  callable|null  $callback
+     * @param callable|null $callback
      */
     public function filter(callable $callback = null): self
     {
@@ -193,9 +192,8 @@ class Collection implements IteratorAggregate
 
     /**
      * Get an operator checker callback.
-     *
-     * @param  string|null  $operator
-     * @param  mixed  $value
+     * @param string|null $operator
+     * @param mixed $value
      */
     protected function operatorForWhere(string $key, string $operator = null, $value = null): Closure
     {
