@@ -3,8 +3,10 @@
 namespace Metricool\Helpers;
 
 use Closure;
+use IteratorAggregate;
+use ArrayIterator;
 
-class Collection
+class Collection implements IteratorAggregate
 {
     /**
      * The items contained in the collection.
@@ -25,7 +27,7 @@ class Collection
     }
 
     /**
-     * Get all of the items in the collection.
+     * Get all the items in the collection.
      *
      * @return array
      */
@@ -70,59 +72,6 @@ class Collection
     }
 
     /**
-     * Get a value retrieving callback.
-     *
-     * @param  callable|string|null  $value
-     * @return callable
-     */
-    protected function valueRetriever($value): callable
-    {
-        // determine if the passed value callable but not a string
-        if (! is_string($value) && is_callable($value)) {
-            return $value;
-        }
-
-        return function ($item) use ($value) {
-            return $this->data_get($item, $value);
-        };
-    }
-
-    /**
-     * Get an item from an array or object using "dot" notation.
-     *
-     * @param  mixed  $target
-     * @param  string|array|int|null  $key
-     * @param  mixed  $default
-     * @return mixed
-     */
-    protected function data_get($target, $key, $default = null)
-    {
-        if (is_null($key)) {
-            return $target;
-        }
-
-        $key = is_array($key) ? $key : explode('.', $key);
-
-        foreach ($key as $i => $segment) {
-            unset($key[$i]);
-
-            if (is_null($segment)) {
-                return $target;
-            }
-
-            if (is_array($target) && array_key_exists($target, $segment)) {
-                $target = $target[$segment];
-            } elseif (is_object($target) && isset($target->{$segment})) {
-                $target = $target->{$segment};
-            } else {
-                return $this->value($default);
-            }
-        }
-
-        return $target;
-    }
-
-    /**
      * Return the default value of the given value.
      *
      * @param  mixed  $value
@@ -131,6 +80,19 @@ class Collection
     protected function value($value, ...$args)
     {
         return $value instanceof Closure ? $value(...$args) : $value;
+    }
+
+    /**
+     * Filter items by the given key value pair.
+     *
+     * @param  string  $key
+     * @param  mixed  $operator
+     * @param  mixed  $value
+     * @return static
+     */
+    public function where($key, $operator = null, $value = null)
+    {
+        return $this->filter($this->operatorForWhere(...func_get_args()));
     }
 
     /**
@@ -149,14 +111,72 @@ class Collection
     }
 
     /**
-     * Determine if the given value is callable, but not a string.
+     * Count the number of items in the collection.
      *
-     * @param  mixed  $value
-     * @return bool
+     * @return int
      */
-    protected function useAsCallable($value): bool
+    public function count()
     {
-        return ! is_string($value) && is_callable($value);
+        return count($this->items);
+    }
+
+    /**
+     * Get the collection of items as a plain array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->map(function ($value) {
+            return is_object($value) && method_exists('toArray', $value) ? $value->toArray() : $value;
+        })->all();
+    }
+
+    /**
+     * Get a value retrieving callback.
+     *
+     * @param  callable|string|null  $value
+     * @return callable
+     */
+    protected function valueRetriever($value): callable
+    {
+        return function ($item) use ($value) {
+            return $this->get($item, $value);
+        };
+    }
+
+    /**
+     * Get an item from an array or object using "dot" notation.
+     *
+     * @param  mixed  $target
+     * @param  string|array|int|null  $key
+     * @param  mixed  $default
+     * @return mixed
+     */
+    protected function get($target, $key, $default = null)
+    {
+        $key = is_array($key) ? $key : explode('.', $key);
+        if (is_null($key)) {
+            return $target;
+        }
+
+        foreach ($key as $i => $segment) {
+            unset($key[$i]);
+
+            if (is_null($segment)) {
+                return $target;
+            }
+
+            if (is_array($target) && array_key_exists($segment, $target)) {
+                $target = $target[$segment];
+            } elseif (is_object($target) && isset($target->{$segment})) {
+                $target = $target->{$segment};
+            } else {
+                return $this->value($default);
+            }
+        }
+
+        return $target;
     }
 
     /**
@@ -172,15 +192,66 @@ class Collection
     }
 
     /**
-     * Get the collection of items as a plain array.
+     * Get an iterator for the items.
      *
-     * @return array
+     * @return \ArrayIterator
      */
-    public function toArray()
+    public function getIterator()
     {
-        return $this->map(function ($value) {
-            return is_object($value) && method_exists('toArray', $value) ? $value->toArray() : $value;
-        })->all();
+        return new ArrayIterator($this->items);
     }
 
+    /**
+     * Run a filter over each of the items.
+     *
+     * @param  callable|null  $callback
+     * @return static
+     */
+    public function filter(callable $callback = null)
+    {
+        if ($callback) {
+            return new static(array_filter($this->items, $callback, ARRAY_FILTER_USE_BOTH));
+        }
+
+        return new static(array_filter($this->items));
+    }
+
+    /**
+     * Get an operator checker callback.
+     *
+     * @param  string  $key
+     * @param  string|null  $operator
+     * @param  mixed  $value
+     * @return \Closure
+     */
+    protected function operatorForWhere($key, $operator, $value = null)
+    {
+        if (func_num_args() === 1) {
+            $value = true;
+            $operator = '=';
+        }
+
+        if (func_num_args() === 2) {
+            $value = $operator;
+            $operator = '=';
+        }
+
+        return function ($item) use ($key, $operator, $value) {
+            $retrieved = $this->get($item, $key);
+
+            switch ($operator) {
+                default:
+                case '=':
+                case '==':  return $retrieved == $value;
+                case '!=':
+                case '<>':  return $retrieved != $value;
+                case '<':   return $retrieved < $value;
+                case '>':   return $retrieved > $value;
+                case '<=':  return $retrieved <= $value;
+                case '>=':  return $retrieved >= $value;
+                case '===': return $retrieved === $value;
+                case '!==': return $retrieved !== $value;
+            }
+        };
+    }
 }
