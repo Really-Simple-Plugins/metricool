@@ -31,7 +31,7 @@ const RealtimeTab = () => {
     const chartConfig = {
         pageViews: {
             label: __("Page Views", "metricool"),
-            color: "var(--color-tertiary)",
+            color: "tertiary",
         },
     };
 
@@ -54,7 +54,7 @@ const RealtimeTab = () => {
                         </FlexContainer>
                     </FlexContainer>
                     <hr/>
-                    <LineChart chartConfig={chartConfig} chartData={realTimeData.realTimeChartData} xAxisKey={lineChartXAxisDataKey}/>
+                    <LineChart chartSettings={{xAxisKey: lineChartXAxisDataKey}} chartConfig={chartConfig} chartData={realTimeData.realTimeChartData} />
                 </FlexContainer>
             )}
             {error && (
