@@ -1,21 +1,16 @@
 <?php
 
-namespace Metricool\Services\Analytics;
+namespace Metricool\Builders;
 
 use Carbon\Carbon;
+use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\DTO\Statistic;
 
-class TimelineService
+class TimelineResponseBuilder
 {
     public array $timeline = [];
+    /** @var array<string, array{timelineStatistics: Collection<Statistic>, results: Collection<Statistic>}> */
     protected array $metrics = [];
-
-    public function setMetrics(array $metrics): self
-    {
-        $this->metrics = $metrics;
-
-        return $this;
-    }
 
     /**
      * Combines statistics within the same timestamp data into a timeline.
@@ -39,22 +34,53 @@ class TimelineService
         return $this->getTimeline();
     }
 
+    /**
+     * Sets the metrics that should be included in a timeline item
+     * @param array<string, array{timelineStatistics: Collection<Statistic>, results: Collection<Statistic>}> $metrics
+     * @return self
+     */
+    public function setMetrics(array $metrics): self
+    {
+        $this->metrics = $metrics;
+
+        return $this;
+    }
+
+    /**
+     * Returns the timeline without preserving keys.
+     * @return array
+     */
     public function getTimeline(): array
     {
         return array_values($this->timeline);
     }
 
-    protected function getRow($datestamp): ?array
+    /**
+     * Returns a row on the given timestamp
+     * @param int $datestamp
+     * @return array|null
+     */
+    protected function getRow(int $datestamp): ?array
     {
         return $this->timeline[$datestamp] ?? null;
     }
 
+    /**
+     * Checks if a row exists on the given timestamp
+     * @param $datestamp
+     * @return bool
+     */
     protected function hasRow($datestamp) : bool
     {
         return ($this->getRow($datestamp) !== null);
     }
 
-    protected function createRow($timestamp): array
+    /**
+     * Creates a row for the given timestamp
+     * @param int $timestamp
+     * @return array
+     */
+    protected function createRow(int $timestamp): array
     {
         $timestampInSeconds = $timestamp / 1000;
 
@@ -71,6 +97,12 @@ class TimelineService
         return $this->addRowToTimeline($timestamp,$row);
     }
 
+    /**
+     * Inserts a row to the timeline
+     * @param $timestamp
+     * @param $row
+     * @return array
+     */
     protected function addRowToTimeline($timestamp, $row): array
     {
         $this->timeline[$timestamp] = $row;
@@ -78,8 +110,14 @@ class TimelineService
         return $this->timeline[$timestamp];
     }
 
+    /**
+     * Adds a metric (Visits / PageViews / etc) to the row
+     * @param $row
+     * @param string $metric
+     * @param Statistic $statistic
+     */
     protected function addMetricToRow(&$row, string $metric, Statistic $statistic): void
     {
-        $row[$metric] = $statistic->getValue();
+        $row[$metric] = $statistic->getHits();
     }
 }
