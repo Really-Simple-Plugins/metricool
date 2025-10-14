@@ -4,12 +4,12 @@ namespace Metricool\Builders;
 
 use Carbon\Carbon;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTO\Statistic;
+use Metricool\Http\Metricool\DTO\TimelineStatistic;
 
 class TimelineResponseBuilder
 {
     public array $timeline = [];
-    /** @var array<string, array{timelineStatistics: Collection<Statistic>, results: Collection<Statistic>}> */
+    /** @var array<string, array{timelineStatistics: Collection<TimelineStatistic>, results: Collection<TimelineStatistic>}> */
     protected array $metrics = [];
 
     /**
@@ -36,7 +36,7 @@ class TimelineResponseBuilder
 
     /**
      * Sets the metrics that should be included in a timeline item
-     * @param array<string, array{timelineStatistics: Collection<Statistic>, results: Collection<Statistic>}> $metrics
+     * @param array<string, array{timelineStatistics: Collection<TimelineStatistic>, results: Collection<TimelineStatistic>}> $metrics
      * @return self
      */
     public function setMetrics(array $metrics): self
@@ -114,9 +114,9 @@ class TimelineResponseBuilder
      * Adds a metric (Visits / PageViews / etc) to the row
      * @param $row
      * @param string $metric
-     * @param Statistic $statistic
+     * @param TimelineStatistic $statistic
      */
-    protected function addMetricToRow(&$row, string $metric, Statistic $statistic): void
+    protected function addMetricToRow(&$row, string $metric, TimelineStatistic $statistic): void
     {
         $row[$metric] = $statistic->getHits();
     }

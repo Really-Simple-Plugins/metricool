@@ -3,7 +3,7 @@
 namespace Metricool\Http\Metricool\Entities;
 
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\Dto\Statistic;
+use Metricool\Http\Metricool\Dto\TimelineStatistic;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
 use Metricool\Traits\isHydratable;
@@ -67,9 +67,7 @@ class TimelineStatistics
 
     /**
      * Fetch and return the timeline statistics data plainly from the API.
-     * @return Collection<Statistic>
-     * @throws \Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return Collection<TimelineStatistic>
      */
     public function get(): Collection
     {
@@ -91,7 +89,6 @@ class TimelineStatistics
             return new Collection([]);
         }
 
-
         if ($this->shouldHydrate) {
             $results = $this->hydrate($results);
         }
@@ -103,9 +100,12 @@ class TimelineStatistics
         return $results;
     }
 
-    protected function hydrateItem($item): Statistic
+    /**
+     * @inheritDoc
+     */
+    protected function hydrateItem($item): TimelineStatistic
     {
-        return new Statistic($item[0], $item[1]);
+        return new TimelineStatistic($item[0], $item[1]);
     }
 
     /**
@@ -122,8 +122,6 @@ class TimelineStatistics
      * When this endpoint holds no data, Metricool returns a result with
      * non-standard output. Just return an empty response when only 1 row is
      * found in the results and the value is 0
-     * @param $response
-     * @return bool
      */
     protected function isEmptyResponse($response): bool
     {

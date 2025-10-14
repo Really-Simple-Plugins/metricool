@@ -4,7 +4,7 @@ namespace Metricool\Services;
 
 use Carbon\Carbon;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\Dto\Statistic;
+use Metricool\Http\Metricool\Dto\TimelineStatistic;
 use Metricool\Builders\TimelineResponseBuilder;
 use Metricool\Services\Analytics\TrendService;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
@@ -15,7 +15,7 @@ class AnalyticsService
     protected Carbon $endDate;
 
     protected TrendService $trendService;
-    /** @var array<string, array{timelineStatistics: Collection<Statistic>, results: Collection<Statistic>}> */
+    /** @var array<string, array{timelineStatistics: Collection<TimelineStatistic>, results: Collection<TimelineStatistic>}> */
     protected array $metrics = [];
 
     public function __construct(TrendService $trendService)
@@ -77,7 +77,7 @@ class AnalyticsService
     /**
      * Gets the results of a metric
      * @param string $metric
-     * @return Collection<int, Statistic>
+     * @return Collection<int, TimelineStatistic>
      */
     public function getResults(string $metric) : Collection
     {
