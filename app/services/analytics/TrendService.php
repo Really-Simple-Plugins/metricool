@@ -3,7 +3,7 @@
 namespace Metricool\Services\Analytics;
 
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
+use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 
 class TrendService
@@ -45,8 +45,8 @@ class TrendService
         }
 
         // Compare the sum of both periods
-        $statisticSumCurrentPeriod = $currentStatistics->sum('value');
-        $statisticSumPreviousPeriod = $previousStatistics->sum('value');
+        $statisticSumCurrentPeriod = $currentStatistics->sum('hits');
+        $statisticSumPreviousPeriod = $previousStatistics->sum('hits');
 
         if ($statisticSumCurrentPeriod > $statisticSumPreviousPeriod){
             $trend = self::TREND_UP;
@@ -75,12 +75,11 @@ class TrendService
         $end = Carbon::createFromFormat('Ymd', $filters['end']);
 
         // We do +1 to end the previous period one day before the current period
-        $diffInDays = $start->diffInDays($end) + 1;
+        $diffInDays = $start->diffInDays($end);
 
         // Previous end is one day before current start
         $previousEnd = $start->copy()->subDay();
-
-        $previousStart = $start->copy()->subDays($diffInDays -1);
+        $previousStart = $previousEnd->copy()->subDays($diffInDays);
 
         return [
             'start' => $previousStart->format('Ymd'),
