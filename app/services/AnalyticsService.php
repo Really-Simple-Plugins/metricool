@@ -51,7 +51,6 @@ class AnalyticsService
      */
     public function loadMetric(string $metric, TimelineStatistics $statistics): self
     {
-        var_dump($this->getFilters());
         try {
             $this->metrics[$metric] = [
                 'timelineStatistics' => $statistics,
