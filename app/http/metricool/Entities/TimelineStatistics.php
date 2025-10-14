@@ -2,6 +2,7 @@
 
 namespace Metricool\Http\Metricool\Entities;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\Dto\TimelineStatistic;
 use Metricool\Http\Metricool\MetricoolClient;
@@ -66,8 +67,17 @@ class TimelineStatistics
     }
 
     /**
+     * @inheritDoc
+     */
+    protected function hydrateItem($item): TimelineStatistic
+    {
+        return new TimelineStatistic($item[0], $item[1]);
+    }
+
+    /**
      * Fetch and return the timeline statistics data plainly from the API.
      * @return Collection<TimelineStatistic>
+     * @throws GuzzleException
      */
     public function get(): Collection
     {
@@ -98,14 +108,6 @@ class TimelineStatistics
         wp_cache_set($cacheName, $results, 'metricool', MINUTE_IN_SECONDS);
 
         return $results;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    protected function hydrateItem($item): TimelineStatistic
-    {
-        return new TimelineStatistic($item[0], $item[1]);
     }
 
     /**

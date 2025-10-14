@@ -2,6 +2,10 @@
 
 namespace Metricool\Traits;
 
+/**
+ * Trait to hydrate results from an Entity into an array of object
+ * {@see \Metricool\Http\Metricool\Entities\TimelineStatistics}
+ */
 trait isHydratable
 {
     protected bool $shouldHydrate = true;
