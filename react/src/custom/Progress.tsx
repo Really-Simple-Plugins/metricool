@@ -2,7 +2,7 @@ import { Card, CardHeader, CardHeaderTitle } from "../components";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import { useState } from "react";
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import Task, { type TaskProps } from "./Task.tsx";
 
 const Progress = () => {

@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from "react";
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import { clsx } from "clsx";
 
 type TabNavigationProps = {

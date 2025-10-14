@@ -1,6 +1,6 @@
 import { Button, Card, CardHeader, CardHeaderTitle, CardDescription } from "../components";
 import { __ } from "@wordpress/i18n";
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import AccountTile from "./AccountTile.tsx";
 
 const ConnectionsSettings = () => {

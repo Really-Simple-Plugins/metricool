@@ -1,4 +1,4 @@
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import { Badge, Button } from "../components";
 import { capitalizeFirstCharacter } from "../functions/utils.tsx";
 

@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardHeaderTitle } from "../components";
 import { __ } from "@wordpress/i18n";
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import ListItem from "./ListItem.tsx";
 
 const OtherPlugins = () => {

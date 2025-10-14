@@ -1,4 +1,4 @@
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import { Button, type ChartConfig, LineChart, Select, SelectOption } from "../components";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";

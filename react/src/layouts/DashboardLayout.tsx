@@ -1,5 +1,5 @@
 import Header from "../custom/Header.tsx";
-import FlexContainer from "../custom/FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import Progress from "../custom/Progress.tsx";
 import WebsiteAnalytics from "../custom/WebsiteAnalytics.tsx";
 import ConnectedAccounts from "../custom/ConnectedAccounts.tsx";

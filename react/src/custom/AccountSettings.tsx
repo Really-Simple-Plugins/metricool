@@ -1,6 +1,6 @@
 import { Button, Card, CardHeader, CardHeaderTitle, Dialog, Input, Label, Switch } from "../components";
 import { __ } from "@wordpress/i18n";
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import FormFooter from "./FormFooter.tsx";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";

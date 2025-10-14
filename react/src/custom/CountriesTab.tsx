@@ -1,4 +1,4 @@
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";

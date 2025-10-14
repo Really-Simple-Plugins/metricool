@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import { Icon } from "../components";
 import { type IconProps } from "../components/src/components/Icon.tsx";
 
