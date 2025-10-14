@@ -16,7 +16,14 @@ class AnalyticsService
     protected Carbon $endDate;
 
     protected TrendService $trendService;
-    /** @var array<string, array{timelineStatistics: Collection<TimelineStatistic>, results: Collection<TimelineStatistic>}> */
+    /**
+     * Metrics holds the name of the Metric, TimelineStatistics and results of the API request
+     * @var array<string, array{
+     *     name: string,
+     *     timelineStatistics: Collection<TimelineStatistic>,
+     *     results: Collection<TimelineStatistic>
+     *  }> 
+     **/
     protected array $metrics = [];
 
     public function __construct(TrendService $trendService)
@@ -55,6 +62,7 @@ class AnalyticsService
     public function loadMetric(string $metric, TimelineStatistics $statistics): self
     {
         $this->metrics[$metric] = [
+            'name' => $metric,
             'timelineStatistics' => $statistics,
             'results' => $statistics->filter($this->getFilters())
                 ->get()
