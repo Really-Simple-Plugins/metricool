@@ -87,11 +87,6 @@ class TimelineStatistics
 
         $results = $this->client->get($this->endpoint);
 
-        /**
-         * When this endpoint holds no data, Metricool returns a result with
-         * non-standard output. Just return an empty response when only 1 row is
-         * found in the results
-         */
         if ($this->isEmptyResponse($results)) {
            return new Collection([]);
         }
@@ -122,6 +117,11 @@ class TimelineStatistics
         return $this->metric;
     }
 
+    /**
+     * When this endpoint holds no data, Metricool returns a result with
+     * non-standard output. Just return an empty response when only 1 row is
+     * found in the results and the value is 0
+     */
     protected function isEmptyResponse($response): bool
     {
         return empty($response) || (is_array($response) && count($response) === 1 && empty($response[1]));
