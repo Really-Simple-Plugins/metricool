@@ -3,7 +3,7 @@
 namespace Metricool\Services;
 
 use Carbon\Carbon;
-use Illuminate\Support\Collection;
+use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\Dto\Statistic;
 use Metricool\Services\Analytics\TimelineService;
 use Metricool\Services\Analytics\TrendService;
@@ -29,16 +29,16 @@ class AnalyticsService
         $this->endDate = Carbon::now()->subDays(30);
     }
 
-    public function setStartDate(string $date, string $format = 'dmY'): self
+    public function setStartDate(string $date, string $format = 'Ymd'): self
     {
-        $this->startDate = Carbon::createFromFormat($date, $format);
+        $this->startDate = Carbon::createFromFormat($format, $date);
 
         return $this;
     }
 
-    public function setEndDate(string $date, string $format = 'dmY'): self
+    public function setEndDate(string $date, string $format = 'Ymd'): self
     {
-        $this->endDate = Carbon::createFromFormat($date, $format);
+        $this->endDate = Carbon::createFromFormat($format, $date);
 
         return $this;
     }
@@ -51,16 +51,29 @@ class AnalyticsService
      */
     public function loadMetric(string $metric, TimelineStatistics $statistics): self
     {
-        $this->metrics[$metric] = [
-            'timelineStatistics' => $statistics,
-            'results' => $statistics->filter([
-                    'start' => $this->startDate,
-                    'end' => $this->endDate
-                ])
-                ->get()
-        ];
+        try {
+            $this->metrics[$metric] = [
+                'timelineStatistics' => $statistics,
+                'results' => $statistics->filter($this->getFilters())
+                    ->get()
+            ];
+        } catch(\Throwable $e) {
+
+        }
 
         return $this;
+    }
+
+    /**
+     * Creates the filters to be used in the timeline statistics
+     * @return array
+     */
+    public function getFilters(): array
+    {
+        return [
+            'start' => $this->startDate->format('Ymd'),
+            'end' => $this->endDate->format('Ymd')
+        ];
     }
 
     /**
@@ -83,19 +96,34 @@ class AnalyticsService
         return $this->metrics[$metric]['timelineStatistics'];
     }
 
-    public function getTotalAmount(string $metric): float // float??
+    /**
+     * Sums the amount of hits of this metric
+     * @param string $metric
+     * @return float
+     */
+    public function getTotalAmount(string $metric): float
     {
         return $this->getResults($metric)
-            ->sum('value');
-    }
-
-    public function getTrend(string $metric): string
-    {
-        return $this->trendService->getTrend($this->getTimelineStatistics($metric), $this->getResults($metric));
+            ->sum('hits');
     }
 
     /**
-     * Creates the timeline
+     * Returns the trend on the previous period
+     * @param string $metric
+     * @return string
+     */
+    public function getTrend(string $metric): string
+    {
+        return $this->trendService->getTrend(
+            $this->getTimelineStatistics($metric),
+            $this->getResults($metric),
+            $this->getFilters()
+        );
+    }
+
+    /**
+     * Builds the timeline
+     * @return array
      */
     public function createTimeline(): array
     {
