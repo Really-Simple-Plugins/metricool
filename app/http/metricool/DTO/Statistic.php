@@ -14,7 +14,7 @@ class Statistic // ASK -> name too generic?
         $this->hits = $hits;
     }
 
-    public function getValue() : float
+    public function getHits() : float
     {
         return $this->hits;
     }
