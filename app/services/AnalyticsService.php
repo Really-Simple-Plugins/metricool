@@ -22,7 +22,7 @@ class AnalyticsService
      *     name: string,
      *     timelineStatistics: Collection<TimelineStatistic>,
      *     results: Collection<TimelineStatistic>
-     *  }> 
+     *  }>
      **/
     protected array $metrics = [];
 
@@ -98,6 +98,7 @@ class AnalyticsService
 
     /**
      * Gets the TimelineStatistics Entity of a metric
+     * @throws InvalidArgumentException
      */
     public function getTimelineStatistics(string $metric): TimelineStatistics
     {
@@ -131,6 +132,7 @@ class AnalyticsService
 
     /**
      * Builds the timeline
+     * @see \Metricool\Http\Endpoints\AnalyticsEndpoint
      */
     public function getTimelineData(): array
     {
