@@ -2,11 +2,11 @@
 
 namespace Metricool\Http\Metricool\Entities;
 
-use Carbon\Carbon;
-use Illuminate\Support\Collection;
-use Metricool\Http\Metricool\MetricoolClient;
+use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\Dto\Statistic;
+use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
+use Metricool\Traits\isHydratable;
 
 /**
  * API responses for the timeline statistics contain of array entries where each
@@ -19,9 +19,11 @@ use Metricool\Http\Metricool\Traits\isFilterable;
 class TimelineStatistics
 {
     use isFilterable;
+    use isHydratable;
 
     protected string $metric;
     protected MetricoolClient $client;
+
     public string $endpoint = 'stats/timeline/';
 
     /**
@@ -50,16 +52,6 @@ class TimelineStatistics
         $this->client = $client;
         $this->endpoint .= $this->metric;
         $this->requiresFilter = $filterRequired;
-
-        /**
-         * The distribution statistics API need a filter by default to prevent
-         * Internal Server errors on the remote server. We set the default
-         * filters to the last 30 days.
-         */
-        $this->filters = [
-            'start' => Carbon::now()->subDays(30)->format('Ymd'),
-            'end' => Carbon::now()->format('Ymd'),
-        ];
     }
 
     /**
@@ -75,12 +67,16 @@ class TimelineStatistics
 
     /**
      * Fetch and return the timeline statistics data plainly from the API.
-     * @throws \GuzzleHttp\Exception\GuzzleException
      * @return Collection<Statistic>
+     * @throws \Exception
+     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     public function get(): Collection
     {
         if ($this->requiresFilter && $this->filtered === false) {
+            if(empty($this->filters['start']) || empty($this->filters['end'])) {
+                throw new \Exception('Start and end date are required for this timeline statistic');
+            }
             $this->filter($this->filters);
         }
 
@@ -89,37 +85,31 @@ class TimelineStatistics
             return $cache;
         }
 
-        $response = $this->client->get($this->endpoint);
+        $results = $this->client->get($this->endpoint);
 
         /**
          * When this endpoint holds no data, Metricool returns a result with
          * non-standard output. Just return an empty response when only 1 row is
          * found in the results
          */
-        if (is_array($response) && count($response) == 1) {
-            // ASK: is early return preferred code style?
-            return new Collection([]);
+        if (is_array($results) && count($results) == 1) {
+            $results = [];
         }
 
-        $results = $this->hydrate($response);
+        if ($this->shouldHydrate) {
+            $results = $this->hydrate($results);
+        }
+
+        $results = new Collection($results);
 
         wp_cache_set($cacheName, $results, 'metricool', MINUTE_IN_SECONDS);
 
         return $results;
     }
 
-    /**
-     * Creates a collection of \Metricool\Http\Metricool\Dto\Statistic objects for
-     * each result of the response. Usage can be seen here:
-     * {@see \Metricool\Services\AnalyticsService::getTotalAmount}
-     * @return Collection<Statistic>
-     */
-    public function hydrate(array $response) : Collection
+    protected function hydrateItem($item): Statistic
     {
-        // todo: use Storage for Collections
-        return new Collection(array_map(function($row) {
-            return new Statistic($row[0], $row[1]);
-        }, $response));
+        return new Statistic($item[0], $item[1]);
     }
 
     /**

@@ -1,0 +1,31 @@
+<?php
+
+namespace Metricool\Traits;
+
+use Metricool\Helpers\Collection;
+
+trait isHydratable
+{
+    protected bool $shouldHydrate = true;
+
+    /**
+     * Hydrate raw data into objects
+     * @param array $data
+     * @return Collection
+     */
+    public function hydrate(array $data): array
+    {
+        $hydrated = [];
+        foreach ($data as $item) {
+            $hydrated[] = $this->hydrateItem($item);
+        }
+        return $hydrated;
+    }
+
+    /**
+     * Hydrate a single item - override in classes using this trait
+     * @param mixed $item
+     * @return mixed
+     */
+    abstract protected function hydrateItem($item);
+}
