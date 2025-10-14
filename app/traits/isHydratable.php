@@ -2,8 +2,6 @@
 
 namespace Metricool\Traits;
 
-use Metricool\Helpers\Collection;
-
 trait isHydratable
 {
     protected bool $shouldHydrate = true;
@@ -11,7 +9,7 @@ trait isHydratable
     /**
      * Hydrate raw data into objects
      * @param array $data
-     * @return Collection
+     * @return array
      */
     public function hydrate(array $data): array
     {

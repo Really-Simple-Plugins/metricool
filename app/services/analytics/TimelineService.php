@@ -4,7 +4,6 @@ namespace Metricool\Services\Analytics;
 
 use Carbon\Carbon;
 use Metricool\Http\Metricool\DTO\Statistic;
-use Metricool\Http\Metricool\Entities\TimelineStatistics;
 
 class TimelineService
 {
