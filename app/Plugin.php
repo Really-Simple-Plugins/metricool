@@ -179,8 +179,7 @@ class Plugin
             new Http\Endpoints\StatisticsEndpoint(),
             new Http\Endpoints\AnalyticsEndpoint(
                 new Services\AnalyticsService(
-                    new Services\Analytics\TrendService(),
-                    new Services\Analytics\TimelineService(),
+                    new Services\Analytics\TrendService()
                 ),
             ),
             new Http\Endpoints\RealtimeEndpoint(),
