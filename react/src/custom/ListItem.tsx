@@ -4,12 +4,12 @@ import { Icon } from "../components";
 import { type IconProps } from "../components/src/components/Icon.tsx";
 
 const iconColorMap = {
-    "warning": "bg-(--rsp-warning)",
-    "success": "bg-(--rsp-success)",
-    "error": "bg-(--rsp-error)",
-    "rss": "bg-(--color-rss)",
-    "simplybook": "bg-(--color-simplybook)",
-    "complianz": "bg-(--color-complianz)",
+    "warning": "bg-rsp-warning",
+    "success": "bg-rsp-success",
+    "error": "bg-sp-error",
+    "rss": "bg-rss",
+    "simplybook": "bg-simplybook",
+    "complianz": "bg-complianz",
 };
 
 type ListItemProps = {
