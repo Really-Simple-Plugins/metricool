@@ -24,7 +24,7 @@ const Task = ({ task: { status, text, action, completed, dismissed } }: { task: 
             <FlexContainer direction={"row"} className={"items-center"}>
                 <div className={"underline cursor-pointer"}><span className={"text-nowrap"}>{action.text}</span></div>
                 {!(completed || dismissed) ? (
-                    <Button variant={"icon"} icon={"close"} iconPosition={"right"}/>
+                    <Button variant={"icon"} size={"icon"} icon={"close"} iconPosition={"right"}/>
                 ) : (
                     <div className={"w-4 h-4"}></div>
                 )}

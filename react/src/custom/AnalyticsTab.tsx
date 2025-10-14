@@ -223,10 +223,10 @@ const AnalyticsTab = () => {
                             )
                         )}
                     </Select>
-                    <Button variant={"upsell"} icon={"file"} iconPosition={"left"}>
+                    <Button variant={"upsell"} size={"sm"} icon={"file"} iconPosition={"left"}>
                         {__("Generate Report", "metricool")}
                     </Button>
-                    <Button variant={"upsell"} icon={"download"} iconPosition={"left"}>
+                    <Button variant={"upsell"} size={"sm"} icon={"download"} iconPosition={"left"}>
                         {__("Download CSV", "metricool")}
                     </Button>
                 </FlexContainer>

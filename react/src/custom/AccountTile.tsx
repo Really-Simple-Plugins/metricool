@@ -30,8 +30,8 @@ const AccountTile = ({ connected, accountType, accountName }: AccountTileProps) 
                         <div className={"font-semibold"}>{accountName}</div>
                     </div>
                     <div className={"flex items-center gap-1"}>
-                        <Button variant={"icon"} icon={"edit"} iconPosition={"right"} iconClass={"size-3"}></Button>
-                        <Button variant={"icon"} icon={"settings"} iconPosition={"right"} iconClass={"size-3"}></Button>
+                        <Button variant={"icon"} size={"icon"} icon={"edit"} iconPosition={"right"} iconClass={"size-3"}></Button>
+                        <Button variant={"icon"} size={"icon"} icon={"settings"} iconPosition={"right"} iconClass={"size-3"}></Button>
                     </div>
                 </div>
                 ) : (
@@ -40,8 +40,8 @@ const AccountTile = ({ connected, accountType, accountName }: AccountTileProps) 
                         <span className={"text-white text-xs"}>{`Connect a ${capitalizeFirstCharacter(accountType)} Account`}</span>
                     </div>
                     <div className={"flex items-center gap-1"}>
-                        <Button variant={"icon"} icon={"external-link"} iconPosition={"right"} iconClass={"size-3 text-white"}></Button>
-                        <Button variant={"icon"} icon={"upsell"} iconPosition={"right"} iconClass={"size-2.5 p-0.5 bg-(--color-upsell) rounded-full"}></Button>
+                        <Button variant={"icon"} size={"icon"} icon={"external-link"} iconPosition={"right"} iconClass={"size-3 text-white"}></Button>
+                        <Button variant={"icon"} size={"icon"} icon={"upsell"} iconPosition={"right"} iconClass={"size-2.5 p-0.5 bg-(--color-upsell) rounded-full text-black"}></Button>
                     </div>
                 </div>
             )}
