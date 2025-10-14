@@ -5,18 +5,18 @@ namespace Metricool\Http\Metricool\Dto;
 class Statistic // ASK -> name too generic?
 {
     public int $timestamp;
-    public float $value;
+    public float $hits;
 
-    public function __construct(int $timestamp, float $value)
+    public function __construct(int $timestamp, float $hits)
     {
         // ASK -> time in constant
         $this->timestamp = $timestamp;
-        $this->value = $value;
+        $this->hits = $hits;
     }
 
     public function getValue() : float
     {
-        return $this->value;
+        return $this->hits;
     }
 
     public function getTimestamp() : int
