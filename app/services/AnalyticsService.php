@@ -51,7 +51,6 @@ class AnalyticsService
     /**
      * Sets the metrics to be used in the analytics service
      * This will fetch the results from the API and store them
-     * @throws
      */
     public function loadMetric(string $metric, TimelineStatistics $statistics): self
     {
@@ -82,7 +81,7 @@ class AnalyticsService
      */
     public function getResults(string $metric) : Collection
     {
-        if (array_key_exists($metric, $this->metrics)) {
+        if (array_key_exists($metric, $this->metrics) === false) {
             throw new InvalidArgumentException("Incompatible metric given: $metric");
         }
 
@@ -94,7 +93,7 @@ class AnalyticsService
      */
     public function getTimelineStatistics(string $metric): TimelineStatistics
     {
-        if (array_key_exists($metric, $this->metrics)) {
+        if (array_key_exists($metric, $this->metrics) === false) {
             throw new InvalidArgumentException("Incompatible metric given: $metric");
         }
 
