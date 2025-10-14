@@ -87,11 +87,7 @@ class TimelineStatistics
 
         $results = $this->client->get($this->endpoint);
 
-        var_dump($results);
-
         if ($this->isEmptyResponse($results)) {
-            var_dump('empty!');
-            exit;
             return new Collection([]);
         }
 
