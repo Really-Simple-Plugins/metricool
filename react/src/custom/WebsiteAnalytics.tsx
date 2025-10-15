@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardHeader, CardHeaderTitle } from "../components";
+import { Block, BlockHeader, BlockHeaderTitle } from "../components";
 import { __ } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import CountriesTab from "./CountriesTab.tsx";
@@ -24,13 +24,13 @@ const WebsiteAnalytics = () => {
     }];
 
     return (
-        <Card>
-            <CardHeader className={"flex justify-between"}>
-                <CardHeaderTitle>{__("Website Analytics", "metricool")}</CardHeaderTitle>
+        <Block>
+            <BlockHeader className={"flex justify-between"}>
+                <BlockHeaderTitle>{__("Website Analytics", "metricool")}</BlockHeaderTitle>
                 <TabNavigation activeTab={activeTab} onTabClick={setActiveTab} tabs={tabs}></TabNavigation>
-            </CardHeader>
+            </BlockHeader>
             {tabs[activeTab].component}
-        </Card>
+        </Block>
     );
 };
 

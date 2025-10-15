@@ -1,4 +1,4 @@
-import { Card, CardHeader, CardHeaderTitle } from "../components";
+import { Block, BlockHeader, BlockHeaderTitle } from "../components";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import { useState } from "react";
@@ -65,11 +65,11 @@ const Progress = () => {
     };
 
     return (
-        <Card>
-            <CardHeader className={"flex justify-between"}>
-                <CardHeaderTitle>{__("Progress", "metricool")}</CardHeaderTitle>
+        <Block>
+            <BlockHeader className={"flex justify-between"}>
+                <BlockHeaderTitle>{__("Progress", "metricool")}</BlockHeaderTitle>
                 <TabNavigation activeTab={activeTab} onTabClick={onTabChange} separator={true} tabs={tabs}/>
-            </CardHeader>
+            </BlockHeader>
             <FlexContainer direction={"column"}>
                 <div className={"w-full bg-neutral-200 rounded-md h-5"}>
                     <div
@@ -95,7 +95,7 @@ const Progress = () => {
                     ))}
                 </div>
             </FlexContainer>
-        </Card>
+        </Block>
     );
 };
 

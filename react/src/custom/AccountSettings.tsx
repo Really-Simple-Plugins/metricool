@@ -1,4 +1,4 @@
-import { Button, Card, CardHeader, CardHeaderTitle, Dialog, Input, Label, Switch } from "../components";
+import { Button, Block, BlockHeader, BlockHeaderTitle, Dialog, Input, Label, Switch } from "../components";
 import { __ } from "@wordpress/i18n";
 import { FlexContainer } from "../components";
 import FormFooter from "./FormFooter.tsx";
@@ -39,12 +39,12 @@ const AccountSettings = () => {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className={"flex flex-col min-w-full md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
-                <Card className={"rounded-t-md rounded-b-none"}>
-                    <CardHeader>
-                        <CardHeaderTitle>
+                <Block className={"rounded-t-md rounded-b-none"}>
+                    <BlockHeader>
+                        <BlockHeaderTitle>
                             {__("Monthly summary", "metricool")}
-                        </CardHeaderTitle>
-                    </CardHeader>
+                        </BlockHeaderTitle>
+                    </BlockHeader>
                     <FlexContainer direction={"column"}>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
                             <FlexContainer direction={"row"}>
@@ -69,7 +69,7 @@ const AccountSettings = () => {
                             <span className={"text-red-500 text-sm"}>{errors.customEmail?.message}</span>
                         </FlexContainer>
                     </FlexContainer>
-                </Card>
+                </Block>
             </FlexContainer>
             <FormFooter/>
             {status === "blocked" && (

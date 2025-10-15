@@ -1,4 +1,4 @@
-import { Button, Card, CardHeader, CardHeaderTitle, CardDescription } from "../components";
+import { Button, Block, BlockHeader, BlockHeaderTitle, BlockDescription } from "../components";
 import { __ } from "@wordpress/i18n";
 import { FlexContainer } from "../components";
 import AccountTile from "./AccountTile.tsx";
@@ -7,15 +7,15 @@ const ConnectionsSettings = () => {
     return (
         <div className={"flex flex-col min-w-full md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
-                <Card>
-                    <CardHeader>
-                        <CardHeaderTitle>
+                <Block>
+                    <BlockHeader>
+                        <BlockHeaderTitle>
                             {__("Connections", "metricool")}
-                        </CardHeaderTitle>
-                        <CardDescription>
+                        </BlockHeaderTitle>
+                        <BlockDescription>
                             {__("The accounts that are connected to Metricool", "metricool")}
-                        </CardDescription>
-                    </CardHeader>
+                        </BlockDescription>
+                    </BlockHeader>
                     <FlexContainer direction={"column"}>
                         <AccountTile connected={true} accountType={"domain"} accountName={"yourwebsite.com"}/>
                         <AccountTile connected={true} accountType={"youtube"} accountName={"YourChannelName"}/>
@@ -27,7 +27,7 @@ const ConnectionsSettings = () => {
                             {__("Connected Accounts", "metricool")}
                         </Button>
                     </FlexContainer>
-                </Card>
+                </Block>
             </FlexContainer>
         </div>
     );

@@ -1,14 +1,14 @@
-import { Card, CardHeader, CardHeaderTitle } from "../components";
+import { Block, BlockHeader, BlockHeaderTitle } from "../components";
 import { __ } from "@wordpress/i18n";
 import { FlexContainer } from "../components";
 import ListItem from "./ListItem.tsx";
 
 const OtherPlugins = () => {
     return (
-        <Card variant={"transparent"}>
-            <CardHeader>
-                <CardHeaderTitle>{__("Other Plugins", "metricool")}</CardHeaderTitle>
-            </CardHeader>
+        <Block variant={"transparent"}>
+            <BlockHeader>
+                <BlockHeaderTitle>{__("Other Plugins", "metricool")}</BlockHeaderTitle>
+            </BlockHeader>
             <FlexContainer direction={"column"} className={"!gap-2"}>
                 <ListItem icon={"circle"} iconColor={"rss"} iconPosition={"left"} link={__("Upgrade", "metricool")} className={"font-semibold"}>
                     {__("Really Simple Security Pro", "metricool")}
@@ -20,7 +20,7 @@ const OtherPlugins = () => {
                     {__("Complianz - Terms and Conditions", "metricool")}
                 </ListItem>
             </FlexContainer>
-        </Card>
+        </Block>
     );
 };
 
