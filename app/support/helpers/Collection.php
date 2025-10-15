@@ -108,7 +108,7 @@ class Collection implements IteratorAggregate
     public function toArray(): array
     {
         return $this->map(function ($value) {
-            return is_object($value) && method_exists('toArray', $value) ? $value->toArray() : $value;
+            return is_object($value) && method_exists($value, 'toArray') ? $value->toArray() : $value;
         })->all();
     }
 
