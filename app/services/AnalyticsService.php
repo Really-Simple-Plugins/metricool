@@ -35,8 +35,10 @@ class AnalyticsService
         $this->endDate = Carbon::now();
     }
 
-    /*
+    /**
      * Sets the startDate for the metrics. Overrides the default startDate
+     * @param string $date The date string
+     * @param string $format The date format of the given date
      */
     public function setStartDate(string $date, string $format = 'Ymd'): self
     {
@@ -45,8 +47,10 @@ class AnalyticsService
         return $this;
     }
 
-    /*
+    /**
      * Sets the endDate for the metrics. Overrides the default endDate
+     * @param string $date The date string
+     * @param string $format The date format of the given date
      */
     public function setEndDate(string $date, string $format = 'Ymd'): self
     {
