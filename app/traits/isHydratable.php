@@ -3,31 +3,30 @@
 namespace Metricool\Traits;
 
 /**
- * Trait to hydrate results from an Entity into an array of object
- * {@see \Metricool\Http\Metricool\Entities\TimelineStatistics}
+ * With this method we can easily access the array contents and the
+ * statistic data per array item. Usage can be seen here:
+ * {@see \Metricool\Services\AnalyticsService::getTotalAmount}
+ * @return Collection<Statistic>
  */
+
 trait isHydratable
 {
     protected bool $shouldHydrate = true;
 
     /**
      * Hydrate raw data into objects
-     * @param array $data
-     * @return array
      */
     public function hydrate(array $data): array
     {
         $hydrated = [];
-        foreach ($data as $item) {
-            $hydrated[] = $this->hydrateItem($item);
+        foreach ($data as $key => $item) {
+            $hydrated[] = $this->hydrateItem($key, $item);
         }
         return $hydrated;
     }
 
     /**
      * Hydrate a single item - override in classes using this trait
-     * @param mixed $item
-     * @return mixed
      */
-    abstract protected function hydrateItem($item);
+    abstract protected function hydrateItem($key, $item);
 }

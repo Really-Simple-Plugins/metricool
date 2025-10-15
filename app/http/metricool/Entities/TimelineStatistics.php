@@ -69,7 +69,7 @@ class TimelineStatistics
     /**
      * @inheritDoc
      */
-    protected function hydrateItem($item): TimelineStatistic
+    protected function hydrateItem($key, $item): TimelineStatistic
     {
         return new TimelineStatistic($item[0], $item[1]);
     }
