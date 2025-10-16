@@ -23,7 +23,7 @@ class TimelineResponseBuilder
     public function build(): array
     {
         foreach ($this->metrics as $name => $metric) {
-            $statistics = $metric['results'] ?? [];
+            $statistics = ($metric['results'] ?? []);
             foreach ($statistics as $statistic) {
                 if ($this->hasRow($statistic->timestamp) === false) {
                     $this->createRow($statistic->timestamp);
@@ -72,7 +72,9 @@ class TimelineResponseBuilder
     }
 
     /**
-     * Creates a row for the given timestamp
+     * Creates a row for the given timestamp. Each key in the metrics is a property.
+     * This uses the $metrics to create a row which contains a property for
+     * every metric with an initial value of 0.
      */
     protected function createRow(int $timestamp): array
     {
@@ -81,7 +83,7 @@ class TimelineResponseBuilder
             'date' => Carbon::createFromTimestampMs($timestamp)->format('j M'),
         ];
 
-        // initialize properties for each metric
+        // initialize the properties for each metric, these are the keys of the metrics
         foreach (array_keys($this->metrics) as $metric) {
             $row[$metric] = 0.0;
         }
