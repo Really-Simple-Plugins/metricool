@@ -23,7 +23,7 @@ class TimelineResponseBuilder
     public function build(): array
     {
         foreach ($this->metrics as $name => $metric) {
-            $statistics = $metric['results'];
+            $statistics = $metric['results'] ?? [];
             foreach ($statistics as $statistic) {
                 if ($this->hasRow($statistic->timestamp) === false) {
                     $this->createRow($statistic->timestamp);
