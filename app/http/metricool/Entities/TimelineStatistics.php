@@ -67,7 +67,12 @@ class TimelineStatistics
     }
 
     /**
-     * @inheritDoc
+     * Hydrates a result:
+     * [
+     *   "1752170400000",
+     *   "981.0"
+     * ]
+     * Into a TimelineStatisticDTO object.
      */
     protected function hydrateItem($key, $item): TimelineStatisticDTO
     {
