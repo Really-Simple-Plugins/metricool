@@ -33,7 +33,7 @@ class TimelineResponseBuilder
             }
         }
 
-        return $this->getTimeline();
+        return $this->getTimelineRows();
     }
 
     /**
@@ -50,7 +50,7 @@ class TimelineResponseBuilder
     /**
      * Returns the timeline without preserving keys.
      */
-    public function getTimeline(): array
+    public function getTimelineRows(): array
     {
         return array_values($this->timeline);
     }
