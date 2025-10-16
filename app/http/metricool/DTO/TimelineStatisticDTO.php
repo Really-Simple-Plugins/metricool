@@ -4,9 +4,11 @@ namespace Metricool\Http\Metricool\Dto;
 
 /**
  * This class represents a TimelineStatistic of one of the results of
- * the TimelineStatistic Entity.
+ * the TimelineStatistic Entity. Every result of the Metricool timeline can
+ * be hydrated into this DTO.
+ * {@see \Metricool\Http\Metricool\Entities\TimelineStatistics::hydrateItem()}
  */
-class TimelineStatistic
+class TimelineStatisticDTO
 {
     public int $timestamp;
     public float $hits;

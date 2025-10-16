@@ -4,7 +4,7 @@ namespace Metricool\Http\Metricool\Entities;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\Dto\TimelineStatistic;
+use Metricool\Http\Metricool\Dto\TimelineStatisticDTO;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
 use Metricool\Traits\isHydratable;
@@ -69,14 +69,14 @@ class TimelineStatistics
     /**
      * @inheritDoc
      */
-    protected function hydrateItem($key, $item): TimelineStatistic
+    protected function hydrateItem($key, $item): TimelineStatisticDTO
     {
-        return new TimelineStatistic($item[0], $item[1]);
+        return new TimelineStatisticDTO($item[0], $item[1]);
     }
 
     /**
      * Fetch and return the timeline statistics data plainly from the API.
-     * @return Collection<TimelineStatistic>
+     * @return Collection<TimelineStatisticDTO>
      * @throws GuzzleException
      */
     public function get(): Collection

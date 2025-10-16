@@ -5,7 +5,7 @@ namespace Metricool\Services;
 use Carbon\Carbon;
 use InvalidArgumentException;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\Dto\TimelineStatistic;
+use Metricool\Http\Metricool\Dto\TimelineStatisticDTO;
 use Metricool\Builders\TimelineResponseBuilder;
 use Metricool\Services\Analytics\TrendService;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
@@ -20,8 +20,8 @@ class AnalyticsService
      * Metrics holds the name of the Metric, TimelineStatistics and results of the API request
      * @var array<string, array{
      *     name: string,
-     *     timelineStatistics: Collection<TimelineStatistic>,
-     *     results: Collection<TimelineStatistic>
+     *     timelineStatistics: Collection<TimelineStatisticDTO>,
+     *     results: Collection<TimelineStatisticDTO>
      *  }>
      **/
     protected array $metrics = [];
@@ -88,7 +88,7 @@ class AnalyticsService
 
     /**
      * Gets the results of a metric
-     * @return Collection<int, TimelineStatistic>
+     * @return Collection<int, TimelineStatisticDTO>
      * @throws InvalidArgumentException
      */
     public function getResults(string $metric) : Collection
