@@ -29,6 +29,8 @@ trait isHydratable
     /**
      * Hydrate a single item - override in classes using this trait
      * Should return the object that represents the result
+     * @param mixed $key The key of the item in the raw array
+     * @param mixed $item The item to be hydrated into an object
      */
     abstract protected function hydrateItem($key, $item);
 }
