@@ -100,10 +100,8 @@ class TimelineStatistics
         }
 
         if ($this->shouldHydrate) {
-            $results = $this->hydrate($results);
+            $results = $this->hydrateResults($results);
         }
-
-        $results = new Collection($results);
 
         wp_cache_set($cacheName, $results, 'metricool', MINUTE_IN_SECONDS);
 
