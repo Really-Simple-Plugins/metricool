@@ -76,11 +76,9 @@ class TimelineResponseBuilder
      */
     protected function createRow(int $timestamp): array
     {
-        $timestampInSeconds = $timestamp / 1000;
-
         $row = [
             'timestamp' => $timestamp,
-            'date' => Carbon::createFromTimestamp($timestampInSeconds)->format('j M'),
+            'date' => Carbon::createFromTimestampMs($timestamp)->format('j M'),
         ];
 
         // initialize properties for each metric
