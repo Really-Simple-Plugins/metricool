@@ -11,7 +11,7 @@ class Collection implements IteratorAggregate
     /**
      * The items contained in the collection.
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * Create a new collection.
