@@ -1,22 +1,80 @@
-import { Button, Block, BlockHeader, BlockHeaderTitle } from "../components";
+import { Block, BlockHeader, BlockHeaderTitle, Button, FlexContainer } from "../components";
 import { __ } from "@wordpress/i18n";
-import { FlexContainer } from "../components";
 import AccountTile from "./AccountTile.tsx";
+import { useQuery } from "@tanstack/react-query";
+import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { useEffect } from "react";
 
 const ConnectedAccounts = () => {
+    const { httpClient } = useGlobalContext();
+    const { data: connectedAccountsData, isLoading, error } = useQuery({
+        queryKey: ["connected", "accounts"],
+        queryFn: () => httpClient?.setRoute("connected_brands").get(),
+        staleTime: 1000 * 60, // 1 minute
+        select: (data) => {
+            console.log(data);
+            return [
+                {
+                    label: "Web",
+                    icon: "domain",
+                    connectedClasses: "text-[#5c90a8]",
+                    unconnectedClasses: "bg-[#5c90a8] border-[#5c90a8]",
+                    upsell: false,
+                    ...(data.data.data.networksData.webData && data.data.data.networksData.webData.url && { userName: data.data.data.networksData.webData.url }),
+                },
+                {
+                    label: "Twitter / X",
+                    icon: "twitter",
+                    connectedClasses: "text-black",
+                    unconnectedClasses: "bg-black border-black",
+                    upsell: true,
+                    ...(data.data.data.networksData.twitterData && { userName: data.data.data.networksData.twitterData.username }),
+                },
+                {
+                    label: "LinkedIn",
+                    icon: "linkedIn",
+                    connectedClasses: "text-linkedin",
+                    unconnectedClasses: "bg-linkedin border-linkedin",
+                    upsell: true,
+                    ...(data.data.data.networksData.linkedinData && { userName: data.data.data.networksData.linkedinData.username }),
+                },
+                {
+                    label: "YouTube",
+                    icon: "youtube",
+                    connectedClasses: "text-youtube",
+                    unconnectedClasses: "bg-youtube border-youtube",
+                    upsell: false,
+                    ...(data.data.data.networksData.youtubeData && { userName: data.data.data.networksData.youtubeData.username }),
+                },
+            ]
+        }
+    });
+
+    useEffect(() => {
+        console.log(connectedAccountsData);
+        console.log(error);
+    }, [connectedAccountsData, error]);
+
     return (
         <Block>
             <BlockHeader>
                 <BlockHeaderTitle>{__("Connected Accounts", "metricool")}</BlockHeaderTitle>
             </BlockHeader>
-            <FlexContainer direction={"column"} className={"md:flex-row"}>
-                <AccountTile connected={true} accountType={"domain"} accountName={"yourwebsite.com"}/>
-                <AccountTile connected={false} accountType={"twitter"}/>
-            </FlexContainer>
-            <FlexContainer direction={"column"} className={"md:flex-row"}>
-                <AccountTile connected={true} accountType={"youtube"} accountName={"YourChannelName"}/>
-                <AccountTile connected={false} accountType={"linkedIn"}/>
-            </FlexContainer>
+            {isLoading && (
+                <div>LOADING</div>
+            )}
+            {connectedAccountsData && (
+                <div className={"grid grid-cols-1 lg:grid-cols-2 gap-2"}>
+                    {connectedAccountsData.map((account) => (
+                        <AccountTile {...account} />
+                    ))}
+                </div>
+            )}
+            {error && (
+                <FlexContainer direction={"row"} className={"justify-center items-center"}>
+                    {__("There was an error fetching your connected accounts.", "metricool")}
+                </FlexContainer>
+            )}
             <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} className={"size-fit"}>
                 {__("Connected Accounts", "metricool")}
             </Button>
