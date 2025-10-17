@@ -2,8 +2,12 @@
 
 namespace Metricool\Http\Metricool\Entities;
 
+use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Helpers\Collection;
+use Metricool\Http\Metricool\DTOs\TimelineStatistic\TimelineDTO;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
+use Metricool\Traits\isHydratable;
 
 /**
  * API responses for the timeline statistics contain of array entries where each
@@ -16,9 +20,12 @@ use Metricool\Http\Metricool\Traits\isFilterable;
 class TimelineStatistics
 {
     use isFilterable;
+    use isHydratable;
 
+    protected string $metric;
     protected MetricoolClient $client;
-    protected string $endpoint = 'stats/timeline/';
+
+    public string $endpoint = 'stats/timeline/';
 
     /**
      * The timeline statistics API is compatible with these metrics.
@@ -35,14 +42,17 @@ class TimelineStatistics
      * Pass a compatible metric to the constructor: {@see compatibleMetrics}
      * @throws \InvalidArgumentException
      */
-    public function __construct(MetricoolClient $client, string $metric)
+    public function __construct(MetricoolClient $client, string $metric, bool $filterRequired = true)
     {
-        if (!in_array($metric, $this->compatibleMetrics)) {
-            throw new \InvalidArgumentException("Incompatible metric given: $metric");
+        $this->metric = $metric;
+
+        if (!in_array($this->metric, $this->compatibleMetrics)) {
+            throw new \InvalidArgumentException("Incompatible metric given: $this->metric");
         }
 
         $this->client = $client;
-        $this->endpoint .= $metric;
+        $this->endpoint .= $this->metric;
+        $this->requiresFilter = $filterRequired;
     }
 
     /**
@@ -57,10 +67,67 @@ class TimelineStatistics
     }
 
     /**
-     * Fetch and return the timeline statistics data plainly from the API.
+     * Hydrates a result:
+     * [
+     *   "1752170400000",
+     *   "981.0"
+     * ]
+     * Into a TimelineStatisticDTO object.
      */
-    public function get(): array
+    protected function hydrateItem($key, $item): TimelineDTO
     {
-        return $this->client->get($this->endpoint);
+        return (new TimelineDTO($item[0], $item[1]));
+    }
+
+    /**
+     * Fetch and return the timeline statistics data plainly from the API.
+     * @return Collection<TimelineDTO>
+     * @throws GuzzleException
+     */
+    public function get(): Collection
+    {
+        if ($this->requiresFilter && $this->filtered === false) {
+            if(empty($this->filters['start']) || empty($this->filters['end'])) {
+                throw new \Exception('Start and end date are required for this timeline statistic');
+            }
+            $this->filter($this->filters);
+        }
+
+        $cacheName = 'timeline_statistics_' . $this->endpoint;
+        if ($cache = wp_cache_get($cacheName, 'metricool')) {
+            return $cache;
+        }
+
+        $results = $this->client->get($this->endpoint);
+
+        if ($this->isEmptyResponse($results)) {
+            return new Collection([]);
+        }
+
+        $results = $this->hydrateResults($results);
+
+        wp_cache_set($cacheName, $results, 'metricool', MINUTE_IN_SECONDS);
+
+        return $results;
+    }
+
+    /**
+     * Return the metric that the current instance is used for. Useful for
+     * dynamic retrieval of the intent of the instance. For an example see:
+     * {@see \Metricool\Services\AnalyticsService::getTrend}
+     */
+    public function getMetric(): string
+    {
+        return $this->metric;
+    }
+
+    /**
+     * When this endpoint holds no data, Metricool returns a result with
+     * non-standard output. Just return an empty response when only 1 row is
+     * found in the results and the value is 0
+     */
+    protected function isEmptyResponse($response): bool
+    {
+        return empty($response) || (is_array($response) && count($response) === 1 && empty($response[0][1]));
     }
 }

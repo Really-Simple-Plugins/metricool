@@ -7,7 +7,7 @@ use Metricool\Traits\HasAllowlistControl;
 use Metricool\Services\RelatedPluginService;
 use Metricool\Interfaces\MultiEndpointInterface;
 
-class RelatedPluginEndpoints implements MultiEndpointInterface
+class RelatedPluginsEndpoints implements MultiEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
