@@ -8,11 +8,14 @@ use Metricool\Http\Metricool\MetricoolClient;
 class ConnectedBrands
 {
     protected MetricoolClient $client;
-    private string $endpoint = 'admin/profiles-auth';
+    private string $endpoint = 'v2/settings/brands/';
 
     public function __construct(MetricoolClient $client)
     {
         $this->client = $client;
+        if (defined('METRICOOL_BLOG_ID') && !empty(METRICOOL_BLOG_ID)) {
+            $this->endpoint = $this->endpoint . METRICOOL_BLOG_ID;
+        }
     }
 
     /**
