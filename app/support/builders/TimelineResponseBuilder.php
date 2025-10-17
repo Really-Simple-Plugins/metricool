@@ -4,7 +4,7 @@ namespace Metricool\Builders;
 
 use Carbon\Carbon;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTO\TimelineStatisticDTO;
+use Metricool\Http\Metricool\Dto\TimelineStatistic\TimelineDTO;
 
 /**
  * Builds a timeline from a collection of metrics and their corresponding statistics.
@@ -13,7 +13,7 @@ use Metricool\Http\Metricool\DTO\TimelineStatisticDTO;
 class TimelineResponseBuilder
 {
     public array $timeline = [];
-    /** @var array<string, array{timelineStatistics: Collection<TimelineStatisticDTO>, results: Collection<TimelineStatisticDTO>}> */
+    /** @var array<string, array{timelineStatistics: Collection<TimelineDTO>, results: Collection<TimelineDTO>}> */
     protected array $metrics = [];
 
     /**
@@ -38,7 +38,7 @@ class TimelineResponseBuilder
 
     /**
      * Sets the metrics that should be included in a timeline item
-     * @param array<string, array{timelineStatistics: Collection<TimelineStatisticDTO>, results: Collection<TimelineStatisticDTO>}> $metrics
+     * @param array<string, array{timelineStatistics: Collection<TimelineDTO>, results: Collection<TimelineDTO>}> $metrics
      */
     public function setMetrics(array $metrics): self
     {
@@ -104,8 +104,8 @@ class TimelineResponseBuilder
     /**
      * Adds a metric (Visits / PageViews / etc) to the row
      */
-    protected function addMetricToRow(&$row, string $metric, TimelineStatisticDTO $statistic): void
+    protected function addMetricToRow(&$row, string $metric, TimelineDTO $statistic): void
     {
-        $row[$metric] = $statistic->getHits();
+        $row[$metric] = $statistic->amount;
     }
 }

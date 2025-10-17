@@ -1,6 +1,8 @@
 <?php
 
-namespace Metricool\Http\Metricool\Dto;
+namespace Metricool\Http\Metricool\DTOs\TimelineStatistic;
+
+use Metricool\Http\Metricool\DTOs\DTO;
 
 /**
  * This class represents a TimelineStatistic of one of the results of
@@ -8,10 +10,10 @@ namespace Metricool\Http\Metricool\Dto;
  * be hydrated into this DTO.
  * {@see \Metricool\Http\Metricool\Entities\TimelineStatistics::hydrateItem()}
  */
-class TimelineStatisticDTO
+class TimelineDTO extends DTO
 {
     public int $timestamp;
-    public float $hits;
+    public float $amount;
 
     /**
      * Constructor to fill all the properties of the TimelineStatistic
@@ -19,23 +21,6 @@ class TimelineStatisticDTO
     public function __construct(int $timestamp, float $hits)
     {
         $this->timestamp = $timestamp;
-        $this->hits = $hits;
+        $this->amount = $hits;
     }
-
-    /**
-     * Gets the hits
-     */
-    public function getHits() : float
-    {
-        return $this->hits;
-    }
-
-    /**
-     * Gets the timestamp
-     */
-    public function getTimestamp() : int
-    {
-        return $this->timestamp;
-    }
-
 }
