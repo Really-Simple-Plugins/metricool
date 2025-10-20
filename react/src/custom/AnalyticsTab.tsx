@@ -8,12 +8,20 @@ import MetricTile from "./MetricTile.tsx";
 import { clsx } from "clsx";
 import Icon from "../components/src/components/Icon.tsx";
 
-const formatTimelineDataIntoChartData = (timelineData: string[][], dataKey: string, locale: string) => {
-    return timelineData.map(([timeStamp, amount]) => ({
-        date: new Date(Number(timeStamp)).toLocaleDateString(locale, { month: "short", day: "numeric" }),
-        [dataKey]: Number(amount),
-    }));
-};
+type MetricData = {
+    label: string,
+    totalAmount: number,
+    trend: "stable" | "up" | "down",
+}
+
+type TimelineData = {
+    date: string,
+    pageViews: number,
+    comments: number,
+    posts: number,
+    visits: number,
+    visitors: number,
+}[]
 
 const dateFilterOptions = [
     {
@@ -103,54 +111,15 @@ const AnalyticsTab = () => {
         queryKey: ["analytics"],
         queryFn: () => httpClient?.setRoute("analytics").setFilters({ start: startDate, end: endDate }).get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data) => {
-            console.log(data);
-            const formattedPageViews = formatTimelineDataIntoChartData(data.data.pageViews.data, "pageViews", metricool.locale);
-            const formattedVisits = formatTimelineDataIntoChartData(data.data.visits.data, "visits", metricool.locale);
-            const formattedVisitors = formatTimelineDataIntoChartData(data.data.visitors.data, "visitors", metricool.locale);
-            const formattedPosts = formatTimelineDataIntoChartData(data.data.posts.data, "posts", metricool.locale);
-            const formattedComments = formatTimelineDataIntoChartData(data.data.comments.data, "comments", metricool.locale);
-            return {
-                totals: {
-                    pageViews: {
-                        totalAmount: data.data.pageViews.data.reduce((accumulated: number, [, amount]: string[]) => (Number(accumulated) + Number(amount)), 0),
-                        trend: data.data.pageViews.trend,
-                    },
-                    visits: {
-                        totalAmount: data.data.visits.data.reduce((accumulated: number, [, amount]: string[]) => (Number(accumulated) + Number(amount)), 0),
-                        trend: data.data.visits.trend,
-                    },
-                    visitors: {
-                        totalAmount: data.data.visitors.data.reduce((accumulated: number, [, amount]: string[]) => (Number(accumulated) + Number(amount)), 0),
-                        trend: data.data.visitors.trend,
-                    },
-                    posts: {
-                        totalAmount: data.data.posts.data.reduce((accumulated: number, [, amount]: string[]) => (Number(accumulated) + Number(amount)), 0),
-                        trend: data.data.posts.trend,
-                    },
-                    comments: {
-                        totalAmount: data.data.comments.data.reduce((accumulated: number, [, amount]: string[]) => (Number(accumulated) + Number(amount)), 0),
-                        trend: data.data.comments.trend,
-                    },
-                },
-                timelineData: formattedPageViews.map((pageViewChartData, index) => ({
-                    ...pageViewChartData,
-                    visits: formattedVisits[index].visits,
-                    visitors: formattedVisitors[index].visitors,
-                    posts: formattedPosts[index] ? formattedPosts[index].posts : 0,
-                    comments: formattedComments[index] ? formattedComments[index].comments : 0,
-                }))
-            };
+        select: (data): {totals: Record<string, MetricData>, timelineData: TimelineData} => {
+            console.log("data", data);
+            return data.data;
         }
     });
 
     useEffect(() => {
         console.log("analytics");
         console.log(analyticsData, isLoading, error);
-
-        console.log("formatted", startDate, endDate);
-
-        console.log(Object.entries(chartConfig));
     }, [error, isLoading, analyticsData]);
 
     const toggleMetric = (dataKey: string) => {
