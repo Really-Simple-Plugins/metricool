@@ -26,6 +26,7 @@
             "Metricool\\Traits\\": "app/traits",
             "Metricool\\Managers\\": "app/managers",
             "Metricool\\Services\\": "app/services",
+            "Metricool\\Services\\Analytics\\": "app/services/analytics",
             "Metricool\\Providers\\": "app/providers",
             "Metricool\\Interfaces\\": "app/interfaces",
             "Metricool\\Exceptions\\": "app/exceptions",
@@ -34,7 +35,10 @@
             "Metricool\\Controllers\\": "app/controllers",
             "Metricool\\Builders\\": "app/support/builders",
             "Metricool\\Http\\Endpoints\\": "app/http/endpoints",
-            "Metricool\\Http\\Metricool\\": "app/http/metricool"
+            "Metricool\\Http\\Factories\\": "app/http/factories",
+            "Metricool\\Http\\Metricool\\": "app/http/metricool",
+            "Metricool\\Http\\Responses\\": "app/http/responses",
+            "Metricool\\Http\\Metricool\\DTO\\": "app/http/metricool/DTO"
         },
         "files": [
             "app/App.php",

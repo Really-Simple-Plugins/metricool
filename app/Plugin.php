@@ -178,10 +178,12 @@ class Plugin
             new Http\Endpoints\UserSettingsEndpoint(),
             new Http\Endpoints\StatisticsEndpoint(),
             new Http\Endpoints\AnalyticsEndpoint(
-                new Services\AnalyticsService()
+                new Services\AnalyticsService(
+                    new Services\Analytics\TrendService()
+                ),
             ),
             new Http\Endpoints\RealtimeEndpoint(),
-            new Http\Endpoints\RelatedPluginEndpoints(
+            new Http\Endpoints\RelatedPluginsEndpoints(
                 new Services\RelatedPluginService()
             ),
         ]);

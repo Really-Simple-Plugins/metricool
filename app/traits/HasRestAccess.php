@@ -58,4 +58,19 @@ trait HasRestAccess
             'request_success' => true, // can be used to check if the response in react actually contains this array.
         ], $code);
     }
+
+    /**
+     * Standardized response error format
+     *
+     * @param string $message - A user friendly error message
+     * @param string $error - The specific error message that occurred
+     * @param int $code - HTTP status code
+     * @return \WP_REST_Response
+     */
+    public function sendHttpErrorResponse(string $message = 'An error occurred', string $error = '', int $code = 500): \WP_REST_Response
+    {
+        return $this->sendHttpResponse([
+            'error' => (defined('WP_DEBUG') && WP_DEBUG ? $error : null)
+        ], false, $message, $code);
+    }
 }

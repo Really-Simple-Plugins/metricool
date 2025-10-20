@@ -2,9 +2,12 @@
 
 namespace Metricool\Http\Metricool\Entities;
 
-use Carbon\Carbon;
+use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Helpers\Collection;
+use Metricool\Http\Metricool\DTOs\TimelineStatistic\TimelineDTO;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
+use Metricool\Traits\isHydratable;
 
 /**
  * API responses for the timeline statistics contain of array entries where each
@@ -17,9 +20,11 @@ use Metricool\Http\Metricool\Traits\isFilterable;
 class TimelineStatistics
 {
     use isFilterable;
+    use isHydratable;
 
     protected string $metric;
     protected MetricoolClient $client;
+
     public string $endpoint = 'stats/timeline/';
 
     /**
@@ -48,16 +53,6 @@ class TimelineStatistics
         $this->client = $client;
         $this->endpoint .= $this->metric;
         $this->requiresFilter = $filterRequired;
-
-        /**
-         * The distribution statistics API need a filter by default to prevent
-         * Internal Server errors on the remote server. We set the default
-         * filters to the last 30 days.
-         */
-        $this->filters = [
-            'start' => Carbon::now()->subDays(30)->format('Ymd'),
-            'end' => Carbon::now()->format('Ymd'),
-        ];
     }
 
     /**
@@ -72,12 +67,29 @@ class TimelineStatistics
     }
 
     /**
-     * Fetch and return the timeline statistics data plainly from the API.
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * Hydrates a result:
+     * [
+     *   "1752170400000",
+     *   "981.0"
+     * ]
+     * Into a TimelineStatisticDTO object.
      */
-    public function get(): array
+    protected function hydrateItem($key, $item): TimelineDTO
+    {
+        return (new TimelineDTO($item[0], $item[1]));
+    }
+
+    /**
+     * Fetch and return the timeline statistics data plainly from the API.
+     * @return Collection<TimelineDTO>
+     * @throws GuzzleException
+     */
+    public function get(): Collection
     {
         if ($this->requiresFilter && $this->filtered === false) {
+            if(empty($this->filters['start']) || empty($this->filters['end'])) {
+                throw new \Exception('Start and end date are required for this timeline statistic');
+            }
             $this->filter($this->filters);
         }
 
@@ -86,10 +98,17 @@ class TimelineStatistics
             return $cache;
         }
 
-        $response =  $this->client->get($this->endpoint);
+        $results = $this->client->get($this->endpoint);
 
-        wp_cache_set($cacheName, $response, 'metricool', MINUTE_IN_SECONDS);
-        return $response;
+        if ($this->isEmptyResponse($results)) {
+            return new Collection([]);
+        }
+
+        $results = $this->hydrateResults($results);
+
+        wp_cache_set($cacheName, $results, 'metricool', MINUTE_IN_SECONDS);
+
+        return $results;
     }
 
     /**
@@ -100,5 +119,15 @@ class TimelineStatistics
     public function getMetric(): string
     {
         return $this->metric;
+    }
+
+    /**
+     * When this endpoint holds no data, Metricool returns a result with
+     * non-standard output. Just return an empty response when only 1 row is
+     * found in the results and the value is 0
+     */
+    protected function isEmptyResponse($response): bool
+    {
+        return empty($response) || (is_array($response) && count($response) === 1 && empty($response[0][1]));
     }
 }
