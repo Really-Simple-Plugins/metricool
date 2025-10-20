@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
 const ConnectionsSettings = () => {
-    const { httpClient } = useGlobalContext();
+    const { httpClient, metricool } = useGlobalContext();
     const { data: connectedAccountsData, isLoading, error } = useQuery({
         enabled: !!httpClient,
         queryKey: ["connected", "accounts"],
@@ -182,7 +182,10 @@ const ConnectionsSettings = () => {
                         )}
                     </FlexContainer>
                     <FlexContainer direction={"row"} className={"justify-end"}>
-                        <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} className={"size-fit"}>
+                        <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} className={"size-fit"} onClick={() => {
+                            window.open(` https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`, "_blank");
+                            window.focus();
+                        }}>
                             {__("Connected Accounts", "metricool")}
                         </Button>
                     </FlexContainer>

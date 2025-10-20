@@ -6,7 +6,7 @@ import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useEffect } from "react";
 
 const ConnectedAccounts = () => {
-    const { httpClient } = useGlobalContext();
+    const { httpClient, metricool } = useGlobalContext();
     const { data: connectedAccountsData, isLoading, error } = useQuery({
         queryKey: ["connected", "accounts"],
         queryFn: () => httpClient?.setRoute("connected_brands").get(),
@@ -75,7 +75,10 @@ const ConnectedAccounts = () => {
                     {__("There was an error fetching your connected accounts.", "metricool")}
                 </FlexContainer>
             )}
-            <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} className={"size-fit"}>
+            <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} className={"size-fit"} onClick={() => {
+                window.open(` https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`, "_blank");
+                window.focus();
+            }}>
                 {__("Connected Accounts", "metricool")}
             </Button>
         </Block>
