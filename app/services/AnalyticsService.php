@@ -119,7 +119,7 @@ class AnalyticsService
     public function getTotalAmount(string $metric): float
     {
         return $this->getResults($metric)
-            ->sum('hits');
+            ->sum('amount');
     }
 
     /**
