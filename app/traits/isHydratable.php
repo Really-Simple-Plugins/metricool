@@ -10,8 +10,6 @@ use Metricool\Helpers\Collection;
  */
 trait isHydratable
 {
-    protected bool $shouldHydrate = true;
-
     /**
      * Hydrate raw data into objects.
      * Use this trait on any Entity that pulls data from an API to hydrate the
