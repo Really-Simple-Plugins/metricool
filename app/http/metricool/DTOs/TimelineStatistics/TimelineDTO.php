@@ -1,6 +1,6 @@
 <?php
 
-namespace Metricool\Http\Metricool\DTOs\TimelineStatistic;
+namespace Metricool\Http\Metricool\DTOs\TimelineStatistics;
 
 use Metricool\Http\Metricool\DTOs\DTO;
 

@@ -4,7 +4,7 @@ namespace Metricool\Builders;
 
 use Carbon\Carbon;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTOs\TimelineStatistic\TimelineDTO;
+use Metricool\Http\Metricool\DTOs\TimelineStatistics\TimelineDTO;
 
 /**
  * Builds a timeline from a collection of metrics and their corresponding statistics.
