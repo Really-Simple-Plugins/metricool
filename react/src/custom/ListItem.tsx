@@ -14,6 +14,7 @@ const iconColorMap = {
 
 type ListItemProps = {
     link?: string
+    action?: string
 } & ({
     icon?: never,
     iconColor?: never,
@@ -31,7 +32,7 @@ type ListItemProps = {
     iconPosition: "left" | "right",
 });
 
-const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, children, className }: React.ComponentProps<'div'> & ListItemProps) => {
+const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, action, children, className }: React.ComponentProps<'div'> & ListItemProps) => {
 
     return (
         <FlexContainer direction={"row"} className={"items-center justify-between"}>
@@ -45,7 +46,7 @@ const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, children, cl
                     {children}
                 </div>
             </FlexContainer>
-            {link && (<span className={"text-sm underline cursor-pointer"}>{link}</span>)}
+            {action && (<span className={"text-sm underline cursor-pointer"}>{action}</span>)}
         </FlexContainer>
     );
 };

@@ -10,13 +10,13 @@ const OtherPlugins = () => {
                 <BlockHeaderTitle>{__("Other Plugins", "metricool")}</BlockHeaderTitle>
             </BlockHeader>
             <FlexContainer direction={"column"} className={"!gap-2"}>
-                <ListItem icon={"circle"} iconColor={"rss"} iconPosition={"left"} link={__("Upgrade", "metricool")} className={"font-semibold"}>
+                <ListItem icon={"circle"} iconColor={"rss"} iconPosition={"left"} action={__("Upgrade", "metricool")} className={"font-semibold"}>
                     {__("Really Simple Security Pro", "metricool")}
                 </ListItem>
-                <ListItem icon={"circle"} iconColor={"simplybook"} iconPosition={"left"} link={__("Install", "metricool")} className={"font-semibold"}>
+                <ListItem icon={"circle"} iconColor={"simplybook"} iconPosition={"left"} action={__("Install", "metricool")} className={"font-semibold"}>
                     {__("Simplybook: Online booking system", "metricool")}
                 </ListItem>
-                <ListItem icon={"circle"} iconColor={"complianz"} iconPosition={"left"} link={__("Install", "metricool")} className={"font-semibold"}>
+                <ListItem icon={"circle"} iconColor={"complianz"} iconPosition={"left"} action={__("Install", "metricool")} className={"font-semibold"}>
                     {__("Complianz - Terms and Conditions", "metricool")}
                 </ListItem>
             </FlexContainer>
