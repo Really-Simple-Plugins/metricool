@@ -27,6 +27,8 @@ const defaultMetricoolData = {
     is_onboarding_completed: false,
     support: null,
     locale: "",
+    blogId: "",
+    userId: "",
 }
 
 interface GlobalState {
