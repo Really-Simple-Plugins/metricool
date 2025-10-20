@@ -42,9 +42,15 @@ const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, action, chil
                 ) : (
                     <Icon icon={icon} iconClass={iconClass} />
                 ))}
-                <div className={clsx(className, "text-sm")}>
-                    {children}
-                </div>
+                {link ? (
+                    <a href={link} target={"_blank"} className={clsx(className, "text-sm")}>
+                        {children}
+                    </a>
+                ) : (
+                    <div className={clsx(className, "text-sm")}>
+                        {children}
+                    </div>
+                )}
             </FlexContainer>
             {action && (<span className={"text-sm underline cursor-pointer"}>{action}</span>)}
         </FlexContainer>
