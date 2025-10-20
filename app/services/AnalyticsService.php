@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use InvalidArgumentException;
 use Metricool\Builders\TimelineResponseBuilder;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\Dto\TimelineStatistic\TimelineDTO;
+use Metricool\Http\Metricool\DTOs\TimelineStatistics\TimelineDTO;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 use Metricool\Services\Analytics\TrendService;
 
