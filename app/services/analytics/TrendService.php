@@ -45,8 +45,8 @@ class TrendService
         }
 
         // Compare the sum of both periods
-        $statisticSumCurrentPeriod = $currentStatistics->sum('hits');
-        $statisticSumPreviousPeriod = $previousStatistics->sum('hits');
+        $statisticSumCurrentPeriod = $currentStatistics->sum('amount');
+        $statisticSumPreviousPeriod = $previousStatistics->sum('amount');
 
         if ($statisticSumCurrentPeriod > $statisticSumPreviousPeriod){
             $trend = self::TREND_UP;
