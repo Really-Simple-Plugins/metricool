@@ -2,10 +2,9 @@
 
 namespace Metricool\Http\Responses;
 
-use Metricool\Helpers\Collection;
 use Metricool\Builders\StatsChartTableBuilder;
+use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\DTOs\DistributionDTO;
-use Metricool\Http\Metricool\DTOs\DTO;
 
 /**
  * A DistributionResponse shows Table and Chart data. The TableData
@@ -23,7 +22,6 @@ abstract class StatisticsResponse extends Response
     public function __construct(Collection $results)
     {
         $this->results = new Collection();
-
         // process and add the results, calculates the distribution
         $this->processResults($results);
     }
