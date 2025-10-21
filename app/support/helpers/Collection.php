@@ -30,6 +30,18 @@ class Collection implements IteratorAggregate
     }
 
     /**
+     * Push one or more items to the end of the collection
+     */
+    public function push(...$values): self
+    {
+        foreach ($values as $value) {
+            $this->items[] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
      * Get the sum of the given values.
      * @param callable|string|null $callback
      */
