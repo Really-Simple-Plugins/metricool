@@ -4,9 +4,9 @@ namespace Metricool\Services;
 
 use Carbon\Carbon;
 use InvalidArgumentException;
-use Metricool\Builders\TimelineResponseBuilder;
+use Metricool\Builders\StatsTimelineBuilder;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTOs\TimelineStatistics\TimelineDTO;
+use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 use Metricool\Services\Analytics\TrendService;
 
@@ -20,7 +20,8 @@ class AnalyticsService
      * Metrics holds the name of the Metric, TimelineStatistics and results of the API request
      * @var array<string, array{
      *     name: string,
-     *     timelineStatistics: Collection<TimelineDTO>,
+     *     label: string,
+     *     statistics: TimelineStatistics,
      *     results: Collection<TimelineDTO>
      *  }>
      **/
@@ -63,16 +64,29 @@ class AnalyticsService
      * Sets the metrics to be used in the analytics service
      * This will fetch the results from the API and store them
      */
-    public function loadMetric(string $metric, TimelineStatistics $statistics): self
+    public function loadMetric(string $metric, string $label, TimelineStatistics $statistics): self
     {
         $this->metrics[$metric] = [
             'name' => $metric,
-            'timelineStatistics' => $statistics,
-            'results' => $statistics->filter($this->getFilters())
-                ->get()
+            'label' => $label,
+            'statistics' => $statistics,
+            'results' => $statistics->filter($this->getFilters())->get()
         ];
 
         return $this;
+    }
+
+    public function getTotals(): array
+    {
+        $totals = [];
+        foreach ($this->metrics as $metric => $metricData) {
+            $totals[$metric] = [
+                'label' => $metricData['label'],
+                'totalAmount' => $this->calcTotalAmount($metric),
+                'trend' => $this->getTrend($metric),
+            ];
+        }
+        return $totals;
     }
 
     /**
@@ -110,13 +124,13 @@ class AnalyticsService
             throw new InvalidArgumentException("Incompatible metric given: $metric");
         }
 
-        return $this->metrics[$metric]['timelineStatistics'];
+        return $this->metrics[$metric]['statistics'];
     }
 
     /**
      * Sums the amount of hits of this metric
      */
-    public function getTotalAmount(string $metric): float
+    public function calcTotalAmount(string $metric): float
     {
         return $this->getResults($metric)
             ->sum('amount');
@@ -140,7 +154,7 @@ class AnalyticsService
      */
     public function getTimelineData(): array
     {
-        return (new TimelineResponseBuilder())->setMetrics($this->metrics)
+        return (new StatsTimelineBuilder())->setMetrics($this->metrics)
             ->build();
     }
 }
