@@ -76,7 +76,7 @@ class DistributionStatistics
      */
     protected function hydrateItem($key, $item): DistributionDTO
     {
-        return new DistributionDTO($this->metric, $key, $item, 0);
+        return new DistributionDTO($this->metric, $key, $item);
     }
 
     /**
