@@ -1,12 +1,13 @@
 <?php
+
 namespace Metricool\Http\Endpoints;
 
 use Metricool\App;
-use Metricool\Http\Responses\AnalyticsResponse;
-use Metricool\Services\AnalyticsService;
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Endpoints\responses\AnalyticsResponse;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\AnalyticsService;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class AnalyticsEndpoint implements SingleEndpointInterface
 {

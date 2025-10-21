@@ -1,6 +1,6 @@
 <?php
 
-namespace Metricool\Http\Responses;
+namespace Metricool\Http\Endpoints\responses;
 
 use Metricool\Builders\StatsChartTableBuilder;
 use Metricool\Helpers\Collection;
@@ -30,7 +30,7 @@ abstract class StatisticsResponse extends Response
      * Gets the properties and labels to be used in the chart and
      * returns the column headers for the chart. Each property is assigned a label.
      * Example: ['property' => 'label']
-     * @see \Metricool\Http\Responses\Statistics\CountriesResponse::getChartColumns()
+     * @see \Metricool\Http\Endpoints\responses\Statistics\CountriesResponse::getChartColumns()
      */
     abstract function getChartColumns(): array;
 

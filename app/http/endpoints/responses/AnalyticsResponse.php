@@ -1,6 +1,6 @@
 <?php
 
-namespace Metricool\Http\Responses;
+namespace Metricool\Http\Endpoints\responses;
 
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 use Metricool\Services\Analytics\TrendService;

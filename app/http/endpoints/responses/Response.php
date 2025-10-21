@@ -1,6 +1,6 @@
 <?php
 
-namespace Metricool\Http\Responses;
+namespace Metricool\Http\Endpoints\responses;
 
 /**
  * Response class that serves as a blueprint for creating custom responses for WordPress REST API endpoints.

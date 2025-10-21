@@ -1,12 +1,13 @@
 <?php
+
 namespace Metricool\Http\Endpoints;
 
 use Metricool\App;
-use Metricool\Http\Responses\Statistics\CountriesResponse;
-use Metricool\Http\Responses\Statistics\RefererResponse;
+use Metricool\Http\Endpoints\responses\Statistics\CountriesResponse;
+use Metricool\Http\Endpoints\responses\Statistics\RefererResponse;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class DistributionEndpoint implements SingleEndpointInterface
 {
@@ -95,7 +96,7 @@ class DistributionEndpoint implements SingleEndpointInterface
 
     protected function findResponseFromMetric($metric): string
     {
-        if(!array_key_exists($metric, self::metricsResponseMapper)) {
+        if (!array_key_exists($metric, self::metricsResponseMapper)) {
             throw new \InvalidArgumentException("Metric $metric is not accepted by this endpoint");
         }
         return self::metricsResponseMapper[$metric];

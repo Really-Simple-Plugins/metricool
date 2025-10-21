@@ -1,10 +1,10 @@
 <?php
 
-namespace Metricool\Http\Responses\Statistics;
+namespace Metricool\Http\Endpoints\responses\Statistics;
 
 use Locale;
+use Metricool\Http\Endpoints\responses\StatisticsResponse;
 use Metricool\Http\Metricool\DTOs\DistributionDTO;
-use Metricool\Http\Responses\StatisticsResponse;
 
 class CountriesResponse extends StatisticsResponse
 {
@@ -23,7 +23,7 @@ class CountriesResponse extends StatisticsResponse
 
     protected function getSingleItem(DistributionDTO $item, int $total): object
     {
-        return (object) [
+        return (object)[
             'value' => $item->value,
             'country' => Locale::getDisplayRegion('-' . $item->value, get_user_locale()),
             'visitors' => $item->amount,

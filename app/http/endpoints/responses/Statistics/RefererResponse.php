@@ -1,9 +1,9 @@
 <?php
 
-namespace Metricool\Http\Responses\Statistics;
+namespace Metricool\Http\Endpoints\responses\Statistics;
 
+use Metricool\Http\Endpoints\responses\StatisticsResponse;
 use Metricool\Http\Metricool\DTOs\DistributionDTO;
-use Metricool\Http\Responses\StatisticsResponse;
 
 class RefererResponse extends StatisticsResponse
 {
@@ -18,7 +18,7 @@ class RefererResponse extends StatisticsResponse
 
     public function getSingleItem(DistributionDTO $item, int $total): object
     {
-        return (object) [
+        return (object)[
             'url' => $item->value,
             'pageViews' => $item->amount,
             'percentage' => $item->calculatePercentageFromTotal($total),
