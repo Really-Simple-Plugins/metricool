@@ -4,21 +4,25 @@ namespace Metricool\Http\Responses;
 
 use Metricool\Helpers\Collection;
 use Metricool\Builders\StatsChartTableBuilder;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
+use Metricool\Http\Metricool\DTOs\DTO;
 
 /**
  * A DistributionResponse shows Table and Chart data. The TableData
  * will have a percentage of the total distribution of the metric. The result
  * in the Chart holds the values to be used inside the Chart
  *
- * These responses are dynamically created from endpoints/StatisticsEndpoint.
- * @see \Metricool\Http\Endpoints\StatisticsEndpoint
+ * These responses are dynamically created from endpoints/DistributionEndpoint.
+ * @see \Metricool\Http\Endpoints\DistributionEndpoint
  */
 abstract class StatisticsResponse extends Response
 {
+    /** @var Collection<DistributionDTO> */
     protected Collection $results;
 
     public function __construct(Collection $results)
     {
+        $this->results = new Collection();
         // process and add the results, calculates the distribution
         $this->processResults($results);
     }
@@ -30,7 +34,6 @@ abstract class StatisticsResponse extends Response
      * @see \Metricool\Http\Responses\Statistics\CountriesResponse::getChartColumns()
      */
     abstract function getChartColumns(): array;
-
 
     /**
      * Creates the response body
@@ -71,34 +74,28 @@ abstract class StatisticsResponse extends Response
     /**
      *  Calculates the total amount of the results
      */
-    public function getTotalAmountOfResults(): int
+    public function getTotalAmountOfResults(Collection $results): int
     {
-        return $this->results->sum('amount');
+        return $results->sum('amount');
     }
 
     /**
      * Processes results, sets distribution percentages on each result
      */
-    protected function processResults(Collection $results): self
+    protected function processResults($results): self
     {
-        $this->results = $results;
-        $total = $this->getTotalAmountOfResults();
+        $total = $this->getTotalAmountOfResults($results);
 
-        foreach ($this->results as &$result) {
-            $result->percentage = $this->calculateDistributionPercentage($result->amount, $total);
+        foreach ($results as $result) {
+            $item = $this->getSingleItem($result, $total);
+            $this->results->push($item);
         }
 
         return $this;
     }
 
     /**
-     * Calculate the distribution percentage
+     * Mutate the DistributionDTO to the requirements of the endpoint
      */
-    protected function calculateDistributionPercentage(int $amount, int $total): float
-    {
-        if($total === 0 || $amount === 0) {
-            return 0;
-        }
-        return round((float) (($amount / $total) * 100), 3, PHP_ROUND_HALF_UP);
-    }
+    abstract protected function getSingleItem(DistributionDTO $item, int $total): object;
 }
