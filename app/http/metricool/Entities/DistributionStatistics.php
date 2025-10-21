@@ -4,8 +4,7 @@ namespace Metricool\Http\Metricool\Entities;
 
 use Carbon\Carbon;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTOs\DistributionStatistics\CountryDTO;
-use Metricool\Http\Metricool\DTOs\DistributionStatistics\ReferrerDTO;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
 use Metricool\Traits\isHydratable;
@@ -28,8 +27,8 @@ class DistributionStatistics
      * The distribution statistics API is compatible with these metrics.
      */
     private array $metrics = [
-        'country' => CountryDTO::class,
-        'referers' => ReferrerDTO::class,
+        'country',
+        'referers',
         //'sources',
     ];
 
@@ -39,7 +38,7 @@ class DistributionStatistics
      */
     public function __construct(MetricoolClient $client, string $metric, bool $filterRequired = true)
     {
-        if (!array_key_exists($metric, $this->metrics)) {
+        if (!in_array($metric, $this->metrics)) {
             throw new \InvalidArgumentException("Incompatible metric given: $metric");
         }
 
@@ -73,12 +72,11 @@ class DistributionStatistics
 
 
     /**
-     * Hydrate every result into a DistributionStatisticDTO object
-     * @return mixed
+     * Hydrate every result into a DistributionDTO object
      */
-    protected function hydrateItem($key, $item): object
+    protected function hydrateItem($key, $item): DistributionDTO
     {
-        return new $this->metrics[$this->metric]($this->metric, $key, $item, 0);
+        return new DistributionDTO($this->metric, $key, $item, 0);
     }
 
     /**
