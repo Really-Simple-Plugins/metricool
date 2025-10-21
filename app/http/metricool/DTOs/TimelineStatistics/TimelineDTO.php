@@ -18,9 +18,9 @@ class TimelineDTO extends DTO
     /**
      * Constructor to fill all the properties of the TimelineStatistic
      */
-    public function __construct(int $timestamp, float $hits)
+    public function __construct(int $timestamp, float $amount)
     {
         $this->timestamp = $timestamp;
-        $this->amount = $hits;
+        $this->amount = $amount;
     }
 }
