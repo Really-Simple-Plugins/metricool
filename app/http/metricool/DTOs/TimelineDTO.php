@@ -1,8 +1,6 @@
 <?php
 
-namespace Metricool\Http\Metricool\DTOs\TimelineStatistics;
-
-use Metricool\Http\Metricool\DTOs\DTO;
+namespace Metricool\Http\Metricool\DTOs;
 
 /**
  * This class represents a TimelineStatistic of one of the results of
@@ -22,13 +20,5 @@ class TimelineDTO extends DTO
     {
         $this->timestamp = $timestamp;
         $this->amount = $amount;
-    }
-
-    public function toArray() : array
-    {
-        return [
-            'timestamp' => $this->timestamp,
-            'amount' => $this->amount
-        ];
     }
 }

@@ -4,7 +4,7 @@ namespace Metricool\Http\Metricool\Entities;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTOs\TimelineStatistics\TimelineDTO;
+use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
 use Metricool\Traits\isHydratable;
