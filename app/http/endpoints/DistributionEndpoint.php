@@ -1,15 +1,12 @@
 <?php
 namespace Metricool\Http\Endpoints;
 
-use Exception;
-use http\Exception\InvalidArgumentException;
 use Metricool\App;
-use Metricool\Http\Factories\StatisticResponseFactory;
 use Metricool\Http\Responses\Statistics\CountriesResponse;
 use Metricool\Http\Responses\Statistics\RefererResponse;
+use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
-use Metricool\Interfaces\SingleEndpointInterface;
 
 class DistributionEndpoint implements SingleEndpointInterface
 {
@@ -74,7 +71,7 @@ class DistributionEndpoint implements SingleEndpointInterface
      * used in the plugin Dashboard to reflect non-realtime statistics.
      * Building it server side prevents client-side complexity.
      *
-     * @throws Exception
+     * @throws \Exception
      */
     private function buildResponse(\WP_REST_Request $request): array
     {
