@@ -20,9 +20,4 @@ abstract class DTO
 
         return null;
     }
-
-    /**
-     * Returns the serialized version of the DTO
-     */
-    abstract public function toArray(): array;
 }
