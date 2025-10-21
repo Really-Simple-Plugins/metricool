@@ -27,7 +27,7 @@ class CountriesResponse extends StatisticsResponse
             'value' => $item->value,
             'country' => Locale::getDisplayRegion('-' . $item->value, get_user_locale()),
             'visitors' => $item->amount,
-            'percentage' => $item->calculatePercentageFromTotal($total)
+            'percentage' => $item->calculatePercentageFromTotal($total),
         ];
     }
 }

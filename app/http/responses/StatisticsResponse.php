@@ -23,6 +23,7 @@ abstract class StatisticsResponse extends Response
     public function __construct(Collection $results)
     {
         $this->results = new Collection();
+
         // process and add the results, calculates the distribution
         $this->processResults($results);
     }
@@ -87,8 +88,7 @@ abstract class StatisticsResponse extends Response
         $total = $this->getTotalAmountOfResults($results);
 
         foreach ($results as $result) {
-            $item = $this->getSingleItem($result, $total);
-            $this->results->push($item);
+            $this->results->push($this->getSingleItem($result, $total));
         }
 
         return $this;

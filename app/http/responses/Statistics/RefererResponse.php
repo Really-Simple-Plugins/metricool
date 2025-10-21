@@ -21,7 +21,7 @@ class RefererResponse extends StatisticsResponse
         return (object) [
             'url' => $item->value,
             'pageViews' => $item->amount,
-            'percentage' => $item->calculatePercentageFromTotal($total)
+            'percentage' => $item->calculatePercentageFromTotal($total),
         ];
     }
 }
