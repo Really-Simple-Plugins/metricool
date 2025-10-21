@@ -3,7 +3,7 @@
 namespace Metricool\Builders;
 
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTOs\DistributionStatistic;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Metricool\DTOs\DTO;
 
 /**
@@ -45,7 +45,7 @@ class StatsChartTableBuilder
 
     /**
      * Sets the results from the DistributionStatistics Entity
-     * @param Collection<DistributionStatistic> $results
+     * @param Collection<DistributionDTO> $results
      */
     public function setResults(Collection $results): self
     {
@@ -82,7 +82,7 @@ class StatsChartTableBuilder
      * Creates a row into the chart based on the chartColumns
      * Each key of the chart column is a property of the DTO
      */
-    protected function createRow(DTO $result): array
+    protected function createRow(object $result): array
     {
         $row = [];
 
