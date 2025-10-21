@@ -1,10 +1,13 @@
 <?php
 namespace Metricool\Http\Endpoints;
 
+use Exception;
 use Metricool\App;
+use Metricool\Http\Factories\StatisticResponseFactory;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\DistributionStatisticsService;
 
 class StatisticsEndpoint implements SingleEndpointInterface
 {
@@ -49,28 +52,38 @@ class StatisticsEndpoint implements SingleEndpointInterface
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
-        $metric = $request->get_param('statistic') ?: '';
-        $statisticsModule = App::provide('client')->statistics();
-
-        if (!method_exists($statisticsModule, $metric)) {
-            return $this->sendHttpResponse([], false, esc_html__('Unknown metric requested', 'metricool'), 400);
-        }
-
         try {
-            $metricModule = $statisticsModule->$metric();
-
-            $requestFilters = $request->get_param('filters');
-            if (method_exists($metricModule, 'filter') && !empty($requestFilters)) {
-                $metricModule->filter($requestFilters);
-            }
-
-            $response = $metricModule->get();
-        } catch (\Throwable $e) {
-            echo '<pre>';
-            var_dump($e->getMessage()); // todo
-            exit();
+            $response = $this->buildResponse($request);
+        } catch (\Exception $e) {
+            return $this->sendHttpErrorResponse(esc_html__('Failed to load analytics data', 'metricool'), $e->getMessage(), 500);
         }
 
         return $this->sendHttpResponse($response);
+
+    }
+
+    /**
+     * Build the specific analytics response for the endpoint. This is mainly
+     * used in the plugin Dashboard to reflect non-realtime statistics.
+     * Building it server side prevents client-side complexity.
+     *
+     * @throws Exception
+     */
+    private function buildResponse(\WP_REST_Request $request): array
+    {
+        $statisticsModule = App::provide('client')->statistics();
+        $metric = $request->get_param('statistic') ?: '';
+
+        $requestFilters = $request->get_param('filters');
+
+        $metricModule = $statisticsModule->$metric();
+        if (method_exists($metricModule, 'filter') && !empty($requestFilters)) {
+            $metricModule->filter($requestFilters);
+        }
+        $results = $metricModule->get();
+
+        $response = StatisticResponseFactory::buildResponse($metric, $results);
+
+        return $response->body();
     }
 }

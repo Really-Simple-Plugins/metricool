@@ -23,4 +23,12 @@ class TimelineDTO extends DTO
         $this->timestamp = $timestamp;
         $this->amount = $amount;
     }
+
+    public function toArray() : array
+    {
+        return [
+            'timestamp' => $this->timestamp,
+            'amount' => $this->amount
+        ];
+    }
 }
