@@ -2,19 +2,26 @@
 namespace Metricool\Http\Endpoints;
 
 use Exception;
+use http\Exception\InvalidArgumentException;
 use Metricool\App;
 use Metricool\Http\Factories\StatisticResponseFactory;
+use Metricool\Http\Responses\Statistics\CountriesResponse;
+use Metricool\Http\Responses\Statistics\RefererResponse;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Services\DistributionStatisticsService;
 
-class StatisticsEndpoint implements SingleEndpointInterface
+class DistributionEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
 
-    const ROUTE = 'statistics';
+    const ROUTE = 'distribution';
+
+    const metricsResponseMapper = [
+        'countries' => CountriesResponse::class,
+        'referers' => RefererResponse::class,
+    ];
 
     /**
      * Only enable this endpoint if the user has access to the admin area and
@@ -30,7 +37,7 @@ class StatisticsEndpoint implements SingleEndpointInterface
      */
     public function registerRoute(): string
     {
-        return self::ROUTE . '/(?P<statistic>[^/]+)';
+        return self::ROUTE . '/(?P<metric>[^/]+)';
     }
 
     /**
@@ -72,18 +79,28 @@ class StatisticsEndpoint implements SingleEndpointInterface
     private function buildResponse(\WP_REST_Request $request): array
     {
         $statisticsModule = App::provide('client')->statistics();
-        $metric = $request->get_param('statistic') ?: '';
 
+        $metric = $request->get_param('metric') ?: '';
         $requestFilters = $request->get_param('filters');
 
+        $response = $this->findResponseFromMetric($metric);
+
         $metricModule = $statisticsModule->$metric();
-        if (method_exists($metricModule, 'filter') && !empty($requestFilters)) {
+        if (!empty($requestFilters)) {
             $metricModule->filter($requestFilters);
         }
         $results = $metricModule->get();
 
-        $response = StatisticResponseFactory::buildResponse($metric, $results);
+        $response = new $response($results);
 
         return $response->body();
+    }
+
+    protected function findResponseFromMetric($metric): string
+    {
+        if(!array_key_exists($metric, self::metricsResponseMapper)) {
+            throw new \InvalidArgumentException("Metric $metric is not accepted by this endpoint");
+        }
+        return self::metricsResponseMapper[$metric];
     }
 }
