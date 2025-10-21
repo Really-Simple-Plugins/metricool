@@ -2,6 +2,8 @@
 
 namespace Metricool\Http\Responses\Statistics;
 
+use Locale;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Responses\StatisticsResponse;
 
 class CountriesResponse extends StatisticsResponse
@@ -13,10 +15,19 @@ class CountriesResponse extends StatisticsResponse
     public function getChartColumns(): array
     {
         return [
-            'metric' => 'value',
+            'value' => 'value',
             'country' => esc_html__('Country', 'metricool'),
-            'visitors' => esc_html__('Visitors', 'metricool')
+            'visitors' => esc_html__('Visitors', 'metricool'),
         ];
     }
 
+    protected function getSingleItem(DistributionDTO $item, int $total): object
+    {
+        return (object) [
+            'value' => $item->value,
+            'country' => Locale::getDisplayRegion('-' . $item->value, get_user_locale()),
+            'visitors' => $item->amount,
+            'percentage' => $item->calculatePercentageFromTotal($total)
+        ];
+    }
 }

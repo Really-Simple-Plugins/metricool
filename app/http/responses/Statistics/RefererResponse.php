@@ -2,8 +2,7 @@
 
 namespace Metricool\Http\Responses\Statistics;
 
-use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTOs\DistributionStatistics\ReferrerDTO;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Responses\StatisticsResponse;
 
 class RefererResponse extends StatisticsResponse
@@ -15,5 +14,14 @@ class RefererResponse extends StatisticsResponse
     public function getChartColumns(): array
     {
         return [];
+    }
+
+    public function getSingleItem(DistributionDTO $item, int $total): object
+    {
+        return (object) [
+            'url' => $item->value,
+            'pageViews' => $item->amount,
+            'percentage' => $item->calculatePercentageFromTotal($total)
+        ];
     }
 }
