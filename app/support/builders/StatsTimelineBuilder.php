@@ -4,13 +4,13 @@ namespace Metricool\Builders;
 
 use Carbon\Carbon;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTOs\TimelineStatistics\TimelineDTO;
+use Metricool\Http\Metricool\DTOs\TimelineDTO;
 
 /**
  * Builds a timeline from a collection of metrics and their corresponding statistics.
  * @see AnalyticsService for usage example
  */
-class TimelineResponseBuilder
+class StatsTimelineBuilder
 {
     public array $timeline = [];
     /** @var array<string, array{timelineStatistics: Collection<TimelineDTO>, results: Collection<TimelineDTO>}> */
