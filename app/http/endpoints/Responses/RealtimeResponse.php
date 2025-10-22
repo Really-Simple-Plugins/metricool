@@ -8,26 +8,31 @@ use Metricool\Services\RealtimeService;
 
 class RealtimeResponse extends Response
 {
-    protected RealtimeService $service;
+    public RealtimeService $service;
 
     public function __construct()
     {
         $this->service = new RealtimeService();
     }
 
-    public function addMetric(string $name, string $label, array $results): self
+    public function addMetric(string $name, string $label, array $results, bool $useInTimeline = true): self
     {
-        $this->service->loadMetric($name, $label, $this->hydrateResults($results));
+        $results = $this->hydrateResults($this->orderResults($results));
+
+        $this->service->loadMetric($name, $label, $results, $useInTimeline);
 
         return $this;
+    }
+
+    protected function orderResults($results)
+    {
+        ksort($results);
+        return $results;
     }
 
     protected function hydrateResults(array $results): Collection
     {
         $timeline = new Collection();
-
-        // order the results
-        ksort($results);
 
         foreach ($results as $timestamp => $amount) {
             $timeline->push(new TimelineDTO($timestamp, $amount));

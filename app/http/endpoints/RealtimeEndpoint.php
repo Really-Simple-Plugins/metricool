@@ -74,7 +74,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
         // Build the response from our data
         $response = new RealtimeResponse();
         $response->addMetric('pageViews', esc_html__('Page views', 'metricool'), $pageViews);
-        $response->addMetric('sessions', esc_html__('Sessions', 'metricool'), $sessions['timeline']);
+        $response->addMetric('sessions', esc_html__('Visitors', 'metricool'), $sessions['timeline'], false);
 
         return $response->body();
     }

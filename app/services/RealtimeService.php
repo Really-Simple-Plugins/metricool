@@ -12,7 +12,8 @@ class RealtimeService
      * @var array<string, array{
      *     name: string,
      *     label: string,
-     *     results: Collection<TimelineDTO>
+     *     results: Collection<TimelineDTO>,
+     *     useInTimeline: bool,
      *  }> Metrics holds the name, label and results of the metric
      **/
     protected array $metrics = [];
@@ -21,12 +22,13 @@ class RealtimeService
      * Sets the metrics to be used in the realtime service. The metrics contains the name, label and results of each metric.
      * @param Collection<TimelineDTO> $results
      */
-    public function loadMetric(string $metric, string $label, Collection $results): self
+    public function loadMetric(string $metric, string $label, Collection $results, $useInTimeline = true): self
     {
         $this->metrics[$metric] = [
             'name' => $metric,
             'label' => $label,
-            'results' => $results
+            'results' => $results,
+            'useInTimeline' => $useInTimeline,
         ];
 
         return $this;
@@ -76,7 +78,7 @@ class RealtimeService
      */
     public function getTimelineData(): array
     {
-        return (new StatsTimelineBuilder())->setDateFormat('j M')
+        return (new StatsTimelineBuilder())->setDateFormat('j M H:i')
             ->setMetrics($this->metrics)
             ->build();
     }
