@@ -15,21 +15,21 @@ class RealtimeResponse extends Response
         $this->service = new RealtimeService();
     }
 
+    /**
+     * Adds a metric to the service. The results will be hydrated and ordered before being added to the service.
+     */
     public function addMetric(string $name, string $label, array $results, bool $useInTimeline = true): self
     {
-        $results = $this->hydrateResults($this->orderResults($results));
+        $results = $this->hydrateResults($results)->sortBy('timestamp');
 
         $this->service->loadMetric($name, $label, $results, $useInTimeline);
 
         return $this;
     }
 
-    protected function orderResults($results)
-    {
-        ksort($results);
-        return $results;
-    }
-
+    /**
+     * Orders and hydrates the results into a collection of TimelineDTO objects.
+     */
     protected function hydrateResults(array $results): Collection
     {
         $timeline = new Collection();
@@ -41,6 +41,9 @@ class RealtimeResponse extends Response
         return $timeline;
     }
 
+    /**
+     * Creates the response body
+     */
     public function body(): array
     {
         return [
