@@ -68,13 +68,15 @@ class RealtimeEndpoint implements SingleEndpointInterface
         $realtimeModule = App::provide('client')->realtime();
 
         // Get our data
-        $pageViews = $realtimeModule->pageViewsPerHour()->get();
         $sessions = $realtimeModule->sessions()->get();
+        $values = $realtimeModule->current()->get();
+
+        // todo: validate results, empty check, etc.
 
         // Build the response from our data
         $response = new RealtimeResponse();
-        $response->addMetric('pageViews', esc_html__('Page views', 'metricool'), $pageViews);
-        $response->addMetric('visitors', esc_html__('Visitors', 'metricool'), $sessions['timeline'], false);
+        $response->addMetric('pageViews', esc_html__('Page views', 'metricool'), $sessions['timeline']);
+        $response->service->addTotals('visitors', esc_html__('Visitors', 'metricool'), $values['Visitors']);
 
         return $response->body();
     }
