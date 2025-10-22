@@ -1,8 +1,8 @@
 <?php
 
-namespace Metricool\Http\Endpoints\responses\Statistics;
+namespace Metricool\Http\Endpoints\Responses\Statistics;
 
-use Metricool\Http\Endpoints\responses\StatisticsResponse;
+use Metricool\Http\Endpoints\Responses\StatisticsResponse;
 use Metricool\Http\Metricool\DTOs\DistributionDTO;
 
 class RefererResponse extends StatisticsResponse

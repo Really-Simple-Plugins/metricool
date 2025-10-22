@@ -3,8 +3,8 @@
 namespace Metricool\Http\Endpoints;
 
 use Metricool\App;
-use Metricool\Http\Endpoints\responses\Statistics\CountriesResponse;
-use Metricool\Http\Endpoints\responses\Statistics\RefererResponse;
+use Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse;
+use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
@@ -60,7 +60,7 @@ class DistributionEndpoint implements SingleEndpointInterface
         try {
             $response = $this->buildResponse($request);
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(esc_html__('Failed to load analytics data', 'metricool'), $e->getMessage(), 500);
+            return $this->sendHttpErrorResponse(esc_html__('Failed to load Analytics data', 'metricool'), $e->getMessage(), 500);
         }
 
         return $this->sendHttpResponse($response);
@@ -68,7 +68,7 @@ class DistributionEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Build the specific analytics response for the endpoint. This is mainly
+     * Build the specific Analytics response for the endpoint. This is mainly
      * used in the plugin Dashboard to reflect non-realtime statistics.
      * Building it server side prevents client-side complexity.
      *

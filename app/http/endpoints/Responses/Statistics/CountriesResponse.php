@@ -1,9 +1,9 @@
 <?php
 
-namespace Metricool\Http\Endpoints\responses\Statistics;
+namespace Metricool\Http\Endpoints\Responses\Statistics;
 
 use Locale;
-use Metricool\Http\Endpoints\responses\StatisticsResponse;
+use Metricool\Http\Endpoints\Responses\StatisticsResponse;
 use Metricool\Http\Metricool\DTOs\DistributionDTO;
 
 class CountriesResponse extends StatisticsResponse

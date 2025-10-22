@@ -1,6 +1,6 @@
 <?php
 
-namespace Metricool\Http\Endpoints\responses;
+namespace Metricool\Http\Endpoints\Responses;
 
 use Metricool\Builders\StatsChartTableBuilder;
 use Metricool\Helpers\Collection;
@@ -11,7 +11,7 @@ use Metricool\Http\Metricool\DTOs\DistributionDTO;
  * will have a percentage of the total distribution of the metric. The result
  * in the Chart holds the values to be used inside the Chart
  *
- * These responses are dynamically created from endpoints/DistributionEndpoint.
+ * These Responses are dynamically created from endpoints/DistributionEndpoint.
  * @see \Metricool\Http\Endpoints\DistributionEndpoint
  */
 abstract class StatisticsResponse extends Response
@@ -22,6 +22,7 @@ abstract class StatisticsResponse extends Response
     public function __construct(Collection $results)
     {
         $this->results = new Collection();
+
         // process and add the results, calculates the distribution
         $this->processResults($results);
     }
@@ -71,7 +72,7 @@ abstract class StatisticsResponse extends Response
     }
 
     /**
-     *  Calculates the total amount of the results
+     * Calculates the total amount of the results
      */
     public function getTotalAmountOfResults(Collection $results): int
     {

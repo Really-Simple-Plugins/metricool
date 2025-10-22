@@ -1,6 +1,6 @@
 <?php
 
-namespace Metricool\Http\Endpoints\responses;
+namespace Metricool\Http\Endpoints\Responses;
 
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 use Metricool\Services\Analytics\TrendService;
@@ -14,11 +14,11 @@ class AnalyticsResponse extends Response
     {
         $this->service = new AnalyticsService(new TrendService());
 
-        if ($requestFilters['start']) {
+        if (isset($requestFilters['start'])) {
             $this->service->setStartDate($requestFilters['start']);
         }
 
-        if ($requestFilters['end']) {
+        if (isset($requestFilters['end'])) {
             $this->service->setEndDate($requestFilters['end']);
         }
     }
