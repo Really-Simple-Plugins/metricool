@@ -36,7 +36,7 @@ class RealtimeService
 
     /**
      * Gets the results of a metric
-     * @return Collection<int, TimelineDTO>
+     * @return Collection<TimelineDTO>
      * @throws \InvalidArgumentException
      */
     protected function getResults(string $metric): Collection
@@ -53,8 +53,7 @@ class RealtimeService
      */
     protected function calcTotalAmount(string $metric): float
     {
-        return $this->getResults($metric)
-            ->sum('amount');
+        return $this->getResults($metric)->sum('amount');
     }
 
     /**
@@ -74,7 +73,7 @@ class RealtimeService
 
     /**
      * Builds the timeline
-     * @see \Metricool\Http\Endpoints\AnalyticsEndpoint
+     * @see \Metricool\Http\Endpoints\RealtimeEndpoint
      */
     public function getTimelineData(): array
     {
