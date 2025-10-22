@@ -17,20 +17,23 @@ class RealtimeResponse extends Response
 
     /**
      * Adds a metric to the service. The results will be hydrated and ordered before being added to the service.
+     * @param $results array{timestamp: int, amount: float} Results from a Metricool timeline response
      */
     public function addMetric(string $name, string $label, array $results, bool $useInTimeline = true): self
     {
-        $results = $this->hydrateResults($results)->sortBy('timestamp');
+        // create an array of TimelineDTO's and sort them
+        $results = $this->hydrateTimelineResults($results)->sortBy('timestamp');
 
-        $this->service->loadMetric($name, $label, $results, $useInTimeline);
+        // add the sorted results to the service
+        $this->service->addMetric($name, $label, $results, $useInTimeline);
 
         return $this;
     }
 
     /**
-     * Orders and hydrates the results into a collection of TimelineDTO objects.
+     * Orders and hydrates the results of a Metricool timeline into a collection of TimelineDTO objects.
      */
-    protected function hydrateResults(array $results): Collection
+    protected function hydrateTimelineResults(array $results): Collection
     {
         $timeline = new Collection();
 
