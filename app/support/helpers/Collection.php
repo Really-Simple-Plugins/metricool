@@ -2,9 +2,9 @@
 
 namespace Metricool\Helpers;
 
+use ArrayIterator;
 use Closure;
 use IteratorAggregate;
-use ArrayIterator;
 
 class Collection implements IteratorAggregate
 {
@@ -42,8 +42,51 @@ class Collection implements IteratorAggregate
     }
 
     /**
+     * Sort the collection using the given callback.
+     */
+    public function sortBy($callback, $options = SORT_REGULAR, $descending = false): self
+    {
+        $results = [];
+
+        $callback = $this->valueRetriever($callback);
+
+        // First we will loop through the items and get the comparator from a callback
+        // function which we were given. Then, we will sort the returned values and
+        // grab all the corresponding values for the sorted keys from this array.
+        foreach ($this->items as $key => $value) {
+            $results[$key] = $callback($value, $key);
+        }
+
+        $descending ? arsort($results, $options)
+            : asort($results, $options);
+
+        // Once we have sorted all of the keys in the array, we will loop through them
+        // and grab the corresponding model so we can set the underlying items list
+        // to the sorted version. Then we'll just return the collection instance.
+        foreach (array_keys($results) as $key) {
+            $results[$key] = $this->items[$key];
+        }
+
+        return new static($results);
+    }
+
+    /**
+     * Run a filter over each of the items.
+     * @param callable|null $callback
+     */
+    public function filter(callable $callback = null): self
+    {
+        if ($callback) {
+            return new static(array_filter($this->items, $callback, ARRAY_FILTER_USE_BOTH));
+        }
+
+        return new static(array_filter($this->items));
+    }
+
+    /**
      * Get the sum of the given values.
      * @param callable|string|null $callback
+     * @return float|int
      */
     public function sum($callback = null)
     {
@@ -70,17 +113,6 @@ class Collection implements IteratorAggregate
         }
 
         return $result;
-    }
-
-    /**
-     * Return the default value of the given value.
-     *
-     * @param mixed $value
-     * @return mixed
-     */
-    protected function value($value, ...$args)
-    {
-        return $value instanceof Closure ? $value(...$args) : $value;
     }
 
     /**
@@ -136,6 +168,17 @@ class Collection implements IteratorAggregate
         };
     }
 
+    /**
+     * Return the default value of the given value.
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    protected function value($value, ...$args)
+    {
+        return $value instanceof Closure ? $value(...$args) : $value;
+    }
+
 
     /**
      * Get an item from an array or object using "dot" notation.
@@ -144,7 +187,6 @@ class Collection implements IteratorAggregate
      * @param mixed $default
      * @return mixed
      */
-
     protected function get($target, $key, $default = null)
     {
         $key = is_array($key) ? $key : explode('.', $key);
@@ -190,19 +232,6 @@ class Collection implements IteratorAggregate
     }
 
     /**
-     * Run a filter over each of the items.
-     * @param callable|null $callback
-     */
-    public function filter(callable $callback = null): self
-    {
-        if ($callback) {
-            return new static(array_filter($this->items, $callback, ARRAY_FILTER_USE_BOTH));
-        }
-
-        return new static(array_filter($this->items));
-    }
-
-    /**
      * Get an operator checker callback.
      * @param string|null $operator
      * @param mixed $value
@@ -225,15 +254,23 @@ class Collection implements IteratorAggregate
             switch ($operator) {
                 default:
                 case '=':
-                case '==':  return $retrieved == $value;
+                case '==':
+                    return $retrieved == $value;
                 case '!=':
-                case '<>':  return $retrieved != $value;
-                case '<':   return $retrieved < $value;
-                case '>':   return $retrieved > $value;
-                case '<=':  return $retrieved <= $value;
-                case '>=':  return $retrieved >= $value;
-                case '===': return $retrieved === $value;
-                case '!==': return $retrieved !== $value;
+                case '<>':
+                    return $retrieved != $value;
+                case '<':
+                    return $retrieved < $value;
+                case '>':
+                    return $retrieved > $value;
+                case '<=':
+                    return $retrieved <= $value;
+                case '>=':
+                    return $retrieved >= $value;
+                case '===':
+                    return $retrieved === $value;
+                case '!==':
+                    return $retrieved !== $value;
             }
         };
     }
