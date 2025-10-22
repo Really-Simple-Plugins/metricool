@@ -41,10 +41,6 @@ class StatsTimelineBuilder
     public function build(): array
     {
         foreach ($this->metrics as $name => $metric) {
-            if ($metric['useInTimeline'] === false) {
-                continue;
-            }
-
             $statistics = ($metric['results'] ?? []);
             foreach ($statistics as $statistic) {
                 if ($this->hasRow($statistic->timestamp) === false) {
@@ -70,7 +66,10 @@ class StatsTimelineBuilder
 
     /**
      * Sets the metrics that should be included in a timeline item
-     * @param array<string, array{timelineStatistics: TimelineStatistics, results: Collection<TimelineDTO>}> $metrics
+     * @param array<string, array{
+     *     timelineStatistics: TimelineStatistics,
+     *     results: Collection<TimelineDTO>
+     * }> $metrics
      */
     public function setMetrics(array $metrics): self
     {
@@ -117,9 +116,6 @@ class StatsTimelineBuilder
 
         // initialize the properties for each metric, these are the keys of the metrics
         foreach ($this->metrics as $property => $metric) {
-            if ($metric['useInTimeline'] === false) {
-                continue;
-            }
             $row[$property] = 0.0;
         }
 
@@ -137,7 +133,7 @@ class StatsTimelineBuilder
     }
 
     /**
-     * Adds a metric (Visits / PageViews / etc) to the row
+     * Adds a metric (Visits / PageViews / etc.) to the row
      */
     protected function addMetricToRow(&$row, string $metric, TimelineDTO $statistic): void
     {

@@ -17,43 +17,41 @@ class RealtimeService
      *  }> Metrics holds the name, label and results of the metric
      **/
     protected array $metrics = [];
+    /**
+     * @var array<string, array{
+     *     label: string,
+     *     totalAmount: int,
+     *  }> Totals holds the values to be shown in the totals
+     **/
+    protected array $totals = [];
 
     /**
      * Sets the metrics to be used in the realtime service. The metrics contains the name, label and results of each metric.
      * @param Collection<TimelineDTO> $results
      */
-    public function loadMetric(string $metric, string $label, Collection $results, $useInTimeline = true): self
+    public function addMetric(string $metric, string $label, Collection $results, $useInTimeline = true, $useInTotals = true): self
     {
-        $this->metrics[$metric] = [
-            'name' => $metric,
-            'label' => $label,
-            'results' => $results,
-            'useInTimeline' => $useInTimeline,
-        ];
+        if ($useInTimeline) {
+            $this->metrics[$metric] = [
+                'name' => $metric,
+                'label' => $label,
+                'results' => $results,
+            ];
+        }
+
+        if ($useInTotals) {
+            $this->addTotals($metric, $label, $results->sum('amount'));
+        }
 
         return $this;
     }
 
-    /**
-     * Gets the results of a metric
-     * @return Collection<TimelineDTO>
-     * @throws \InvalidArgumentException
-     */
-    protected function getResults(string $metric): Collection
+    public function addTotals(string $metric, string $label, int $amount)
     {
-        if (array_key_exists($metric, $this->metrics) === false) {
-            throw new \InvalidArgumentException("Incompatible metric given: $metric");
-        }
-
-        return $this->metrics[$metric]['results'];
-    }
-
-    /**
-     * Sums the amount of hits of this metric
-     */
-    protected function calcTotalAmount(string $metric): float
-    {
-        return $this->getResults($metric)->sum('amount');
+        $this->totals[$metric] = [
+            'label' => $label,
+            'totalAmount' => $amount,
+        ];
     }
 
     /**
@@ -61,14 +59,7 @@ class RealtimeService
      */
     public function getTotals(): array
     {
-        $totals = [];
-        foreach ($this->metrics as $metric => $metricData) {
-            $totals[$metric] = [
-                'label' => $metricData['label'],
-                'totalAmount' => $this->calcTotalAmount($metric),
-            ];
-        }
-        return $totals;
+        return $this->totals;
     }
 
     /**
