@@ -1,10 +1,12 @@
 <?php
+
 namespace Metricool;
 
+use Carbon\Carbon;
+use Metricool\Managers\ControllerManager;
+use Metricool\Managers\EndpointManager;
 use Metricool\Managers\FeatureManager;
 use Metricool\Managers\ProviderManager;
-use Metricool\Managers\EndpointManager;
-use Metricool\Managers\ControllerManager;
 
 class Plugin
 {
@@ -29,6 +31,7 @@ class Plugin
      */
     public function boot()
     {
+        Carbon::setLocale('fr');
         register_activation_hook(App::env('plugin.base_file'), [$this, 'activation']);
         register_deactivation_hook(App::env('plugin.base_file'), [$this, 'deactivation']);
         register_uninstall_hook(App::env('plugin.base_file'), 'Metricool\Plugin::uninstall');
@@ -202,7 +205,7 @@ class Plugin
      */
     public function checkForUpgrades(): void
     {
-        $previousSavedVersion = (string) get_option('_metricool_current_version', '');
+        $previousSavedVersion = (string)get_option('_metricool_current_version', '');
         if ($previousSavedVersion === App::env('plugin.version')) {
             return; // Nothing to do
         }

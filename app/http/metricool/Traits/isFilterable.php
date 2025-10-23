@@ -2,6 +2,8 @@
 
 namespace Metricool\Http\Metricool\Traits;
 
+use Metricool\Utility\StringUtility;
+
 /**
  * Parent classes should define an endpoint property
  * @property string $endpoint
@@ -84,11 +86,12 @@ trait isFilterable
     }
 
     /**
-     * Method used to apply a filter. Calls apply{FilterName}Filter() method when present
+     * Method used to apply a filter. Calls apply{FilterName}Filter() method when
+     * present.
      */
-    protected function applyFilter($filterName, $filterValue): bool
+    private function applyFilter(string $filterName, string $filterValue): bool
     {
-        $filterMethod = 'apply' . ucfirst($filterName) . 'Filter';
+        $filterMethod = 'apply' . StringUtility::snakeToPascalCase($filterName) . 'Filter';
 
         if (method_exists($this, $filterMethod)) {
             return $this->{$filterMethod}($filterValue);
