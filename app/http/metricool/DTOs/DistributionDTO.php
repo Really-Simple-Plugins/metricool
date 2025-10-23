@@ -19,7 +19,11 @@ class DistributionDTO extends DTO
         $this->amount = $amount;
     }
 
-    public function calculatePercentageFromTotal($total)
+    /**
+     * Calculates the percentage of the amount in relation to the total number
+     * @see \Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse::getSingleItem()
+     */
+    public function calculatePercentageFromTotal($total): float
     {
         if ($total === 0 || $this->amount === 0) {
             return 0;

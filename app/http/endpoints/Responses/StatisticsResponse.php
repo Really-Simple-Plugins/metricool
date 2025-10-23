@@ -82,7 +82,8 @@ abstract class StatisticsResponse extends Response
     }
 
     /**
-     * Processes results, this calculated distribution percentages on each result
+     * Processes results, this calculates distribution percentages on each result
+     * and adds them to the results collection.
      * @param Collection|DistributionDTO[] $results
      */
     protected function processResults(Collection $results): self
