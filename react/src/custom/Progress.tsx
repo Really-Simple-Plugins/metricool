@@ -1,8 +1,8 @@
-import { Card, CardHeader, CardHeaderTitle } from "../components";
-import { __, sprintf, _n } from "@wordpress/i18n";
+import { Block, BlockHeader, BlockHeaderTitle } from "../components";
+import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import { useState } from "react";
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import Task, { type TaskProps } from "./Task.tsx";
 
 const Progress = () => {
@@ -54,20 +54,24 @@ const Progress = () => {
 
     const [activeTab, setActiveTab] = useState(1);
     const [displayedTasks, setDisplayedTasks] = useState(remainingTasks);
-    const tabs = [`${__("All Tasks", 'metricool')} (${tasks.length})`, `${__("Remaining Tasks", "metricool")} (${remainingTasks.length})`];
+    const tabs = [{
+        title: `${__("All Tasks", "metricool")} (${tasks.length})`
+    }, {
+        title: `${__("Remaining Tasks", "metricool")} (${remainingTasks.length})`
+    }];
     const onTabChange = (tabIndex: number) => {
         setActiveTab(tabIndex);
         setDisplayedTasks(tabIndex === 0 ? tasks : remainingTasks);
     };
 
     return (
-        <Card>
-            <CardHeader className={"flex justify-between"}>
-                <CardHeaderTitle>{__("Progress", "metricool")}</CardHeaderTitle>
+        <Block>
+            <BlockHeader className={"flex justify-between"}>
+                <BlockHeaderTitle>{__("Progress", "metricool")}</BlockHeaderTitle>
                 <TabNavigation activeTab={activeTab} onTabClick={onTabChange} separator={true} tabs={tabs}/>
-            </CardHeader>
+            </BlockHeader>
             <FlexContainer direction={"column"}>
-                <div className={"w-full bg-gray-200 rounded-md h-5"}>
+                <div className={"w-full bg-neutral-200 rounded-md h-5"}>
                     <div
                         className={"bg-[image:var(--gradient-brand)] h-5 rounded-md transition-all duration-300"}
                         style={{ width: `${completionPercentage}%` }}
@@ -91,7 +95,7 @@ const Progress = () => {
                     ))}
                 </div>
             </FlexContainer>
-        </Card>
+        </Block>
     );
 };
 

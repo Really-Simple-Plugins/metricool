@@ -1,17 +1,17 @@
-import { Card, CardHeader, CardHeaderTitle } from "../components";
+import { Block, BlockHeader, BlockHeaderTitle } from "../components";
 import { __ } from "@wordpress/i18n";
 
 const NotificationsSidebar = () => {
     return (
-        <Card variant={"transparent"}>
-            <CardHeader className={"!gap-3"}>
-                <CardHeaderTitle>
+        <Block variant={"transparent"}>
+            <BlockHeader className={"!gap-3"}>
+                <BlockHeaderTitle>
                     {__("Notifications", "metricool")}
-                </CardHeaderTitle>
+                </BlockHeaderTitle>
                 <hr/>
-            </CardHeader>
+            </BlockHeader>
             <div className={"text-gray-400 italic"}>{__("You currently have no notifications.", "metricool")}</div>
-        </Card>
+        </Block>
     );
 };
 

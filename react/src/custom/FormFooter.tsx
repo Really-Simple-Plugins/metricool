@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import { Button } from "../components";
 import { useEffect, useState } from "react";
 import ScrollProgressBar from "./ScrollProgressBar.tsx";
