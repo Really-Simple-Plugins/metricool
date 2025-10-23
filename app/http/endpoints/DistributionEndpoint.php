@@ -19,7 +19,7 @@ class DistributionEndpoint implements SingleEndpointInterface
 
     public const ROUTE = 'distribution';
 
-    const metricsResponseMapper = [
+    private const metricsResponseMapper = [
         'countries' => CountriesResponse::class,
         'referers' => RefererResponse::class,
     ];
@@ -88,7 +88,7 @@ class DistributionEndpoint implements SingleEndpointInterface
         // Load the results
         $results = $this->getResultsFromMetric($metric, $requestFilters);
 
-        // Load the results and add them to the response
+        // Process the results and add them to the response
         $response->processResults($results);
 
         return $response->body();
