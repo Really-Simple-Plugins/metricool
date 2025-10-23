@@ -79,8 +79,6 @@ class RealtimeEndpoint implements SingleEndpointInterface
             throw new \Exception('Visitors data is missing');
         }
 
-        // todo: validate results, empty check, etc.
-
         $response = new RealtimeResponse();
 
         // Add the pageViews to the timeline and totals
