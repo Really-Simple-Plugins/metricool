@@ -2,6 +2,7 @@
 
 namespace Metricool\Http\Metricool\Entities;
 
+use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\DTOs\TimelineDTO;
@@ -50,6 +51,16 @@ class TimelineStatistics
             throw new \InvalidArgumentException("Incompatible metric given: $this->metric");
         }
 
+        /**
+         * The distribution statistics API need a filter by default to prevent
+         * Internal Server errors on the remote server. We set the default
+         * filters to the last 30 days.
+         */
+        $this->filters = [
+            'start' => Carbon::now()->subDays(30)->format('Ymd'),
+            'end' => Carbon::now()->format('Ymd'),
+        ];
+
         $this->client = $client;
         $this->endpoint .= $this->metric;
         $this->requiresFilter = $filterRequired;
@@ -63,7 +74,60 @@ class TimelineStatistics
         return [
             'start' => '/^\d+$/',
             'end' => '/^\d+$/',
+            'period' => '/^(last\d+days|last\d+months|yesterday|)$/',
         ];
+    }
+
+    /**
+     * Applies the period filter
+     * @see IsFilterable
+     */
+    protected function applyPeriodFilter(string $period): bool
+    {
+        $startDate = Carbon::now();
+        $endDate = Carbon::now();
+
+        switch ($period) {
+            case 'yesterday':
+                $startDate->subDay();
+                $endDate->subDay();
+                break;
+            case 'lastweek':
+                $startDate->subDays(7)->startOfWeek();
+                $endDate->subDays(7)->endOfWeek();
+                break;
+            case 'last30days':
+                $startDate->subDays(30);
+                break;
+            case 'last3months':
+                $startDate->subMonths(3);
+                break;
+            case 'last6months':
+                $startDate->subMonths(6);
+                break;
+            case 'last12months':
+                $startDate->subMonths(12);
+                break;
+            case 'currentmonth':
+                $startDate->startOfMonth();
+                break;
+            default:
+                return false;
+        }
+
+        $this->endpoint = add_query_arg(
+            sanitize_text_field('start'),
+            sanitize_text_field($startDate->format('Ymd')),
+            $this->endpoint
+        );
+
+        $this->endpoint = add_query_arg(
+            sanitize_text_field('end'),
+            sanitize_text_field($endDate->format('Ymd')),
+            $this->endpoint
+        );
+
+        return true;
     }
 
     /**

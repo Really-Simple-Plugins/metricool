@@ -50,22 +50,18 @@ trait isFilterable
 
         $acceptedFilters = $this->getAcceptedFilters();
 
-        foreach ($filters as $name => $filter) {
-            if (empty($acceptedFilters[$name])) {
+        foreach ($filters as $filterName => $filterValue) {
+            if (empty($acceptedFilters[$filterName])) {
                 continue;
             }
 
-            if ($this->isFilterValid($filter, $acceptedFilters[$name]) === false) {
+            if ($this->isFilterValid($filterValue, $acceptedFilters[$filterName]) === false) {
                 continue;
             }
 
-            $this->endpoint = add_query_arg(
-                sanitize_text_field($name),
-                sanitize_text_field($filter),
-                $this->endpoint
-            );
-
-            $this->filtered = true;
+            if ($this->applyFilter($filterName, $filterValue)) {
+                $this->filtered = true;
+            }
         }
 
         return $this;
@@ -74,9 +70,9 @@ trait isFilterable
     /**
      * Process the filter value based on the pregMatch condition.
      */
-    private function isFilterValid(string $filter, string $pregMatch): bool
+    private function isFilterValid(string $filterValue, string $pregMatch): bool
     {
-        return preg_match($pregMatch, $filter) ? $filter : false;
+        return (bool)preg_match($pregMatch, $filterValue);
     }
 
     /**
@@ -85,5 +81,25 @@ trait isFilterable
     public function getFilters(): array
     {
         return $this->filters;
+    }
+
+    /**
+     * Method used to apply a filter. Calls apply{FilterName}Filter() method when present
+     */
+    protected function applyFilter($filterName, $filterValue): bool
+    {
+        $filterMethod = 'apply' . ucfirst($filterName) . 'Filter';
+
+        if (method_exists($this, $filterMethod)) {
+            return $this->{$filterMethod}($filterValue);
+        }
+
+        $this->endpoint = add_query_arg(
+            sanitize_text_field($filterName),
+            sanitize_text_field($filterValue),
+            $this->endpoint
+        );
+
+        return true;
     }
 }
