@@ -15,7 +15,7 @@ import { routeTree } from './routeTree.gen';
 const hashHistory = createHashHistory();
 
 // Create default queryClient
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 // Create a new router instance
 const router = createRouter({
