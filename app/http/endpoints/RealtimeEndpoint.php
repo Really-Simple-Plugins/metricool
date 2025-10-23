@@ -62,6 +62,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
      * Build the specific Analytics response for the endpoint. This is mainly
      * used in the plugin Dashboard to reflect non-realtime statistics.
      * Building it server side prevents client-side complexity.
+     * @throws \Exception
      */
     private function buildResponse(\WP_REST_Request $request): array
     {
@@ -69,14 +70,23 @@ class RealtimeEndpoint implements SingleEndpointInterface
 
         // Get our data
         $sessions = $realtimeModule->sessions()->get();
+        if (!isset($sessions['timeline'])) {
+            throw new \Exception('Session data is missing');
+        }
+
         $values = $realtimeModule->current()->get();
+        if (!isset($values['activeVisits'])) {
+            throw new \Exception('Visitors data is missing');
+        }
 
         // todo: validate results, empty check, etc.
 
-        // Build the response from our data
         $response = new RealtimeResponse();
-        $response->addMetric('pageViews', esc_html__('Page views', 'metricool'), $sessions['timeline']);
-        $response->service->addTotals('visitors', esc_html__('Visitors', 'metricool'), $values['Visitors']);
+
+        // Add the pageViews to the timeline and totals
+        $response->service->addMetric('pageViews', esc_html__('Page views', 'metricool'), $sessions['timeline']);
+        // Add visitors just to the totals
+        $response->service->addTotals('visitors', esc_html__('Visitors', 'metricool'), $values['activeVisits']);
 
         return $response->body();
     }

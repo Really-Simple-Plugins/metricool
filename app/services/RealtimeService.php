@@ -29,8 +29,10 @@ class RealtimeService
      * Sets the metrics to be used in the realtime service. The metrics contains the name, label and results of each metric.
      * @param Collection|TimelineDTO[] $results
      */
-    public function addMetric(string $metric, string $label, Collection $results, $useInTimeline = true, $useInTotals = true): self
+    public function addMetric(string $metric, string $label, array $results, $useInTimeline = true, $useInTotals = true): self
     {
+        $results = $this->hydrateResults($results)->sortBy('timestamp');
+
         if ($useInTimeline) {
             $this->metrics[$metric] = [
                 'name' => $metric,
@@ -44,6 +46,20 @@ class RealtimeService
         }
 
         return $this;
+    }
+
+    /**
+     * Orders and hydrates the results of a Metricool timeline into a collection of TimelineDTO objects.
+     */
+    protected function hydrateResults(array $results): Collection
+    {
+        $collection = new Collection();
+
+        foreach ($results as $timestamp => $amount) {
+            $collection->push(new TimelineDTO($timestamp, $amount));
+        }
+
+        return $collection;
     }
 
     public function addTotals(string $metric, string $label, int $amount)

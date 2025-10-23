@@ -2,8 +2,6 @@
 
 namespace Metricool\Http\Endpoints\Responses;
 
-use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Services\RealtimeService;
 
 class RealtimeResponse extends Response
@@ -30,19 +28,6 @@ class RealtimeResponse extends Response
         return $this;
     }
 
-    /**
-     * Orders and hydrates the results of a Metricool timeline into a collection of TimelineDTO objects.
-     */
-    protected function hydrateTimelineResults(array $results): Collection
-    {
-        $timeline = new Collection();
-
-        foreach ($results as $timestamp => $amount) {
-            $timeline->push(new TimelineDTO($timestamp, $amount));
-        }
-
-        return $timeline;
-    }
 
     /**
      * Creates the response body
