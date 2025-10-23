@@ -79,8 +79,8 @@ class DistributionEndpoint implements SingleEndpointInterface
      */
     private function buildResponse(\WP_REST_Request $request): array
     {
-        $metric = $request->get_param('metric') ?: '';
-        $requestFilters = $request->get_param('filters') ?: [];
+        $metric = ($request->get_param('metric') ?: '');
+        $requestFilters = ($request->get_param('filters') ?: []);
 
         // Find and create the response
         $response = $this->createResponseFromMetric($metric);
@@ -97,7 +97,7 @@ class DistributionEndpoint implements SingleEndpointInterface
     /**
      * @return Collection|DistributionDTO[]
      */
-    protected function getResultsFromMetric(string $metric, ar $filters): Collection
+    protected function getResultsFromMetric(string $metric, array $filters): Collection
     {
         $statisticsModule = App::provide('client')->statistics();
 
