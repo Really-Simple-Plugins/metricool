@@ -13,7 +13,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
     use HasRestAccess;
     use HasAllowlistControl;
 
-    const ROUTE = 'realtime';
+    public const ROUTE = 'realtime';
 
     /**
      * Only enable this endpoint if the user has access to the admin area and

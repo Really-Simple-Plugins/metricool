@@ -13,7 +13,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     use HasRestAccess;
     use HasAllowlistControl;
 
-    const ROUTE = 'analytics';
+    public const ROUTE = 'analytics';
 
     /**
      * Only enable this endpoint if the user has access to the admin area and

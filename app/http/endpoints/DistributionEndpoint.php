@@ -17,7 +17,7 @@ class DistributionEndpoint implements SingleEndpointInterface
     use HasRestAccess;
     use HasAllowlistControl;
 
-    const ROUTE = 'distribution';
+    public const ROUTE = 'distribution';
 
     const metricsResponseMapper = [
         'countries' => CountriesResponse::class,
