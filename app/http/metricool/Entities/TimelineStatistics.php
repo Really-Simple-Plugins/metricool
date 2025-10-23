@@ -151,9 +151,6 @@ class TimelineStatistics
     public function get(): Collection
     {
         if ($this->requiresFilter && $this->filtered === false) {
-            if (empty($this->filters['start']) || empty($this->filters['end'])) {
-                throw new \Exception('Start and end date are required for this timeline statistic');
-            }
             $this->filter($this->filters);
         }
 
