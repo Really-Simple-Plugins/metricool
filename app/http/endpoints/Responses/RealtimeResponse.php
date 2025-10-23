@@ -14,7 +14,7 @@ class RealtimeResponse extends Response
     }
 
     /**
-     * Creates the response body
+     * @inheritDoc
      */
     public function body(): array
     {

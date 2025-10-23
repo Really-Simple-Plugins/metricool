@@ -5,7 +5,6 @@ namespace Metricool\Http\Metricool\DTOs;
 /**
  * This class represents a DistributionDTO of one of the results of
  * the DistributionDTO Entity.
- * {@see \Metricool\Http\Metricool\}
  */
 class DistributionDTO extends DTO
 {
@@ -22,9 +21,9 @@ class DistributionDTO extends DTO
 
     public function calculatePercentageFromTotal($total)
     {
-        if($total === 0 || $this->amount === 0) {
+        if ($total === 0 || $this->amount === 0) {
             return 0;
         }
-        return round((float) (($this->amount / $total) * 100), 3, PHP_ROUND_HALF_UP);
+        return round((float)(($this->amount / $total) * 100), 3, PHP_ROUND_HALF_UP);
     }
 }

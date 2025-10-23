@@ -36,7 +36,7 @@ abstract class StatisticsResponse extends Response
     abstract function getChartColumns(): array;
 
     /**
-     * Creates the response body
+     * @inheritDoc
      */
     public function body(): array
     {
@@ -56,7 +56,8 @@ abstract class StatisticsResponse extends Response
     }
 
     /**
-     * Gets the chart to be used in response
+     * Gets the chart to be used in response. If the columns are empty,
+     * no chart will be produced
      */
     public function getChartData(): array
     {
@@ -96,7 +97,8 @@ abstract class StatisticsResponse extends Response
     }
 
     /**
-     * Mutate the DistributionDTO to the requirements of the endpoint
+     * Mutate the DistributionDTO to the requirements of the endpoint and
+     * calculates the distribution percentage
      */
     abstract protected function getSingleItem(DistributionDTO $item, int $total): object;
 }

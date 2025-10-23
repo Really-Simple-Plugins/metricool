@@ -15,6 +15,9 @@ class AnalyticsResponse extends Response
             ->setRequestFilters($requestFilters);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function body(): array
     {
         return [
