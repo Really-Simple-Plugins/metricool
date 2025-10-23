@@ -1,14 +1,14 @@
-import { Button, Card, CardHeader, CardHeaderTitle } from "../components";
+import { Button, Block, BlockHeader, BlockHeaderTitle } from "../components";
 import { __ } from "@wordpress/i18n";
-import FlexContainer from "./FlexContainer.tsx";
+import { FlexContainer } from "../components";
 import AccountTile from "./AccountTile.tsx";
 
 const ConnectedAccounts = () => {
     return (
-        <Card>
-            <CardHeader>
-                <CardHeaderTitle>{__("Connected Accounts", "metricool")}</CardHeaderTitle>
-            </CardHeader>
+        <Block>
+            <BlockHeader>
+                <BlockHeaderTitle>{__("Connected Accounts", "metricool")}</BlockHeaderTitle>
+            </BlockHeader>
             <FlexContainer direction={"column"} className={"md:flex-row"}>
                 <AccountTile connected={true} accountType={"domain"} accountName={"yourwebsite.com"}/>
                 <AccountTile connected={false} accountType={"twitter"}/>
@@ -20,7 +20,7 @@ const ConnectedAccounts = () => {
             <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} className={"size-fit"}>
                 {__("Connected Accounts", "metricool")}
             </Button>
-        </Card>
+        </Block>
     );
 };
 
