@@ -3,15 +3,6 @@ import { FlexContainer } from "../components";
 import { Icon } from "../components";
 import { type IconProps } from "../components/src/components/Icon.tsx";
 
-const iconColorMap = {
-    "warning": "bg-rsp-warning",
-    "success": "bg-rsp-success",
-    "error": "bg-sp-error",
-    "rss": "bg-rss",
-    "simplybook": "bg-simplybook",
-    "complianz": "bg-complianz",
-};
-
 type ListItemProps = {
     link?: string
     action?: string
@@ -27,7 +18,7 @@ type ListItemProps = {
     iconPosition: "left" | "right",
 } | {
     icon: "circle",
-    iconColor: keyof typeof iconColorMap,
+    iconColor: string,
     iconClass?: string,
     iconPosition: "left" | "right",
 });
@@ -38,7 +29,14 @@ const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, action, chil
         <FlexContainer direction={"row"} className={"items-center justify-between"}>
             <FlexContainer direction={"row"} className={clsx("items-center !gap-2", iconPosition === "right" && "flex-row-reverse")}>
                 {icon && ( icon === "circle" ? (
-                    <div className={clsx("h-3 w-3 rounded-full", iconColor && iconColorMap[iconColor])}></div>
+                    <div className={clsx("h-3 w-3 rounded-full",
+                        iconColor === "warning" && "bg-rsp-warning",
+                        iconColor === "success" && "bg-rsp-success",
+                        iconColor === "error" && "bg-rsp-error",
+                        iconColor === "simplybook" && "bg-simplybook",
+                        iconColor === "rsssl" && "bg-rss",
+                        iconColor === "cmplz" && "bg-complianz",
+                    )}></div>
                 ) : (
                     <Icon icon={icon} iconClass={iconClass} />
                 ))}
