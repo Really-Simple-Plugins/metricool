@@ -12,6 +12,8 @@ class ReviewController implements ControllerInterface
     use HasViews;
     use HasAllowlistControl;
 
+    private const MIN_SESSIONS_COUNT = 20;
+
     private string $reviewAction = 'rsp_metricool_review_form_submit';
     private string $reviewNonceName = 'rsp_metricool_review_nonce';
 
@@ -142,15 +144,15 @@ class ReviewController implements ControllerInterface
 
     /**
      * Returns the message we render in the notice. It only includes the amount
-     * of tracked sessions in the last 30 days if this exceeds 20. Otherwise,
-     * it will render a general message.
+     * of tracked sessions in the last 30 days if this exceeds
+     * {@see MIN_SESSIONS_COUNT}. Otherwise, it will render a general message.
      */
     private function getReviewNoticeMessage(): string
     {
         $mentionedStatistic = esc_html__('statistics', 'metricool');
         $sessionCountLast30Days = $this->getSessionCountLast30Days();
 
-        if ($sessionCountLast30Days > 20) {
+        if ($sessionCountLast30Days > self::MIN_SESSIONS_COUNT) {
             $mentionedStatistic = ($sessionCountLast30Days . ' ' . esc_html__('sessions', 'metricool'));
         }
 
