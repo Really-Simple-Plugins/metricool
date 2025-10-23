@@ -31,7 +31,7 @@ abstract class StatisticsResponse extends Response
      * Gets the properties and labels to be used in the chart and
      * returns the column headers for the chart. Each property is assigned a label.
      * Example: ['property' => 'label']
-     * @see \Metricool\Http\Endpoints\responses\Statistics\CountriesResponse::getChartColumns()
+     * @see \Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse::getChartColumns()
      */
     abstract function getChartColumns(): array;
 
@@ -73,6 +73,7 @@ abstract class StatisticsResponse extends Response
 
     /**
      * Calculates the total amount of the results
+     * @param Collection|DistributionDTO[] $results
      */
     public function getTotalAmountOfResults(Collection $results): int
     {
@@ -80,9 +81,10 @@ abstract class StatisticsResponse extends Response
     }
 
     /**
-     * Processes results, sets distribution percentages on each result
+     * Processes results, this calculated distribution percentages on each result
+     * @param Collection|DistributionDTO[] $results
      */
-    protected function processResults($results): self
+    protected function processResults(Collection $results): self
     {
         $total = $this->getTotalAmountOfResults($results);
 
