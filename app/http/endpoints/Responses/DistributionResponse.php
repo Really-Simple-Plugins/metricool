@@ -63,7 +63,7 @@ abstract class DistributionResponse extends Response
     {
         $response = [];
         $response['tableData'] = $this->getResultData();
-        $response['chartDate'] = $this->getChartData();
+        $response['chartData'] = $this->getChartData();
 
         return $response;
     }
