@@ -14,7 +14,7 @@ use Metricool\Http\Metricool\DTOs\DistributionDTO;
  * These Responses are dynamically created from endpoints/DistributionEndpoint.
  * @see \Metricool\Http\Endpoints\DistributionEndpoint
  */
-abstract class StatisticsResponse extends Response
+abstract class DistributionResponse extends Response
 {
     /** @var Collection|DistributionDTO[] */
     protected Collection $results;

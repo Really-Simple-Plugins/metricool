@@ -94,7 +94,7 @@ class DistributionEndpoint implements SingleEndpointInterface
         return $response->body();
     }
 
-    protected function findResponseFromMetric($metric): string
+    protected function findResponseFromMetric($metric, $results): string
     {
         if (!array_key_exists($metric, self::metricsResponseMapper)) {
             throw new \InvalidArgumentException("Metric $metric is not accepted by this endpoint");

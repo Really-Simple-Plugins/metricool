@@ -2,10 +2,10 @@
 
 namespace Metricool\Http\Endpoints\Responses\Statistics;
 
-use Metricool\Http\Endpoints\Responses\StatisticsResponse;
+use Metricool\Http\Endpoints\Responses\DistributionResponse;
 use Metricool\Http\Metricool\DTOs\DistributionDTO;
 
-class RefererResponse extends StatisticsResponse
+class RefererResponse extends DistributionResponse
 {
     /**
      * The columns for the country chart. Keys represent the property,
