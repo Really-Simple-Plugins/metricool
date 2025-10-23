@@ -4,8 +4,9 @@ import { Icon } from "../components";
 import { type IconProps } from "../components/src/components/Icon.tsx";
 
 type ListItemProps = {
-    link?: string
-    action?: string
+    link?: string,
+    action?: () => void,
+    actionText?: string,
 } & ({
     icon?: never,
     iconColor?: never,
@@ -23,8 +24,7 @@ type ListItemProps = {
     iconPosition: "left" | "right",
 });
 
-const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, action, children, className }: React.ComponentProps<'div'> & ListItemProps) => {
-
+const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, action, actionText, children, className }: React.ComponentProps<'div'> & ListItemProps) => {
     return (
         <FlexContainer direction={"row"} className={"items-center justify-between"}>
             <FlexContainer direction={"row"} className={clsx("items-center !gap-2", iconPosition === "right" && "flex-row-reverse")}>
@@ -50,7 +50,11 @@ const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, action, chil
                     </div>
                 )}
             </FlexContainer>
-            {action && (<span className={"text-sm underline cursor-pointer"}>{action}</span>)}
+            {actionText && (
+                <span onClick={action} className={clsx("text-sm", action && "underline cursor-pointer")}>
+                    {actionText}
+                </span>
+            )}
         </FlexContainer>
     );
 };
