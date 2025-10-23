@@ -74,7 +74,7 @@ class TimelineStatistics
         return [
             'start' => '/^\d+$/',
             'end' => '/^\d+$/',
-            'period' => '/^(last\d+days|last\d+months|yesterday|)$/',
+            'period' => '/^.+$/',
         ];
     }
 
@@ -116,14 +116,14 @@ class TimelineStatistics
         }
 
         $this->endpoint = add_query_arg(
-            sanitize_text_field('start'),
-            sanitize_text_field($startDate->format('Ymd')),
+            'start',
+            $startDate->format('Ymd'),
             $this->endpoint
         );
 
         $this->endpoint = add_query_arg(
-            sanitize_text_field('end'),
-            sanitize_text_field($endDate->format('Ymd')),
+            'end',
+            $endDate->format('Ymd'),
             $this->endpoint
         );
 
