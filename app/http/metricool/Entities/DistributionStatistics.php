@@ -29,7 +29,7 @@ class DistributionStatistics
     private array $metrics = [
         'country',
         'referers',
-        //'sources',
+        'sources',
     ];
 
     /**
