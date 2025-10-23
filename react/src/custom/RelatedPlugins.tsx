@@ -1,6 +1,5 @@
-import { Block, BlockHeader, BlockHeaderTitle } from "../components";
+import { Block, BlockHeader, BlockHeaderTitle, FlexContainer } from "../components";
 import { __ } from "@wordpress/i18n";
-import { FlexContainer } from "../components";
 import ListItem from "./ListItem.tsx";
 
 const RelatedPlugins = () => {
