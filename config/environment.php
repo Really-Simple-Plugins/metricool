@@ -24,6 +24,7 @@ return [
         'react_url' => plugin_dir_url(__DIR__).'react',
         'dashboard_url' => admin_url('admin.php?page=metricool'),
         'support_url' => 'https://wordpress.org/support/plugin/metricool/',
+        'review_url' => 'https://wordpress.org/support/plugin/metricool/reviews/#new-post',
     ],
     'metricool' => [
     ],

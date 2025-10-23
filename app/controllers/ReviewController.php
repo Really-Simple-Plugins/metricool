@@ -34,18 +34,10 @@ class ReviewController implements ControllerInterface
             return;
         }
 
-        $reviewMessage = sprintf(
-            // translators: %1$d is replaced by the amount of bookings, %2$ and %23$ are replaced with opening and closing a tag containing hyperlink
-            __('Hi, Metricool has helped you reach %1$d bookings in the last 30 days. If you have a moment, please consider leaving a review on WordPress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %2$smessage%3$s.', 'metricool'),
-            3,
-            '<a href="' . App::env('plugin.support_url') . '"  rel="noopener noreferrer"  target="_blank">',
-            '</a>'
-        );
-
         $this->render('admin/review-notice', [
-            'logoUrl' => App::env('plugin.assets_url') . 'img/metricool-icon-256x256.png',
-            'reviewUrl' => App::env('metricool.review_url'),
-            'reviewMessage' => $reviewMessage,
+            'logoUrl' => App::env('plugin.assets_url') . 'img/mc-logo.svg',
+            'reviewUrl' => App::env('plugin.review_url'),
+            'reviewMessage' => $this->getReviewNoticeMessage(),
             'reviewAction' => $this->reviewAction,
             'reviewNonceName' => $this->reviewNonceName,
         ]);
@@ -146,5 +138,41 @@ class ReviewController implements ControllerInterface
         $thirtyDaysAgo = Carbon::now()->subDays(30);
 
         return $timestamp->isBefore($thirtyDaysAgo);
+    }
+
+    /**
+     * Returns the message we render in the notice. It only includes the amount
+     * of tracked sessions in the last 30 days if this exceeds 20. Otherwise,
+     * it will render a general message.
+     */
+    private function getReviewNoticeMessage(): string
+    {
+        $mentionedStatistic = esc_html__('statistics', 'metricool');
+        $sessionCountLast30Days = $this->getSessionCountLast30Days();
+
+        if ($sessionCountLast30Days > 20) {
+            $mentionedStatistic = ($sessionCountLast30Days . ' ' . esc_html__('sessions', 'metricool'));
+        }
+
+        return sprintf(
+            // translators: %s is replaced by eiter "x sessions" or "statistics", %2$ and %23$ are replaced with opening and closing a tag containing hyperlink
+            __('Hi, Metricool has tracked %s on your site for the last 30 days. If you have a moment, please consider leaving a review on wordpress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %2$smessage%3$s.', 'metricool'),
+            $mentionedStatistic,
+            '<a href="' . App::env('plugin.support_url') . '"  rel="noopener noreferrer"  target="_blank">',
+            '</a>'
+        );
+    }
+
+    /**
+     * Return amount of tracked sessions for the last 30 days (default filter)
+     * or return zero when the request fails.
+     */
+    private function getSessionCountLast30Days(): int
+    {
+        try {
+            return App::provide('client')->statistics()->visits()->get()->sum('amount');
+        } catch (\Throwable $e) {
+            return 0; // silently fail
+        }
     }
 }
