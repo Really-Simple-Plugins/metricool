@@ -50,11 +50,11 @@ class ReviewController implements ControllerInterface
      */
     public function processReviewFormSubmit(): void
     {
-        if (App::provide('request')->fromGlobal()->isEmpty('rsp_metricool_review_form')) {
+        $request = App::provide('request')->fromGlobal();
+
+        if ($request->isEmpty('rsp_metricool_review_form')) {
             return;
         }
-
-        $request = App::provide('request')->fromGlobal();
 
         $nonce = $request->get($this->reviewNonceName);
         if (wp_verify_nonce($nonce, $this->reviewAction) === false) {
