@@ -2,7 +2,6 @@
 
 namespace Metricool;
 
-use Carbon\Carbon;
 use Metricool\Managers\ControllerManager;
 use Metricool\Managers\EndpointManager;
 use Metricool\Managers\FeatureManager;
@@ -31,7 +30,6 @@ class Plugin
      */
     public function boot()
     {
-        Carbon::setLocale('fr');
         register_activation_hook(App::env('plugin.base_file'), [$this, 'activation']);
         register_deactivation_hook(App::env('plugin.base_file'), [$this, 'deactivation']);
         register_uninstall_hook(App::env('plugin.base_file'), 'Metricool\Plugin::uninstall');
