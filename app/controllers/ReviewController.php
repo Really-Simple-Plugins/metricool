@@ -172,7 +172,9 @@ class ReviewController implements ControllerInterface
     private function getSessionCountLast30Days(): int
     {
         try {
-            return App::provide('client')->statistics()->visits()->get()->sum('amount');
+            return App::provide('client')->statistics()->visits()->filter([
+                'period' => 'last30days',
+            ])->get()->sum('amount');
         } catch (\Throwable $e) {
             return 0; // silently fail
         }
