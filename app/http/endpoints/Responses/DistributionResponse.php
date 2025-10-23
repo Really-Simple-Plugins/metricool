@@ -23,12 +23,25 @@ abstract class DistributionResponse extends Response
      */
     protected Collection $results;
 
-    public function __construct(Collection $results)
+    public function __construct()
     {
         $this->results = new Collection();
+    }
 
-        // process and add the results, calculates the distribution
-        $this->processResults($results);
+    /**
+     * Processes results, this calculates distribution percentages on each result
+     * and adds them to the results collection.
+     * @param Collection|DistributionDTO[] $results
+     */
+    public function processResults(Collection $results): self
+    {
+        $total = $this->getTotalAmountOfResults($results);
+
+        foreach ($results as $result) {
+            $this->results->push($this->getSingleItem($result, $total));
+        }
+
+        return $this;
     }
 
     /**
@@ -87,22 +100,6 @@ abstract class DistributionResponse extends Response
     public function getTotalAmountOfResults(Collection $results): int
     {
         return $results->sum('amount');
-    }
-
-    /**
-     * Processes results, this calculates distribution percentages on each result
-     * and adds them to the results collection.
-     * @param Collection|DistributionDTO[] $results
-     */
-    protected function processResults(Collection $results): self
-    {
-        $total = $this->getTotalAmountOfResults($results);
-
-        foreach ($results as $result) {
-            $this->results->push($this->getSingleItem($result, $total));
-        }
-
-        return $this;
     }
 
     /**

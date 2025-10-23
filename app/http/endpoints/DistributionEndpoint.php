@@ -3,6 +3,7 @@
 namespace Metricool\Http\Endpoints;
 
 use Metricool\App;
+use Metricool\Http\Endpoints\Responses\DistributionResponse;
 use Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse;
 use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
 use Metricool\Interfaces\SingleEndpointInterface;
@@ -81,24 +82,34 @@ class DistributionEndpoint implements SingleEndpointInterface
         $metric = $request->get_param('metric') ?: '';
         $requestFilters = $request->get_param('filters');
 
-        $response = $this->findResponseFromMetric($metric);
+        // Find and create the response
+        $response = $this->createResponseFromMetric($metric);
 
+        // Load the results
         $metricModule = $statisticsModule->$metric();
         if (!empty($requestFilters)) {
             $metricModule->filter($requestFilters);
         }
         $results = $metricModule->get();
 
-        $response = new $response($results);
+        // Load the results and add them to the response
+        $response->processResults($results);
 
         return $response->body();
     }
 
-    protected function findResponseFromMetric($metric, $results): string
+    /**
+     * Find the response that matches the requested metric or throw an exception.
+     * Each metric has its own specific serialisation of the results and chartDatagit
+     */
+    protected function createResponseFromMetric(string $metric): DistributionResponse
     {
         if (!array_key_exists($metric, self::metricsResponseMapper)) {
             throw new \InvalidArgumentException("Metric $metric is not accepted by this endpoint");
         }
-        return self::metricsResponseMapper[$metric];
+
+        $response = self::metricsResponseMapper[$metric];
+
+        return new $response();
     }
 }
