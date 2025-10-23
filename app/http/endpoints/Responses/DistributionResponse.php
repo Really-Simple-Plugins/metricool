@@ -16,7 +16,11 @@ use Metricool\Http\Metricool\DTOs\DistributionDTO;
  */
 abstract class DistributionResponse extends Response
 {
-    /** @var Collection|DistributionDTO[] */
+    /**
+     * A collection of DistributionDTO's that holds the results of the
+     * Metricool\Http\Metricool\Entities\DistributionStatistics entity.
+     * @var Collection|DistributionDTO[]
+     */
     protected Collection $results;
 
     public function __construct(Collection $results)
