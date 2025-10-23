@@ -3,9 +3,11 @@
 namespace Metricool\Http\Endpoints;
 
 use Metricool\App;
+use Metricool\Helpers\Collection;
 use Metricool\Http\Endpoints\Responses\DistributionResponse;
 use Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse;
 use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
@@ -77,25 +79,35 @@ class DistributionEndpoint implements SingleEndpointInterface
      */
     private function buildResponse(\WP_REST_Request $request): array
     {
-        $statisticsModule = App::provide('client')->statistics();
-
         $metric = $request->get_param('metric') ?: '';
-        $requestFilters = $request->get_param('filters');
+        $requestFilters = $request->get_param('filters') ?: [];
 
         // Find and create the response
         $response = $this->createResponseFromMetric($metric);
 
         // Load the results
-        $metricModule = $statisticsModule->$metric();
-        if (!empty($requestFilters)) {
-            $metricModule->filter($requestFilters);
-        }
-        $results = $metricModule->get();
+        $results = $this->getResultsFromMetric($metric, $requestFilters);
 
         // Load the results and add them to the response
         $response->processResults($results);
 
         return $response->body();
+    }
+
+    /**
+     * @return Collection|DistributionDTO[]
+     */
+    protected function getResultsFromMetric(string $metric, ar $filters): Collection
+    {
+        $statisticsModule = App::provide('client')->statistics();
+
+        // Load the results
+        $metricModule = $statisticsModule->$metric();
+        if (!empty($filters)) {
+            $metricModule->filter($filters);
+        }
+
+        return $metricModule->get();
     }
 
     /**
