@@ -3,11 +3,11 @@ import { __ } from "@wordpress/i18n";
 import { FlexContainer } from "../components";
 import ListItem from "./ListItem.tsx";
 
-const OtherPlugins = () => {
+const RelatedPlugins = () => {
     return (
         <Block variant={"transparent"}>
             <BlockHeader>
-                <BlockHeaderTitle>{__("Other Plugins", "metricool")}</BlockHeaderTitle>
+                <BlockHeaderTitle>{__("Related Plugins", "metricool")}</BlockHeaderTitle>
             </BlockHeader>
             <FlexContainer direction={"column"} className={"!gap-2"}>
                 <ListItem icon={"circle"} iconColor={"rss"} iconPosition={"left"} action={__("Upgrade", "metricool")} className={"font-semibold"}>
@@ -24,4 +24,4 @@ const OtherPlugins = () => {
     );
 };
 
-export default OtherPlugins;
+export default RelatedPlugins;
