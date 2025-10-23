@@ -1,17 +1,18 @@
 <?php
+
 namespace Metricool\Http\Endpoints;
 
 use Metricool\App;
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class UserSettingsEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
 
-    const ROUTE = 'user_settings';
+    public const ROUTE = 'user_settings';
 
     /**
      * Only enable this endpoint if the user has access to the admin area and

@@ -2,26 +2,26 @@
 
 namespace Metricool\Services;
 
-use Carbon\Carbon;
 use InvalidArgumentException;
-use Metricool\Builders\TimelineResponseBuilder;
+use Metricool\Builders\StatsTimelineBuilder;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\Dto\TimelineStatistic\TimelineDTO;
+use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 use Metricool\Services\Analytics\TrendService;
 
 class AnalyticsService
 {
-    protected Carbon $startDate;
-    protected Carbon $endDate;
-
     protected TrendService $trendService;
+
+    protected array $requestFilters;
     /**
      * Metrics holds the name of the Metric, TimelineStatistics and results of the API request
      * @var array<string, array{
      *     name: string,
-     *     timelineStatistics: Collection<TimelineDTO>,
-     *     results: Collection<TimelineDTO>
+     *     label: string,
+     *     statistics: TimelineStatistics,
+     *     results: Collection|TimelineDTO[],
+     *     useInTimeline: bool,
      *  }>
      **/
     protected array $metrics = [];
@@ -29,32 +29,11 @@ class AnalyticsService
     public function __construct(TrendService $trendService)
     {
         $this->trendService = $trendService;
-
-        // set default start and end date
-        $this->startDate = Carbon::now()->subDays(30);
-        $this->endDate = Carbon::now();
     }
 
-    /**
-     * Sets the startDate for the metrics. Overrides the default startDate
-     * @param string $date The date string
-     * @param string $format The date format of the given date
-     */
-    public function setStartDate(string $date, string $format = 'Ymd'): self
+    public function setRequestFilters(array $requestFilters): self
     {
-        $this->startDate = Carbon::createFromFormat($format, $date);
-
-        return $this;
-    }
-
-    /**
-     * Sets the endDate for the metrics. Overrides the default endDate
-     * @param string $date The date string
-     * @param string $format The date format of the given date
-     */
-    public function setEndDate(string $date, string $format = 'Ymd'): self
-    {
-        $this->endDate = Carbon::createFromFormat($format, $date);
+        $this->requestFilters = $requestFilters;
 
         return $this;
     }
@@ -63,35 +42,38 @@ class AnalyticsService
      * Sets the metrics to be used in the analytics service
      * This will fetch the results from the API and store them
      */
-    public function loadMetric(string $metric, TimelineStatistics $statistics): self
+    public function loadMetric(string $metric, string $label, TimelineStatistics $statistics): self
     {
         $this->metrics[$metric] = [
             'name' => $metric,
-            'timelineStatistics' => $statistics,
-            'results' => $statistics->filter($this->getFilters())
-                ->get()
+            'label' => $label,
+            'statistics' => $statistics,
+            'results' => $statistics->filter($this->requestFilters)->get(),
         ];
 
         return $this;
     }
 
-    /**
-     * Creates the filters to be used in the timeline statistics
-     */
-    public function getFilters(): array
+    public function getTotals(): array
     {
-        return [
-            'start' => $this->startDate->format('Ymd'),
-            'end' => $this->endDate->format('Ymd')
-        ];
+        $totals = [];
+        foreach ($this->metrics as $metric => $metricData) {
+            $totals[$metric] = [
+                'label' => $metricData['label'],
+                'totalAmount' => $this->calcTotalAmount($metric),
+                'trend' => $this->getTrend($metric),
+            ];
+        }
+        return $totals;
     }
+
 
     /**
      * Gets the results of a metric
      * @return Collection<int, TimelineDTO>
      * @throws InvalidArgumentException
      */
-    public function getResults(string $metric) : Collection
+    public function getResults(string $metric): Collection
     {
         if (array_key_exists($metric, $this->metrics) === false) {
             throw new InvalidArgumentException("Incompatible metric given: $metric");
@@ -110,13 +92,13 @@ class AnalyticsService
             throw new InvalidArgumentException("Incompatible metric given: $metric");
         }
 
-        return $this->metrics[$metric]['timelineStatistics'];
+        return $this->metrics[$metric]['statistics'];
     }
 
     /**
      * Sums the amount of hits of this metric
      */
-    public function getTotalAmount(string $metric): float
+    public function calcTotalAmount(string $metric): float
     {
         return $this->getResults($metric)
             ->sum('amount');
@@ -130,7 +112,7 @@ class AnalyticsService
         return $this->trendService->getTrend(
             $this->getTimelineStatistics($metric),
             $this->getResults($metric),
-            $this->getFilters()
+            $this->requestFilters
         );
     }
 
@@ -140,7 +122,7 @@ class AnalyticsService
      */
     public function getTimelineData(): array
     {
-        return (new TimelineResponseBuilder())->setMetrics($this->metrics)
+        return (new StatsTimelineBuilder())->setMetrics($this->metrics)
             ->build();
     }
 }

@@ -176,7 +176,7 @@ class Plugin
             new Http\Endpoints\ConnectedBrandsEndpoint(),
             new Http\Endpoints\SubscriptionEndpoint(),
             new Http\Endpoints\UserSettingsEndpoint(),
-            new Http\Endpoints\StatisticsEndpoint(),
+            new Http\Endpoints\DistributionEndpoint(),
             new Http\Endpoints\AnalyticsEndpoint(
                 new Services\AnalyticsService(
                     new Services\Analytics\TrendService()
