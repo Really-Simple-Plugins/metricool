@@ -81,13 +81,13 @@ class TimelineStatistics
 
     /**
      * Fetch and return the timeline statistics data plainly from the API.
-     * @return Collection<TimelineDTO>
+     * @return Collection|TimelineDTO[]
      * @throws GuzzleException
      */
     public function get(): Collection
     {
         if ($this->requiresFilter && $this->filtered === false) {
-            if(empty($this->filters['start']) || empty($this->filters['end'])) {
+            if (empty($this->filters['start']) || empty($this->filters['end'])) {
                 throw new \Exception('Start and end date are required for this timeline statistic');
             }
             $this->filter($this->filters);

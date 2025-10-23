@@ -12,7 +12,7 @@ class RealtimeService
      * @var array<string, array{
      *     name: string,
      *     label: string,
-     *     results: Collection<TimelineDTO>,
+     *     results: Collection|TimelineDTO[],
      *     useInTimeline: bool,
      *  }> Metrics holds the name, label and results of the metric
      **/
@@ -27,7 +27,7 @@ class RealtimeService
 
     /**
      * Sets the metrics to be used in the realtime service. The metrics contains the name, label and results of each metric.
-     * @param Collection<TimelineDTO> $results
+     * @param Collection|TimelineDTO[] $results
      */
     public function addMetric(string $metric, string $label, Collection $results, $useInTimeline = true, $useInTotals = true): self
     {

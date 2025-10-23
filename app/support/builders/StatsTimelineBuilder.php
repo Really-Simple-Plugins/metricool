@@ -23,7 +23,7 @@ class StatsTimelineBuilder
      * @var array<string, array{
      *     name: string,
      *     label: string,
-     *     results: Collection<TimelineDTO>,
+     *     results: Collection|TimelineDTO[],
      *     useInTimeline: bool,
      *  }>
      **/
@@ -68,7 +68,7 @@ class StatsTimelineBuilder
      * Sets the metrics that should be included in a timeline item
      * @param array<string, array{
      *     timelineStatistics: TimelineStatistics,
-     *     results: Collection<TimelineDTO>
+     *     results: Collection|TimelineDTO[],
      * }> $metrics
      */
     public function setMetrics(array $metrics): self
