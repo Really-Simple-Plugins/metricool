@@ -111,7 +111,7 @@ class StatsTimelineBuilder
     {
         $row = [
             'timestamp' => $timestamp,
-            'date' => Carbon::createFromTimestampMs($timestamp)->format($this->dateFormat),
+            'label' => Carbon::createFromTimestampMs($timestamp)->format($this->dateFormat),
         ];
 
         // initialize the properties for each metric, these are the keys of the metrics
