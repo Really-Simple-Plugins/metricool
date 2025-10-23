@@ -75,7 +75,7 @@ class ReviewController implements ControllerInterface
     /**
      * Check if the review notice can be rendered. True when:
      * - The user has not dismissed the notice
-     * - The company registration time is suitable for review
+     * - The onboarding completion time is suitable for review
      * - The review notice dismissed time has passed
      * - The amount of bookings is greater than the threshold
      * - The user is not on an edit screen
@@ -87,7 +87,7 @@ class ReviewController implements ControllerInterface
             return false;
         }
 
-        if ($this->companyRegisteredTimeSuitableForReview() === false) {
+        if ($this->onboardingCompletedTimestampSuitableForReview() === false) {
             return false;
         }
 
@@ -106,16 +106,16 @@ class ReviewController implements ControllerInterface
     }
 
     /**
-     * Check if the company registration time is more than 30 days ago.
+     * Check if the onboarding completion time is more than 30 days ago.
      */
-    private function companyRegisteredTimeSuitableForReview(): bool
+    private function onboardingCompletedTimestampSuitableForReview(): bool
     {
-        $companyRegistrationStartTime = get_option('metricool_company_registration_start_time');
-        if (empty($companyRegistrationStartTime)) {
+        $onboardingCompletedTimestamp = get_option('metricool_onboarding_completed_unix_timestamp');
+        if (empty($onboardingCompletedTimestamp)) {
             return false;
         }
 
-        return $this->timestampIsThirtyDaysAgo($companyRegistrationStartTime);
+        return $this->timestampIsThirtyDaysAgo($onboardingCompletedTimestamp);
     }
 
     /**

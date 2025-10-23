@@ -1,9 +1,7 @@
 <?php namespace Metricool\Features\Onboarding;
 
-use Metricool\Http\ApiClient;
 use Metricool\Helpers\Storage;
 use Metricool\Traits\HasRestAccess;
-use Metricool\Utility\StringUtility;
 
 class OnboardingService
 {
@@ -30,6 +28,7 @@ class OnboardingService
             return true;
         }
 
+        update_option('metricool_onboarding_completed_unix_timestamp', time(), false);
         return update_option('metricool_onboarding_completed', true, false);
     }
 
