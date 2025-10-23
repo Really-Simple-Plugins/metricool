@@ -8,16 +8,6 @@ use Metricool\Http\Metricool\DTOs\DistributionDTO;
 class RefererResponse extends DistributionResponse
 {
     /**
-     * The columns for the country chart. Keys represent the property,
-     * value is the label for this property
-     * @see \Metricool\Builders\StatsChartTableBuilder::setColumns()
-     */
-    public function getChartColumns(): array
-    {
-        return [];
-    }
-
-    /**
      * @inheritDoc
      */
     public function getSingleItem(DistributionDTO $item, int $total): object

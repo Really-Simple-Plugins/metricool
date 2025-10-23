@@ -31,9 +31,13 @@ abstract class DistributionResponse extends Response
      * Gets the properties and labels to be used in the chart and
      * returns the column headers for the chart. Each property is assigned a label.
      * Example: ['property' => 'label']
+     * Leave empty to not include the chart data
      * @see \Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse::getChartColumns()
      */
-    abstract function getChartColumns(): array;
+    protected function getChartColumns(): array
+    {
+        return [];
+    }
 
     /**
      * @inheritDoc
