@@ -19,7 +19,6 @@ class AnalyticsEndpoint implements SingleEndpointInterface
 
     public function __construct(AnalyticsService $service)
     {
-        // todo: refactor trendservice
         $this->service = $service;
     }
 
