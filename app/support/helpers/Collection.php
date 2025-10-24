@@ -70,6 +70,10 @@ class Collection implements IteratorAggregate
         return new static($results);
     }
 
+    /**
+     * Sort the collection in descending order.
+     * @see Collection::sortBy()
+     */
     public function sortByDesc($callback, $options = SORT_REGULAR): self
     {
         return $this->sortBy($callback, $options, true);
