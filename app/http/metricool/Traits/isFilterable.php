@@ -74,7 +74,7 @@ trait isFilterable
      */
     private function isFilterValid(string $filterValue, string $pregMatch): bool
     {
-        return (bool)preg_match($pregMatch, $filterValue);
+        return (bool) preg_match($pregMatch, $filterValue);
     }
 
     /**

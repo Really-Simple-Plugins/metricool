@@ -205,7 +205,7 @@ class Plugin
      */
     public function checkForUpgrades(): void
     {
-        $previousSavedVersion = (string)get_option('_metricool_current_version', '');
+        $previousSavedVersion = (string) get_option('_metricool_current_version', '');
         if ($previousSavedVersion === App::env('plugin.version')) {
             return; // Nothing to do
         }
