@@ -33,6 +33,36 @@ abstract class DistributionResponse extends Response
     }
 
     /**
+     * @param string $sort The column to sort the results on
+     */
+    public function setSort(string $sort): self
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    /**
+     * @param string $order Sets the ordering. asc for ascending, desc for descending
+     */
+    public function setOrder(string $order): self
+    {
+        $this->order = $order;
+
+        return $this;
+    }
+
+    /**
+     * @param string $column The column to calculate the total distribution from
+     */
+    public function setSum(string $column): self
+    {
+        $this->sum = $column;
+
+        return $this;
+    }
+
+    /**
      * @inheritDoc
      */
     public function body(): array
