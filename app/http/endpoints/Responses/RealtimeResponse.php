@@ -2,19 +2,16 @@
 
 namespace Metricool\Http\Endpoints\Responses;
 
-
-use Metricool\Services\RealtimeService;
-
 class RealtimeResponse extends Response
 {
     /**
      * @var array $totals The data to be shown in the totals columns
-     * @see RealtimeService::getTotals()
+     * @see \Metricool\Services\RealtimeService::getTotals()
      */
     public array $totals = [];
     /**
      * @var array $timelineData The data to be shown in the timeline
-     * @see RealtimeService::getTimelineData()
+     * @see \Metricool\Services\RealtimeService::getTimelineData()
      */
     public array $timelineData = [];
 
