@@ -247,11 +247,12 @@ class Collection implements IteratorAggregate
      */
     protected function operatorForWhere(string $key, string $operator = null, $value = null): Closure
     {
+        // allow shorthand for a boolean check: $collection->where('property');
         if (func_num_args() === 1) {
             $value = true;
             $operator = '=';
         }
-
+        // allow a shorthand for a == comparison: $collection->where('property', 'value');
         if (func_num_args() === 2) {
             $value = $operator;
             $operator = '=';

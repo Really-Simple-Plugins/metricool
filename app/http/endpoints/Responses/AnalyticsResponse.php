@@ -2,23 +2,28 @@
 
 namespace Metricool\Http\Endpoints\Responses;
 
+use Metricool\Services\AnalyticsService;
+
 class AnalyticsResponse extends Response
 {
-    public array $totals;
-    public array $timelineData;
-
     /**
      * Sets the totals to be shown in the response
-     * [''
-     * ]
+     * @see AnalyticsService::getTotals()
      */
+    public array $totals = [];
+    /**
+     * Sets the totals to be shown in the response
+     * @see AnalyticsService::getTimelineData()
+     */
+    public array $timelineData = [];
+
     public function setTotals($totals): self
     {
         $this->totals = $totals;
 
         return $this;
     }
-
+    
     public function setTimelineData($timelineData): self
     {
         $this->timelineData = $timelineData;

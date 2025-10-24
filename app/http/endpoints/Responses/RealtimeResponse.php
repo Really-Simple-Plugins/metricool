@@ -3,10 +3,20 @@
 namespace Metricool\Http\Endpoints\Responses;
 
 
+use Metricool\Services\RealtimeService;
+
 class RealtimeResponse extends Response
 {
-    public array $totals;
-    public array $timelineData;
+    /**
+     * @var array $totals The data to be shown in the totals columns
+     * @see RealtimeService::getTotals()
+     */
+    public array $totals = [];
+    /**
+     * @var array $timelineData The data to be shown in the timeline
+     * @see RealtimeService::getTimelineData()
+     */
+    public array $timelineData = [];
 
     public function setTotals(array $totals): self
     {
@@ -15,7 +25,7 @@ class RealtimeResponse extends Response
         return $this;
     }
 
-    public function setTimelineData($timeline): self
+    public function setTimelineData(array $timeline): self
     {
         $this->timelineData = $timeline;
 
