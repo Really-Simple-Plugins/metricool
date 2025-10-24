@@ -17,7 +17,7 @@ class FeatureHelper
      */
     public static function isEnabled(string $feature): bool
     {
-        $method = 'is' . StringUtility::snakeToUpperCamelCase($feature) . 'Enabled';
+        $method = 'is' . StringUtility::snakeToPascalCase($feature) . 'Enabled';
         if (method_exists(__CLASS__, $method)) {
             return self::$method();
         }

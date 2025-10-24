@@ -3,8 +3,11 @@
 namespace Metricool\Http\Metricool\Entities;
 
 use Carbon\Carbon;
+use Metricool\Helpers\Collection;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
+use Metricool\Traits\isHydratable;
 
 /**
  * API responses for distribution statistics include data on how various metrics
@@ -14,29 +17,32 @@ use Metricool\Http\Metricool\Traits\isFilterable;
 class DistributionStatistics
 {
     use isFilterable;
+    use isHydratable;
 
     protected MetricoolClient $client;
     protected string $endpoint = 'stats/distribution/';
+    protected string $metric;
 
     /**
      * The distribution statistics API is compatible with these metrics.
      */
-    private array $compatibleMetrics = [
+    private array $metrics = [
         'country',
         'referers',
         'sources',
     ];
 
     /**
-     * Pass a compatible metric to the constructor: {@see compatibleMetrics}
+     * Pass a compatible metric to the constructor: {@see metrics}
      * @throws \InvalidArgumentException
      */
     public function __construct(MetricoolClient $client, string $metric, bool $filterRequired = true)
     {
-        if (!in_array($metric, $this->compatibleMetrics)) {
+        if (!in_array($metric, $this->metrics)) {
             throw new \InvalidArgumentException("Incompatible metric given: $metric");
         }
 
+        $this->metric = $metric;
         $this->client = $client;
         $this->endpoint .= $metric;
         $this->requiresFilter = $filterRequired;
@@ -64,15 +70,25 @@ class DistributionStatistics
         ];
     }
 
+
     /**
-     * Fetch and return the distribution statistics data plainly from the API.
+     * Hydrate every result into a DistributionDTO object
      */
-    public function get(): array
+    protected function hydrateItem($key, $item): DistributionDTO
+    {
+        return new DistributionDTO($this->metric, $key, $item);
+    }
+
+    /**
+     * Fetch and return the distribution statistics data
+     */
+    public function get(): Collection
     {
         if ($this->requiresFilter && $this->filtered === false) {
             $this->filter($this->filters);
         }
 
-        return $this->client->get($this->endpoint);
+        return $this->hydrateResults($this->client->get($this->endpoint));
     }
+
 }
