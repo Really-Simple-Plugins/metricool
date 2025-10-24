@@ -74,7 +74,7 @@ class TimelineStatistics
         return [
             'start' => '/^\d+$/',
             'end' => '/^\d+$/',
-            'period' => '/^.+$/',
+            'period' => '/^[a-z0-9]+$/i',
         ];
     }
 
