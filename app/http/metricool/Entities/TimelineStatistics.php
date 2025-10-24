@@ -78,11 +78,12 @@ class TimelineStatistics
         ];
     }
 
+
     /**
      * Applies the period filter
      * @see IsFilterable
      */
-    protected function applyPeriodFilter(string $period): bool
+    protected function applyPeriodFilter(string $period): void
     {
         $startDate = Carbon::now();
         $endDate = Carbon::now();
@@ -111,23 +112,10 @@ class TimelineStatistics
             case 'currentmonth':
                 $startDate->startOfMonth();
                 break;
-            default:
-                return false;
         }
 
-        $this->endpoint = add_query_arg(
-            'start',
-            $startDate->format('Ymd'),
-            $this->endpoint
-        );
-
-        $this->endpoint = add_query_arg(
-            'end',
-            $endDate->format('Ymd'),
-            $this->endpoint
-        );
-
-        return true;
+        $this->applyFilter('start', $startDate->format('Ymd'));
+        $this->applyFilter('end', $endDate->format('Ymd'));
     }
 
     /**
