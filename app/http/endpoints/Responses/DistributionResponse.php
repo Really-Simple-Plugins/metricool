@@ -73,7 +73,7 @@ abstract class DistributionResponse extends Response
      */
     public function getResultData(): array
     {
-        return $this->results->toArray();
+        return $this->results->sortByDesc('percentage')->toArray();
     }
 
     /**

@@ -70,6 +70,11 @@ class Collection implements IteratorAggregate
         return new static($results);
     }
 
+    public function sortByDesc($callback, $options = SORT_REGULAR): self
+    {
+        return $this->sortBy($callback, $options, true);
+    }
+
     /**
      * Run a filter over each of the items.
      * @param callable|null $callback
