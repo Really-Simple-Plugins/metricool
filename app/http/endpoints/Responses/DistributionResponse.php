@@ -17,31 +17,65 @@ use Metricool\Http\Metricool\DTOs\DistributionDTO;
 abstract class DistributionResponse extends Response
 {
     /**
-     * A collection of DistributionDTO's that holds the results of the
-     * Metricool\Http\Metricool\Entities\DistributionStatistics entity.
+     * A collection of DistributionDTO's that holds the statistics of the
+     * Metricool\Http\Metricool\Entities\DistributionStatistics Entity.
      * @var Collection|DistributionDTO[]
      */
-    protected Collection $results;
+    protected Collection $statistics;
 
-    public function __construct()
+    public string $sort;
+    public string $order;
+
+    public function __construct(Collection $statistics, $sort = 'percentage', $order = 'desc')
     {
-        $this->results = new Collection();
+        $this->statistics = $statistics;
+        $this->sort = $sort;
+        $this->order = $order;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function body(): array
+    {
+        $results = $this->parse()->sortBy($this->sort, $this->order === 'desc');
+
+        $response = [];
+        $response['tableData'] = $this->createTableData($results);
+        $response['chartData'] = $this->createChartData($results);
+
+        return $response;
     }
 
     /**
      * Processes results, this calculates distribution percentages on each result
-     * and adds them to the results collection.
-     * @param Collection|DistributionDTO[] $results
+     * and serializes every item to the requirements of the endpoint
+     * @return Collection|mixed[] Serialized version of the results to be used in the response body
      */
-    public function processResults(Collection $results): self
+    protected function parse(): Collection
     {
-        $total = $this->getTotalAmountOfResults($results);
+        $total = $this->getTotalAmountOfResults();
 
-        foreach ($results as $result) {
-            $this->results->push($this->getSingleItem($result, $total));
-        }
+        // parse
+        return $this->statistics->map(function ($statistic) use ($total) {
+            return $this->parseSingleItem($statistic, $total);
+        });
+    }
 
-        return $this;
+    /**
+     * Calculates the total amount of the results
+     */
+    protected function getTotalAmountOfResults(): int
+    {
+        return $this->statistics->sum('amount');
+    }
+
+    /**
+     * Gets the table data to be used in the response body
+     */
+    protected function createTableData(Collection $results): array
+    {
+        return $results->toArray();
     }
 
     /**
@@ -56,31 +90,12 @@ abstract class DistributionResponse extends Response
         return [];
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function body(): array
-    {
-        $response = [];
-        $response['tableData'] = $this->getResultData();
-        $response['chartData'] = $this->getChartData();
-
-        return $response;
-    }
-
-    /**
-     * Gets the results to be used in response
-     */
-    public function getResultData(): array
-    {
-        return $this->results->sortByDesc('percentage')->toArray();
-    }
 
     /**
      * Gets the chart to be used in response. If the columns are empty,
      * no chart will be produced
      */
-    public function getChartData(): array
+    protected function createChartData(Collection $results): array
     {
         $columns = $this->getChartColumns();
 
@@ -89,22 +104,13 @@ abstract class DistributionResponse extends Response
         }
 
         return (new StatsChartTableBuilder())->setColumns($columns)
-            ->setResults($this->results)
+            ->setResults($results)
             ->build();
-    }
-
-    /**
-     * Calculates the total amount of the results
-     * @param Collection|DistributionDTO[] $results
-     */
-    public function getTotalAmountOfResults(Collection $results): int
-    {
-        return $results->sum('amount');
     }
 
     /**
      * Mutate the DistributionDTO to the requirements of the endpoint and
      * calculates the distribution percentage
      */
-    abstract protected function getSingleItem(DistributionDTO $item, int $total): object;
+    abstract protected function parseSingleItem(DistributionDTO $item, int $total): object;
 }

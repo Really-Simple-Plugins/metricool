@@ -25,9 +25,9 @@ class CountriesResponse extends DistributionResponse
     /**
      * @inheritDoc
      */
-    protected function getSingleItem(DistributionDTO $item, int $total): object
+    protected function parseSingleItem(DistributionDTO $item, int $total): object
     {
-        return (object)[
+        return (object) [
             'value' => $item->value,
             'country' => Locale::getDisplayRegion('-' . $item->value, get_user_locale()),
             'visitors' => $item->amount,
