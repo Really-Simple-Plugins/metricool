@@ -2,15 +2,24 @@
 
 namespace Metricool\Http\Endpoints\Responses;
 
-use Metricool\Services\RealtimeService;
 
 class RealtimeResponse extends Response
 {
-    public RealtimeService $service;
+    public array $totals;
+    public array $timelineData;
 
-    public function __construct()
+    public function setTotals(array $totals): self
     {
-        $this->service = new RealtimeService();
+        $this->totals = $totals;
+
+        return $this;
+    }
+
+    public function setTimelineData($timeline): self
+    {
+        $this->timelineData = $timeline;
+
+        return $this;
     }
 
     /**
@@ -19,8 +28,8 @@ class RealtimeResponse extends Response
     public function body(): array
     {
         return [
-            'totals' => $this->service->getTotals(),
-            'timelineData' => $this->service->getTimelineData(),
+            'totals' => $this->totals,
+            'timelineData' => $this->timelineData,
         ];
     }
 }

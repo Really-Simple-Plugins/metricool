@@ -183,7 +183,9 @@ class Plugin
                     new Services\Analytics\TrendService()
                 ),
             ),
-            new Http\Endpoints\RealtimeEndpoint(),
+            new Http\Endpoints\RealtimeEndpoint(
+                new Services\RealtimeService()
+            ),
             new Http\Endpoints\RelatedPluginsEndpoints(
                 new Services\RelatedPluginService()
             ),

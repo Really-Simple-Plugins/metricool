@@ -13,7 +13,7 @@ class AnalyticsService
 {
     protected TrendService $trendService;
 
-    protected array $requestFilters;
+    protected array $requestFilters = [];
     /**
      * Metrics holds the name of the Metric, TimelineStatistics and results of the API request
      * @var array<string, array{

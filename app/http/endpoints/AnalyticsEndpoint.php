@@ -5,6 +5,7 @@ namespace Metricool\Http\Endpoints;
 use Metricool\App;
 use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\AnalyticsService;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -14,6 +15,13 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     use HasAllowlistControl;
 
     public const ROUTE = 'analytics';
+    public AnalyticsService $service;
+
+    public function __construct(AnalyticsService $service)
+    {
+        // todo: refactor trendservice
+        $this->service = $service;
+    }
 
     /**
      * Only enable this endpoint if the user has access to the admin area and
@@ -71,27 +79,31 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         $requestFilters = ($request->get_param('filters') ?: []);
         $requestMetrics = ($request->get_param('metrics') ?: ['pageViews', 'visits', 'visitors', 'posts', 'comments']);
 
-        $response = new AnalyticsResponse($requestFilters);
+        $this->service->setRequestFilters($requestFilters);
 
         if (in_array('pageViews', $requestMetrics)) {
-            $response->service->loadMetric('pageViews', esc_html__('Page views', 'metricool'), $statisticsModule->pageViews());
+            $this->service->loadMetric('pageViews', esc_html__('Page views', 'metricool'), $statisticsModule->pageViews());
         }
 
         if (in_array('visits', $requestMetrics)) {
-            $response->service->loadMetric('visits', esc_html__('Visits', 'metricool'), $statisticsModule->visits());
+            $this->service->loadMetric('visits', esc_html__('Visits', 'metricool'), $statisticsModule->visits());
         }
 
         if (in_array('visitors', $requestMetrics)) {
-            $response->service->loadMetric('visitors', esc_html__('Visitors', 'metricool'), $statisticsModule->visitors());
+            $this->service->loadMetric('visitors', esc_html__('Visitors', 'metricool'), $statisticsModule->visitors());
         }
 
         if (in_array('posts', $requestMetrics)) {
-            $response->service->loadMetric('posts', esc_html__('Posts', 'metricool'), $statisticsModule->posts());
+            $this->service->loadMetric('posts', esc_html__('Posts', 'metricool'), $statisticsModule->posts());
         }
 
         if (in_array('comments', $requestMetrics)) {
-            $response->service->loadMetric('comments', esc_html__('Comments', 'metricool'), $statisticsModule->comments());
+            $this->service->loadMetric('comments', esc_html__('Comments', 'metricool'), $statisticsModule->comments());
         }
+
+        $response = new AnalyticsResponse();
+        $response->setTotals($this->service->getTotals());
+        $response->setTimelineData($this->service->getTimelineData());
 
         return $response->body();
     }

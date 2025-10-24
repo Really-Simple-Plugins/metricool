@@ -2,17 +2,28 @@
 
 namespace Metricool\Http\Endpoints\Responses;
 
-use Metricool\Services\Analytics\TrendService;
-use Metricool\Services\AnalyticsService;
-
 class AnalyticsResponse extends Response
 {
-    public AnalyticsService $service;
+    public array $totals;
+    public array $timelineData;
 
-    public function __construct(array $requestFilters = [])
+    /**
+     * Sets the totals to be shown in the response
+     * [''
+     * ]
+     */
+    public function setTotals($totals): self
     {
-        $this->service = (new AnalyticsService(new TrendService()))
-            ->setRequestFilters($requestFilters);
+        $this->totals = $totals;
+
+        return $this;
+    }
+
+    public function setTimelineData($timelineData): self
+    {
+        $this->timelineData = $timelineData;
+
+        return $this;
     }
 
     /**
@@ -21,8 +32,8 @@ class AnalyticsResponse extends Response
     public function body(): array
     {
         return [
-            'totals' => $this->service->getTotals(),
-            'timelineData' => $this->service->getTimelineData(),
+            'totals' => $this->totals,
+            'timelineData' => $this->timelineData,
         ];
     }
 }
