@@ -4,43 +4,33 @@ import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 
-type DataTableColumns = { country: string, visitors: unknown, percent: string };
+type DataTableColumns = { country: string, visitors: number, percentage: number };
 
 const columns = [
     {
         accessorKey: "country",
-        header: ({ column }: { column: Column<DataTableColumns> }) => (<DataTableColumnHeader column={column} title={__("Country", "metricool")}/>),
+        header: ({ column }: { column: Column<DataTableColumns> }) => (
+            <DataTableColumnHeader column={column} title={__("Country", "metricool")}/>),
     },
     {
         accessorKey: "visitors",
-        header: ({ column }: { column: Column<DataTableColumns> }) => (<DataTableColumnHeader column={column} title={__("Visitors", "metricool")}/>),
+        header: ({ column }: { column: Column<DataTableColumns> }) => (
+            <DataTableColumnHeader column={column} title={__("Visitors", "metricool")}/>),
     },
     {
-        accessorKey: "percent",
-        header: ({ column }: { column: Column<DataTableColumns> }) => (<DataTableColumnHeader column={column} title={__("Percent", "metricool")}/>),
+        accessorKey: "percentage",
+        header: ({ column }: { column: Column<DataTableColumns> }) => (
+            <DataTableColumnHeader column={column} title={__("Percent", "metricool")}/>),
     },
 ];
 
 const CountriesTab = () => {
-    const { metricool, httpClient } = useGlobalContext();
-    const localizeCountryNames = new Intl.DisplayNames(metricool.locale, { type: "region" });
-    const numberFormatter = Intl.NumberFormat(metricool.locale, {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 3,
-    });
+    const { httpClient } = useGlobalContext();
     const { data: countryData, isLoading, error } = useQuery({
         queryKey: ["analytics", "countries"],
-        queryFn: () => httpClient?.setRoute("statistics/countries").get(),
+        queryFn: () => httpClient?.setRoute("distribution/countries").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data) => {
-            const totalVisitors = Object.values(data.data).reduce((previous, current) => Number(previous) + Number(current));
-            const countriesArray = Object.entries(data.data)
-                .map(([countryCode, visitorAmount]) => [countryCode, localizeCountryNames.of(countryCode), visitorAmount]);
-            return {
-                chartData: [["value", "Country", __("Visitors", "metricool")], ...countriesArray],
-                tableData: Object.entries(data.data).map(([countryCode, visitorAmount]) => ({ country: localizeCountryNames.of(countryCode) ?? "", visitors: visitorAmount, percent: `${numberFormatter.format((Number(visitorAmount) * 100) / Number(totalVisitors))}%` })),
-            };
-        }
+        select: (data): { tableData: DataTableColumns[], chartData: string[][] } => data.data,
     });
 
     const geochartOptions = {
