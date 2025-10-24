@@ -104,7 +104,7 @@ const AnalyticsTab = () => {
             hidden: false,
         },
     });
-    const lineChartXAxisDataKey = "date";
+    const lineChartXAxisDataKey = "label";
 
     const { data: analyticsData, isLoading, error } = useQuery({
         queryKey: ["analytics"],
