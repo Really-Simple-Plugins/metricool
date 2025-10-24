@@ -89,7 +89,7 @@ const Progress = () => {
                 </div>
 
                 {/* Task List */}
-                <div className="h-[290px] mt-1 grid overflow-y-auto content-start gap-2">
+                <div className="h-[290px] mt-1 grid overflow-y-auto content-start gap-4">
                     {displayedTasks.map((task) => (
                         <Task key={task.id} task={task}/>
                     ))}
