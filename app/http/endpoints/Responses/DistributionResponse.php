@@ -25,6 +25,7 @@ abstract class DistributionResponse extends Response
 
     public string $sort = 'percentage';
     public string $order = 'desc';
+    public string $sum = 'amount';
 
     public function __construct(Collection $statistics)
     {
@@ -65,7 +66,7 @@ abstract class DistributionResponse extends Response
      */
     protected function getTotalAmountOfResults(): int
     {
-        return $this->statistics->sum('amount');
+        return $this->statistics->sum($this->sum);
     }
 
     /**
