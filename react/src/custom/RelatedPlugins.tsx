@@ -4,7 +4,6 @@ import ListItem from "./ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { queryClient } from "../main.tsx";
-import { useEffect } from "react";
 
 const pluginStatuses: Record<string, string> = {
     installed: __("Installed", "metricool"),
@@ -39,11 +38,6 @@ const RelatedPlugins = () => {
         }
     });
 
-    useEffect(() => {
-        console.log("use effect related", relatedPlugins);
-        console.log("related error", error);
-    }, [relatedPlugins, error]);
-
     const { mutate: runPluginAction } = useMutation({
         mutationFn: async ({ slug, action, key }: {
             slug: string,
@@ -69,7 +63,7 @@ const RelatedPlugins = () => {
             }).post();
 
             const updatedPluginItem = updatedPluginItemResponse?.data?.plugin;
-            console.log(updatedPluginItem);
+
             if (!updatedPluginItem) {
                 console.error("Error fetching updated plugin item: ", updatedPluginItemResponse?.message);
                 return;
@@ -78,7 +72,6 @@ const RelatedPlugins = () => {
             return updatedPluginItem;
         },
         onSuccess: (data, variables) => {
-            console.log("mutation success data", data);
             const currentRelatedPluginsData: {
                 data: { plugins: Record<string, RelatedPlugin> },
             } = queryClient.getQueryData(["other_plugins_data"]) ?? { data: { plugins: {} } };

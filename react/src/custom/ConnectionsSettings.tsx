@@ -3,7 +3,6 @@ import { __ } from "@wordpress/i18n";
 import AccountTile from "./AccountTile.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
 
 const ConnectionsSettings = () => {
     const { httpClient, metricool } = useGlobalContext();
@@ -13,7 +12,6 @@ const ConnectionsSettings = () => {
         queryFn: () => httpClient?.setRoute("connected_brands").get(),
         staleTime: 1000 * 60, // 1 minute
         select: (data) => {
-            console.log(data.data.data.networksData);
             return ([
                 {
                     label: "Web",
@@ -146,10 +144,6 @@ const ConnectionsSettings = () => {
             ]);
         }
     });
-
-    useEffect(() => {
-        console.log(connectedAccountsData, isLoading, error);
-    }, [connectedAccountsData, isLoading, error]);
 
     return (
         <div className={"flex flex-col min-w-full md:min-w-[50%]"}>

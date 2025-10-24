@@ -26,7 +26,6 @@ class HttpClient {
      * @param route - The API route to be used.
      */
     constructor(settings: HttpClientSettings, route?: string,) {
-        console.log(settings.MC_API_URL);
         this.httpClientSettings = {
             NONCE: settings.NONCE,
             MC_API_URL: settings.MC_API_URL,

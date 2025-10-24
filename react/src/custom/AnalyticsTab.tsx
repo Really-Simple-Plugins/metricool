@@ -2,7 +2,7 @@ import { Button, type ChartConfig, FlexContainer, LineChart, Select, SelectOptio
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MetricTile from "./MetricTile.tsx";
 import { clsx } from "clsx";
 import Icon from "../components/src/components/Icon.tsx";
@@ -110,16 +110,8 @@ const AnalyticsTab = () => {
         queryKey: ["analytics"],
         queryFn: () => httpClient?.setRoute("analytics").setFilters({ start: startDate, end: endDate }).get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): {totals: Record<string, MetricData>, timelineData: TimelineData} => {
-            console.log("data", data);
-            return data.data;
-        }
+        select: (data): { totals: Record<string, MetricData>, timelineData: TimelineData } => data.data,
     });
-
-    useEffect(() => {
-        console.log("analytics");
-        console.log(analyticsData, isLoading, error);
-    }, [error, isLoading, analyticsData]);
 
     const toggleMetric = (dataKey: string) => {
         setChartConfig((prevState) => ({
