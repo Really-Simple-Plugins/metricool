@@ -44,7 +44,7 @@ class Collection implements IteratorAggregate
     /**
      * Sort the collection using the given callback.
      */
-    public function sortBy($callback, $options = SORT_REGULAR, $descending = false, $preserveKeys = false): self
+    public function sortBy($callback, $preserveKeys = false, $descending = false, $options = SORT_REGULAR): self
     {
         $results = [];
 
@@ -75,12 +75,21 @@ class Collection implements IteratorAggregate
     }
 
     /**
+     * Sort the collection in ascending order.
+     * @see Collection::sortBy()
+     */
+    public function sortByAsc($callback, $preserveKeys = false): self
+    {
+        return $this->sortBy($callback, $preserveKeys, false);
+    }
+
+    /**
      * Sort the collection in descending order.
      * @see Collection::sortBy()
      */
-    public function sortByDesc($callback, $options = SORT_REGULAR, $preserveKeys = false): self
+    public function sortByDesc($callback, $preserveKeys = false): self
     {
-        return $this->sortBy($callback, $options, true, $preserveKeys);
+        return $this->sortBy($callback, $preserveKeys, true);
     }
 
     /**
