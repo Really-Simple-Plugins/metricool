@@ -12,6 +12,8 @@ class ReviewController implements ControllerInterface
     use HasViews;
     use HasAllowlistControl;
 
+    private const MIN_SESSIONS_COUNT = 20;
+
     private string $reviewAction = 'rsp_metricool_review_form_submit';
     private string $reviewNonceName = 'rsp_metricool_review_nonce';
 
@@ -34,18 +36,10 @@ class ReviewController implements ControllerInterface
             return;
         }
 
-        $reviewMessage = sprintf(
-            // translators: %1$d is replaced by the amount of bookings, %2$ and %23$ are replaced with opening and closing a tag containing hyperlink
-            __('Hi, Metricool has helped you reach %1$d bookings in the last 30 days. If you have a moment, please consider leaving a review on WordPress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %2$smessage%3$s.', 'metricool'),
-            3,
-            '<a href="' . App::env('plugin.support_url') . '"  rel="noopener noreferrer"  target="_blank">',
-            '</a>'
-        );
-
         $this->render('admin/review-notice', [
-            'logoUrl' => App::env('plugin.assets_url') . 'img/metricool-icon-256x256.png',
-            'reviewUrl' => App::env('metricool.review_url'),
-            'reviewMessage' => $reviewMessage,
+            'logoUrl' => App::env('plugin.assets_url') . 'img/mc-logo.svg',
+            'reviewUrl' => App::env('plugin.review_url'),
+            'reviewMessage' => $this->getReviewNoticeMessage(),
             'reviewAction' => $this->reviewAction,
             'reviewNonceName' => $this->reviewNonceName,
         ]);
@@ -56,11 +50,11 @@ class ReviewController implements ControllerInterface
      */
     public function processReviewFormSubmit(): void
     {
-        if (App::provide('request')->fromGlobal()->isEmpty('rsp_metricool_review_form')) {
+        $request = App::provide('request')->fromGlobal();
+
+        if ($request->isEmpty('rsp_metricool_review_form')) {
             return;
         }
-
-        $request = App::provide('request')->fromGlobal();
 
         $nonce = $request->get($this->reviewNonceName);
         if (wp_verify_nonce($nonce, $this->reviewAction) === false) {
@@ -81,7 +75,7 @@ class ReviewController implements ControllerInterface
     /**
      * Check if the review notice can be rendered. True when:
      * - The user has not dismissed the notice
-     * - The company registration time is suitable for review
+     * - The onboarding completion time is suitable for review
      * - The review notice dismissed time has passed
      * - The amount of bookings is greater than the threshold
      * - The user is not on an edit screen
@@ -93,7 +87,7 @@ class ReviewController implements ControllerInterface
             return false;
         }
 
-        if ($this->companyRegisteredTimeSuitableForReview() === false) {
+        if ($this->onboardingCompletedTimestampSuitableForReview() === false) {
             return false;
         }
 
@@ -112,16 +106,16 @@ class ReviewController implements ControllerInterface
     }
 
     /**
-     * Check if the company registration time is more than 30 days ago.
+     * Check if the onboarding completion time is more than 30 days ago.
      */
-    private function companyRegisteredTimeSuitableForReview(): bool
+    private function onboardingCompletedTimestampSuitableForReview(): bool
     {
-        $companyRegistrationStartTime = get_option('metricool_company_registration_start_time');
-        if (empty($companyRegistrationStartTime)) {
+        $onboardingCompletedTimestamp = get_option('metricool_onboarding_completed_unix_timestamp');
+        if (empty($onboardingCompletedTimestamp)) {
             return false;
         }
 
-        return $this->timestampIsThirtyDaysAgo($companyRegistrationStartTime);
+        return $this->timestampIsThirtyDaysAgo($onboardingCompletedTimestamp);
     }
 
     /**
@@ -146,5 +140,43 @@ class ReviewController implements ControllerInterface
         $thirtyDaysAgo = Carbon::now()->subDays(30);
 
         return $timestamp->isBefore($thirtyDaysAgo);
+    }
+
+    /**
+     * Returns the message we render in the notice. It only includes the amount
+     * of tracked sessions in the last 30 days if this exceeds
+     * {@see MIN_SESSIONS_COUNT}. Otherwise, it will render a general message.
+     */
+    private function getReviewNoticeMessage(): string
+    {
+        $mentionedStatistic = esc_html__('statistics', 'metricool');
+        $sessionCountLast30Days = $this->getSessionCountLast30Days();
+
+        if ($sessionCountLast30Days > self::MIN_SESSIONS_COUNT) {
+            $mentionedStatistic = ($sessionCountLast30Days . ' ' . esc_html__('sessions', 'metricool'));
+        }
+
+        return sprintf(
+            // translators: %s is replaced by eiter "x sessions" or "statistics", %2$ and %23$ are replaced with opening and closing a tag containing hyperlink
+            __('Hi, Metricool has tracked %s on your site for the last 30 days. If you have a moment, please consider leaving a review on wordpress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %2$smessage%3$s.', 'metricool'),
+            $mentionedStatistic,
+            '<a href="' . App::env('plugin.support_url') . '"  rel="noopener noreferrer"  target="_blank">',
+            '</a>'
+        );
+    }
+
+    /**
+     * Return amount of tracked sessions for the last 30 days (default filter)
+     * or return zero when the request fails.
+     */
+    private function getSessionCountLast30Days(): int
+    {
+        try {
+            return App::provide('client')->statistics()->visits()->filter([
+                'period' => 'last30days',
+            ])->get()->sum('amount');
+        } catch (\Throwable $e) {
+            return 0; // silently fail
+        }
     }
 }
