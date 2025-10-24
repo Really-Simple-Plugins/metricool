@@ -1,5 +1,4 @@
-import { FlexContainer } from "../components";
-import { Button, type Column, DataTable, DataTableColumnHeader } from "../components";
+import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer } from "../components";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";

@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { Button, LineChart } from "../components";
-import { FlexContainer } from "../components";
+import { Button, FlexContainer, LineChart } from "../components";
 import MetricTile from "./MetricTile.tsx";
 
 const formatTimelineDataIntoChartData = (timelineData: object, dataKey: string, locale: string) => {

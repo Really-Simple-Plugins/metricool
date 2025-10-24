@@ -1,8 +1,7 @@
-import { FlexContainer } from "../components";
+import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer } from "../components";
 import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
-import { Button, DataTable, DataTableColumnHeader, type Column } from "../components";
 import { __ } from "@wordpress/i18n";
 
 type DataTableColumns = { country: string, visitors: unknown, percent: string };
