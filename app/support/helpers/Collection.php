@@ -30,6 +30,15 @@ class Collection implements IteratorAggregate
     }
 
     /**
+     * Get first item from the collection
+     * @return mixed
+     */
+    public function first()
+    {
+        return reset($this->items);
+    }
+
+    /**
      * Push one or more items to the end of the collection
      */
     public function push(...$values): self
@@ -44,7 +53,7 @@ class Collection implements IteratorAggregate
     /**
      * Sort the collection using the given callback.
      */
-    public function sortBy($callback, $preserveKeys = false, $descending = false, $options = SORT_REGULAR): self
+    public function sortBy($callback, $descending = false, $preserveKeys = false, $options = SORT_REGULAR): self
     {
         $results = [];
 
@@ -78,18 +87,18 @@ class Collection implements IteratorAggregate
      * Sort the collection in ascending order.
      * @see Collection::sortBy()
      */
-    public function sortByAsc($callback, $preserveKeys = false): self
+    public function sortByAsc($callback, $preserveKeys = false, $options = SORT_REGULAR): self
     {
-        return $this->sortBy($callback, $preserveKeys, false);
+        return $this->sortBy($callback, $preserveKeys, $options);
     }
 
     /**
      * Sort the collection in descending order.
      * @see Collection::sortBy()
      */
-    public function sortByDesc($callback, $preserveKeys = false): self
+    public function sortByDesc($callback, $preserveKeys = false, $options = SORT_REGULAR): self
     {
-        return $this->sortBy($callback, $preserveKeys, true);
+        return $this->sortBy($callback, $preserveKeys, true, $options);
     }
 
     /**
@@ -138,8 +147,10 @@ class Collection implements IteratorAggregate
     }
 
     /**
-     * Filter items by the given key value pair.
-     *
+     * Filter items by the given key value pair. Allows shorthands for:
+     * $collection->where('property', 'value'); for a loose comparison check
+     * and
+     * $collection->where('property'); for a loose boolean check
      * @param mixed $operator
      * @param mixed $value
      */
@@ -260,12 +271,11 @@ class Collection implements IteratorAggregate
      */
     protected function operatorForWhere(string $key, string $operator = null, $value = null): Closure
     {
-        // allow shorthand for a boolean check: $collection->where('property');
+        // Allow shorthands
         if (func_num_args() === 1) {
             $value = true;
             $operator = '=';
         }
-        // allow a shorthand for a == comparison: $collection->where('property', 'value');
         if (func_num_args() === 2) {
             $value = $operator;
             $operator = '=';
