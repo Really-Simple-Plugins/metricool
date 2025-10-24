@@ -28,6 +28,6 @@ class DistributionDTO extends DTO
         if ($total === 0 || $this->amount === 0) {
             return 0;
         }
-        return round((float)(($this->amount / $total) * 100), 3, PHP_ROUND_HALF_UP);
+        return round((float) (($this->amount / $total) * 100), 3, PHP_ROUND_HALF_UP);
     }
 }
