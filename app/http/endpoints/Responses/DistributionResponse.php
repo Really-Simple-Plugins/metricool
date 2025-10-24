@@ -23,14 +23,12 @@ abstract class DistributionResponse extends Response
      */
     protected Collection $statistics;
 
-    public string $sort;
-    public string $order;
+    public string $sort = 'percentage';
+    public string $order = 'desc';
 
-    public function __construct(Collection $statistics, $sort = 'percentage', $order = 'desc')
+    public function __construct(Collection $statistics)
     {
         $this->statistics = $statistics;
-        $this->sort = $sort;
-        $this->order = $order;
     }
 
     /**
