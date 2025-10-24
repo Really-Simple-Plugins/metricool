@@ -4,27 +4,16 @@ import { __ } from "@wordpress/i18n";
 import { Button, FlexContainer, LineChart } from "../components";
 import MetricTile from "./MetricTile.tsx";
 
-const formatTimelineDataIntoChartData = (timelineData: object, dataKey: string, locale: string) => {
-    return Object.entries(timelineData).sort().map(([pageViewTimeStamp, pageViewAmount]) => ({
-        [dataKey]: new Date(Number(pageViewTimeStamp)).toLocaleTimeString(locale, { timeStyle: "short" }).toLowerCase().replace(" ", ""),
-        pageViews: pageViewAmount
-    }));
-};
-
 const RealtimeTab = () => {
-    const { httpClient, metricool } = useGlobalContext();
-    const lineChartXAxisDataKey = "timestamp";
+    const { httpClient } = useGlobalContext();
+    const lineChartXAxisDataKey = "label";
 
     const { data: realTimeData, isLoading, error } = useQuery({
         queryKey: ["analytics", "realtime"],
-        queryFn: () => httpClient?.setRoute("realtime/sessions").get(),
+        queryFn: () => httpClient?.setRoute("realtime").get(),
         staleTime: 1000 * 60, // 1 minute
         refetchInterval: 1000 * 60, // 1 minute
-        select: (data) => ({
-            realTimeChartData: formatTimelineDataIntoChartData(data.data.timeline, lineChartXAxisDataKey, metricool.locale),
-            totalPageViews: Object.values<number>(data.data.timeline).reduce((accumulatedPageViews, currentPageViews) => accumulatedPageViews + currentPageViews),
-            totalVisitors: data.data.sessions.length,
-        }),
+        select: (data) => data.data,
     });
 
     const chartConfig = {
@@ -44,16 +33,16 @@ const RealtimeTab = () => {
                     <FlexContainer direction={"row"} className={"justify-between pt-2 pl-2"}>
                         <div className={"text-md font-semibold"}>{__("Last 30 Minutes", "metricool")}</div>
                         <FlexContainer direction={"row"}>
-                            <MetricTile metric={realTimeData.totalPageViews} variant={"tertiary"}>
+                            <MetricTile metric={realTimeData.totals.pageViews.totalAmount} variant={"tertiary"}>
                                 {__("Page Views", "metricool")}
                             </MetricTile>
-                            <MetricTile metric={realTimeData.totalVisitors} variant={"primary"}>
+                            <MetricTile metric={realTimeData.totals.visitors.totalAmount} variant={"primary"}>
                                 {__("Visitors", "metricool")}
                             </MetricTile>
                         </FlexContainer>
                     </FlexContainer>
                     <hr/>
-                    <LineChart chartSettings={{xAxisKey: lineChartXAxisDataKey}} chartConfig={chartConfig} chartData={realTimeData.realTimeChartData} />
+                    <LineChart chartSettings={{ xAxisKey: lineChartXAxisDataKey }} chartConfig={chartConfig} chartData={realTimeData.timelineData}/>
                 </FlexContainer>
             )}
             {error && (
