@@ -61,23 +61,26 @@ class TaskManagementListener
      */
     public function handleConnectedBrands($connections)
     {
+        if (!count($connections)) {
+            return;
+        }
+
         $connectTasks = [
             'facebookData' => Tasks\TwitterTask::class,
             'linkedinData' => Tasks\LinkedInTask::class,
         ];
 
-        if (count($connections) > 1) {
-            $this->service->completeTask(
-                Tasks\FirstConnectionTask::IDENTIFIER
-            );
+        $this->service->completeTask(
+            Tasks\FirstConnectionTask::IDENTIFIER
+        );
 
-            foreach ($connections as $key => $task) {
-                if (array_key_exists($key, $connectTasks)) {
-                    $this->service->completeTask(
-                        $connectTasks[$key]::IDENTIFIER
-                    );
-                }
+        foreach ($connections as $key => $task) {
+            if (array_key_exists($key, $connectTasks)) {
+                $this->service->completeTask(
+                    $connectTasks[$key]::IDENTIFIER
+                );
             }
         }
+
     }
 }
