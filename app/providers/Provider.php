@@ -1,9 +1,10 @@
 <?php
+
 namespace Metricool\Providers;
 
 use Metricool\App;
-use Metricool\Utility\StringUtility;
 use Metricool\Interfaces\ProviderInterface;
+use Metricool\Utility\StringUtility;
 
 class Provider implements ProviderInterface
 {
@@ -20,7 +21,7 @@ class Provider implements ProviderInterface
     public function provide(): void
     {
         foreach ($this->provides as $provide) {
-            $method = 'provide' . StringUtility::snakeToUpperCamelCase($provide);
+            $method = 'provide' . StringUtility::snakeToPascalCase($provide);
             if (method_exists($this, $method) === false) {
                 continue;
             }

@@ -1,8 +1,6 @@
 <?php
 
-namespace Metricool\Http\Metricool\DTOs\TimelineStatistic;
-
-use Metricool\Http\Metricool\DTOs\DTO;
+namespace Metricool\Http\Metricool\DTOs;
 
 /**
  * This class represents a TimelineStatistic of one of the results of

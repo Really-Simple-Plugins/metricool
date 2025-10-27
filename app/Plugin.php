@@ -1,10 +1,11 @@
 <?php
+
 namespace Metricool;
 
+use Metricool\Managers\ControllerManager;
+use Metricool\Managers\EndpointManager;
 use Metricool\Managers\FeatureManager;
 use Metricool\Managers\ProviderManager;
-use Metricool\Managers\EndpointManager;
-use Metricool\Managers\ControllerManager;
 
 class Plugin
 {
@@ -176,13 +177,15 @@ class Plugin
             new Http\Endpoints\ConnectedBrandsEndpoint(),
             new Http\Endpoints\SubscriptionEndpoint(),
             new Http\Endpoints\UserSettingsEndpoint(),
-            new Http\Endpoints\StatisticsEndpoint(),
+            new Http\Endpoints\DistributionEndpoint(),
             new Http\Endpoints\AnalyticsEndpoint(
                 new Services\AnalyticsService(
                     new Services\Analytics\TrendService()
                 ),
             ),
-            new Http\Endpoints\RealtimeEndpoint(),
+            new Http\Endpoints\RealtimeEndpoint(
+                new Services\RealtimeService()
+            ),
             new Http\Endpoints\RelatedPluginsEndpoints(
                 new Services\RelatedPluginService()
             ),

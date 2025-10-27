@@ -2,6 +2,8 @@
 
 namespace Metricool\Http\Metricool\Traits;
 
+use Metricool\Utility\StringUtility;
+
 /**
  * Parent classes should define an endpoint property
  * @property string $endpoint
@@ -50,20 +52,16 @@ trait isFilterable
 
         $acceptedFilters = $this->getAcceptedFilters();
 
-        foreach ($filters as $name => $filter) {
-            if (empty($acceptedFilters[$name])) {
+        foreach ($filters as $filterName => $filterValue) {
+            if (empty($acceptedFilters[$filterName])) {
                 continue;
             }
 
-            if ($this->isFilterValid($filter, $acceptedFilters[$name]) === false) {
+            if ($this->isFilterValid($filterValue, $acceptedFilters[$filterName]) === false) {
                 continue;
             }
 
-            $this->endpoint = add_query_arg(
-                sanitize_text_field($name),
-                sanitize_text_field($filter),
-                $this->endpoint
-            );
+            $this->doFilter($filterName, $filterValue);
 
             $this->filtered = true;
         }
@@ -74,9 +72,9 @@ trait isFilterable
     /**
      * Process the filter value based on the pregMatch condition.
      */
-    private function isFilterValid(string $filter, string $pregMatch): bool
+    private function isFilterValid(string $filterValue, string $pregMatch): bool
     {
-        return preg_match($pregMatch, $filter) ? $filter : false;
+        return (bool) preg_match($pregMatch, $filterValue);
     }
 
     /**
@@ -85,5 +83,34 @@ trait isFilterable
     public function getFilters(): array
     {
         return $this->filters;
+    }
+
+    /**
+     * Method used to execute a filter. Calls apply{FilterName}Filter() method when
+     * present. Falls back to self::applyFilter();
+     */
+    private function doFilter(string $filterName, string $filterValue): void
+    {
+        $filterMethod = 'apply' . StringUtility::snakeToPascalCase($filterName) . 'Filter';
+
+        if (method_exists($this, $filterMethod)) {
+            // execute custom filter
+            $this->{$filterMethod}($filterValue);
+        } else {
+            // execute default filter
+            $this->applyFilter($filterName, $filterValue);
+        }
+    }
+
+    /**
+     * Takes a filter name and value and append it to the request.
+     */
+    protected function applyFilter(string $filterName, string $filterValue)
+    {
+        $this->endpoint = add_query_arg(
+            sanitize_text_field($filterName),
+            sanitize_text_field($filterValue),
+            $this->endpoint
+        );
     }
 }

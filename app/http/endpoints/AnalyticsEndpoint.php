@@ -1,25 +1,25 @@
 <?php
+
 namespace Metricool\Http\Endpoints;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Metricool\App;
-use Metricool\Services\AnalyticsService;
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\AnalyticsService;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class AnalyticsEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
 
-    const ROUTE = 'analytics';
+    public const ROUTE = 'analytics';
+    public AnalyticsService $service;
 
-    protected AnalyticsService $analyticsService;
-
-    public function __construct(AnalyticsService $analyticsService)
+    public function __construct(AnalyticsService $service)
     {
-        $this->analyticsService = $analyticsService;
+        $this->service = $service;
     }
 
     /**
@@ -60,69 +60,51 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     {
         try {
             $response = $this->buildResponse($request);
-        } catch (GuzzleException $e) {
-            return $this->sendHttpErrorResponse(esc_html__('Failed to load analytics data', 'metricool'), $e->getMessage(), 500);
+        } catch (\Exception $e) {
+            return $this->sendHttpErrorResponse(esc_html__('Failed to load Analytics data', 'metricool'), $e->getMessage());
         }
 
         return $this->sendHttpResponse($response);
     }
 
     /**
-     * Build the specific analytics response for the endpoint. This is mainly
+     * Build the specific Analytics response for the endpoint. This is mainly
      * used in the plugin Dashboard to reflect non-realtime statistics.
      * Building it server side prevents client-side complexity.
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
     private function buildResponse(\WP_REST_Request $request): array
     {
         $statisticsModule = App::provide('client')->statistics();
         $requestFilters = ($request->get_param('filters') ?: []);
+        $requestMetrics = ($request->get_param('metrics') ?: ['pageViews', 'visits', 'visitors', 'posts', 'comments']);
 
-        if (isset($requestFilters['start'])) {
-            $this->analyticsService->setStartDate($requestFilters['start']);
+        $this->service->setRequestFilters($requestFilters);
+
+        if (in_array('pageViews', $requestMetrics)) {
+            $this->service->loadMetric('pageViews', esc_html__('Page views', 'metricool'), $statisticsModule->pageViews());
         }
 
-        if (isset($requestFilters['end'])) {
-            $this->analyticsService->setEndDate($requestFilters['end']);
+        if (in_array('visits', $requestMetrics)) {
+            $this->service->loadMetric('visits', esc_html__('Visits', 'metricool'), $statisticsModule->visits());
         }
 
-        $this->analyticsService->loadMetric('pageViews', $statisticsModule->pageViews())
-            ->loadMetric('visits', $statisticsModule->visits())
-            ->loadMetric('visitors', $statisticsModule->visitors())
-            ->loadMetric('posts', $statisticsModule->posts())
-            ->loadMetric('comments', $statisticsModule->comments());
+        if (in_array('visitors', $requestMetrics)) {
+            $this->service->loadMetric('visitors', esc_html__('Visitors', 'metricool'), $statisticsModule->visitors());
+        }
 
-        return [
-            'totals' => [
-                'pageViews' => [
-                    'label' => esc_html__('Page views', 'metricool'),
-                    'totalAmount' => $this->analyticsService->getTotalAmount('pageViews'),
-                    'trend' => $this->analyticsService->getTrend('pageViews'),
-                ],
-                'visits' => [
-                    'label' => esc_html__('Visits', 'metricool'),
-                    'totalAmount' => $this->analyticsService->getTotalAmount('visits'),
-                    'trend' => $this->analyticsService->getTrend('visits'),
-                ],
-                'visitors' => [
-                    'label' => esc_html__('Visitors', 'metricool'),
-                    'totalAmount' => $this->analyticsService->getTotalAmount('visitors'),
-                    'trend' => $this->analyticsService->getTrend('visitors'),
-                ],
-                'posts' => [
-                    'label' => esc_html__('Posts', 'metricool'),
-                    'totalAmount' => $this->analyticsService->getTotalAmount('posts'),
-                    'trend' => $this->analyticsService->getTrend('posts'),
-                ],
-                'comments' => [
-                    'label' => esc_html__('Comments', 'metricool'),
-                    'totalAmount' => $this->analyticsService->getTotalAmount('comments'),
-                    'trend' => $this->analyticsService->getTrend('comments'),
-                ],
-            ],
-            'timelineData' => $this->analyticsService->getTimelineData()
-        ];
+        if (in_array('posts', $requestMetrics)) {
+            $this->service->loadMetric('posts', esc_html__('Posts', 'metricool'), $statisticsModule->posts());
+        }
 
+        if (in_array('comments', $requestMetrics)) {
+            $this->service->loadMetric('comments', esc_html__('Comments', 'metricool'), $statisticsModule->comments());
+        }
+
+        $response = new AnalyticsResponse();
+        $response->setTotals($this->service->getTotals());
+        $response->setTimelineData($this->service->getTimelineData());
+
+        return $response->body();
     }
+
 }

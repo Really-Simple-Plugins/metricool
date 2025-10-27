@@ -1,17 +1,26 @@
 <?php
+
 namespace Metricool\Http\Endpoints;
 
 use Metricool\App;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Http\Endpoints\Responses\RealtimeResponse;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\RealtimeService;
 use Metricool\Traits\HasAllowlistControl;
-use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Traits\HasRestAccess;
 
-class RealtimeEndpoint implements MultiEndpointInterface
+class RealtimeEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
 
-    const ROUTE = 'realtime';
+    public const ROUTE = 'realtime';
+    public RealtimeService $service;
+
+    public function __construct(RealtimeService $service)
+    {
+        $this->service = $service;
+    }
 
     /**
      * Only enable this endpoint if the user has access to the admin area and
@@ -25,52 +34,67 @@ class RealtimeEndpoint implements MultiEndpointInterface
     /**
      * @inheritDoc
      */
-    public function registerRoutes(): array
+    public function registerRoute(): string
+    {
+        return self::ROUTE;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerArguments(): array
     {
         return [
-            self::ROUTE . '/(?P<statistic>[^/]+)' => [
-                'methods' => \WP_REST_Server::READABLE,
-                'callback' => [$this, 'callback'],
-            ],
-            self::ROUTE . '/(?P<statistic>[^/]+)/(?P<operation>[^/]+)' => [
-                'methods' => \WP_REST_Server::READABLE,
-                'callback' => [$this, 'callback'],
-            ],
+            'methods' => \WP_REST_Server::READABLE,
+            'callback' => [$this, 'callback'],
         ];
     }
 
     /**
-     * Method will dynamically request the requested realtime statistic. Method
-     * is used for both endpoints in this route. When called without an
-     * operation, it defaults to 'get'.
-     *
-     * @example /wp-json/metricool/v1/realtime/countries (without operation = get)
-     * @example /wp-json/metricool/v1/realtime/countries/get
-     * @example /wp-json/metricool/v1/realtime/countries/count
-     * @example /wp-json/metricool/v1/realtime/countries/sum
+     * Build the specific Realtime response for the endpoint. This is mainly
+     * used in the plugin Dashboard. Building it server side prevents client-side complexity.
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
-        $metric = $request->get_param('statistic') ?: '';
-        $operation = $request->get_param('operation') ?: 'get';
-        $realtimeModule = App::provide('client')->realtime();
-
-        if (!method_exists($realtimeModule, $metric)) {
-            return $this->sendHttpResponse([], false, esc_html__('Unknown metric requested', 'metricool'), 400);
-        }
-
-        if (!method_exists($realtimeModule->$metric(), $operation)) {
-            return $this->sendHttpResponse([], false, esc_html__('Unknown operation requested', 'metricool'), 400);
-        }
-
         try {
-            $response = $realtimeModule->$metric()->$operation();
-        } catch (\Throwable $e) {
-            echo '<pre>';
-            var_dump($e->getMessage()); // todo
-            exit();
+            $response = $this->buildResponse($request);
+        } catch (\Exception $e) {
+            return $this->sendHttpErrorResponse(esc_html__('Failed to load Realtime data', 'metricool'), $e->getMessage());
         }
 
         return $this->sendHttpResponse($response);
+    }
+
+    /**
+     * Build the specific Analytics response for the endpoint. This is mainly
+     * used in the plugin Dashboard to reflect non-realtime statistics.
+     * Building it server side prevents client-side complexity.
+     * @throws \Exception
+     */
+    private function buildResponse(\WP_REST_Request $request): array
+    {
+        $realtimeModule = App::provide('client')->realtime();
+
+        // Get our data
+        $sessions = $realtimeModule->sessions()->get();
+        if (!isset($sessions['timeline'])) {
+            throw new \Exception('Session data is missing');
+        }
+
+        $values = $realtimeModule->current()->get();
+        if (!isset($values['activeVisits'])) {
+            throw new \Exception('Visitors data is missing');
+        }
+
+        // Add the pageViews to the timeline and totals
+        $this->service->addMetric('pageViews', esc_html__('Page views', 'metricool'), $sessions['timeline']);
+        // Add visitors just to the totals
+        $this->service->addTotals('visitors', esc_html__('Visitors', 'metricool'), $values['activeVisits']);
+
+        $response = new RealtimeResponse();
+        $response->setTotals($this->service->getTotals());
+        $response->setTimelineData($this->service->getTimelineData());
+
+        return $response->body();
     }
 }
