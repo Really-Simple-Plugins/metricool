@@ -6,6 +6,7 @@ import { useGlobalContext } from "../context/GlobalContext.tsx";
 
 const ConnectedAccounts = () => {
     const { httpClient, metricool } = useGlobalContext();
+    const metricoolSSOLink = `https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`
     const { data: connectedAccountsData, isLoading, error } = useQuery({
         queryKey: ["connected", "accounts"],
         queryFn: () => httpClient?.setRoute("connected_brands").get(),
@@ -59,7 +60,7 @@ const ConnectedAccounts = () => {
             {connectedAccountsData && (
                 <div className={"grid grid-cols-1 lg:grid-cols-2 gap-2"}>
                     {connectedAccountsData.map((account) => (
-                        <AccountTile {...account} />
+                        <AccountTile {...account} link={metricoolSSOLink} />
                     ))}
                 </div>
             )}
@@ -69,7 +70,7 @@ const ConnectedAccounts = () => {
                 </FlexContainer>
             )}
             <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} className={"size-fit"} onClick={() => {
-                window.open(` https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`, "_blank");
+                window.open(metricoolSSOLink, "_blank");
                 window.focus();
             }}>
                 {__("Connected Accounts", "metricool")}
