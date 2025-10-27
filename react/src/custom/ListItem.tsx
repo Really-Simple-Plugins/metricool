@@ -41,11 +41,11 @@ const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, action, acti
                     <Icon icon={icon} iconClass={iconClass} />
                 ))}
                 {link ? (
-                    <a href={link} target={"_blank"} className={clsx(className, "text-sm")}>
+                    <a href={link} target={"_blank"} className={clsx(className, "text-md")}>
                         {children}
                     </a>
                 ) : (
-                    <div className={clsx(className, "text-sm")}>
+                    <div className={clsx(className, "text-md")}>
                         {children}
                     </div>
                 )}
