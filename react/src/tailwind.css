@@ -46,6 +46,14 @@ Metricool Brand Style Guide
     **/
     --color-light-green: #52C79F;
     --color-upsell: #F5C931;
+
+    /**
+    ======================================
+    Metricool Web Colors
+    ======================================
+    **/
+    --color-web: #5c90a8;
+    --color-blog: #5f9ea0;
 }
 
 /**
