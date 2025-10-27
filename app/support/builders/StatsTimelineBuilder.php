@@ -4,17 +4,35 @@ namespace Metricool\Builders;
 
 use Carbon\Carbon;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTOs\TimelineStatistic\TimelineDTO;
+use Metricool\Http\Metricool\DTOs\TimelineDTO;
+use Metricool\Http\Metricool\Entities\TimelineStatistics;
 
 /**
  * Builds a timeline from a collection of metrics and their corresponding statistics.
  * @see AnalyticsService for usage example
  */
-class TimelineResponseBuilder
+class StatsTimelineBuilder
 {
-    public array $timeline = [];
-    /** @var array<string, array{timelineStatistics: Collection<TimelineDTO>, results: Collection<TimelineDTO>}> */
+    /**
+     * @var array $timeline This holds all the results of the timeline
+     */
+    protected array $timeline = [];
+
+    /**
+     * Metrics holds the name of the Metric, the label and results of the API request
+     * @var array<string, array{
+     *     name: string,
+     *     label: string,
+     *     results: Collection|TimelineDTO[],
+     *     useInTimeline: bool,
+     *  }>
+     **/
     protected array $metrics = [];
+
+    /**
+     * @var string $dateFormat The date to be used in the results of the timeline
+     */
+    protected string $dateFormat = 'j M';
 
     /**
      * Combines statistics within the same timestamp data into a timeline.
@@ -37,8 +55,21 @@ class TimelineResponseBuilder
     }
 
     /**
+     * Set the date format to be used in the results of the timeline.
+     */
+    public function setDateFormat(string $format): self
+    {
+        $this->dateFormat = $format;
+
+        return $this;
+    }
+
+    /**
      * Sets the metrics that should be included in a timeline item
-     * @param array<string, array{timelineStatistics: Collection<TimelineDTO>, results: Collection<TimelineDTO>}> $metrics
+     * @param array<string, array{
+     *     timelineStatistics: TimelineStatistics,
+     *     results: Collection|TimelineDTO[],
+     * }> $metrics
      */
     public function setMetrics(array $metrics): self
     {
@@ -66,7 +97,7 @@ class TimelineResponseBuilder
     /**
      * Checks if a row exists on the given timestamp
      */
-    protected function hasRow($datestamp) : bool
+    protected function hasRow($datestamp): bool
     {
         return ($this->getRow($datestamp) !== null);
     }
@@ -80,15 +111,15 @@ class TimelineResponseBuilder
     {
         $row = [
             'timestamp' => $timestamp,
-            'date' => Carbon::createFromTimestampMs($timestamp)->format('j M'),
+            'label' => Carbon::createFromTimestampMs($timestamp)->translatedFormat($this->dateFormat),
         ];
 
         // initialize the properties for each metric, these are the keys of the metrics
-        foreach (array_keys($this->metrics) as $metric) {
-            $row[$metric] = 0.0;
+        foreach ($this->metrics as $property => $metric) {
+            $row[$property] = 0.0;
         }
 
-        return $this->addRowToTimeline($timestamp,$row);
+        return $this->addRowToTimeline($timestamp, $row);
     }
 
     /**
@@ -102,7 +133,7 @@ class TimelineResponseBuilder
     }
 
     /**
-     * Adds a metric (Visits / PageViews / etc) to the row
+     * Adds a metric (Visits / PageViews / etc.) to the row
      */
     protected function addMetricToRow(&$row, string $metric, TimelineDTO $statistic): void
     {

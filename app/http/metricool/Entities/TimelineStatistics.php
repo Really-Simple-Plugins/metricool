@@ -2,9 +2,10 @@
 
 namespace Metricool\Http\Metricool\Entities;
 
+use Carbon\Carbon;
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Helpers\Collection;
-use Metricool\Http\Metricool\DTOs\TimelineStatistic\TimelineDTO;
+use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\isFilterable;
 use Metricool\Traits\isHydratable;
@@ -50,6 +51,16 @@ class TimelineStatistics
             throw new \InvalidArgumentException("Incompatible metric given: $this->metric");
         }
 
+        /**
+         * The distribution statistics API need a filter by default to prevent
+         * Internal Server errors on the remote server. We set the default
+         * filters to the last 30 days.
+         */
+        $this->filters = [
+            'start' => Carbon::now()->subDays(30)->format('Ymd'),
+            'end' => Carbon::now()->format('Ymd'),
+        ];
+
         $this->client = $client;
         $this->endpoint .= $this->metric;
         $this->requiresFilter = $filterRequired;
@@ -63,7 +74,48 @@ class TimelineStatistics
         return [
             'start' => '/^\d+$/',
             'end' => '/^\d+$/',
+            'period' => '/^[a-z0-9]+$/i',
         ];
+    }
+
+
+    /**
+     * Applies the period filter
+     * @see IsFilterable
+     */
+    protected function applyPeriodFilter(string $period): void
+    {
+        $startDate = Carbon::now();
+        $endDate = Carbon::now();
+
+        switch ($period) {
+            case 'yesterday':
+                $startDate->subDay();
+                $endDate->subDay();
+                break;
+            case 'lastweek':
+                $startDate->subDays(7)->startOfWeek();
+                $endDate->subDays(7)->endOfWeek();
+                break;
+            case 'last30days':
+                $startDate->subDays(30);
+                break;
+            case 'last3months':
+                $startDate->subMonths(3);
+                break;
+            case 'last6months':
+                $startDate->subMonths(6);
+                break;
+            case 'last12months':
+                $startDate->subMonths(12);
+                break;
+            case 'currentmonth':
+                $startDate->startOfMonth();
+                break;
+        }
+
+        $this->applyFilter('start', $startDate->format('Ymd'));
+        $this->applyFilter('end', $endDate->format('Ymd'));
     }
 
     /**
@@ -81,15 +133,12 @@ class TimelineStatistics
 
     /**
      * Fetch and return the timeline statistics data plainly from the API.
-     * @return Collection<TimelineDTO>
+     * @return Collection|TimelineDTO[]
      * @throws GuzzleException
      */
     public function get(): Collection
     {
         if ($this->requiresFilter && $this->filtered === false) {
-            if(empty($this->filters['start']) || empty($this->filters['end'])) {
-                throw new \Exception('Start and end date are required for this timeline statistic');
-            }
             $this->filter($this->filters);
         }
 
