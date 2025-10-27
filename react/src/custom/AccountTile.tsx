@@ -15,7 +15,7 @@ type AccountTileProps = {
 const AccountTile = ({ label, icon, connectedClasses, unconnectedClasses, upsell, userName, link }: AccountTileProps) => {
     return (
         <div onClick={() => {window.open(link, "_blank"); window.focus();}}
-             className={clsx("flex rounded-sm border-1 w-full min-h-[40px] px-1 items-center gap-2",
+             className={clsx("flex rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2",
                  userName ? "border-neutral-200" : unconnectedClasses,
         )}>
             <div className={"min-w-[24px] flex items-center justify-center"}>
