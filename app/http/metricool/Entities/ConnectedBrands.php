@@ -3,25 +3,21 @@
 namespace Metricool\Http\Metricool\Entities;
 
 use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Helpers\Event;
 use Metricool\Http\Metricool\MetricoolClient;
 
 class ConnectedBrands
 {
     protected MetricoolClient $client;
-    private string $endpoint = 'admin/profiles-auth';
+    private string $endpoint = 'v2/settings/brands/';
 
+    /**
+     * @throws \Exception
+     */
     public function __construct(MetricoolClient $client)
     {
         $this->client = $client;
-    }
-
-    /**
-     * Fetch and return the timeline statistics data plainly from the API.
-     * @throws GuzzleException
-     */
-    public function all(): array
-    {
-        return $this->client->get($this->endpoint);
+        $this->endpoint = $this->endpoint . $this->client->getBlogId();
     }
 
     /**
@@ -30,6 +26,19 @@ class ConnectedBrands
      */
     public function get(): array
     {
-        return $this->all();
+        if (!$this->client->hasBlogId()) {
+            // This endpoint should not be called without a BlogId. Return empty result.
+            return [];
+        }
+
+        $result = $this->client->get($this->endpoint);
+
+        // todo: validation?
+
+        if (isset($result['data']['networksData'])) {
+            Event::dispatch(Event::CONNECTED_BRANDS, $result['data']['networksData']);
+        }
+
+        return $result;
     }
 }
