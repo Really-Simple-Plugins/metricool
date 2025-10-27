@@ -17,7 +17,8 @@ class TaskManagementListener
     public function listen(): void
     {
         add_action('load-edit.php', [$this, 'handleEditPageLoad']);
-        add_action('metricool_event_' . Event::EXAMPLE_EVENT, [$this, 'handleExampleEvent']);
+
+        add_action('metricool_event_' . Event::CONNECTED_BRANDS_DATA_LOADED, [$this, 'handleConnectedBrands']);
     }
 
     /**
@@ -29,19 +30,33 @@ class TaskManagementListener
             return;
         }
 
-         $this->service->dismissTask(
-             Tasks\SchedulePostTask::IDENTIFIER,
-         );
+        $this->service->dismissTask(
+            Tasks\SchedulePostTask::IDENTIFIER,
+        );
     }
 
     /**
-     * Handle the example event to update task status.
+     * Event receives a list of connections from the "networksData" object of the /v2/settings/brands Metricool API response
      */
-    public function handleExampleEvent(array $arguments): void
+    public function handleConnectedBrands($connections)
     {
-        // todo
-        // $this->service->flagTaskUrgent(
-            // Tasks\AddMandatoryServiceTask::IDENTIFIER
-       // );
+        $connectTasks = [
+            'facebookData' => Tasks\TwitterTask::class,
+            'linkedinData' => Tasks\LinkedInTask::class,
+        ];
+
+        if (count($connections) > 1) {
+            $this->service->completeTask(
+                Tasks\FirstConnectionTask::IDENTIFIER
+            );
+
+            foreach ($connections as $key => $task) {
+                if (array_key_exists($key, $connectTasks)) {
+                    $this->service->completeTask(
+                        $connectTasks[$key]::IDENTIFIER
+                    );
+                }
+            }
+        }
     }
 }
