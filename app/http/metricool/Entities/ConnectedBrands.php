@@ -36,7 +36,7 @@ class ConnectedBrands
         // todo: validation?
 
         if (isset($result['data']['networksData'])) {
-            Event::dispatch(Event::CONNECTED_BRANDS, $result['data']['networksData']);
+            Event::dispatch(Event::CONNECTED_BRANDS_DATA_LOADED, $result['data']['networksData']);
         }
 
         return $result;
