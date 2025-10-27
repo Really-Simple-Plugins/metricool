@@ -39,7 +39,7 @@ const TrafficTab = () => {
             )}
             {trafficData && (
                 <FlexContainer direction={"column"}>
-                    <DataTable data={trafficData.tableData} columns={columns}/>
+                    <DataTable data={trafficData.tableData} columns={columns} tableSettings={{ pageSize: 7 }}/>
                 </FlexContainer>
             )}
             {error && (
