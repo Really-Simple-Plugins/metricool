@@ -37,6 +37,27 @@ class TaskManagementListener
 
     /**
      * Event receives a list of connections from the "networksData" object of the /v2/settings/brands Metricool API response
+     *
+     * Example:
+     * {
+     *     "webData": "https://help.metricool.com/es/",
+     *     "facebookData": "101307319490812",
+     *     "instagramData": "testingmetri",
+     *     "threadsData": "testingmetri",
+     *     "blueskyData": "testingmetri.bsky.social",
+     *     "twitterData": "TestingMetri",
+     *     "linkedinData": "urn:li:organization:91711355",
+     *     "pinterestData": "testingmetri",
+     *     "tiktokData": "testingmetri",
+     *     "gbpData": "accounts/114630028650069139274/locations/16265234060702537753",
+     *     "youtubeData": "UCYc9UBnvBDUXqpgJZYEurOg",
+     *     "twitchData": "868382795",
+     *     "facebookAdsData": "act_911576459824189",
+     *     "googleAdsData": "8686751192",
+     *     "tiktokAdsData": "7186312106294165505"
+     * }
+     *
+     * Completes tasks based on the keys and values of the connections object.
      */
     public function handleConnectedBrands($connections)
     {
