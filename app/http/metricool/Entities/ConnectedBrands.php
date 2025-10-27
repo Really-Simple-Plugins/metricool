@@ -33,12 +33,12 @@ class ConnectedBrands
 
         $result = $this->client->get($this->endpoint);
 
-        // todo: validation?
-
-        if (isset($result['data']['networksData'])) {
-            Event::dispatch(Event::CONNECTED_BRANDS_DATA_LOADED, $result['data']['networksData']);
+        if (!isset($result['data']['networksData'])) {
+            return [];
         }
 
-        return $result;
+        Event::dispatch(Event::CONNECTED_BRANDS_DATA_LOADED, $result['data']['networksData']);
+
+        return $result['data']['networksData'];
     }
 }
