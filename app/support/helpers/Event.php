@@ -14,7 +14,7 @@ class Event
      * Event names
      */
     const EXAMPLE_EVENT = 'example_event';
-    const CONNECTED_BRANDS_DATA_LOADED = 'connected_brands_data_loaded';
+    const CONNECTED_NETWORKS_DATA_LOADED = 'connected_networks_data_loaded';
     const SUBSCRIPTION_DATA_LOADED = 'subscription_data_loaded';
 
     /**

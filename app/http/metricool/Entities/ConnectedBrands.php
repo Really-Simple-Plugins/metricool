@@ -37,7 +37,7 @@ class ConnectedBrands
             return [];
         }
 
-        Event::dispatch(Event::CONNECTED_BRANDS_DATA_LOADED, $result['data']['networksData']);
+        Event::dispatch(Event::CONNECTED_NETWORKS_DATA_LOADED, $result['data']['networksData']);
 
         return $result['data'];
     }

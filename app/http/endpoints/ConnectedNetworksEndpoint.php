@@ -62,7 +62,6 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     public function buildResponse(\WP_REST_Request $request): array
     {
         $connectedBrand = App::provide('client')->connectedBrands()->get();
-
         $response = new ConnectedNetworksResponse($connectedBrand);
 
         return $response->body();

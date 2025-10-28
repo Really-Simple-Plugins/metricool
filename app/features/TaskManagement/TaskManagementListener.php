@@ -19,7 +19,7 @@ class TaskManagementListener
     {
         add_action('load-edit.php', [$this, 'handleEditPageLoad']);
 
-        add_action('metricool_event_' . Event::CONNECTED_BRANDS_DATA_LOADED, [$this, 'handleConnectedBrands']);
+        add_action('metricool_event_' . Event::CONNECTED_NETWORKS_DATA_LOADED, [$this, 'handleConnectedNetworks']);
         add_action('metricool_event_' . Event::SUBSCRIPTION_DATA_LOADED, [$this, 'handleSubscriptionLoaded']);
     }
 
@@ -41,7 +41,7 @@ class TaskManagementListener
      * Event receives a list of connections from the "networksData" object of the /v2/settings/brands Metricool API response
      * Completes tasks based on the keys and values of the connections array.
      */
-    public function handleConnectedBrands($connections): void
+    public function handleConnectedNetworks($connections): void
     {
         if (!count($connections)) {
             return;
@@ -66,7 +66,8 @@ class TaskManagementListener
     }
 
     /**
-     *
+     * This even receives the response of the /v2/profile/subscription endpoint.
+     * Completes HistoricalDataTask
      */
     public function handleSubscriptionLoaded(array $subscription): void
     {

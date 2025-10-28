@@ -12,6 +12,9 @@ class ConnectedNetworksResponse extends Response
         $this->brandSettings = $brandSettings;
     }
 
+    /**
+     * Parse the brandSettings response and extract just the connected networks
+     */
     protected function parse(): array
     {
         $networks = [];
@@ -19,6 +22,7 @@ class ConnectedNetworksResponse extends Response
         foreach ($this->brandSettings['networksData'] as $network => $networkData) {
             $networks[] = str_replace('Data', '', $network);
         }
+
         return $networks;
     }
 
