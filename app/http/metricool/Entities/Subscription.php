@@ -14,13 +14,14 @@ class Subscription
     {
         $this->client = $client;
     }
-
+    
     public function get(): array
     {
         $response = $this->client->get($this->endpoint);
+        $data = ($response['data'] ?? []);
 
-        Event::dispatch(Event::SUBSCRIPTION_DATA_LOADED, $response['data'] ?? []);
+        Event::dispatch(Event::SUBSCRIPTION_DATA_LOADED, $data);
 
-        return ($response['data'] ?? []);
+        return $data;
     }
 }
