@@ -1,10 +1,10 @@
-import { Button, Icon } from "../components";
+import { Icon, type IconProps } from "../components";
 import { clsx } from "clsx";
 import { __, sprintf } from "@wordpress/i18n";
 
 type AccountTileProps = {
     label: string,
-    icon: string,
+    icon: IconProps["icon"],
     connectedClasses: string,
     unconnectedClasses: string,
     upsell: boolean,
