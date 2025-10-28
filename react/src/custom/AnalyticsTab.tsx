@@ -188,7 +188,13 @@ const AnalyticsTab = () => {
                             )
                         )}
                     </Select>
-                    <Button variant={"upsell"} size={"sm"} icon={"file"} iconPosition={"left"}>
+                    <Button
+                        variant={"upsell"}
+                        size={"sm"}
+                        icon={"file"}
+                        iconPosition={"left"}
+                        link={`https://app.metricool.com/evolution/reports?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                    >
                         {__("Report", "metricool")}
                     </Button>
                 </FlexContainer>

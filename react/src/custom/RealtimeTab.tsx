@@ -5,7 +5,7 @@ import { Button, FlexContainer, LineChart } from "../components";
 import MetricTile from "./MetricTile.tsx";
 
 const RealtimeTab = () => {
-    const { httpClient } = useGlobalContext();
+    const { httpClient, metricool } = useGlobalContext();
     const lineChartXAxisDataKey = "label";
 
     const { data: realTimeData, isLoading, error } = useQuery({
@@ -58,7 +58,13 @@ const RealtimeTab = () => {
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>
-                <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"}>
+                <Button
+                    variant={"primary-gradient-ghost"}
+                    icon={"external-link"}
+                    iconPosition={"right"}
+                    iconClass={"svg-gradient"}
+                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                >
                     {__("View Analytics", "metricool")}
                 </Button>
             </FlexContainer>
