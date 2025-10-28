@@ -24,7 +24,7 @@ const ConnectedAccounts = () => {
             return [
                 {
                     label: "Web",
-                    icon: "domain",
+                    icon: "web",
                     connectedClasses: "text-[#5c90a8]",
                     unconnectedClasses: "bg-[#5c90a8] border-[#5c90a8]",
                     upsell: false,
