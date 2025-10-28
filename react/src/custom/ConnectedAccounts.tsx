@@ -67,7 +67,7 @@ const ConnectedAccounts = () => {
                 <div>LOADING</div>
             )}
             {connectedAccountsData && (
-                <div className={"grid grid-cols-1 lg:grid-cols-2 gap-2"}>
+                <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
                     {connectedAccountsData.map((account) => (
                         <AccountTile {...account} link={metricoolSSOLink} />
                     ))}
