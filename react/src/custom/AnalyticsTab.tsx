@@ -158,7 +158,7 @@ const AnalyticsTab = () => {
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
-                <FlexContainer direction={"row"} className={"sm:flex-col xl:flex-row flex-wrap"}>
+                <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
                     <Select
                         defaultValue={"last30Days"}
                         icon={{ icon: "upsell", iconClass: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
