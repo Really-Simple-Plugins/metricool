@@ -2,16 +2,18 @@
 
 namespace Metricool\Features\Notifications\Notices;
 
+
 class FirstConnectionNotice extends AbstractNotice
 {
     const IDENTIFIER = 'first_connection';
+    protected bool $active = true;
 
     /**
      * @inheritDoc
      */
     public function getTitle(): string
     {
-        return esc_html__('No connections detected', 'simplybook');
+        return esc_html__('No connections detected', 'metricool');
     }
 
     /**
@@ -19,7 +21,7 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getText(): string
     {
-        return esc_html__('Connect your first social account to Metricool to start scheduling and tracking your content.', 'simplybook');
+        return esc_html__('Connect your first social account to Metricool to start scheduling and tracking your content.', 'metricool');
     }
 
     /**

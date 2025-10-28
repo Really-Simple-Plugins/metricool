@@ -82,22 +82,20 @@ class DistributionEndpoint implements SingleEndpointInterface
         $metric = ($request->get_param('metric') ?: '');
         $requestFilters = ($request->get_param('filters') ?: []);
 
-        // Find and create the response
-        $response = $this->createResponseFromMetric($metric);
+        // Load the statistics
+        $statistics = $this->getStatisticsForMetric($metric, $requestFilters);
 
-        // Load the results
-        $results = $this->getResultsFromMetric($metric, $requestFilters);
-
-        // Process the results and add them to the response
-        $response->processResults($results);
+        // Find the associated response object for the metric
+        $response = $this->createResponseObjectFromMetric($metric, $statistics);
 
         return $response->body();
     }
 
     /**
+     * Loads the results from the Metricool API
      * @return Collection|DistributionDTO[]
      */
-    protected function getResultsFromMetric(string $metric, array $filters): Collection
+    protected function getStatisticsForMetric(string $metric, array $filters): Collection
     {
         $statisticsModule = App::provide('client')->statistics();
 
@@ -112,9 +110,10 @@ class DistributionEndpoint implements SingleEndpointInterface
 
     /**
      * Find the response that matches the requested metric or throw an exception.
-     * Each metric has its own specific serialisation of the results and chartDatagit
+     * Each metric has its own specific serialisation of the results and chartData
+     * @param Collection|DistributionDTO[] $statistics
      */
-    protected function createResponseFromMetric(string $metric): DistributionResponse
+    protected function createResponseObjectFromMetric(string $metric, Collection $statistics): DistributionResponse
     {
         if (!array_key_exists($metric, self::metricsResponseMapper)) {
             throw new \InvalidArgumentException("Metric $metric is not accepted by this endpoint");
@@ -122,6 +121,6 @@ class DistributionEndpoint implements SingleEndpointInterface
 
         $response = self::metricsResponseMapper[$metric];
 
-        return new $response();
+        return new $response($statistics);
     }
 }

@@ -5,6 +5,7 @@ namespace Metricool\Http\Endpoints;
 use Metricool\App;
 use Metricool\Http\Endpoints\Responses\RealtimeResponse;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\RealtimeService;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -14,6 +15,12 @@ class RealtimeEndpoint implements SingleEndpointInterface
     use HasAllowlistControl;
 
     public const ROUTE = 'realtime';
+    public RealtimeService $service;
+
+    public function __construct(RealtimeService $service)
+    {
+        $this->service = $service;
+    }
 
     /**
      * Only enable this endpoint if the user has access to the admin area and
@@ -79,12 +86,14 @@ class RealtimeEndpoint implements SingleEndpointInterface
             throw new \Exception('Visitors data is missing');
         }
 
-        $response = new RealtimeResponse();
-
         // Add the pageViews to the timeline and totals
-        $response->service->addMetric('pageViews', esc_html__('Page views', 'metricool'), $sessions['timeline']);
+        $this->service->addMetric('pageViews', esc_html__('Page views', 'metricool'), $sessions['timeline']);
         // Add visitors just to the totals
-        $response->service->addTotals('visitors', esc_html__('Visitors', 'metricool'), $values['activeVisits']);
+        $this->service->addTotals('visitors', esc_html__('Visitors', 'metricool'), $values['activeVisits']);
+
+        $response = new RealtimeResponse();
+        $response->setTotals($this->service->getTotals());
+        $response->setTimelineData($this->service->getTimelineData());
 
         return $response->body();
     }

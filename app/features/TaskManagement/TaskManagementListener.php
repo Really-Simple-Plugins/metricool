@@ -3,6 +3,7 @@
 namespace Metricool\Features\TaskManagement;
 
 use Metricool\App;
+use Metricool\Features\TaskManagement\Tasks\HistoricalDataTask;
 use Metricool\Helpers\Event;
 
 class TaskManagementListener
@@ -17,7 +18,9 @@ class TaskManagementListener
     public function listen(): void
     {
         add_action('load-edit.php', [$this, 'handleEditPageLoad']);
-        add_action('metricool_event_' . Event::EXAMPLE_EVENT, [$this, 'handleExampleEvent']);
+
+        add_action('metricool_event_' . Event::CONNECTED_NETWORKS_DATA_LOADED, [$this, 'handleConnectedNetworks']);
+        add_action('metricool_event_' . Event::SUBSCRIPTION_DATA_LOADED, [$this, 'handleSubscriptionLoaded']);
     }
 
     /**
@@ -29,19 +32,49 @@ class TaskManagementListener
             return;
         }
 
-         $this->service->dismissTask(
-             Tasks\SchedulePostTask::IDENTIFIER,
-         );
+        $this->service->dismissTask(
+            Tasks\SchedulePostTask::IDENTIFIER,
+        );
     }
 
     /**
-     * Handle the example event to update task status.
+     * Event receives a list of connections from the "networksData" object of the /v2/settings/brands Metricool API response
+     * Completes tasks based on the keys and values of the connections array.
      */
-    public function handleExampleEvent(array $arguments): void
+    public function handleConnectedNetworks($connections): void
     {
-        // todo
-        // $this->service->flagTaskUrgent(
-            // Tasks\AddMandatoryServiceTask::IDENTIFIER
-       // );
+        if (!count($connections)) {
+            return;
+        }
+
+        $connectTasks = [
+            'facebookData' => Tasks\TwitterTask::class,
+            'linkedinData' => Tasks\LinkedInTask::class,
+        ];
+
+        $this->service->completeTask(
+            Tasks\FirstConnectionTask::IDENTIFIER
+        );
+
+        foreach ($connections as $key => $task) {
+            if (array_key_exists($key, $connectTasks)) {
+                $this->service->completeTask(
+                    $connectTasks[$key]::IDENTIFIER
+                );
+            }
+        }
+    }
+
+    /**
+     * This even receives the response of the /v2/profile/subscription endpoint.
+     * Completes HistoricalDataTask
+     */
+    public function handleSubscriptionLoaded(array $subscription): void
+    {
+        $isPremium = strtolower($subscription['planId']) !== 'free';
+
+        if ($isPremium) {
+            $this->service->completeTask(HistoricalDataTask::IDENTIFIER);
+        }
     }
 }

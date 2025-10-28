@@ -1,10 +1,11 @@
 <?php
+
 namespace Metricool;
 
+use Metricool\Managers\ControllerManager;
+use Metricool\Managers\EndpointManager;
 use Metricool\Managers\FeatureManager;
 use Metricool\Managers\ProviderManager;
-use Metricool\Managers\EndpointManager;
-use Metricool\Managers\ControllerManager;
 
 class Plugin
 {
@@ -174,6 +175,7 @@ class Plugin
     {
         $this->endpointManager->registerEndpoints([
             new Http\Endpoints\ConnectedBrandsEndpoint(),
+            new Http\Endpoints\ConnectedNetworksEndpoint(),
             new Http\Endpoints\SubscriptionEndpoint(),
             new Http\Endpoints\UserSettingsEndpoint(),
             new Http\Endpoints\DistributionEndpoint(),
@@ -182,7 +184,9 @@ class Plugin
                     new Services\Analytics\TrendService()
                 ),
             ),
-            new Http\Endpoints\RealtimeEndpoint(),
+            new Http\Endpoints\RealtimeEndpoint(
+                new Services\RealtimeService()
+            ),
             new Http\Endpoints\RelatedPluginsEndpoints(
                 new Services\RelatedPluginService()
             ),

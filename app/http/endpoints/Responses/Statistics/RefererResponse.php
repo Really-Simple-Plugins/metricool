@@ -10,9 +10,9 @@ class RefererResponse extends DistributionResponse
     /**
      * @inheritDoc
      */
-    public function getSingleItem(DistributionDTO $item, int $total): object
+    public function parseSingleItem(DistributionDTO $item, int $total): object
     {
-        return (object)[
+        return (object) [
             'url' => $item->value,
             'pageViews' => $item->amount,
             'percentage' => $item->calculatePercentageFromTotal($total),

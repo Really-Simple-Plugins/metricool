@@ -2,6 +2,8 @@
 
 namespace Metricool\Http\Metricool\Traits;
 
+use Metricool\Utility\StringUtility;
+
 /**
  * Parent classes should define an endpoint property
  * @property string $endpoint
@@ -59,9 +61,9 @@ trait isFilterable
                 continue;
             }
 
-            if ($this->applyFilter($filterName, $filterValue)) {
-                $this->filtered = true;
-            }
+            $this->doFilter($filterName, $filterValue);
+
+            $this->filtered = true;
         }
 
         return $this;
@@ -72,7 +74,7 @@ trait isFilterable
      */
     private function isFilterValid(string $filterValue, string $pregMatch): bool
     {
-        return (bool)preg_match($pregMatch, $filterValue);
+        return (bool) preg_match($pregMatch, $filterValue);
     }
 
     /**
@@ -84,22 +86,31 @@ trait isFilterable
     }
 
     /**
-     * Method used to apply a filter. Calls apply{FilterName}Filter() method when present
+     * Method used to execute a filter. Calls apply{FilterName}Filter() method when
+     * present. Falls back to self::applyFilter();
      */
-    protected function applyFilter($filterName, $filterValue): bool
+    private function doFilter(string $filterName, string $filterValue): void
     {
-        $filterMethod = 'apply' . ucfirst($filterName) . 'Filter';
+        $filterMethod = 'apply' . StringUtility::snakeToPascalCase($filterName) . 'Filter';
 
         if (method_exists($this, $filterMethod)) {
-            return $this->{$filterMethod}($filterValue);
+            // execute custom filter
+            $this->{$filterMethod}($filterValue);
+        } else {
+            // execute default filter
+            $this->applyFilter($filterName, $filterValue);
         }
+    }
 
+    /**
+     * Takes a filter name and value and append it to the request.
+     */
+    protected function applyFilter(string $filterName, string $filterValue)
+    {
         $this->endpoint = add_query_arg(
             sanitize_text_field($filterName),
             sanitize_text_field($filterValue),
             $this->endpoint
         );
-
-        return true;
     }
 }

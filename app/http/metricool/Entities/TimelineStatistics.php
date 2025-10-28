@@ -74,15 +74,16 @@ class TimelineStatistics
         return [
             'start' => '/^\d+$/',
             'end' => '/^\d+$/',
-            'period' => '/^(last\d+days|last\d+months|yesterday|)$/',
+            'period' => '/^[a-z0-9]+$/i',
         ];
     }
+
 
     /**
      * Applies the period filter
      * @see IsFilterable
      */
-    protected function applyPeriodFilter(string $period): bool
+    protected function applyPeriodFilter(string $period): void
     {
         $startDate = Carbon::now();
         $endDate = Carbon::now();
@@ -111,23 +112,10 @@ class TimelineStatistics
             case 'currentmonth':
                 $startDate->startOfMonth();
                 break;
-            default:
-                return false;
         }
 
-        $this->endpoint = add_query_arg(
-            sanitize_text_field('start'),
-            sanitize_text_field($startDate->format('Ymd')),
-            $this->endpoint
-        );
-
-        $this->endpoint = add_query_arg(
-            sanitize_text_field('end'),
-            sanitize_text_field($endDate->format('Ymd')),
-            $this->endpoint
-        );
-
-        return true;
+        $this->applyFilter('start', $startDate->format('Ymd'));
+        $this->applyFilter('end', $endDate->format('Ymd'));
     }
 
     /**
@@ -151,9 +139,6 @@ class TimelineStatistics
     public function get(): Collection
     {
         if ($this->requiresFilter && $this->filtered === false) {
-            if (empty($this->filters['start']) || empty($this->filters['end'])) {
-                throw new \Exception('Start and end date are required for this timeline statistic');
-            }
             $this->filter($this->filters);
         }
 

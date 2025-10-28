@@ -3,6 +3,7 @@
 namespace Metricool\Http\Metricool\Entities;
 
 use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Helpers\Event;
 use Metricool\Http\Metricool\MetricoolClient;
 
 class ConnectedBrands
@@ -10,21 +11,13 @@ class ConnectedBrands
     protected MetricoolClient $client;
     private string $endpoint = 'v2/settings/brands/';
 
+    /**
+     * @throws \Exception
+     */
     public function __construct(MetricoolClient $client)
     {
         $this->client = $client;
-        if (defined('METRICOOL_BLOG_ID') && !empty(METRICOOL_BLOG_ID)) {
-            $this->endpoint = $this->endpoint . METRICOOL_BLOG_ID;
-        }
-    }
-
-    /**
-     * Fetch and return the timeline statistics data plainly from the API.
-     * @throws GuzzleException
-     */
-    public function all(): array
-    {
-        return $this->client->get($this->endpoint);
+        $this->endpoint = $this->endpoint . $this->client->getBlogId();
     }
 
     /**
@@ -33,6 +26,19 @@ class ConnectedBrands
      */
     public function get(): array
     {
-        return $this->all();
+        if (!$this->client->hasBlogId()) {
+            // This endpoint should not be called without a BlogId. Return empty result.
+            return [];
+        }
+
+        $result = $this->client->get($this->endpoint);
+
+        if (!isset($result['data']['networksData'])) {
+            return [];
+        }
+
+        Event::dispatch(Event::CONNECTED_NETWORKS_DATA_LOADED, $result['data']['networksData']);
+
+        return $result['data'];
     }
 }
