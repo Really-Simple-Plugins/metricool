@@ -184,10 +184,7 @@ const AnalyticsTab = () => {
                         )}
                     </Select>
                     <Button variant={"upsell"} size={"sm"} icon={"file"} iconPosition={"left"}>
-                        {__("Generate Report", "metricool")}
-                    </Button>
-                    <Button variant={"upsell"} size={"sm"} icon={"download"} iconPosition={"left"}>
-                        {__("Download CSV", "metricool")}
+                        {__("Report", "metricool")}
                     </Button>
                 </FlexContainer>
                 <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} onClick={() => {
