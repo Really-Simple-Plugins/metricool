@@ -39,14 +39,6 @@ const ConnectedAccounts = () => {
                     ...(data.data.data.networksData.twitterData && { userName: data.data.data.networksData.twitterData.username }),
                 },
                 {
-                    label: "LinkedIn",
-                    icon: "linkedIn",
-                    connectedClasses: "text-linkedin",
-                    unconnectedClasses: "bg-linkedin border-linkedin",
-                    upsell: true,
-                    ...(data.data.data.networksData.linkedinData && { userName: data.data.data.networksData.linkedinData.username }),
-                },
-                {
                     label: "YouTube",
                     icon: "youtube",
                     connectedClasses: "text-youtube",
@@ -54,7 +46,15 @@ const ConnectedAccounts = () => {
                     upsell: false,
                     ...(data.data.data.networksData.youtubeData && { userName: data.data.data.networksData.youtubeData.username }),
                 },
-            ]
+                {
+                    label: "LinkedIn",
+                    icon: "linkedIn",
+                    connectedClasses: "text-linkedin",
+                    unconnectedClasses: "bg-linkedin border-linkedin",
+                    upsell: true,
+                    ...(data.data.data.networksData.linkedinData && { userName: data.data.data.networksData.linkedinData.username }),
+                },
+            ];
         }
     });
 
