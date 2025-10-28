@@ -29,8 +29,8 @@ const RealtimeTab = () => {
                 <div>LOADING</div>
             )}
             {realTimeData && (
-                <FlexContainer direction={"column"} className={"rounded-md bg-gray-50"}>
-                    <FlexContainer direction={"row"} className={"justify-between pt-2 pl-2"}>
+                <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 !gap-2 p-2"}>
+                    <FlexContainer direction={"row"} className={"justify-between"}>
                         <div className={"text-md font-semibold"}>{__("Last 30 Minutes", "metricool")}</div>
                         <FlexContainer direction={"row"}>
                             <MetricTile metric={realTimeData.totals.pageViews.totalAmount} variant={"tertiary"}>
@@ -41,7 +41,7 @@ const RealtimeTab = () => {
                             </MetricTile>
                         </FlexContainer>
                     </FlexContainer>
-                    <hr/>
+                    <hr  className={"-mx-2"}/>
                     <LineChart
                         chartSettings={{
                             xAxisKey: lineChartXAxisDataKey,
