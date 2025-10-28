@@ -148,7 +148,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-ga",
                     unconnectedClasses: "bg-ga border-ga",
                     upsell: false,
-                    ...(data.data.data.networksData.googleAdsData && { userName: data.data.data.networksData.googleAdsData.username }),
+                    ...(data.data.data.networksData.googleAdsData && { userName: data.data.data.networksData.googleAdsData.providerUserId }),
                 },
                 {
                     label: "TikTok Ads",
