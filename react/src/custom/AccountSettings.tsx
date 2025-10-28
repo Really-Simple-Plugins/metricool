@@ -56,7 +56,7 @@ const AccountSettings = () => {
                     </BlockHeader>
                     <FlexContainer direction={"column"}>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
-                            <FlexContainer direction={"row"}>
+                            <FlexContainer direction={"row"} className={"w-full justify-between"}>
                                 <Label htmlFor={"receiveMonthlySummary"}>{__("Receive monthly summary", "metricool")}</Label>
                                 <Controller
                                     control={control}
