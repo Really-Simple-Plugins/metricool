@@ -1,8 +1,17 @@
-import { Block, BlockHeader, BlockHeaderTitle, Button, FlexContainer } from "../components";
+import { Block, BlockHeader, BlockHeaderTitle, Button, FlexContainer, type IconProps } from "../components";
 import { __ } from "@wordpress/i18n";
 import AccountTile from "./AccountTile.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
+
+type ConnectedAccount = {
+    label: string,
+    icon: IconProps["icon"],
+    connectedClasses: string,
+    unconnectedClasses: string,
+    upsell: boolean,
+    userName?: string,
+};
 
 const ConnectedAccounts = () => {
     const { httpClient, metricool } = useGlobalContext();
@@ -11,7 +20,7 @@ const ConnectedAccounts = () => {
         queryKey: ["connected", "accounts"],
         queryFn: () => httpClient?.setRoute("connected_brands").get(),
         staleTime: 1000 * 60, // 1 minute
-        select: (data) => {
+        select: (data): ConnectedAccount[] => {
             return [
                 {
                     label: "Web",
