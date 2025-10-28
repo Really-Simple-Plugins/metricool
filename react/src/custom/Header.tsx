@@ -22,16 +22,22 @@ const Header = () => {
                 </div>
             </div>
             <div className={"flex gap-4"}>
-                <Button variant={"black"} icon={"faq"} iconPosition={"left"} iconClass={"text-white"} onClick={() => {
-                    window.open("https://help.metricool.com", "_blank");
-                    window.focus();
-                }}>
+                <Button
+                    variant={"black"}
+                    icon={"faq"}
+                    iconPosition={"left"}
+                    iconClass={"text-white"}
+                    link={"https://help.metricool.com"}
+                >
                     {__("Help Center", "metricool")}
                 </Button>
-                <Button variant={"primary-gradient"} icon={"sparkle"} iconPosition={"left"} iconClass={"text-secondary"} onClick={() => {
-                    window.open(`https://app.metricool.com/user-settings/plan?blogId=${metricool.blogId}&userId=${metricool.userId}`, "_blank");
-                    window.focus();
-                }}>
+                <Button
+                    variant={"primary-gradient"}
+                    icon={"sparkle"}
+                    iconPosition={"left"}
+                    iconClass={"text-secondary"}
+                    link={`https://app.metricool.com/user-settings/plan?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                >
                     {__("Upgrade to Premium", "metricool")}
                 </Button>
             </div>

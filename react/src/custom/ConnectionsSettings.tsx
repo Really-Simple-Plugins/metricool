@@ -193,10 +193,13 @@ const ConnectionsSettings = () => {
                         )}
                     </FlexContainer>
                     <FlexContainer direction={"row"} className={"justify-end"}>
-                        <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} onClick={() => {
-                            window.open(` https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`, "_blank");
-                            window.focus();
-                        }}>
+                        <Button
+                            variant={"primary-gradient-ghost"}
+                            icon={"external-link"}
+                            iconPosition={"right"}
+                            iconClass={"svg-gradient"}
+                            link={`https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                        >
                             {__("Connected Accounts", "metricool")}
                         </Button>
                     </FlexContainer>

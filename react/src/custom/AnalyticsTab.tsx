@@ -192,10 +192,13 @@ const AnalyticsTab = () => {
                         {__("Report", "metricool")}
                     </Button>
                 </FlexContainer>
-                <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} onClick={() => {
-                    window.open(`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`, "_blank");
-                    window.focus();
-                }}>
+                <Button
+                    variant={"primary-gradient-ghost"}
+                    icon={"external-link"}
+                    iconPosition={"right"}
+                    iconClass={"svg-gradient"}
+                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                >
                     {__("View Analytics", "metricool")}
                 </Button>
             </FlexContainer>

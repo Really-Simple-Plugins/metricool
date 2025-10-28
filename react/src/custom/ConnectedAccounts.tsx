@@ -78,10 +78,12 @@ const ConnectedAccounts = () => {
                     {__("There was an error fetching your connected accounts.", "metricool")}
                 </FlexContainer>
             )}
-            <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"} onClick={() => {
-                window.open(metricoolSSOLink, "_blank");
-                window.focus();
-            }}>
+            <Button
+                variant={"primary-gradient-ghost"}
+                icon={"external-link"}
+                iconPosition={"right"}
+                iconClass={"svg-gradient"}
+                link={metricoolSSOLink}>
                 {__("Connected Accounts", "metricool")}
             </Button>
         </Block>
