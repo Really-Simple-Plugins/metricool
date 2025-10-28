@@ -34,7 +34,7 @@ const AccountTile = ({ label, icon, connectedClasses, unconnectedClasses, upsell
                 </div>
                 <div className={"flex items-center gap-2 mr-1"}>
                     {upsell && (
-                        <Icon icon={"upsell"} iconClass={"size-2.5 p-0.5 bg-upsell rounded-full text-black"} />
+                        <Icon icon={"upsell"} iconClass={"size-2.5 p-0.5 bg-upsell rounded-full text-black"}/>
                     )}
                 </div>
             </div>
