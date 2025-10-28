@@ -171,7 +171,7 @@ const AnalyticsTab = () => {
                             filterOption.isUpsell ? (
                                 <FlexContainer
                                     direction={"row"}
-                                    className={clsx("items-center rounded-xs py-1.5 pr-8 pl-2 !gap-2 text-sm outline-hidden select-none font-semibold bg-secondary-light hover:bg-upsell focus:bg-upsell")}
+                                    className={clsx("items-center rounded-xs py-1.5 px-2 !gap-2 text-sm outline-hidden select-none font-semibold bg-secondary-light hover:bg-upsell focus:bg-upsell")}
                                 >
                                     <span className="flex size-3.5 items-center justify-center">
                                         <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
