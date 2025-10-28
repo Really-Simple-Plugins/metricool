@@ -15,16 +15,16 @@ const SettingsMenu = () => {
                 </BlockHeaderTitle>
             </BlockHeader>
             <FlexContainer direction={"column"} className={"!gap-3"}>
-                <Link to={"/settings/account"} className="text-md text-black hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none focus:shadow-none">
+                <Link to={"/settings/account"} className="text-md text-black hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none">
                     {__("Account Settings", "metricool")}
                 </Link>
-                <Link to={"/settings/connections"} className="text-md text-black hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none focus:shadow-none">
+                <Link to={"/settings/connections"} className="text-md text-black hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none">
                     {__("Connections", "metricool")}
                 </Link>
-                <ListItem className={"text-md text-black cursor-pointer hover:underline focus:shadow-none"} icon={"inline-external-link"} iconPosition={"right"} link={`https://app.metricool.com/affiliation/general?blogId=${metricool.blogId}&userId=${metricool.userId}`}>
+                <ListItem className={"text-md text-black cursor-pointer hover:underline"} icon={"inline-external-link"} iconPosition={"right"} link={`https://app.metricool.com/affiliation/general?blogId=${metricool.blogId}&userId=${metricool.userId}`}>
                     {__("Affiliation Program", "metricool")}
                 </ListItem>
-                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline focus:shadow-none"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"} link={`https://app.metricool.com/user-management/users?blogId=${metricool.blogId}&userId=${metricool.userId}`}>
+                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"} link={`https://app.metricool.com/user-management/users?blogId=${metricool.blogId}&userId=${metricool.userId}`}>
                     {__("User Management", "metricool")}
                 </ListItem>
                 <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"} link={`https://app.metricool.com/my-tasks/open?blogId=${metricool.blogId}&userId=${metricool.userId}`}>
