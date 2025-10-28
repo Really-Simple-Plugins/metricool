@@ -1,6 +1,15 @@
-import { Button, Block, BlockHeader, BlockHeaderTitle, Dialog, Input, Label, Switch } from "../components";
+import {
+    Block,
+    BlockHeader,
+    BlockHeaderTitle,
+    Button,
+    Dialog,
+    FlexContainer,
+    Input,
+    Label,
+    Switch
+} from "../components";
 import { __ } from "@wordpress/i18n";
-import { FlexContainer } from "../components";
 import FormFooter from "./FormFooter.tsx";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -48,23 +57,23 @@ const AccountSettings = () => {
                     <FlexContainer direction={"column"}>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
                             <FlexContainer direction={"row"}>
-                                <Label htmlFor="receiveMonthlySummary">{__("Receive monthly summary", "metricool")}</Label>
+                                <Label htmlFor={"receiveMonthlySummary"}>{__("Receive monthly summary", "metricool")}</Label>
                                 <Controller
                                     control={control}
                                     render={({ field }) =>
                                         <Switch checked={field.value} onCheckedChange={field.onChange}/>}
-                                    name="receiveMonthlySummary"
+                                    name={"receiveMonthlySummary"}
                                 />
                             </FlexContainer>
                             <span className={"text-red-500 text-sm"}>{errors.receiveMonthlySummary?.message}</span>
                         </FlexContainer>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
-                            <Label htmlFor="customEmail">{__("Custom e-mail for the monthly summary", "metricool")}</Label>
+                            <Label htmlFor={"customEmail"}>{__("Custom e-mail for the monthly summary", "metricool")}</Label>
                             <Controller
                                 control={control}
                                 render={({ field }) =>
                                     <Input {...field} id={"customEmail"} placeholder={__("Placeholder", "metricool")}/>}
-                                name="customEmail"
+                                name={"customEmail"}
                             />
                             <span className={"text-red-500 text-sm"}>{errors.customEmail?.message}</span>
                         </FlexContainer>
@@ -76,7 +85,7 @@ const AccountSettings = () => {
                 <Dialog open={status === "blocked"}>
                     <p>{__("You have unsaved changes. Are you sure you want to leave?", "simplybook")}</p>
                     <p>{__("Your changes will be lost.", "simplybook")}</p>
-                    <FlexContainer direction={"row"} className={" w-full justify-center"}>
+                    <FlexContainer direction={"row"} className={"w-full justify-center"}>
                         <Button variant={"black"} onClick={proceed}>{__("Leave", "metricool")}</Button>
                         <Button variant={"black"} onClick={reset}>{__("Stay", "metricool")}</Button>
                     </FlexContainer>
