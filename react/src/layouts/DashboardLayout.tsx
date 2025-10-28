@@ -10,7 +10,7 @@ export const DashboardLayout = () => {
         <FlexContainer direction={"column"} className={"h-full w-full"}>
             <Header/>
             <FlexContainer direction={"column"} className={"px-4 w-full"}>
-                <FlexContainer direction={"column"} className={"w-full justify-around md:flex-row md:min-h-[500px] md:max-h-[500px]"}>
+                <FlexContainer direction={"column"} className={"w-full justify-around xl:flex-row xl:min-h-[500px] xl:max-h-[500px]"}>
                     <Progress />
                     <WebsiteAnalytics />
                 </FlexContainer>
