@@ -42,7 +42,14 @@ const RealtimeTab = () => {
                         </FlexContainer>
                     </FlexContainer>
                     <hr/>
-                    <LineChart chartSettings={{ xAxisKey: lineChartXAxisDataKey }} chartConfig={chartConfig} chartData={realTimeData.timelineData}/>
+                    <LineChart
+                        chartSettings={{
+                            xAxisKey: lineChartXAxisDataKey,
+                            general: { height: 290 },
+                        }}
+                        chartConfig={chartConfig}
+                        chartData={realTimeData.timelineData}
+                    />
                 </FlexContainer>
             )}
             {error && (
