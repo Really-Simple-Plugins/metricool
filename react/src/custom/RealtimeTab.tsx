@@ -24,7 +24,7 @@ const RealtimeTab = () => {
     };
 
     return (
-        <FlexContainer direction={"column"} className={"min-h-[290px] justify-between grow"}>
+        <FlexContainer direction={"column"} className={"justify-between grow"}>
             {isLoading && (
                 <div>LOADING</div>
             )}
