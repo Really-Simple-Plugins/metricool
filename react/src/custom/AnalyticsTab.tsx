@@ -126,25 +126,22 @@ const AnalyticsTab = () => {
                 <div>LOADING</div>
             )}
             {analyticsData && (
-                <FlexContainer direction={"column"} className={"rounded-md bg-gray-50"}>
-                    <FlexContainer direction={"row"} className={"justify-between p-2 flex-wrap"}>
-                        <div className={"text-md font-semibold"}>{__("Website", "metricool")}</div>
-                        <FlexContainer direction={"row"} className={"flex-wrap justify-end w-full"}>
-                            {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
-                                <MetricTile
-                                    onClick={() => toggleMetric(metricKey)}
-                                    metric={numberFormatter.format(metricData.totalAmount)}
-                                    trend={metricData.trend}
-                                    variant={chartConfig[metricKey].color}
-                                    inactive={chartConfig[metricKey].hidden}
-                                    disabled={metricData.totalAmount === 0}
-                                >
-                                    {chartConfig[metricKey].label}
-                                </MetricTile>
-                            ))}
-                        </FlexContainer>
+                <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 !gap-2 p-2"}>
+                    <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>
+                        {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
+                            <MetricTile
+                                onClick={() => toggleMetric(metricKey)}
+                                metric={numberFormatter.format(metricData.totalAmount)}
+                                trend={metricData.trend}
+                                variant={chartConfig[metricKey].color}
+                                inactive={chartConfig[metricKey].hidden}
+                                disabled={metricData.totalAmount === 0}
+                            >
+                                {chartConfig[metricKey].label}
+                            </MetricTile>
+                        ))}
                     </FlexContainer>
-                    <hr/>
+                    <hr className={"-mx-2"}/>
                     <LineChart
                         chartConfig={chartConfig}
                         chartSettings={{
