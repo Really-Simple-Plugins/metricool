@@ -15,7 +15,7 @@ type ConnectedAccount = {
 
 const ConnectedAccounts = () => {
     const { httpClient, metricool } = useGlobalContext();
-    const metricoolSSOLink = `https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`
+    const metricoolSSOLink = `https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`;
     const { data: connectedAccountsData, isLoading, error } = useQuery({
         queryKey: ["connected", "accounts"],
         queryFn: () => httpClient?.setRoute("connected_brands").get(),
