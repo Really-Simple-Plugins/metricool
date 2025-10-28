@@ -15,17 +15,18 @@ class NotificationListener
 
     public function listen(): void
     {
-        add_action('metricool_event_' . Event::EXAMPLE_EVENT, [$this, 'handleExampleEvent']);
+        add_action('metricool_event_' . Event::CONNECTED_NETWORKS_DATA_LOADED, [$this, 'handleConnectedNetworks']);
     }
 
     /**
-     * Handle the example event to update task status.
+     * Event receives a list of connections from the "networksData" object of the /v2/settings/brands Metricool API response
+     * Dismisses the FirstConnectionNotice
      */
-    public function handleExampleEvent(array $arguments): void
+    public function handleConnectedNetworks(array $connections): void
     {
-        // todo
-        // $this->service->activate(
-            // Notices\FailedAuthenticationNotice::IDENTIFIER
-        // );
+        // todo: test this on front-end
+        if (count($connections) > 1) {
+            $this->service->deactivate(Notices\FirstConnectionNotice::IDENTIFIER);
+        }
     }
 }
