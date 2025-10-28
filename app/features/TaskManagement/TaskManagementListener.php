@@ -3,6 +3,7 @@
 namespace Metricool\Features\TaskManagement;
 
 use Metricool\App;
+use Metricool\Features\TaskManagement\Tasks\HistoricalDataTask;
 use Metricool\Helpers\Event;
 
 class TaskManagementListener
@@ -19,6 +20,7 @@ class TaskManagementListener
         add_action('load-edit.php', [$this, 'handleEditPageLoad']);
 
         add_action('metricool_event_' . Event::CONNECTED_BRANDS_DATA_LOADED, [$this, 'handleConnectedBrands']);
+        add_action('metricool_event_' . Event::SUBSCRIPTION_DATA_LOADED, [$this, 'handleSubscriptionLoaded']);
     }
 
     /**
@@ -37,29 +39,9 @@ class TaskManagementListener
 
     /**
      * Event receives a list of connections from the "networksData" object of the /v2/settings/brands Metricool API response
-     *
-     * Example:
-     * {
-     *     "webData": "https://help.metricool.com/es/",
-     *     "facebookData": "101307319490812",
-     *     "instagramData": "testingmetri",
-     *     "threadsData": "testingmetri",
-     *     "blueskyData": "testingmetri.bsky.social",
-     *     "twitterData": "TestingMetri",
-     *     "linkedinData": "urn:li:organization:91711355",
-     *     "pinterestData": "testingmetri",
-     *     "tiktokData": "testingmetri",
-     *     "gbpData": "accounts/114630028650069139274/locations/16265234060702537753",
-     *     "youtubeData": "UCYc9UBnvBDUXqpgJZYEurOg",
-     *     "twitchData": "868382795",
-     *     "facebookAdsData": "act_911576459824189",
-     *     "googleAdsData": "8686751192",
-     *     "tiktokAdsData": "7186312106294165505"
-     * }
-     *
-     * Completes tasks based on the keys and values of the connections object.
+     * Completes tasks based on the keys and values of the connections array.
      */
-    public function handleConnectedBrands($connections)
+    public function handleConnectedBrands($connections): void
     {
         if (!count($connections)) {
             return;
@@ -81,6 +63,17 @@ class TaskManagementListener
                 );
             }
         }
+    }
 
+    /**
+     *
+     */
+    public function handleSubscriptionLoaded(array $subscription): void
+    {
+        $isPremium = strtolower($subscription['planId']) !== 'free';
+
+        if ($isPremium) {
+            $this->service->completeTask(HistoricalDataTask::IDENTIFIER);
+        }
     }
 }

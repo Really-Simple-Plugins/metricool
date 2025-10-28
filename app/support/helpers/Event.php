@@ -15,6 +15,7 @@ class Event
      */
     const EXAMPLE_EVENT = 'example_event';
     const CONNECTED_BRANDS_DATA_LOADED = 'connected_brands_data_loaded';
+    const SUBSCRIPTION_DATA_LOADED = 'subscription_data_loaded';
 
     /**
      * Execute a WordPress event based on our constants.
