@@ -145,7 +145,14 @@ const AnalyticsTab = () => {
                         </FlexContainer>
                     </FlexContainer>
                     <hr/>
-                    <LineChart chartConfig={chartConfig} chartSettings={{ xAxisKey: lineChartXAxisDataKey }} chartData={analyticsData.timelineData} linesSettings={{ type: "linear" }}/>
+                    <LineChart
+                        chartConfig={chartConfig}
+                        chartSettings={{
+                            xAxisKey: lineChartXAxisDataKey,
+                            general: { height: 290 },
+                        }}
+                        chartData={analyticsData.timelineData}
+                        linesSettings={{ type: "monotone" }}/>
                 </FlexContainer>
             )}
             {error && (
