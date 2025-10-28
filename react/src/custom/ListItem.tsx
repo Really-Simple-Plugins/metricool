@@ -28,18 +28,17 @@ const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, action, acti
     return (
         <FlexContainer direction={"row"} className={"items-center justify-between"}>
             <FlexContainer direction={"row"} className={clsx("items-center !gap-2", iconPosition === "right" && "flex-row-reverse")}>
-                {icon && ( icon === "circle" ? (
-                    <div className={clsx("h-3 w-3 rounded-full",
-                        iconColor === "warning" && "bg-rsp-warning",
-                        iconColor === "success" && "bg-rsp-success",
-                        iconColor === "error" && "bg-rsp-error",
-                        iconColor === "simplybook" && "bg-simplybook",
-                        iconColor === "rsssl" && "bg-rss",
-                        iconColor === "cmplz" && "bg-complianz",
-                    )}></div>
-                ) : (
-                    <Icon icon={icon} iconClass={iconClass} />
-                ))}
+                {icon && (
+                    <Icon icon={icon} iconClass={clsx(iconClass,
+                        icon === "circle" && "h-3 w-3",
+                        iconColor === "warning" && "text-rsp-warning",
+                        iconColor === "success" && "text-rsp-success",
+                        iconColor === "error" && "text-rsp-error",
+                        iconColor === "simplybook" && "text-simplybook",
+                        iconColor === "rsssl" && "text-rss",
+                        iconColor === "cmplz" && "text-complianz",
+                    )}/>
+                )}
                 {link ? (
                     <a href={link} target={"_blank"} className={clsx(className, "text-md")}>
                         {children}
