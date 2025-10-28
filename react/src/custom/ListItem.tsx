@@ -1,7 +1,5 @@
 import { clsx } from "clsx";
-import { FlexContainer } from "../components";
-import { Icon } from "../components";
-import { type IconProps } from "../components/src/components/Icon.tsx";
+import { FlexContainer, Icon, type IconProps } from "../components";
 
 type ListItemProps = {
     link?: string,
@@ -13,7 +11,7 @@ type ListItemProps = {
     iconClass?: never,
     iconPosition?: never,
 } | {
-    icon: IconProps['icon'],
+    icon: IconProps["icon"],
     iconColor?: never,
     iconClass?: string,
     iconPosition: "left" | "right",
@@ -24,7 +22,17 @@ type ListItemProps = {
     iconPosition: "left" | "right",
 });
 
-const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, action, actionText, children, className }: React.ComponentProps<'div'> & ListItemProps) => {
+const ListItem = ({
+    icon,
+    iconColor,
+    iconPosition,
+    iconClass,
+    link,
+    action,
+    actionText,
+    children,
+    className
+}: React.ComponentProps<"div"> & ListItemProps) => {
     return (
         <FlexContainer direction={"row"} className={"items-center justify-between"}>
             <FlexContainer direction={"row"} className={clsx("items-center !gap-2", iconPosition === "right" && "flex-row-reverse")}>
