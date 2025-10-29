@@ -19,7 +19,7 @@ const Progress = () => {
             completionPercentage: number
         } => {
             const allTasks = data.data;
-            const remainingTasks = allTasks.filter((task: TaskProps) => !(task.status === "completed"));
+            const remainingTasks = allTasks.filter((task: TaskProps) => !(task.status === "completed" || task.status === "dismissed"));
             const completedTasks = allTasks.filter(
                 (task: TaskProps) => task.status === "dismissed" || task.status === "completed",
             );
