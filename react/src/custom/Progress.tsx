@@ -1,11 +1,26 @@
 import { Block, BlockHeader, BlockHeaderTitle } from "../components";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlexContainer } from "../components";
 import Task, { type TaskProps } from "./Task.tsx";
+import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { useQuery } from "@tanstack/react-query";
 
 const Progress = () => {
+    const { httpClient } = useGlobalContext();
+
+    const { data: taskData, isLoading, error } = useQuery({
+        queryKey: ["tasks"],
+        queryFn: () => httpClient?.setRoute("get_tasks").get(),
+        staleTime: 1000 * 60, // 1 minute
+        select: (data) => data.data,
+    });
+
+    useEffect(() => {
+        console.log(taskData, isLoading, error);
+    }, [taskData, isLoading, error]);
+
 
     const completionPercentage = 45;
     const tasks: TaskProps[] = [
