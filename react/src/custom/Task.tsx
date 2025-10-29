@@ -21,7 +21,9 @@ export type TaskProps = {
     }
 };
 
-const Task = ({ task: { status, text, action }, onDismiss }: { task: TaskProps, onDismiss?: () => void }) => {
+const Task = ({ task: { status, text, action, type }, onDismiss }: { task: TaskProps, onDismiss?: () => void }) => {
+    const taskIsDismissable = type === "optional" && ["open", "urgent", "premium"].includes(status);
+
     return (
         <FlexContainer direction={"row"} className={"justify-between"}>
             <FlexContainer direction={"row"} className={"items-center"}>
@@ -40,7 +42,7 @@ const Task = ({ task: { status, text, action }, onDismiss }: { task: TaskProps, 
                     </div>
                 )}
                 <div className={"w-4 h-4"}>
-                    {!(status === "completed" || status === "dismissed") && (
+                    {taskIsDismissable && (
                         <Button variant={"icon"} size={"icon"} icon={"close"} iconPosition={"right"} onClick={onDismiss}/>
                     )}
                 </div>
