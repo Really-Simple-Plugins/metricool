@@ -24,7 +24,7 @@ const WebsiteAnalytics = () => {
     }];
 
     return (
-        <Block>
+        <Block className={"xl:max-w-[calc(50%-(--spacing(2)))]"}>
             <BlockHeader className={"flex justify-between"}>
                 <BlockHeaderTitle>{__("Website Analytics", "metricool")}</BlockHeaderTitle>
                 <TabNavigation activeTab={activeTab} onTabClick={setActiveTab} tabs={tabs}></TabNavigation>
