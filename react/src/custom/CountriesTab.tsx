@@ -42,12 +42,12 @@ const CountriesTab = () => {
     };
 
     return (
-        <FlexContainer direction={"column"} className={"justify-between grow"}>
+        <FlexContainer direction={"column"} className={"justify-between grow !gap-2"}>
             {isLoading && (
                 <div>LOADING</div>
             )}
             {countryData && (
-                <FlexContainer direction={"column"}>
+                <FlexContainer direction={"column"} className={"!gap-2"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>
                         <Chart
                             data={countryData.chartData}
@@ -57,7 +57,7 @@ const CountriesTab = () => {
                             width={"100%"}
                         />
                     </FlexContainer>
-                    <DataTable columns={columns} data={countryData.tableData} tableSettings={{ pageSize: 5 }}/>
+                    <DataTable columns={columns} data={countryData.tableData} tableSettings={{ pageSize: 3 }}/>
                 </FlexContainer>
             )}
             {error && (
