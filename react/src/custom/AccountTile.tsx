@@ -21,7 +21,7 @@ const AccountTile = ({ label, icon, connectedClasses, unconnectedClasses, upsell
             <div className={"min-w-[25px] flex items-center justify-center"}>
                 <Icon icon={icon} size={"xl"} iconClass={clsx(userName ? connectedClasses : "text-white")}/>
             </div>
-            <div className={"flex justify-between grow"}>
+            <div className={"flex justify-between items-center grow"}>
                 <div className={clsx("text-sm flex flex-col justify-center", !userName && "cursor-pointer")}>
                     {userName ? (
                         <>
@@ -32,11 +32,9 @@ const AccountTile = ({ label, icon, connectedClasses, unconnectedClasses, upsell
                         <span className={"text-white"}>{sprintf(__("Connect a %s Account"), label)}</span>
                     )}
                 </div>
-                <div className={"flex items-center gap-2 mr-1"}>
-                    {upsell && (
-                        <Icon icon={"upsell"} iconClass={"size-2.5 p-0.5 bg-upsell rounded-full text-black"}/>
-                    )}
-                </div>
+                {upsell && (
+                    <Icon icon={"upsell"} iconClass={"size-2.5 p-0.5 bg-upsell rounded-full text-black"}/>
+                )}
             </div>
         </div>
     );
