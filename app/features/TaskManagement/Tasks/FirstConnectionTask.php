@@ -7,6 +7,9 @@ class FirstConnectionTask extends AbstractTask
 {
     const IDENTIFIER = 'first_connection';
 
+    protected bool $required = false;
+    
+
     /**
      * @inheritDoc
      */
