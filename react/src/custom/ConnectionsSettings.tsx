@@ -36,7 +36,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-web",
                     unconnectedClasses: "bg-web border-web",
                     upsell: false,
-                    ...(data.data.data.networksData.webData && data.data.data.networksData.webData.url && { userName: data.data.data.networksData.webData.url }),
+                    ...(data.data.networksData.webData && data.data.networksData.webData.url && { userName: data.data.networksData.webData.url }),
                 },
                 {
                     label: "Blog",
@@ -44,7 +44,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-blog",
                     unconnectedClasses: "bg-blog border-blog",
                     upsell: false,
-                    ...(data.data.data.networksData.webData && data.data.data.networksData.webData.feedRss && { userName: data.data.data.networksData.webData.feedRss }),
+                    ...(data.data.networksData.webData && data.data.networksData.webData.feedRss && { userName: data.data.networksData.webData.feedRss }),
                 },
                 {
                     label: "Facebook",
@@ -52,7 +52,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-facebook",
                     unconnectedClasses: "bg-facebook border-facebook",
                     upsell: false,
-                    ...(data.data.data.networksData.facebookData && { userName: data.data.data.networksData.facebookData.username }),
+                    ...(data.data.networksData.facebookData && { userName: data.data.networksData.facebookData.username }),
                 },
                 {
                     label: "Instagram",
@@ -60,7 +60,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-instagram",
                     unconnectedClasses: "bg-instagram border-instagram",
                     upsell: false,
-                    ...(data.data.data.networksData.instagramData && { userName: data.data.data.networksData.instagramData.username }),
+                    ...(data.data.networksData.instagramData && { userName: data.data.networksData.instagramData.username }),
                 },
                 {
                     label: "Threads",
@@ -68,7 +68,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-threads",
                     unconnectedClasses: "bg-threads border-threads",
                     upsell: false,
-                    ...(data.data.data.networksData.threadsData && { userName: data.data.data.networksData.threadsData.username }),
+                    ...(data.data.networksData.threadsData && { userName: data.data.networksData.threadsData.username }),
                 },
                 {
                     label: "Twitter / X",
@@ -76,7 +76,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-x",
                     unconnectedClasses: "bg-x border-x",
                     upsell: true,
-                    ...(data.data.data.networksData.twitterData && { userName: data.data.data.networksData.twitterData.username }),
+                    ...(data.data.networksData.twitterData && { userName: data.data.networksData.twitterData.username }),
                 },
                 {
                     label: "Bluesky",
@@ -84,7 +84,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-bluesky",
                     unconnectedClasses: "bg-bluesky border-bluesky",
                     upsell: false,
-                    ...(data.data.data.networksData.blueskyData && { userName: data.data.data.networksData.blueskyData.username }),
+                    ...(data.data.networksData.blueskyData && { userName: data.data.networksData.blueskyData.username }),
                 },
                 {
                     label: "LinkedIn",
@@ -92,7 +92,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-linkedin",
                     unconnectedClasses: "bg-linkedin border-linkedin",
                     upsell: true,
-                    ...(data.data.data.networksData.linkedinData && { userName: data.data.data.networksData.linkedinData.username }),
+                    ...(data.data.networksData.linkedinData && { userName: data.data.networksData.linkedinData.username }),
                 },
                 {
                     label: "Pinterest",
@@ -100,15 +100,15 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-pinterest",
                     unconnectedClasses: "bg-pinterest border-pinterest",
                     upsell: false,
-                    ...(data.data.data.networksData.pinterestData && { userName: data.data.data.networksData.pinterestData.username }),
+                    ...(data.data.networksData.pinterestData && { userName: data.data.networksData.pinterestData.username }),
                 },
                 {
-                    label: `TikTok ${data.data.data.networksData.tiktokData ? data.data.data.networksData.tiktokData.accountType.toLowerCase() : ""}`,
+                    label: `TikTok ${data.data.networksData.tiktokData ? data.data.networksData.tiktokData.accountType.toLowerCase() : ""}`,
                     icon: "tiktok",
                     connectedClasses: "text-tiktok",
                     unconnectedClasses: "bg-tiktok border-tiktok",
                     upsell: false,
-                    ...(data.data.data.networksData.tiktokData && { userName: data.data.data.networksData.tiktokData.username }),
+                    ...(data.data.networksData.tiktokData && { userName: data.data.networksData.tiktokData.username }),
                 },
                 {
                     label: "Google Business Profile",
@@ -116,7 +116,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-gbp",
                     unconnectedClasses: "bg-gbp border-gbp",
                     upsell: false,
-                    ...(data.data.data.networksData.gbpData && { userName: data.data.data.networksData.gbpData.username }),
+                    ...(data.data.networksData.gbpData && { userName: data.data.networksData.gbpData.username }),
                 },
                 {
                     label: "YouTube",
@@ -124,7 +124,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-youtube",
                     unconnectedClasses: "bg-youtube border-youtube",
                     upsell: false,
-                    ...(data.data.data.networksData.youtubeData && { userName: data.data.data.networksData.youtubeData.username }),
+                    ...(data.data.networksData.youtubeData && { userName: data.data.networksData.youtubeData.username }),
                 },
                 {
                     label: "Twitch",
@@ -132,7 +132,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-twitch",
                     unconnectedClasses: "bg-twitch border-twitch",
                     upsell: false,
-                    ...(data.data.data.networksData.twitchData && { userName: data.data.data.networksData.twitchData.username }),
+                    ...(data.data.networksData.twitchData && { userName: data.data.networksData.twitchData.username }),
                 },
                 {
                     label: "Meta Ads",
@@ -140,7 +140,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-facebook",
                     unconnectedClasses: "bg-facebook border-facebook",
                     upsell: false,
-                    ...(data.data.data.networksData.facebookAdsData && { userName: data.data.data.networksData.facebookAdsData.username }),
+                    ...(data.data.networksData.facebookAdsData && { userName: data.data.networksData.facebookAdsData.username }),
                 },
                 {
                     label: "Google Ads",
@@ -148,7 +148,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-ga",
                     unconnectedClasses: "bg-ga border-ga",
                     upsell: false,
-                    ...(data.data.data.networksData.googleAdsData && { userName: data.data.data.networksData.googleAdsData.providerUserId }),
+                    ...(data.data.networksData.googleAdsData && { userName: data.data.networksData.googleAdsData.providerUserId }),
                 },
                 {
                     label: "TikTok Ads",
@@ -156,7 +156,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-tiktok",
                     unconnectedClasses: "bg-tiktok border-tiktok",
                     upsell: false,
-                    ...(data.data.data.networksData.tiktokAdsData && { userName: data.data.data.networksData.tiktokAdsData.username }),
+                    ...(data.data.networksData.tiktokAdsData && { userName: data.data.networksData.tiktokAdsData.username }),
                 },
             ]);
         }

@@ -21,14 +21,14 @@ const ConnectedAccounts = () => {
         queryFn: () => httpClient?.setRoute("connected_brands").get(),
         staleTime: 1000 * 60, // 1 minute
         select: (data): ConnectedAccount[] => {
-            return [
+            return ([
                 {
                     label: "Web",
                     icon: "web",
                     connectedClasses: "text-[#5c90a8]",
                     unconnectedClasses: "bg-[#5c90a8] border-[#5c90a8]",
                     upsell: false,
-                    ...(data.data.data.networksData.webData && data.data.data.networksData.webData.url && { userName: data.data.data.networksData.webData.url }),
+                    ...(data.data.networksData.webData && data.data.networksData.webData.url && { userName: data.data.networksData.webData.url }),
                 },
                 {
                     label: "Twitter / X",
@@ -36,7 +36,7 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-black",
                     unconnectedClasses: "bg-black border-black",
                     upsell: true,
-                    ...(data.data.data.networksData.twitterData && { userName: data.data.data.networksData.twitterData.username }),
+                    ...(data.data.networksData.twitterData && { userName: data.data.networksData.twitterData.username }),
                 },
                 {
                     label: "YouTube",
@@ -44,7 +44,7 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-youtube",
                     unconnectedClasses: "bg-youtube border-youtube",
                     upsell: false,
-                    ...(data.data.data.networksData.youtubeData && { userName: data.data.data.networksData.youtubeData.username }),
+                    ...(data.data.networksData.youtubeData && { userName: data.data.networksData.youtubeData.username }),
                 },
                 {
                     label: "LinkedIn",
@@ -52,9 +52,9 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-linkedin",
                     unconnectedClasses: "bg-linkedin border-linkedin",
                     upsell: true,
-                    ...(data.data.data.networksData.linkedinData && { userName: data.data.data.networksData.linkedinData.username }),
+                    ...(data.data.networksData.linkedinData && { userName: data.data.networksData.linkedinData.username }),
                 },
-            ];
+            ]);
         }
     });
 
