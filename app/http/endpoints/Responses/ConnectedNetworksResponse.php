@@ -32,10 +32,6 @@ class ConnectedNetworksResponse extends Response
      */
     public function body(): array
     {
-        $results = $this->parse();
-
-        return [
-            'connected_networks' => $results,
-        ];
+        return $this->parse();
     }
 }
