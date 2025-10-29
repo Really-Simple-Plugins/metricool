@@ -18,7 +18,7 @@ const ConnectedAccounts = () => {
     const metricoolSSOLink = `https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`;
     const { data: connectedAccountsData, isLoading, error } = useQuery({
         queryKey: ["connected", "accounts"],
-        queryFn: () => httpClient?.setRoute("connected_brands").get(),
+        queryFn: () => httpClient?.setRoute("connected_networks").get(),
         staleTime: 1000 * 60, // 1 minute
         select: (data): ConnectedAccount[] => {
             return ([
@@ -28,7 +28,7 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-[#5c90a8]",
                     unconnectedClasses: "bg-[#5c90a8] border-[#5c90a8]",
                     upsell: false,
-                    ...(data.data.networksData.webData && data.data.networksData.webData.url && { userName: data.data.networksData.webData.url }),
+                    ...(data.data.web && data.data.web.url && { userName: data.data.web.url }),
                 },
                 {
                     label: "Twitter / X",
@@ -36,7 +36,7 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-black",
                     unconnectedClasses: "bg-black border-black",
                     upsell: true,
-                    ...(data.data.networksData.twitterData && { userName: data.data.networksData.twitterData.username }),
+                    ...(data.data.twitter && { userName: data.data.twitter.username }),
                 },
                 {
                     label: "YouTube",
@@ -44,7 +44,7 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-youtube",
                     unconnectedClasses: "bg-youtube border-youtube",
                     upsell: false,
-                    ...(data.data.networksData.youtubeData && { userName: data.data.networksData.youtubeData.username }),
+                    ...(data.data.youtube && { userName: data.data.youtube.username }),
                 },
                 {
                     label: "LinkedIn",
@@ -52,7 +52,7 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-linkedin",
                     unconnectedClasses: "bg-linkedin border-linkedin",
                     upsell: true,
-                    ...(data.data.networksData.linkedinData && { userName: data.data.networksData.linkedinData.username }),
+                    ...(data.data.linkedin && { userName: data.data.linkedin.username }),
                 },
             ]);
         }
