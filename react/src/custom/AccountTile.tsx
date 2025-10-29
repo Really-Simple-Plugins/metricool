@@ -29,7 +29,7 @@ const AccountTile = ({ label, icon, connectedClasses, unconnectedClasses, upsell
                             <div className={"font-semibold"}>{userName}</div>
                         </>
                     ) : (
-                        <span className={"text-white text-xs"}>{sprintf(__("Connect a %s Account"), label)}</span>
+                        <span className={"text-white"}>{sprintf(__("Connect a %s Account"), label)}</span>
                     )}
                 </div>
                 <div className={"flex items-center gap-2 mr-1"}>
