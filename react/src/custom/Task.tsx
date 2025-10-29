@@ -3,18 +3,26 @@ import { Badge, Button } from "../components";
 import { capitalizeFirstCharacter } from "../functions/utils.tsx";
 
 export type TaskProps = {
-    status: "warning" | "open" | "premium",
+    id: string,
     text: string,
-    id: number,
-    action: {
+    label: string,
+    status: "open" | "urgent" | "completed" | "dismissed" | "hidden" | "premium",
+    type: "required" | "optional",
+    premium: boolean;
+    special_feature: boolean,
+    priority: number,
+    action?: {
         text: string,
-        link: string
-    },
-    completed: boolean,
-    dismissed: boolean,
-}
+        link?: string,
+        login_link?: string,
+        target?: string,
+        modal?: {
+            id: string,
+        }
+    }
+};
 
-const Task = ({ task: { status, text, action, completed, dismissed } }: { task: TaskProps }) => {
+const Task = ({ task: { status, text, action }, onDismiss }: { task: TaskProps, onDismiss?: () => void }) => {
     return (
         <FlexContainer direction={"row"} className={"justify-between"}>
             <FlexContainer direction={"row"} className={"items-center"}>
@@ -23,11 +31,11 @@ const Task = ({ task: { status, text, action, completed, dismissed } }: { task: 
             </FlexContainer>
             <FlexContainer direction={"row"} className={"items-center"}>
                 <div className={"underline cursor-pointer"}><span className={"text-nowrap"}>{action.text}</span></div>
-                {!(completed || dismissed) ? (
-                    <Button variant={"icon"} size={"icon"} icon={"close"} iconPosition={"right"}/>
-                ) : (
-                    <div className={"w-4 h-4"}></div>
-                )}
+                <div className={"w-4 h-4"}>
+                    {!(status === "completed" || status === "dismissed") && (
+                        <Button variant={"icon"} size={"icon"} icon={"close"} iconPosition={"right"} onClick={onDismiss}/>
+                    )}
+                </div>
             </FlexContainer>
         </FlexContainer>
     );
