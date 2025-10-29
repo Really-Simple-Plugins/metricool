@@ -1,5 +1,4 @@
-import { FlexContainer } from "../components";
-import { Badge, Button } from "../components";
+import { Badge, Button, FlexContainer } from "../components";
 import { capitalizeFirstCharacter } from "../functions/utils.tsx";
 
 export type TaskProps = {
@@ -31,7 +30,10 @@ const Task = ({ task: { status, text, action }, onDismiss }: { task: TaskProps, 
             </FlexContainer>
             <FlexContainer direction={"row"} className={"items-center"}>
                 {action && (
-                    <div className={"underline cursor-pointer"} onClick={()=> {window.open(action?.link, action?.target); window.focus();}}>
+                    <div className={"underline cursor-pointer"} onClick={() => {
+                        window.open(action?.link, action?.target);
+                        window.focus();
+                    }}>
                         <span className={"text-nowrap"}>
                             {action.text}
                         </span>
