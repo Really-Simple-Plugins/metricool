@@ -1,8 +1,7 @@
-import { Block, BlockHeader, BlockHeaderTitle } from "../components";
+import { Block, BlockHeader, BlockHeaderTitle, FlexContainer } from "../components";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import { useEffect, useState } from "react";
-import { FlexContainer } from "../components";
 import Task, { type TaskProps } from "./Task.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
