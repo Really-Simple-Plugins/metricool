@@ -1,5 +1,4 @@
 import { Badge, Button, FlexContainer } from "../components";
-import { capitalizeFirstCharacter } from "../functions/utils.tsx";
 
 export type TaskProps = {
     id: string,
@@ -17,17 +16,33 @@ export type TaskProps = {
         target?: string,
         modal?: {
             id: string,
-        }
-    }
+        },
+    },
 };
 
-const Task = ({ task: { status, text, action, type }, onDismiss }: { task: TaskProps, onDismiss?: () => void }) => {
+const Task = ({
+    task: {
+        status,
+        text,
+        action,
+        type,
+        label,
+        premium,
+        special_feature
+    },
+    onDismiss
+}: {
+    task: TaskProps,
+    onDismiss?: () => void
+}) => {
     const taskIsDismissable = type === "optional" && ["open", "urgent", "premium"].includes(status);
 
     return (
         <FlexContainer direction={"row"} className={"justify-between"}>
             <FlexContainer direction={"row"} className={"items-center"}>
-                <Badge variant={status}>{capitalizeFirstCharacter(status)}</Badge>
+                <Badge variant={(premium || special_feature) ? "premium" : status === "hidden" ? "default" : status}>
+                    {label}
+                </Badge>
                 <div className={"font-semibold"}>{text}</div>
             </FlexContainer>
             <FlexContainer direction={"row"} className={"items-center"}>
