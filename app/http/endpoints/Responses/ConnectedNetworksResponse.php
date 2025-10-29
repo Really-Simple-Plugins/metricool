@@ -20,7 +20,8 @@ class ConnectedNetworksResponse extends Response
         $networks = [];
 
         foreach ($this->brandSettings['networksData'] as $network => $networkData) {
-            $networks[] = str_replace('Data', '', $network);
+            $networkName = str_replace('Data', '', $network);
+            $networks[$networkName] = $networkData;
         }
 
         return $networks;
