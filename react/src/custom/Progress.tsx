@@ -66,13 +66,13 @@ const Progress = () => {
                     </div>
 
                     <div className={"flex items-center justify-start gap-4"}>
-                    <span className={"font-bold text-2xl w-min"}>
-                        {taskData.completionPercentage}%
-                    </span>
+                        <span className={"font-bold text-2xl w-min"}>
+                            {taskData.completionPercentage}%
+                        </span>
                         <span className="text-xl font-medium">
-                        {taskData.remainingTasks.length === 0 && __("You're all set! Great job!", "simplybook")}
+                            {taskData.remainingTasks.length === 0 && __("You're all set! Great job!", "simplybook")}
                             {taskData.remainingTasks.length > 0 && sprintf(_n("You're on your way. You still have %s task open.", "You're on your way. You still have %s tasks open.", taskData.remainingTasks.length, "simplybook"), String(taskData.remainingTasks.length))}
-                    </span>
+                        </span>
                     </div>
 
                     {/* Task List */}
