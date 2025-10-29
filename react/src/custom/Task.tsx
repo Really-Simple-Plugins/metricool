@@ -30,7 +30,13 @@ const Task = ({ task: { status, text, action }, onDismiss }: { task: TaskProps, 
                 <div className={"font-semibold"}>{text}</div>
             </FlexContainer>
             <FlexContainer direction={"row"} className={"items-center"}>
-                <div className={"underline cursor-pointer"}><span className={"text-nowrap"}>{action.text}</span></div>
+                {action && (
+                    <div className={"underline cursor-pointer"} onClick={()=> {window.open(action?.link, action?.target); window.focus();}}>
+                        <span className={"text-nowrap"}>
+                            {action.text}
+                        </span>
+                    </div>
+                )}
                 <div className={"w-4 h-4"}>
                     {!(status === "completed" || status === "dismissed") && (
                         <Button variant={"icon"} size={"icon"} icon={"close"} iconPosition={"right"} onClick={onDismiss}/>
