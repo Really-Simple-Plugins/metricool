@@ -4,11 +4,11 @@ import TabNavigation from "./TabNavigation.tsx";
 import { useEffect, useState } from "react";
 import Task, { type TaskProps } from "./Task.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const Progress = () => {
     const { httpClient } = useGlobalContext();
-    const { data: taskData, isLoading, error } = useQuery({
+    const { data: taskData, isLoading, error, refetch } = useQuery({
         queryKey: ["tasks"],
         queryFn: () => httpClient?.setRoute("get_tasks").get(),
         staleTime: 1000 * 60, // 1 minute
@@ -31,6 +31,29 @@ const Progress = () => {
                 completionPercentage: completionPercentage,
             };
         },
+    });
+
+    const { mutate: dismissTask } = useMutation({
+        mutationFn: async ({ taskId }: {
+            taskId: string,
+        }) => {
+            const response = await httpClient?.setRoute("dismiss_task").setPayload({
+                "taskId": taskId,
+            }).post();
+            console.log(response);
+
+            const taskDismissed = response?.data;
+
+            if (!taskDismissed) {
+                console.error("Error dismissing task: ", response?.message);
+                return;
+            }
+
+            return taskDismissed;
+        },
+        onSuccess: async () => {
+            await refetch();
+        }
     });
 
     useEffect(() => {
@@ -78,7 +101,7 @@ const Progress = () => {
                     {/* Task List */}
                     <div className="mt-1 grid overflow-y-auto content-start gap-4">
                         {[...taskData.remainingTasks, ...(activeTab === 0 ? [...taskData.completedTasks] : [])].map((task) => (
-                            <Task key={task.id} task={task}/>
+                            <Task key={task.id} task={task} onDismiss={() => dismissTask({ taskId: task.id })}/>
                         ))}
                     </div>
                 </FlexContainer>
