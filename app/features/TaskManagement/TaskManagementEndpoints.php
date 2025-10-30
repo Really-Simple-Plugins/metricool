@@ -65,6 +65,8 @@ class TaskManagementEndpoints
     {
         $storage = $this->retrieveHttpStorage($request);
 
+        $request->get_param('taskId');
+
         $sanitizedTaskId = $storage->getTitle('taskId');
 
         try {

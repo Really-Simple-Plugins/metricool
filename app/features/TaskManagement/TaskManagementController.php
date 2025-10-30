@@ -2,8 +2,8 @@
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Interfaces\TaskInterface;
 use Metricool\Interfaces\FeatureInterface;
+use Metricool\Interfaces\TaskInterface;
 
 class TaskManagementController implements FeatureInterface
 {
@@ -34,11 +34,11 @@ class TaskManagementController implements FeatureInterface
      * This method returns an array of task objects that should be added to the
      * database.
      *
+     * @return TaskInterface[]
      * @internal New tasks should be added here. Upgrade the task version if the
      * task should be updated. If a task should be removed, remove the task from
      * this list.
      *
-     * @return TaskInterface[]
      */
     private function getTaskObjects(): array
     {
@@ -48,6 +48,11 @@ class TaskManagementController implements FeatureInterface
             new Tasks\LinkedInTask(),
             new Tasks\HistoricalDataTask(),
             new Tasks\FirstConnectionTask(),
+            // Example tasks
+            new Tasks\ExampleDismissableTask(),
+            new Tasks\ExamplePremiumTask(),
+            new Tasks\ExampleRequiredTask(),
+            new Tasks\ExampleSpecialFeatureTask(),
         ];
 
         return array_filter($pluginTasks, function ($task) {
