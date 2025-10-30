@@ -51,7 +51,7 @@ const NotificationsSidebar = () => {
                         <div>{notice.text}</div>
                             {notice.action && (
                                 <div className={"p-0.5"}>
-                                    <a href={notice.action.link} target={notice.action.target}>
+                                    <a href={notice.action.link} target={notice.action.target} className={"underline"}>
                                         {notice.action.text}
                                     </a>
                                 </div>
