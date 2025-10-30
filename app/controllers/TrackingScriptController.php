@@ -26,6 +26,8 @@ class TrackingScriptController implements ControllerInterface
 
     public function renderTrackingWidget(): void
     {
-        $this->render('/tracking-script', ['hash' => $this->service->getTrackingHash()]);
+        $this->render('public/tracking-script', [
+            'hash' => $this->service->getTrackingHash(),
+        ]);
     }
 }
