@@ -35,7 +35,7 @@ const FormFooter = () => {
     }, [isPageScrollable]);
 
     return (
-        <div className={clsx("sticky bottom-0 start-0 z-10 shadow-md bg-gray-50 w-full transition-all ease-in-out duration-200 rounded-none",
+        <div className={clsx("sticky bottom-0 start-0 z-10 shadow-lg bg-gray-50 w-full transition-all ease-in-out duration-200 rounded-none",
             (!isPageScrollable || scrollProgressPercent >= 88) && "rounded-b-md",
         )}>
             {isPageScrollable && <ScrollProgressBar scrollProgress={scrollProgressPercent}/>}
