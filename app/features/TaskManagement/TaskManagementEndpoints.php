@@ -2,8 +2,8 @@
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class TaskManagementEndpoints
 {
@@ -27,9 +27,9 @@ class TaskManagementEndpoints
      */
     public function addTaskRoutes(array $routes): array
     {
-        if ($this->adminAccessAllowed() === false) {
-            return $routes;
-        }
+//        if ($this->adminAccessAllowed() === false) {
+//            return $routes;
+//        }
 
         $routes['get_tasks'] = [
             'methods' => \WP_REST_Server::READABLE,
@@ -39,6 +39,7 @@ class TaskManagementEndpoints
         $routes['dismiss_task'] = [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'dismissTaskCallback'],
+            'permission_callback' => '__return_true',
         ];
 
         return $routes;
@@ -66,7 +67,12 @@ class TaskManagementEndpoints
         $storage = $this->retrieveHttpStorage($request);
 
         $sanitizedTaskId = $storage->getTitle('taskId');
-        $this->service->dismissTask($sanitizedTaskId);
+
+        try {
+            $this->service->dismissTask($sanitizedTaskId);
+        } catch (\Exception $e) {
+            return $this->sendHttpErrorResponse($e->getMessage());
+        }
 
         return $this->sendHttpResponse();
     }
