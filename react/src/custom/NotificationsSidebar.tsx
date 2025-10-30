@@ -61,10 +61,13 @@ const NotificationsSidebar = () => {
                             )}
                         </FlexContainer>
                     </Alert>))
-            ) : (
-                <div className={"text-gray-400 italic"}>
-                    {__("You currently have no notifications.", "metricool")}
-                </div>
+            ) : (isLoading ? (
+                    <div>LOADING</div>
+                ) : (
+                    <div className={"text-gray-400 italic"}>
+                        {__("You currently have no notifications.", "metricool")}
+                    </div>
+                )
             )}
         </Block>
     );
