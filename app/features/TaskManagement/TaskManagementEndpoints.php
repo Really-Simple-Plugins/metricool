@@ -2,8 +2,8 @@
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class TaskManagementEndpoints
 {
@@ -65,8 +65,15 @@ class TaskManagementEndpoints
     {
         $storage = $this->retrieveHttpStorage($request);
 
+        $request->get_param('taskId');
+
         $sanitizedTaskId = $storage->getTitle('taskId');
-        $this->service->dismissTask($sanitizedTaskId);
+
+        try {
+            $this->service->dismissTask($sanitizedTaskId);
+        } catch (\Exception $e) {
+            return $this->sendHttpErrorResponse($e->getMessage());
+        }
 
         return $this->sendHttpResponse();
     }

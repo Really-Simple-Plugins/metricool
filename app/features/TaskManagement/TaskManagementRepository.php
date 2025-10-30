@@ -2,9 +2,8 @@
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Helpers\Event;
-use Metricool\Interfaces\TaskInterface;
 use Metricool\Features\TaskManagement\Tasks\AbstractTask;
+use Metricool\Interfaces\TaskInterface;
 
 class TaskManagementRepository
 {
@@ -115,16 +114,18 @@ class TaskManagementRepository
     /**
      * Update the status of a task if the task exists. If the task is required
      * and the status is set to 'dismissed', the status will not be updated.
+     * @throws \Exception
      */
     public function updateTaskStatus(string $taskId, string $status): void
     {
         $task = $this->getTask($taskId);
+
         if ($task === null) {
-            return;
+            throw new \Exception('Unknown task');
         }
 
         if ($task->isRequired() && $status === AbstractTask::STATUS_DISMISSED) {
-            return; // Not allowed
+            throw new \Exception('Task can not be dismissed.');
         }
 
         $task->setStatus($status);
