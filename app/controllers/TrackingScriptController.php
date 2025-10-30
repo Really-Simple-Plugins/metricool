@@ -20,13 +20,14 @@ class TrackingScriptController implements ControllerInterface
 
     public function register(): void
     {
-        if ($this->service->canRenderTrackingScript()) {
-            add_action('wp_footer', [$this, 'renderTrackingWidget']);
-        }
+        add_action('wp_footer', [$this, 'renderTrackingWidget']);
     }
 
     public function renderTrackingWidget(): void
     {
+        if (!$this->service->canRenderTrackingScript()) {
+            return;
+        }
         $this->render('public/tracking-script', [
             'script' => App::env('metricool.tracking_script'),
             'hash' => $this->service->getTrackingHash(),
