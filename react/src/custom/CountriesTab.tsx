@@ -49,13 +49,15 @@ const CountriesTab = () => {
             {countryData && (
                 <FlexContainer direction={"column"} className={"!gap-2"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>
-                        <Chart
-                            data={countryData.chartData}
-                            chartType="GeoChart"
-                            options={geochartOptions}
-                            height={"200px"}
-                            width={"100%"}
-                        />
+                        <div className={"min-h-[185px]"}>
+                            <Chart
+                                data={countryData.chartData}
+                                chartType="GeoChart"
+                                options={geochartOptions}
+                                height={"185px"}
+                                width={"100%"}
+                            />
+                        </div>
                     </FlexContainer>
                     <DataTable columns={columns} data={countryData.tableData} tableSettings={{ pageSize: 3 }}/>
                 </FlexContainer>
