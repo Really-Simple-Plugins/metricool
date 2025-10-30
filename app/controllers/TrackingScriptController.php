@@ -29,7 +29,7 @@ class TrackingScriptController implements ControllerInterface
             return;
         }
         $this->render('public/tracking-script', [
-            'script' => App::env('metricool.tracking_script'),
+            'script_url' => App::env('metricool.tracking_script_url'),
             'hash' => $this->service->getTrackingHash(),
         ]);
     }
