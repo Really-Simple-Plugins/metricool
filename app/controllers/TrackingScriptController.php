@@ -19,7 +19,7 @@ class TrackingScriptController implements ControllerInterface
 
     public function register(): void
     {
-        if ($this->service->trackingScriptActive()) {
+        if ($this->service->canRenderTrackingScript()) {
             add_action('wp_footer', [$this, 'renderTrackingWidget']);
         }
     }

@@ -7,15 +7,15 @@ class TrackingScriptService
     /**
      * Checks if a hash is set and if the user has enabled the widget
      */
-    public function trackingScriptActive(): bool
+    public function canRenderTrackingScript(): bool
     {
-        return !empty($this->getTrackingHash()) && $this->getTrackingWidgetActive();
+        return !empty($this->getTrackingHash()) && $this->isTrackingWidgetActive();
     }
 
     /**
      * Returns if the user has enabled the widget in the settings
      */
-    public function getTrackingWidgetActive(): bool
+    public function isTrackingWidgetActive(): bool
     {
         return get_option('metricool_tracking_script_active') ?? true;
     }
@@ -27,5 +27,4 @@ class TrackingScriptService
     {
         return get_option('metricool_tracking_script_hash') ?? '';
     }
-
 }
