@@ -2,7 +2,9 @@
 
 namespace Metricool\Features\TaskManagement\Tasks;
 
-// todo - add listener
+use Metricool\App;
+use Metricool\Helpers\MetricoolUrl;
+
 class HistoricalDataTask extends AbstractTask
 {
     const IDENTIFIER = 'store_historical_data';
@@ -32,7 +34,7 @@ class HistoricalDataTask extends AbstractTask
     {
         return [
             'text' => esc_html__('Upgrade', 'metricool'),
-            'link' => 'https://app.metricool.com/user-settings/plan',
+            'link' => MetricoolUrl::adminUrl(App::env('metricool.upgrade_premium_url')),
             'target' => '_blank',
         ];
     }

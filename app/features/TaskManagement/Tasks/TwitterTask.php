@@ -2,7 +2,9 @@
 
 namespace Metricool\Features\TaskManagement\Tasks;
 
-// todo - add listener
+use Metricool\App;
+use Metricool\Helpers\MetricoolUrl;
+
 class TwitterTask extends AbstractTask
 {
     const IDENTIFIER = 'connect_twitter';
@@ -32,7 +34,7 @@ class TwitterTask extends AbstractTask
     {
         return [
             'text' => esc_html__('Connect', 'metricool'),
-            'link' => 'https://app.metricool.com/evolution/twitter',
+            'link' => MetricoolUrl::adminUrl(App::env('metricool.connect_twitter_url')),
             'target' => '_blank',
         ];
     }

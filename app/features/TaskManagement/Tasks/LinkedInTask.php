@@ -2,7 +2,9 @@
 
 namespace Metricool\Features\TaskManagement\Tasks;
 
-// todo - add listener
+use Metricool\App;
+use Metricool\Helpers\MetricoolUrl;
+
 class LinkedInTask extends AbstractTask
 {
     const IDENTIFIER = 'connect_linkedin';
@@ -32,7 +34,7 @@ class LinkedInTask extends AbstractTask
     {
         return [
             'text' => esc_html__('Connect', 'metricool'),
-            'link' => 'https://app.metricool.com/evolution/linkedin',
+            'link' => MetricoolUrl::adminUrl(App::env('metricool.connect_linkedin_url')),
             'target' => '_blank',
         ];
     }

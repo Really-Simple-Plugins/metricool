@@ -2,6 +2,8 @@
 
 namespace Metricool\Features\Notifications\Notices;
 
+use Metricool\App;
+use Metricool\Helpers\MetricoolUrl;
 
 class FirstConnectionNotice extends AbstractNotice
 {
@@ -45,17 +47,9 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getAction(): array
     {
-        // todo - fetch from settings
-        $queryArgs = array_filter([
-            'blogId' => (defined('METRICOOL_BLOG_ID') ? METRICOOL_BLOG_ID : ''),
-            'userId' => (defined('METRICOOL_USER_ID') ? METRICOOL_USER_ID : ''),
-        ]);
-
-        $link = add_query_arg($queryArgs, 'https://app.metricool.com/evolution/brandSummary');
-
         return [
             'text' => esc_html__('Connect', 'metricool'),
-            'link' => $link,
+            'link' => MetricoolUrl::adminUrl(App::env('metricool.connect_network_url')),
             'target' => '_blank',
         ];
     }
