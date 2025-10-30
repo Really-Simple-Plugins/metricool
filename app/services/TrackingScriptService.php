@@ -9,7 +9,7 @@ class TrackingScriptService
      */
     public function canRenderTrackingScript(): bool
     {
-        return !empty($this->getTrackingHash()) && $this->isTrackingWidgetActive();
+        return strlen($this->getTrackingHash()) > 0 && $this->isTrackingWidgetActive();
     }
 
     /**
@@ -17,7 +17,7 @@ class TrackingScriptService
      */
     public function isTrackingWidgetActive(): bool
     {
-        return get_option('metricool_tracking_script_active') ?? true;
+        return get_option('metricool_tracking_script_active', true);
     }
 
     /**
@@ -25,6 +25,6 @@ class TrackingScriptService
      */
     public function getTrackingHash(): string
     {
-        return get_option('metricool_tracking_script_hash') ?? '';
+        return get_option('metricool_tracking_script_hash', '');
     }
 }
