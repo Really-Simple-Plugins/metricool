@@ -49,9 +49,9 @@ const NotificationsSidebar = () => {
             </BlockHeader>
             {noticeData?.activeNotifications && noticeData?.activeNotifications?.length > 0 ? (
                 noticeData?.activeNotifications.map((notice) => (
-                    <Alert title={notice.title} variant={notice.type} >
+                    <Alert title={notice.title} variant={notice.type}>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
-                        <div>{notice.text}</div>
+                            <div>{notice.text}</div>
                             {notice.action && (
                                 <div className={"p-0.5"}>
                                     <a href={notice.action.link} target={notice.action.target} className={"underline"}>
