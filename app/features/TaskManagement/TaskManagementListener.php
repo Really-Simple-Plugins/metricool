@@ -47,7 +47,7 @@ class TaskManagementListener
             return;
         }
 
-        // Complete the first connection task when a social network is connected
+        // Complete the FirstConnectionTask when a social network is connected
         if (count($socialNetworks) > 0) {
             $this->service->completeTask(Tasks\FirstConnectionTask::IDENTIFIER);
         }
