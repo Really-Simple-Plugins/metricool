@@ -2,6 +2,7 @@
 
 namespace Metricool\Controllers;
 
+use Metricool\App;
 use Metricool\Interfaces\ControllerInterface;
 use Metricool\Services\TrackingScriptService;
 use Metricool\Traits\HasViews;
@@ -27,6 +28,7 @@ class TrackingScriptController implements ControllerInterface
     public function renderTrackingWidget(): void
     {
         $this->render('public/tracking-script', [
+            'script' => App::env('metricool.tracking_script'),
             'hash' => $this->service->getTrackingHash(),
         ]);
     }

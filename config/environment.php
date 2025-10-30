@@ -27,6 +27,7 @@ return [
         'review_url' => 'https://wordpress.org/support/plugin/metricool/reviews/#new-post',
     ],
     'metricool' => [
+        'tracking_script' => 'https://tracker.metricool.com/resources/be.js',
     ],
     'http' => [
         'version' => 'v1',
