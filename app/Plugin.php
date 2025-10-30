@@ -164,7 +164,9 @@ class Plugin
                 new Services\CapabilityService(),
             ),
             new Controllers\ReviewController(),
-            new Controllers\TrackingScriptController(new TrackingScriptService()),
+            new Controllers\TrackingScriptController(
+                new TrackingScriptService(),
+            ),
         ]);
     }
 
