@@ -47,7 +47,6 @@ class TaskManagementListener
             return;
         }
 
-
         // Complete the first connection task when a social network is connected
         if (count($socialNetworks) > 0) {
             $this->service->completeTask(Tasks\FirstConnectionTask::IDENTIFIER);
@@ -60,7 +59,7 @@ class TaskManagementListener
         ];
 
         foreach ($socialNetworks as $networkName) {
-            // Find task associated with this network and complete it
+            // Find a task associated with this network and complete it
             if (array_key_exists($networkName, $connectNetworkTasks)) {
                 $this->service->completeTask(
                     $connectNetworkTasks[$networkName]::IDENTIFIER

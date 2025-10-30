@@ -5,6 +5,7 @@ namespace Metricool\Helpers;
 class MetricoolUrl
 {
     /**
+     * Add required query args to a Metricool admin url
      * @param string $url External url to a Metricool admin page
      * @return string The url with the required query args
      */
