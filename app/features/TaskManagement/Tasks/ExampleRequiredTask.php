@@ -14,7 +14,7 @@ class ExampleRequiredTask extends AbstractTask
      */
     public function getText(): string
     {
-        return esc_html__('This is a premium task', 'metricool');
+        return esc_html__('This is a required task', 'metricool');
     }
 
     /**
