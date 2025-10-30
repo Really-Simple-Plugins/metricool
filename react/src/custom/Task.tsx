@@ -4,7 +4,7 @@ export type TaskProps = {
     id: string,
     text: string,
     label: string,
-    status: "open" | "urgent" | "completed" | "dismissed" | "hidden" | "premium",
+    status: "open" | "urgent" | "completed" | "dismissed" | "hidden",
     type: "required" | "optional",
     premium: boolean;
     special_feature: boolean,
