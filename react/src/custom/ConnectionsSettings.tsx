@@ -1,8 +1,6 @@
 import {
     Block,
-    BlockDescription,
     BlockHeader,
-    BlockHeaderTitle,
     Button,
     FlexContainer,
     type IconProps
@@ -166,14 +164,10 @@ const ConnectionsSettings = () => {
         <div className={"flex flex-col min-w-full md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
                 <Block>
-                    <BlockHeader>
-                        <BlockHeaderTitle>
-                            {__("Connections", "metricool")}
-                        </BlockHeaderTitle>
-                        <BlockDescription>
-                            {__("The accounts that are connected to Metricool", "metricool")}
-                        </BlockDescription>
-                    </BlockHeader>
+                    <BlockHeader
+                        title={__("Connections", "metricool")}
+                        description={__("The accounts that are connected to Metricool", "metricool")}
+                    />
                     <FlexContainer direction={"column"}>
                         {isLoading && (
                             <div>LOADING</div>

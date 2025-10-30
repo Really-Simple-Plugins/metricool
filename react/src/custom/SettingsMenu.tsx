@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Block, BlockHeader, BlockHeaderTitle } from "../components";
+import { Block, BlockHeader } from "../components";
 import { __ } from "@wordpress/i18n";
 import { FlexContainer } from "../components";
 import ListItem from "./ListItem.tsx";
@@ -9,11 +9,7 @@ const SettingsMenu = () => {
     const { metricool } = useGlobalContext();
     return (
         <Block className={"md:sticky md:top-[3rem]"}>
-            <BlockHeader>
-                <BlockHeaderTitle>
-                    {__("Settings", "metricool")}
-                </BlockHeaderTitle>
-            </BlockHeader>
+            <BlockHeader title={__("Settings", "metricool")}/>
             <FlexContainer direction={"column"} className={"!gap-3"}>
                 <Link to={"/settings/account"} className="text-md text-black hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none">
                     {__("Account Settings", "metricool")}

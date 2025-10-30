@@ -1,7 +1,6 @@
 import {
     Block,
     BlockHeader,
-    BlockHeaderTitle,
     Button,
     Dialog,
     FlexContainer,
@@ -49,11 +48,7 @@ const AccountSettings = () => {
         <form onSubmit={handleSubmit(onSubmit)} className={"flex flex-col min-w-full md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
                 <Block className={"rounded-t-md rounded-b-none"}>
-                    <BlockHeader>
-                        <BlockHeaderTitle>
-                            {__("Monthly summary", "metricool")}
-                        </BlockHeaderTitle>
-                    </BlockHeader>
+                    <BlockHeader title={__("Monthly summary", "metricool")}/>
                     <FlexContainer direction={"column"}>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
                             <FlexContainer direction={"row"} className={"w-full justify-between"}>

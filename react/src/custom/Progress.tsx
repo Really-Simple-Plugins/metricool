@@ -1,4 +1,4 @@
-import { Block, BlockHeader, BlockHeaderTitle, FlexContainer } from "../components";
+import { Block, BlockHeader, FlexContainer } from "../components";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import { useEffect, useState } from "react";
@@ -72,10 +72,12 @@ const Progress = () => {
 
     return (
         <Block>
-            <BlockHeader className={"flex justify-between"}>
-                <BlockHeaderTitle>{__("Progress", "metricool")}</BlockHeaderTitle>
-                <TabNavigation activeTab={activeTab} onTabClick={onTabChange} separator={true} tabs={tabs}/>
-            </BlockHeader>
+            <BlockHeader
+                title={__("Progress", "metricool")}
+                action={(
+                    <TabNavigation activeTab={activeTab} onTabClick={onTabChange} separator={true} tabs={tabs}/>
+                )}
+            />
             {isLoading && (
                 <div>LOADING</div>
             )}

@@ -1,4 +1,4 @@
-import { Block, BlockHeader, BlockHeaderTitle, FlexContainer } from "../components";
+import { Block, BlockHeader, FlexContainer } from "../components";
 import { __ } from "@wordpress/i18n";
 import ListItem from "./ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -109,9 +109,7 @@ const RelatedPlugins = () => {
 
     return (
         <Block variant={"transparent"}>
-            <BlockHeader>
-                <BlockHeaderTitle>{__("Related Plugins", "metricool")}</BlockHeaderTitle>
-            </BlockHeader>
+            <BlockHeader title={__("Related Plugins", "metricool")}/>
             <FlexContainer direction={"column"} className={"!gap-2"}>
                 {isLoading && (
                     <div>LOADING</div>

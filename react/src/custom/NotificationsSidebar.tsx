@@ -1,4 +1,4 @@
-import { Block, BlockHeader, BlockHeaderTitle, Alert, FlexContainer } from "../components";
+import { Alert, Block, BlockHeader, FlexContainer } from "../components";
 import { __ } from "@wordpress/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
@@ -41,12 +41,7 @@ const NotificationsSidebar = () => {
 
     return (
         <Block variant={"transparent"} className={"px-0"}>
-            <BlockHeader className={"!gap-3"}>
-                <BlockHeaderTitle>
-                    {__("Notifications", "metricool")}
-                </BlockHeaderTitle>
-                <hr/>
-            </BlockHeader>
+            <BlockHeader title={__("Notifications", "metricool")} separator={true}/>
             {noticeData?.activeNotifications && noticeData?.activeNotifications?.length > 0 ? (
                 noticeData?.activeNotifications.map((notice) => (
                     <Alert title={notice.title} variant={notice.type}>

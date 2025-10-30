@@ -1,4 +1,4 @@
-import { Block, BlockHeader, BlockHeaderTitle, Button, FlexContainer, type IconProps } from "../components";
+import { Block, BlockHeader, Button, FlexContainer, type IconProps } from "../components";
 import { __ } from "@wordpress/i18n";
 import AccountTile from "./AccountTile.tsx";
 import { useQuery } from "@tanstack/react-query";
@@ -60,9 +60,7 @@ const ConnectedAccounts = () => {
 
     return (
         <Block>
-            <BlockHeader>
-                <BlockHeaderTitle>{__("Connected Accounts", "metricool")}</BlockHeaderTitle>
-            </BlockHeader>
+            <BlockHeader title={__("Connected Accounts", "metricool")}/>
             {isLoading && (
                 <div>LOADING</div>
             )}
