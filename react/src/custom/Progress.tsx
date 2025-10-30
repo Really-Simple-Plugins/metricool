@@ -101,7 +101,7 @@ const Progress = () => {
                     </div>
 
                     {/* Task List */}
-                    <div className="mt-1 grid overflow-y-auto content-start gap-4">
+                    <div className="max-h-[300px] flex flex-col overflow-y-auto gap-4 pr-3">
                         {[...taskData.remainingTasks, ...(activeTab === 0 ? [...taskData.completedTasks] : [])].map((task) => (
                             <Task key={task.id} task={task} onDismiss={() => dismissTask({ taskId: task.id })}/>
                         ))}
