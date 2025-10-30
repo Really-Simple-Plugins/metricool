@@ -24,8 +24,14 @@ class NotificationListener
      */
     public function handleConnectedNetworks(array $connections): void
     {
-        // todo: test this on front-end
-        if (count($connections) > 1) {
+        $connectionNames = array_keys($connections);
+
+        // filter out all non-social networks
+        $socialNetworks = array_filter($connectionNames, function ($connectionName) {
+            return !str_contains('webData', $connectionName);
+        });
+
+        if (count($socialNetworks) > 0) {
             $this->service->deactivate(Notices\FirstConnectionNotice::IDENTIFIER);
         }
     }
