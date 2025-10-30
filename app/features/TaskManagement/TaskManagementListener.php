@@ -59,7 +59,7 @@ class TaskManagementListener
         ];
 
         foreach ($socialNetworks as $networkName) {
-            // Find a task associated with this network and complete it
+            // Check if a network is associated with a task and complete it
             if (array_key_exists($networkName, $connectNetworkTasks)) {
                 $this->service->completeTask(
                     $connectNetworkTasks[$networkName]::IDENTIFIER
