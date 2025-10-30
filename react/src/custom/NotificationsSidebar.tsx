@@ -26,9 +26,12 @@ const NotificationsSidebar = () => {
         queryKey: ["notices"],
         queryFn: () => httpClient?.setRoute("get_notices").get(),
         staleTime: 1000 * 60, // 1 minute
-        select: (data): Notice[] => {
+        select: (data): { allNotifications: Notice[], activeNotifications: Notice[] } => {
             console.log(data);
-            return data.data;
+            return {
+                allNotifications: data.data,
+                activeNotifications: data.data.filter((notice: Notice) => notice.active),
+            };
         },
     });
 
@@ -44,8 +47,8 @@ const NotificationsSidebar = () => {
                 </BlockHeaderTitle>
                 <hr/>
             </BlockHeader>
-            {noticeData ? (
-                noticeData.map((notice) => (
+            {noticeData?.activeNotifications && noticeData?.activeNotifications?.length > 0 ? (
+                noticeData?.activeNotifications.map((notice) => (
                     <Alert title={notice.title} variant={notice.type} >
                         <FlexContainer direction={"column"} className={"!gap-2"}>
                         <div>{notice.text}</div>
