@@ -27,7 +27,7 @@ class ConnectedBrands
     public function get(): array
     {
         if (!$this->client->hasBlogId()) {
-            // This endpoint should not be called without a BlogId. Return empty result.
+            // This endpoint should not be called without a BlogId. Return an empty result.
             return [];
         }
 
@@ -37,8 +37,15 @@ class ConnectedBrands
             return [];
         }
 
+        // Dispatch event to notify about the connected social networks?
         if (isset($result['data']['networksData'])) {
-            Event::dispatch(Event::CONNECTED_NETWORKS_DATA_LOADED, $result['data']['networksData']);
+            // filter out networks that are not social media
+            $connectionNames = array_keys($result['data']['networksData']);
+            $connectedSocialNetworks = array_filter($connectionNames, function ($connectionName) {
+                return !str_contains('webData', $connectionName) && !str_contains('Ads', $connectionName);
+            });
+
+            Event::dispatch(Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, $connectedSocialNetworks);
         }
 
         return $result['data'];

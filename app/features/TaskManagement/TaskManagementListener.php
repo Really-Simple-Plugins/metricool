@@ -19,7 +19,7 @@ class TaskManagementListener
     {
         add_action('load-edit.php', [$this, 'handleEditPageLoad']);
 
-        add_action('metricool_event_' . Event::CONNECTED_NETWORKS_DATA_LOADED, [$this, 'handleConnectedNetworks']);
+        add_action('metricool_event_' . Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, [$this, 'handleSocialConnectedNetworks']);
         add_action('metricool_event_' . Event::SUBSCRIPTION_DATA_LOADED, [$this, 'handleSubscriptionLoaded']);
     }
 
@@ -38,32 +38,37 @@ class TaskManagementListener
     }
 
     /**
-     * Event receives a list of connections from the "networksData" object of the /v2/settings/brands Metricool API response
-     * Completes tasks based on the keys and values of the connections array.
+     * @param array $socialNetworks List of social media connections filtered from the "networksData"
+     * /v2/settings/brands Metricool API response
      */
-    public function handleConnectedNetworks($connections): void
+    public function handleSocialConnectedNetworks(array $socialNetworks): void
     {
-        if (!count($connections)) {
+        if (!count($socialNetworks)) {
             return;
         }
 
-        $connectTasks = [
+
+        // Complete the first connection task when a social network is connected
+        if (count($socialNetworks) > 0) {
+            $this->service->completeTask(Tasks\FirstConnectionTask::IDENTIFIER);
+        }
+
+        // Complete these tasks when a specific social network is connected
+        $connectNetworkTasks = [
             'facebookData' => Tasks\TwitterTask::class,
             'linkedinData' => Tasks\LinkedInTask::class,
         ];
 
-        $this->service->completeTask(
-            Tasks\FirstConnectionTask::IDENTIFIER
-        );
-
-        foreach ($connections as $key => $task) {
-            if (array_key_exists($key, $connectTasks)) {
+        foreach ($socialNetworks as $networkName) {
+            // Find task associated with this network and complete it
+            if (array_key_exists($networkName, $connectNetworkTasks)) {
                 $this->service->completeTask(
-                    $connectTasks[$key]::IDENTIFIER
+                    $connectNetworkTasks[$networkName]::IDENTIFIER
                 );
             }
         }
     }
+
 
     /**
      * This even receives the response of the /v2/profile/subscription endpoint.

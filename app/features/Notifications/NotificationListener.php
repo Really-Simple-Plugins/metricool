@@ -15,22 +15,15 @@ class NotificationListener
 
     public function listen(): void
     {
-        add_action('metricool_event_' . Event::CONNECTED_NETWORKS_DATA_LOADED, [$this, 'handleConnectedNetworks']);
+        add_action('metricool_event_' . Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, [$this, 'handleConnectedSocialNetworks']);
     }
 
     /**
-     * Event receives a list of connections from the "networksData" object of the /v2/settings/brands Metricool API response
-     * Dismisses the FirstConnectionNotice
+     * @param array $socialNetworks List of social media connections filtered from the "networksData"
+     * /v2/settings/brands Metricool API response
      */
-    public function handleConnectedNetworks(array $connections): void
+    public function handleConnectedSocialNetworks(array $socialNetworks): void
     {
-        $connectionNames = array_keys($connections);
-
-        // filter out all non-social networks
-        $socialNetworks = array_filter($connectionNames, function ($connectionName) {
-            return !str_contains('webData', $connectionName);
-        });
-
         if (count($socialNetworks) > 0) {
             $this->service->deactivate(Notices\FirstConnectionNotice::IDENTIFIER);
         }

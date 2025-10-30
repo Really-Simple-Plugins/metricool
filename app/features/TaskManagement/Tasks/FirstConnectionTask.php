@@ -8,14 +8,14 @@ class FirstConnectionTask extends AbstractTask
     const IDENTIFIER = 'first_connection';
 
     protected bool $required = false;
-    
+
 
     /**
      * @inheritDoc
      */
     public function getText(): string
     {
-        return esc_html__('Connect your first account to Metricool', 'metricool');
+        return esc_html__('Connect your first social account to Metricool', 'metricool');
     }
 
     /**
