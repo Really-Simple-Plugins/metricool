@@ -33,11 +33,13 @@ class ConnectedBrands
 
         $result = $this->client->get($this->endpoint);
 
-        if (!isset($result['data']['networksData'])) {
+        if (!isset($result['data'])) {
             return [];
         }
 
-        Event::dispatch(Event::CONNECTED_NETWORKS_DATA_LOADED, $result['data']['networksData']);
+        if (isset($result['data']['networksData'])) {
+            Event::dispatch(Event::CONNECTED_NETWORKS_DATA_LOADED, $result['data']['networksData']);
+        }
 
         return $result['data'];
     }
