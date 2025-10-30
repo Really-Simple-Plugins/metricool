@@ -85,7 +85,7 @@ const Progress = () => {
         <Block>
             <BlockHeader
                 title={__("Progress", "metricool")}
-                action={(
+                action={taskData && (
                     <TabNavigation activeTab={activeTab} onTabClick={onTabChange} separator={true} tabs={tabs}/>
                 )}
             />
