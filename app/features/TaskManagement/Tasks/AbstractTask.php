@@ -44,7 +44,7 @@ abstract class AbstractTask implements TaskInterface
      * user but should be reactivated when the task is upgraded to a new
      * version.
      */
-    protected bool $reactivateOnUpgrade;Í›
+    protected bool $reactivateOnUpgrade;
 
     /**
      * Use this property to define if the task is a premium task. Useful for
