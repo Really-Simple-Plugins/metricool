@@ -17,6 +17,7 @@ export type Notice = {
     route: string,
     text: string,
     title: string,
+    visible: boolean,
     type: "info" | "warning",
 };
 
@@ -32,10 +33,11 @@ const NotificationsSidebar = () => {
         staleTime: 1000 * 60, // 1 minute
         select: (data): Record<string, Notice[]> => {
             console.log(data);
+            const noticesWithVisibility = data.data.map((notice: Notice) => ({...notice, visible: notice.visible ? notice.visible : notice.active && (notice.route === "general" || notice.route === pathname)}));
             return {
-                allNotifications: data.data,
-                activeNotifications: data.data.filter((notice: Notice) => notice.active),
-                visibleNotifications: data.data.filter((notice: Notice) => notice.active && (notice.route === "general" || notice.route === pathname))
+                allNotifications: noticesWithVisibility,
+                activeNotifications: noticesWithVisibility.filter((notice: Notice) => notice.active),
+                visibleNotifications: noticesWithVisibility.filter((notice: Notice) => notice.visible),
             };
         },
     });
