@@ -1,6 +1,7 @@
 import { Alert, Block, BlockHeader, FlexContainer } from "../components";
 import { __ } from "@wordpress/i18n";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from '@tanstack/react-router';
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useEffect } from "react";
 
@@ -21,16 +22,20 @@ type Notice = {
 
 const NotificationsSidebar = () => {
     const { httpClient } = useGlobalContext();
+    const pathname = useLocation({
+        select: (location) => location.pathname.split("/").at(-1),
+    });
     const { data: noticeData, isLoading, error } = useQuery({
         enabled: !!httpClient,
         queryKey: ["notices"],
         queryFn: () => httpClient?.setRoute("get_notices").get(),
         staleTime: 1000 * 60, // 1 minute
-        select: (data): { allNotifications: Notice[], activeNotifications: Notice[] } => {
+        select: (data): Record<string, Notice[]> => {
             console.log(data);
             return {
                 allNotifications: data.data,
                 activeNotifications: data.data.filter((notice: Notice) => notice.active),
+                visibleNotifications: data.data.filter((notice: Notice) => notice.active && (notice.route === "general" || notice.route === pathname))
             };
         },
     });
@@ -42,8 +47,8 @@ const NotificationsSidebar = () => {
     return (
         <Block variant={"transparent"} className={"px-0"}>
             <BlockHeader title={__("Notifications", "metricool")} separator={true}/>
-            {noticeData?.activeNotifications && noticeData?.activeNotifications?.length > 0 ? (
-                noticeData?.activeNotifications.map((notice) => (
+            {noticeData?.visibleNotifications && noticeData?.visibleNotifications?.length > 0 ? (
+                noticeData?.visibleNotifications.map((notice) => (
                     <Alert title={notice.title} variant={notice.type}>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
                             <div>{notice.text}</div>
