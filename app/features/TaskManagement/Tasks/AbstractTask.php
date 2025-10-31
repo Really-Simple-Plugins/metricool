@@ -44,7 +44,7 @@ abstract class AbstractTask implements TaskInterface
      * user but should be reactivated when the task is upgraded to a new
      * version.
      */
-    protected bool $reactivateOnUpgrade;
+    protected bool $reactivateOnUpgrade;Í›
 
     /**
      * Use this property to define if the task is a premium task. Useful for
@@ -105,14 +105,13 @@ abstract class AbstractTask implements TaskInterface
      */
     public function getPriority(): int
     {
-        if (!$this->isCompleted()) {
-            // Return a different priority for tasks that are premium or special features
-            if ($this->isPremium()) {
-                return self::STATE_PREMIUM['priority'];
-            }
-            if ($this->isSpecialFeature()) {
-                return self::STATE_SPECIAL_FEATURE['priority'];
-            }
+
+        // Return a different priority for tasks that are premium or special features
+        if ($this->isPremium()) {
+            return self::STATE_PREMIUM['priority'];
+        }
+        if ($this->isSpecialFeature()) {
+            return self::STATE_SPECIAL_FEATURE['priority'];
         }
 
         return $this->priority ?? self::STATE_OPEN['priority'];
