@@ -20,7 +20,6 @@ abstract class AbstractTask implements TaskInterface
     public const STATE_PREMIUM = ['priority' => 15, 'is_premium' => true];
     public const STATE_SPECIAL_FEATURE = ['priority' => 15, 'is_special_feature' => true];
 
-
     /**
      * Override this constant to define the identifier of the task. This
      * identifier is used to identify the task in the database and in the UI.
@@ -106,6 +105,16 @@ abstract class AbstractTask implements TaskInterface
      */
     public function getPriority(): int
     {
+        if (!$this->isCompleted()) {
+            // Return a different priority for tasks that are premium or special features
+            if ($this->isPremium()) {
+                return self::STATE_PREMIUM['priority'];
+            }
+            if ($this->isSpecialFeature()) {
+                return self::STATE_SPECIAL_FEATURE['priority'];
+            }
+        }
+
         return $this->priority ?? self::STATE_OPEN['priority'];
     }
 
@@ -161,22 +170,22 @@ abstract class AbstractTask implements TaskInterface
      * Method is used to set that state of the task. For all available
      * states {@see AbstractTask::TASK_STATES} constant.
      */
-    public function setState(array $state): void
+    public function fill(array $data): void
     {
-        if (isset($state['status'])) {
-            $this->setStatus($state['status']);
+        if (isset($data['status'])) {
+            $this->setStatus($data['status']);
         }
 
-        if (isset($state['priority'])) {
-            $this->setPriority($state['priority']);
+        if (isset($data['priority'])) {
+            $this->setPriority($data['priority']);
         }
 
-        if (isset($state['is_premium'])) {
-            $this->setPremium($state['is_premium']);
+        if (isset($data['is_premium'])) {
+            $this->setPremium($data['is_premium']);
         }
 
-        if (isset($state['is_special_feature'])) {
-            $this->setSpecialFeature($state['is_special_feature']);
+        if (isset($data['is_special_feature'])) {
+            $this->setSpecialFeature($data['is_special_feature']);
         }
     }
 
@@ -185,7 +194,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function open(): void
     {
-        $this->setState(self::STATE_OPEN);
+        $this->fill(self::STATE_OPEN);
     }
 
     /**
@@ -193,7 +202,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function urgent(): void
     {
-        $this->setState(self::STATE_URGENT);
+        $this->fill(self::STATE_URGENT);
     }
 
     /**
@@ -206,7 +215,7 @@ abstract class AbstractTask implements TaskInterface
             return; // Not allowed
         }
 
-        $this->setState(self::STATE_DISMISSED);
+        $this->fill(self::STATE_DISMISSED);
     }
 
     /**
@@ -214,7 +223,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function completed(): void
     {
-        $this->setState(self::STATE_COMPLETED);
+        $this->fill(self::STATE_COMPLETED);
     }
 
     /**
@@ -222,7 +231,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function hide(): void
     {
-        $this->setState(self::STATE_HIDDEN);
+        $this->fill(self::STATE_HIDDEN);
     }
 
     /**
@@ -230,7 +239,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function isCompleted(): bool
     {
-        return $this->status === self::STATUS_COMPLETED;
+        return $this->getStatus() === self::STATUS_COMPLETED;
     }
 
     /**

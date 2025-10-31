@@ -36,7 +36,7 @@ class TaskManagementRepository
         // If strict mode is enabled, remove tasks that are hidden
         if ($strict) {
             $tasks = array_filter($tasks, function ($task) {
-                return $task->getStatus() !== AbstractTask::STATUS_HIDDEN;
+                return $task->isHidden() === false;
             });
         }
 
@@ -116,7 +116,7 @@ class TaskManagementRepository
      * and the status is set to 'dismissed', the status will not be updated.
      * @throws \Exception
      */
-    public function updateTaskStatus(string $taskId, string $status): void
+    public function updateTaskState(string $taskId, array $state): void
     {
         $task = $this->getTask($taskId);
 
@@ -124,11 +124,11 @@ class TaskManagementRepository
             throw new \Exception('Unknown task');
         }
 
-        if ($task->isRequired() && $status === AbstractTask::STATUS_DISMISSED) {
+        if ($task->isRequired() && $state['status'] === AbstractTask::STATUS_DISMISSED) {
             throw new \Exception('Task can not be dismissed.');
         }
 
-        $task->setStatus($status);
+        $task->fill($state);
         $this->addTask($task);
     }
 

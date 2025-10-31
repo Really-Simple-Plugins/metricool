@@ -2,8 +2,8 @@
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Interfaces\TaskInterface;
 use Metricool\Features\TaskManagement\Tasks\AbstractTask;
+use Metricool\Interfaces\TaskInterface;
 
 class TaskManagementService
 {
@@ -103,41 +103,46 @@ class TaskManagementService
     /**
      * Dismiss a task by setting the status to 'dismissed'. Only allowed if
      * the task is not required.
+     * @throws \Exception
      */
     public function dismissTask(string $taskId): void
     {
-        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_DISMISSED);
+        $this->repository->updateTaskState($taskId, AbstractTask::STATE_DISMISSED);
     }
 
     /**
      * Open a task by setting the status to 'open'
+     * @throws \Exception
      */
     public function openTask(string $taskId): void
     {
-        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_OPEN);
+        $this->repository->updateTaskState($taskId, AbstractTask::STATE_OPEN);
     }
 
     /**
      * Set the task to 'urgent' status
+     * @throws \Exception
      */
     public function flagTaskUrgent(string $taskId): void
     {
-        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_URGENT);
+        $this->repository->updateTaskState($taskId, AbstractTask::STATE_URGENT);
     }
 
     /**
      * Hide a task by setting the status to 'hidden'
+     * @throws \Exception
      */
     public function hideTask(string $taskId): void
     {
-        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_HIDDEN);
+        $this->repository->updateTaskState($taskId, AbstractTask::STATE_HIDDEN);
     }
 
     /**
      * Complete a task by setting the status to 'completed'
+     * @throws \Exception
      */
     public function completeTask(string $taskId): void
     {
-        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_COMPLETED);
+        $this->repository->updateTaskState($taskId, AbstractTask::STATE_COMPLETED);
     }
 }

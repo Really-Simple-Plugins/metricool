@@ -32,9 +32,7 @@ class TaskManagementListener
             return;
         }
 
-        $this->service->dismissTask(
-            Tasks\SchedulePostTask::IDENTIFIER,
-        );
+        $this->dismissTask(Tasks\SchedulePostTask::IDENTIFIER);
     }
 
     /**
@@ -49,7 +47,7 @@ class TaskManagementListener
 
         // Complete the FirstConnectionTask when a social network is connected
         if (count($socialNetworks) > 0) {
-            $this->service->completeTask(Tasks\FirstConnectionTask::IDENTIFIER);
+            $this->completeTask(Tasks\FirstConnectionTask::IDENTIFIER);
         }
 
         // Complete these tasks when a specific social network is connected
@@ -61,13 +59,10 @@ class TaskManagementListener
         foreach ($socialNetworks as $networkName) {
             // Check if a network is associated with a task and complete it
             if (array_key_exists($networkName, $connectNetworkTasks)) {
-                $this->service->completeTask(
-                    $connectNetworkTasks[$networkName]::IDENTIFIER
-                );
+                $this->completeTask($connectNetworkTasks[$networkName]::IDENTIFIER);
             }
         }
     }
-
 
     /**
      * This even receives the response of the /v2/profile/subscription endpoint.
@@ -78,7 +73,29 @@ class TaskManagementListener
         $isPremium = strtolower($subscription['planId']) !== 'free';
 
         if ($isPremium) {
-            $this->service->completeTask(HistoricalDataTask::IDENTIFIER);
+            $this->completeTask(HistoricalDataTask::IDENTIFIER);
+        }
+    }
+
+    /**
+     * Attempt to complete a task. If an exception is thrown, the task will not be completed.
+     */
+    public function completeTask(string $taskIdentifier): void
+    {
+        try {
+            $this->service->completeTask($taskIdentifier);
+        } catch (\Exception $e) {
+        }
+    }
+
+    /**
+     * Attempt to dismiss a task. If an exception is thrown, the task will not be completed.
+     */
+    protected function dismissTask(string $taskIdentifier)
+    {
+        try {
+            $this->service->dismissTask($taskIdentifier);
+        } catch (\Exception $e) {
         }
     }
 }
