@@ -6,12 +6,20 @@ use Metricool\Interfaces\TaskInterface;
 
 abstract class AbstractTask implements TaskInterface
 {
-    const STATUS_OPEN = 'open';
-    const STATUS_URGENT = 'urgent';
-    const STATUS_DISMISSED = 'dismissed';
-    const STATUS_COMPLETED = 'completed';
-    const STATUS_PREMIUM = 'premium';
-    const STATUS_HIDDEN = 'hidden';
+    public const STATUS_URGENT = 'urgent';
+    public const STATUS_OPEN = 'open';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_DISMISSED = 'dismissed';
+    public const STATUS_HIDDEN = 'hidden';
+
+    public const STATE_URGENT = ['status' => self::STATUS_URGENT, 'priority' => 0];
+    public const STATE_OPEN = ['status' => self::STATUS_OPEN, 'priority' => 10];
+    public const STATE_COMPLETED = ['status' => self::STATUS_COMPLETED, 'priority' => 40];
+    public const STATE_DISMISSED = ['status' => self::STATUS_DISMISSED, 'priority' => 30];
+    public const STATE_HIDDEN = ['status' => self::STATUS_HIDDEN, 'priority' => 30];
+    public const STATE_PREMIUM = ['priority' => 15, 'is_premium' => true];
+    public const STATE_SPECIAL_FEATURE = ['priority' => 15, 'is_special_feature' => true];
+
 
     /**
      * Override this constant to define the identifier of the task. This
@@ -60,6 +68,8 @@ abstract class AbstractTask implements TaskInterface
      */
     private string $status;
 
+    private string $priority;
+
     /**
      * Override this method to define the text that should be displayed to the
      * user in the tasks dashboard component
@@ -94,6 +104,14 @@ abstract class AbstractTask implements TaskInterface
     /**
      * @inheritDoc
      */
+    public function getPriority(): int
+    {
+        return $this->priority ?? self::STATE_OPEN['priority'];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function reactivateOnUpgrade(): bool
     {
         return $this->reactivateOnUpgrade ?? false;
@@ -112,39 +130,74 @@ abstract class AbstractTask implements TaskInterface
      */
     public function setStatus(string $status): void
     {
-        $knownStatuses = [
-            self::STATUS_OPEN,
-            self::STATUS_URGENT,
-            self::STATUS_DISMISSED,
-            self::STATUS_COMPLETED,
-            self::STATUS_PREMIUM,
-            self::STATUS_HIDDEN,
-        ];
-        if (!in_array($status, $knownStatuses)) {
-            return; // Not allowed
-        }
-
         $this->status = $status;
     }
 
     /**
-     * Activate the task by setting the status to 'open'
+     * Gets the priority of the task.
+     */
+    public function setPriority(int $priority): void
+    {
+        $this->priority = $priority;
+    }
+
+    /**
+     * Sets the premium property of the task.
+     */
+    public function setPremium(bool $isPremium): void
+    {
+        $this->premium = $isPremium;;
+    }
+
+    /**
+     * Sets the special feature property of the task.
+     */
+    public function setSpecialFeature(bool $isSpecialFeature): void
+    {
+        $this->specialFeature = $isSpecialFeature;
+    }
+
+    /**
+     * Method is used to set that state of the task. For all available
+     * states {@see AbstractTask::TASK_STATES} constant.
+     */
+    public function setState(array $state): void
+    {
+        if (isset($state['status'])) {
+            $this->setStatus($state['status']);
+        }
+
+        if (isset($state['priority'])) {
+            $this->setPriority($state['priority']);
+        }
+
+        if (isset($state['is_premium'])) {
+            $this->setPremium($state['is_premium']);
+        }
+
+        if (isset($state['is_special_feature'])) {
+            $this->setSpecialFeature($state['is_special_feature']);
+        }
+    }
+
+    /**
+     * Activate the task by setting the state to 'open'
      */
     public function open(): void
     {
-        $this->status = self::STATUS_OPEN;
+        $this->setState(self::STATE_OPEN);
     }
 
     /**
-     * Set the task to 'urgent' status
+     * Set the task to 'urgent' state
      */
     public function urgent(): void
     {
-        $this->status = self::STATUS_URGENT;
+        $this->setState(self::STATE_URGENT);
     }
 
     /**
-     * Dismiss the task by setting the status to 'dismissed'. Only allowed if
+     * Dismiss the task by setting the state to 'dismissed'. Only allowed if
      * the task is not required.
      */
     public function dismiss(): void
@@ -153,23 +206,47 @@ abstract class AbstractTask implements TaskInterface
             return; // Not allowed
         }
 
-        $this->status = self::STATUS_DISMISSED;
+        $this->setState(self::STATE_DISMISSED);
     }
 
     /**
-     * Complete the task by setting the status to 'completed'
+     * Complete the task by setting the state to 'completed'
      */
     public function completed(): void
     {
-        $this->status = self::STATUS_COMPLETED;
+        $this->setState(self::STATE_COMPLETED);
     }
 
     /**
-     * Hide the task by setting the status to 'hidden'
+     * Hide the task by setting the state to 'hidden'
      */
     public function hide(): void
     {
-        $this->status = self::STATUS_HIDDEN;
+        $this->setState(self::STATE_HIDDEN);
+    }
+
+    /**
+     * Reads if the task is completed
+     */
+    public function isCompleted(): bool
+    {
+        return $this->status === self::STATUS_COMPLETED;
+    }
+
+    /**
+     * Reads if the task is dismissed
+     */
+    public function isDismissed(): bool
+    {
+        return $this->status === self::STATUS_DISMISSED;
+    }
+
+    /**
+     * Reads if the task is required
+     */
+    public function isHidden(): bool
+    {
+        return $this->status === self::STATUS_HIDDEN;
     }
 
     /**
@@ -224,6 +301,7 @@ abstract class AbstractTask implements TaskInterface
             'text' => $this->getText(),
             'label' => $this->getLabel(),
             'status' => $this->getStatus(),
+            'priority' => $this->getPriority(),
             'premium' => $this->isPremium(),
             'special_feature' => $this->isSpecialFeature(),
             'type' => $this->isRequired() ? 'required' : 'optional',

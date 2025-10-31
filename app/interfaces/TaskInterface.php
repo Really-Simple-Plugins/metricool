@@ -29,8 +29,8 @@ interface TaskInterface
     public function getPriority(): int;
 
     /**
-     * Method is used to fill properties of the task from a state array.
-     * @param array $state
+     * Method is used to fill properties of the task from a data array.
+     * @param array $data
      * @example
      * [
      *      'status' => 'open',
@@ -39,7 +39,7 @@ interface TaskInterface
      * ]
      * {@see AbstractTask}
      */
-    public function setState(array $state): void;
+    public function fill(array $data): void;
 
     /**
      * Returns the version of the task
