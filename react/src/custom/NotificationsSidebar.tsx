@@ -5,7 +5,7 @@ import { useLocation } from '@tanstack/react-router';
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useEffect } from "react";
 
-type Notice = {
+export type Notice = {
     action: {
         text: string,
         link: string,
