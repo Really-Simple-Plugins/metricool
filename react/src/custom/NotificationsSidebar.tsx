@@ -49,7 +49,7 @@ const NotificationsSidebar = () => {
             <BlockHeader title={__("Notifications", "metricool")} separator={true}/>
             {noticeData?.visibleNotifications && noticeData?.visibleNotifications?.length > 0 ? (
                 noticeData?.visibleNotifications.map((notice) => (
-                    <Alert title={notice.title} variant={notice.type}>
+                    <Alert key={notice.id} title={notice.title} variant={notice.type}>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
                             <div>{notice.text}</div>
                             {notice.action && (
