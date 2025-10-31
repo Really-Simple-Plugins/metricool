@@ -2,8 +2,8 @@
 
 namespace Metricool\Features\Notifications;
 
-use Metricool\Interfaces\NoticeInterface;
 use Metricool\Interfaces\FeatureInterface;
+use Metricool\Interfaces\NoticeInterface;
 
 class NotificationsController implements FeatureInterface
 {
@@ -44,6 +44,11 @@ class NotificationsController implements FeatureInterface
         // Add new notices here
         $pluginNotices = [
             new Notices\FirstConnectionNotice(),
+            new Notices\ExampleWarning(),
+            new Notices\ExampleInactiveNotice(),
+            new Notices\ExampleConnectionsWarning(),
+            new Notices\ExamplePremiumNotice(),
+            new Notices\ExamplePremiumWarning(),
         ];
 
         return array_filter($pluginNotices, function ($notice) {
