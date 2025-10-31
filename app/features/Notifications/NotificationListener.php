@@ -24,6 +24,7 @@ class NotificationListener
      */
     public function handleConnectedSocialNetworks(array $socialNetworks): void
     {
+        // Deactivate the FirstConnectionNotice when a social network is connected
         if (count($socialNetworks) > 0) {
             $this->service->deactivate(Notices\FirstConnectionNotice::IDENTIFIER);
         }
