@@ -44,6 +44,7 @@ class NotificationsController implements FeatureInterface
         // Add new notices here
         $pluginNotices = [
             new Notices\FirstConnectionNotice(),
+            new Notices\ExampleNotice(),
             new Notices\ExampleWarning(),
             new Notices\ExampleInactiveNotice(),
             new Notices\ExampleConnectionsWarning(),
