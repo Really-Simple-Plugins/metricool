@@ -24,6 +24,24 @@ interface TaskInterface
     public function getStatus(): string;
 
     /**
+     * Returns the priority of the task. A lower number is more important.
+     */
+    public function getPriority(): int;
+
+    /**
+     * Method is used to fill properties of the task from a state array.
+     * @param array $state
+     * @example
+     * [
+     *      'status' => 'open',
+     *      'priority' => 1,
+     *      'premium' => true,
+     * ]
+     * {@see AbstractTask}
+     */
+    public function setState(array $state): void;
+
+    /**
      * Returns the version of the task
      */
     public function getVersion(): string;
@@ -35,16 +53,15 @@ interface TaskInterface
      */
     public function reactivateOnUpgrade(): bool;
 
-
     /**
      * Method is used to add an action to the UI of the task item.
+     * @return array
      * @example
      * [
      *      'type' => 'button',
      *      'text' => 'Button text',
      *      'link' => 'https://example.com' | '/services/new,
      * ]
-     * @return array
      */
     public function getAction(): array;
 
