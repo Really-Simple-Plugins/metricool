@@ -207,7 +207,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function isDismissable(): bool
     {
-        return !$this->required;
+        return $this->required === false;
     }
 
     /**
