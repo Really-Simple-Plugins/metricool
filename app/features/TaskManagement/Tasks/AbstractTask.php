@@ -12,11 +12,14 @@ abstract class AbstractTask implements TaskInterface
     public const STATUS_DISMISSED = 'dismissed';
     public const STATUS_HIDDEN = 'hidden';
 
-    public const STATE_URGENT = ['status' => self::STATUS_URGENT, 'priority' => 0];
-    public const STATE_OPEN = ['status' => self::STATUS_OPEN, 'priority' => 10];
-    public const STATE_COMPLETED = ['status' => self::STATUS_COMPLETED, 'priority' => 20];
-    public const STATE_DISMISSED = ['status' => self::STATUS_DISMISSED, 'priority' => 30];
-    public const STATE_HIDDEN = ['status' => self::STATUS_HIDDEN, 'priority' => 40];
+    public const STATUS_STATES = [
+        'urgent' => ['priority' => 0],
+        'open' => ['priority' => 10],
+        'completed' => ['priority' => 20],
+        'dismissed' => ['priority' => 30],
+        'hidden' => ['priority' => 40],
+    ];
+
     public const STATE_PREMIUM = ['priority' => 15, 'is_premium' => true];
     public const STATE_SPECIAL_FEATURE = ['priority' => 15, 'is_special_feature' => true];
 
@@ -65,9 +68,8 @@ abstract class AbstractTask implements TaskInterface
      * use the {@see setStatus()} method in the construct of the task. See
      * {@see AddMandatoryProviderTask} for an example.
      */
-    private string $status;
-
-    private string $priority;
+    protected string $status;
+    
 
     /**
      * Override this method to define the text that should be displayed to the
@@ -105,8 +107,6 @@ abstract class AbstractTask implements TaskInterface
      */
     public function getPriority(): int
     {
-
-        // Return a different priority for tasks that are premium or special features
         if ($this->isPremium()) {
             return self::STATE_PREMIUM['priority'];
         }
@@ -114,7 +114,11 @@ abstract class AbstractTask implements TaskInterface
             return self::STATE_SPECIAL_FEATURE['priority'];
         }
 
-        return $this->priority ?? self::STATE_OPEN['priority'];
+        $status = $this->getStatus();
+
+        if (isset(self::STATUS_STATES[$status])) {
+            return self::STATUS_STATES[$status]['priority'];
+        }
     }
 
     /**
@@ -165,35 +169,13 @@ abstract class AbstractTask implements TaskInterface
         $this->specialFeature = $isSpecialFeature;
     }
 
-    /**
-     * Method is used to set that state of the task. For all available
-     * states {@see AbstractTask::TASK_STATES} constant.
-     */
-    public function fill(array $data): void
-    {
-        if (isset($data['status'])) {
-            $this->setStatus($data['status']);
-        }
-
-        if (isset($data['priority'])) {
-            $this->setPriority($data['priority']);
-        }
-
-        if (isset($data['is_premium'])) {
-            $this->setPremium($data['is_premium']);
-        }
-
-        if (isset($data['is_special_feature'])) {
-            $this->setSpecialFeature($data['is_special_feature']);
-        }
-    }
 
     /**
      * Activate the task by setting the state to 'open'
      */
     public function open(): void
     {
-        $this->fill(self::STATE_OPEN);
+        $this->setStatus(self::STATUS_OPEN);
     }
 
     /**
@@ -201,7 +183,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function urgent(): void
     {
-        $this->fill(self::STATE_URGENT);
+        $this->setStatus(self::STATUS_URGENT);
     }
 
     /**
@@ -214,7 +196,7 @@ abstract class AbstractTask implements TaskInterface
             return; // Not allowed
         }
 
-        $this->fill(self::STATE_DISMISSED);
+        $this->setStatus(self::STATUS_DISMISSED);
     }
 
     /**
@@ -222,7 +204,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function completed(): void
     {
-        $this->fill(self::STATE_COMPLETED);
+        $this->setStatus(self::STATUS_COMPLETED);
     }
 
     /**
@@ -230,7 +212,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function hide(): void
     {
-        $this->fill(self::STATE_HIDDEN);
+        $this->setStatus(self::STATUS_HIDDEN);
     }
 
     /**

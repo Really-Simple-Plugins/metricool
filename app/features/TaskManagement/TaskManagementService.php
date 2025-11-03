@@ -107,7 +107,7 @@ class TaskManagementService
      */
     public function dismissTask(string $taskId): void
     {
-        $this->repository->updateTaskState($taskId, AbstractTask::STATE_DISMISSED);
+        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_DISMISSED);
     }
 
     /**
@@ -116,7 +116,7 @@ class TaskManagementService
      */
     public function openTask(string $taskId): void
     {
-        $this->repository->updateTaskState($taskId, AbstractTask::STATE_OPEN);
+        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_OPEN);
     }
 
     /**
@@ -125,7 +125,7 @@ class TaskManagementService
      */
     public function flagTaskUrgent(string $taskId): void
     {
-        $this->repository->updateTaskState($taskId, AbstractTask::STATE_URGENT);
+        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_URGENT);
     }
 
     /**
@@ -134,7 +134,7 @@ class TaskManagementService
      */
     public function hideTask(string $taskId): void
     {
-        $this->repository->updateTaskState($taskId, AbstractTask::STATE_HIDDEN);
+        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_HIDDEN);
     }
 
     /**
@@ -143,6 +143,6 @@ class TaskManagementService
      */
     public function completeTask(string $taskId): void
     {
-        $this->repository->updateTaskState($taskId, AbstractTask::STATE_COMPLETED);
+        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_COMPLETED);
     }
 }

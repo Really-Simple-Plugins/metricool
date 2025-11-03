@@ -76,7 +76,7 @@ class TaskManagementRepository
         // Keep current status if new task does not want to reactivate on
         // upgrade
         if ($taskExists && ($task->reactivateOnUpgrade() === false)) {
-            $task->setStatus(
+            $task->setState(
                 $existingTask->getStatus(),
             );
         }
@@ -116,7 +116,7 @@ class TaskManagementRepository
      * and the status is set to 'dismissed', the status will not be updated.
      * @throws \Exception
      */
-    public function updateTaskState(string $taskId, array $state): void
+    public function updateTaskStatus(string $taskId, string $status): void
     {
         $task = $this->getTask($taskId);
 
@@ -124,11 +124,11 @@ class TaskManagementRepository
             throw new \Exception('Unknown task');
         }
 
-        if ($task->isRequired() && $state['status'] === AbstractTask::STATUS_DISMISSED) {
+        if ($task->isRequired() && $status === AbstractTask::STATUS_DISMISSED) {
             throw new \Exception('Task can not be dismissed.');
         }
 
-        $task->fill($state);
+        $task->setStatus($status);
         $this->addTask($task);
     }
 
