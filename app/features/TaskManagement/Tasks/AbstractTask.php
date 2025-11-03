@@ -14,9 +14,9 @@ abstract class AbstractTask implements TaskInterface
 
     public const STATE_URGENT = ['status' => self::STATUS_URGENT, 'priority' => 0];
     public const STATE_OPEN = ['status' => self::STATUS_OPEN, 'priority' => 10];
-    public const STATE_COMPLETED = ['status' => self::STATUS_COMPLETED, 'priority' => 40];
+    public const STATE_COMPLETED = ['status' => self::STATUS_COMPLETED, 'priority' => 20];
     public const STATE_DISMISSED = ['status' => self::STATUS_DISMISSED, 'priority' => 30];
-    public const STATE_HIDDEN = ['status' => self::STATUS_HIDDEN, 'priority' => 30];
+    public const STATE_HIDDEN = ['status' => self::STATUS_HIDDEN, 'priority' => 40];
     public const STATE_PREMIUM = ['priority' => 15, 'is_premium' => true];
     public const STATE_SPECIAL_FEATURE = ['priority' => 15, 'is_special_feature' => true];
 
