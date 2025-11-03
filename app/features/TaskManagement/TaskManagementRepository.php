@@ -2,7 +2,6 @@
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Features\TaskManagement\Tasks\AbstractTask;
 use Metricool\Interfaces\TaskInterface;
 
 class TaskManagementRepository
@@ -122,10 +121,6 @@ class TaskManagementRepository
 
         if ($task === null) {
             throw new \Exception('Unknown task');
-        }
-
-        if ($task->isRequired() && $status === AbstractTask::STATUS_DISMISSED) {
-            throw new \Exception('Task can not be dismissed.');
         }
 
         $task->setStatus($status);
