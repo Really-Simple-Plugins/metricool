@@ -76,7 +76,7 @@ class TaskManagementRepository
         // Keep current status if new task does not want to reactivate on
         // upgrade
         if ($taskExists && ($task->reactivateOnUpgrade() === false)) {
-            $task->setState(
+            $task->setStatus(
                 $existingTask->getStatus(),
             );
         }
