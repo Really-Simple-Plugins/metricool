@@ -109,7 +109,7 @@ const Progress = () => {
                                     key={task.id}
                                     task={task}
                                     onDismiss={() => dismissTask({ taskId: task.id })}
-                                    {...(task.premium && {badgeClass: "bg-[image:var(--gradient-brand)] border-transparent [background-origin:border-box]"})}
+                                    {...((task.premium && !(task.status === "completed" || task.status === "dismissed")) && {badgeClass: "bg-[image:var(--gradient-brand)] border-transparent [background-origin:border-box]"})}
                                 />
                             ))
                         }
