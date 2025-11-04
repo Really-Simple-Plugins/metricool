@@ -1,5 +1,6 @@
 import React, { createContext, type Dispatch, useContext, useEffect, useReducer, } from "react";
 import HttpClient from "../api/HttpClient.tsx";
+import { setLocaleData } from "@wordpress/i18n";
 
 interface GlobalContext {
     globalState: GlobalState,
@@ -69,6 +70,7 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
         // but the tsc complains it can't find it
         dispatch({ dispatchType: "setMetricoolVariables", change: { metricool: { ...window.metricool.values } } });
         dispatch({ dispatchType: "initialiseHttpClient" });
+        dispatch({ dispatchType: "setTranslations" });
         // @ts-expect-error same as above
         // setting to undefined so it is no longer accessible in the devtools
         window.metricool = undefined;
@@ -100,6 +102,22 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
                 return { ...state };
             }
             return { ...state, metricool: { ...action.change.metricool, is_onboarding_completed: true } };
+        }
+        case "setTranslations": {
+            if (!state.metricool) {
+                throw new Error("No metricool data");
+            }
+            console.log(state.metricool);
+            state.metricool.json_translations.forEach((translationString) => {
+                const translations = JSON.parse(translationString);
+                const localeData = translations.locale_data?.metricool;
+                if (!localeData) {
+                    return;
+                }
+                localeData[""].domain = "metricool";
+                setLocaleData(localeData, "metricool");
+            });
+            return { ...state };
         }
         case "initialiseHttpClient": {
             if (state.metricool.rest_url && state.metricool.rest_namespace && state.metricool.rest_version && state.metricool.x_wp_nonce && state.metricool.nonce) {
