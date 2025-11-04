@@ -18,18 +18,7 @@ const Progress = () => {
             completedTasks: TaskProps[],
             completionPercentage: number
         } => {
-            const statusPriority = {
-                urgent: 0,
-                open: 10,
-                completed: 20,
-                dismissed: 30,
-                hidden: 40,
-            };
-            const allTasks = data.data.map((task: TaskProps) => ({
-                ...task,
-                priority: (task.premium || task.special_feature) ? 15 : statusPriority[task.status] ? statusPriority[task.status] : 50,
-            })).sort((a: TaskProps, b: TaskProps) => a.priority - b.priority);
-
+            const allTasks = data.data.sort((a: TaskProps, b: TaskProps) => a.priority - b.priority);
             const remainingTasks = allTasks.filter((task: TaskProps) => !(task.status === "completed" || task.status === "dismissed"));
             const completedTasks = allTasks.filter(
                 (task: TaskProps) => task.status === "dismissed" || task.status === "completed",
