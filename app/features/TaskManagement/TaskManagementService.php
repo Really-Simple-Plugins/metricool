@@ -2,8 +2,8 @@
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Interfaces\TaskInterface;
 use Metricool\Features\TaskManagement\Tasks\AbstractTask;
+use Metricool\Interfaces\TaskInterface;
 
 class TaskManagementService
 {
@@ -103,6 +103,7 @@ class TaskManagementService
     /**
      * Dismiss a task by setting the status to 'dismissed'. Only allowed if
      * the task is not required.
+     * @throws \Exception
      */
     public function dismissTask(string $taskId): void
     {
@@ -111,6 +112,7 @@ class TaskManagementService
 
     /**
      * Open a task by setting the status to 'open'
+     * @throws \Exception
      */
     public function openTask(string $taskId): void
     {
@@ -119,6 +121,7 @@ class TaskManagementService
 
     /**
      * Set the task to 'urgent' status
+     * @throws \Exception
      */
     public function flagTaskUrgent(string $taskId): void
     {
@@ -127,6 +130,7 @@ class TaskManagementService
 
     /**
      * Hide a task by setting the status to 'hidden'
+     * @throws \Exception
      */
     public function hideTask(string $taskId): void
     {
@@ -135,6 +139,7 @@ class TaskManagementService
 
     /**
      * Complete a task by setting the status to 'completed'
+     * @throws \Exception
      */
     public function completeTask(string $taskId): void
     {

@@ -6,12 +6,33 @@ use Metricool\Interfaces\TaskInterface;
 
 abstract class AbstractTask implements TaskInterface
 {
-    const STATUS_OPEN = 'open';
-    const STATUS_URGENT = 'urgent';
-    const STATUS_DISMISSED = 'dismissed';
-    const STATUS_COMPLETED = 'completed';
-    const STATUS_PREMIUM = 'premium';
-    const STATUS_HIDDEN = 'hidden';
+    protected const DEFAULT_PRIORITY = 10;
+
+    public const STATUS_URGENT = 'urgent';
+    public const STATUS_OPEN = 'open';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_DISMISSED = 'dismissed';
+    public const STATUS_HIDDEN = 'hidden';
+
+    /**
+     * Statuses that are used to determine the state of the task. A state holds
+     * properties that are used for a task with this status.
+     */
+    protected const STATUS_STATES = [
+        self::STATUS_URGENT => ['priority' => 0],
+        self::STATUS_OPEN => ['priority' => self::DEFAULT_PRIORITY],
+        self::STATUS_COMPLETED => ['priority' => 20],
+        self::STATUS_DISMISSED => ['priority' => 30],
+        self::STATUS_HIDDEN => ['priority' => 40],
+    ];
+
+    /**
+     * These states are used to determine the properties of a task that is not
+     * based on a status.
+     * @see self::getPriority()
+     */
+    protected const STATE_PREMIUM = ['priority' => 15];
+    protected const STATE_SPECIAL_FEATURE = ['priority' => 15];
 
     /**
      * Override this constant to define the identifier of the task. This
@@ -58,7 +79,7 @@ abstract class AbstractTask implements TaskInterface
      * use the {@see setStatus()} method in the construct of the task. See
      * {@see AddMandatoryProviderTask} for an example.
      */
-    private string $status;
+    protected string $status;
 
     /**
      * Override this method to define the text that should be displayed to the
@@ -94,6 +115,33 @@ abstract class AbstractTask implements TaskInterface
     /**
      * @inheritDoc
      */
+    public function getPriority(): int
+    {
+        if ($this->isPremium()) {
+            return self::STATE_PREMIUM['priority'];
+        }
+        if ($this->isSpecialFeature()) {
+            return self::STATE_SPECIAL_FEATURE['priority'];
+        }
+
+        $state = self::getStateFromStatus($this->getStatus());
+
+        return $state['priority'] ?? self::DEFAULT_PRIORITY;
+    }
+
+    /**
+     * Returns the priority of the task based on the status.
+     * @param string $status
+     * @return array|null
+     */
+    protected function getStateFromStatus(string $status): ?array
+    {
+        return self::STATUS_STATES[$status] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function reactivateOnUpgrade(): bool
     {
         return $this->reactivateOnUpgrade ?? false;
@@ -109,67 +157,108 @@ abstract class AbstractTask implements TaskInterface
 
     /**
      * @inheritDoc
+     * @throws \Exception
      */
     public function setStatus(string $status): void
     {
-        $knownStatuses = [
-            self::STATUS_OPEN,
-            self::STATUS_URGENT,
-            self::STATUS_DISMISSED,
-            self::STATUS_COMPLETED,
-            self::STATUS_PREMIUM,
-            self::STATUS_HIDDEN,
-        ];
-        if (!in_array($status, $knownStatuses)) {
-            return; // Not allowed
+        if ($status == self::STATUS_DISMISSED && $this->isDismissable() === false) {
+            throw new \Exception('Task is required and cannot be dismissed');
         }
 
         $this->status = $status;
     }
 
     /**
-     * Activate the task by setting the status to 'open'
+     * Sets the premium property of the task.
+     */
+    public function setPremium(bool $isPremium): void
+    {
+        $this->premium = $isPremium;;
+    }
+
+    /**
+     * Sets the special feature property of the task.
+     */
+    public function setSpecialFeature(bool $isSpecialFeature): void
+    {
+        $this->specialFeature = $isSpecialFeature;
+    }
+
+    /**
+     * Activate the task by setting the state to 'open'
+     * @throws \Exception
      */
     public function open(): void
     {
-        $this->status = self::STATUS_OPEN;
+        $this->setStatus(self::STATUS_OPEN);
     }
 
     /**
-     * Set the task to 'urgent' status
+     * Set the task to 'urgent' state
+     * @throws \Exception
      */
     public function urgent(): void
     {
-        $this->status = self::STATUS_URGENT;
+        $this->setStatus(self::STATUS_URGENT);
     }
 
     /**
-     * Dismiss the task by setting the status to 'dismissed'. Only allowed if
-     * the task is not required.
+     * Check if the task can be dismissed.
+     */
+    public function isDismissable(): bool
+    {
+        return $this->required === false;
+    }
+
+    /**
+     * Dismiss the task by setting the state to 'dismissed'
+     * @throws \Exception
      */
     public function dismiss(): void
     {
-        if ($this->required) {
-            return; // Not allowed
-        }
-
-        $this->status = self::STATUS_DISMISSED;
+        $this->setStatus(self::STATUS_DISMISSED);
     }
 
     /**
-     * Complete the task by setting the status to 'completed'
+     * Complete the task by setting the state to 'completed'
+     * @throws \Exception
      */
     public function completed(): void
     {
-        $this->status = self::STATUS_COMPLETED;
+        $this->setStatus(self::STATUS_COMPLETED);
     }
 
     /**
-     * Hide the task by setting the status to 'hidden'
+     * Hide the task by setting the state to 'hidden'
+     * @throws \Exception
      */
     public function hide(): void
     {
-        $this->status = self::STATUS_HIDDEN;
+        $this->setStatus(self::STATUS_HIDDEN);
+    }
+
+    /**
+     * Reads if the task is completed
+     */
+    public function isCompleted(): bool
+    {
+        return $this->getStatus() === self::STATUS_COMPLETED;
+    }
+
+    /**
+     * Reads if the task is dismissed
+     */
+    public function isDismissed(): bool
+    {
+        return $this->status === self::STATUS_DISMISSED;
+    }
+
+    /**
+     * Reads if the task is required
+     */
+    public function isHidden(): bool
+    {
+        return $this->status === self::STATUS_HIDDEN;
     }
 
     /**
@@ -224,6 +313,7 @@ abstract class AbstractTask implements TaskInterface
             'text' => $this->getText(),
             'label' => $this->getLabel(),
             'status' => $this->getStatus(),
+            'priority' => $this->getPriority(),
             'premium' => $this->isPremium(),
             'special_feature' => $this->isSpecialFeature(),
             'type' => $this->isRequired() ? 'required' : 'optional',

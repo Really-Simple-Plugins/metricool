@@ -24,6 +24,11 @@ interface TaskInterface
     public function getStatus(): string;
 
     /**
+     * Returns the priority of the task. A lower number is more important.
+     */
+    public function getPriority(): int;
+
+    /**
      * Returns the version of the task
      */
     public function getVersion(): string;
@@ -35,16 +40,15 @@ interface TaskInterface
      */
     public function reactivateOnUpgrade(): bool;
 
-
     /**
      * Method is used to add an action to the UI of the task item.
+     * @return array
      * @example
      * [
      *      'type' => 'button',
      *      'text' => 'Button text',
      *      'link' => 'https://example.com' | '/services/new,
      * ]
-     * @return array
      */
     public function getAction(): array;
 

@@ -53,6 +53,9 @@ class TaskManagementController implements FeatureInterface
             new Tasks\ExamplePremiumTask(),
             new Tasks\ExampleRequiredTask(),
             new Tasks\ExampleSpecialFeatureTask(),
+            new Tasks\ExampleUrgentTask(),
+            new Tasks\ExampleCompletedTask(),
+            new Tasks\ExampleDismissedTask(),
         ];
 
         return array_filter($pluginTasks, function ($task) {

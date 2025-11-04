@@ -24,7 +24,7 @@ class HistoricalDataTask extends AbstractTask
      */
     public function getText(): string
     {
-        return esc_html__('Store historical analytics for 90 days with Premium', 'metricool');
+        return esc_html__('Gain access to analytics with unlimited historical data.', 'metricool');
     }
 
     /**
