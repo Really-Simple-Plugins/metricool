@@ -1,4 +1,4 @@
-import { Badge, Button, FlexContainer } from "../components";
+import { Badge, type BadgeVariantsProps, Button, FlexContainer } from "../components";
 
 export type TaskProps = {
     id: string,
@@ -38,12 +38,30 @@ const Task = ({
     onDismiss?: () => void
 }) => {
     const taskIsDismissable = type === "optional" && ["open", "urgent", "premium"].includes(status);
+    const getBadgeVariant = (): BadgeVariantsProps["variant"] => {
+        if (status === "completed") {
+            return "completed";
+        }
+        if (status === "dismissed") {
+            return "dismissed";
+        }
+        if (premium) {
+            return "premium";
+        }
+        if (special_feature) {
+            return "special-feature";
+        }
+        if (status === "hidden") {
+            return "default";
+        }
+        return status;
+    };
 
     return (
         <FlexContainer direction={"row"} className={"justify-between"}>
             <FlexContainer direction={"row"} className={"items-center"}>
                 <Badge
-                    variant={premium ? "premium": special_feature ? "special-feature" : status === "hidden" ? "default" : status}
+                    variant={getBadgeVariant()}
                     className={badgeClass}
                 >
                     {label}
