@@ -30,9 +30,11 @@ const Task = ({
         premium,
         special_feature
     },
+    badgeClass,
     onDismiss
 }: {
     task: TaskProps,
+    badgeClass?: string,
     onDismiss?: () => void
 }) => {
     const taskIsDismissable = type === "optional" && ["open", "urgent", "premium"].includes(status);
@@ -40,7 +42,10 @@ const Task = ({
     return (
         <FlexContainer direction={"row"} className={"justify-between"}>
             <FlexContainer direction={"row"} className={"items-center"}>
-                <Badge variant={(premium || special_feature) ? "premium" : status === "hidden" ? "default" : status}>
+                <Badge
+                    variant={(premium || special_feature) ? "premium" : status === "hidden" ? "default" : status}
+                    className={badgeClass}
+                >
                     {label}
                 </Badge>
                 <div className={"font-semibold"}>{text}</div>
