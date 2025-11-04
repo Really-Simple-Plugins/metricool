@@ -116,7 +116,12 @@ const Progress = () => {
                         {[...taskData.remainingTasks, ...(activeTab === 0 ? [...taskData.completedTasks] : [])]
                             .sort((a: TaskProps, b: TaskProps) => a.priority - b.priority)
                             .map((task) => (
-                                <Task key={task.id} task={task} onDismiss={() => dismissTask({ taskId: task.id })}/>
+                                <Task
+                                    key={task.id}
+                                    task={task}
+                                    onDismiss={() => dismissTask({ taskId: task.id })}
+                                    {...(task.premium && {badgeClass: "bg-[image:var(--gradient-brand)] border-transparent [background-origin:border-box]"})}
+                                />
                             ))
                         }
                     </div>
