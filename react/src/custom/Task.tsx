@@ -43,7 +43,7 @@ const Task = ({
         <FlexContainer direction={"row"} className={"justify-between"}>
             <FlexContainer direction={"row"} className={"items-center"}>
                 <Badge
-                    variant={(premium || special_feature) ? "premium" : status === "hidden" ? "default" : status}
+                    variant={premium ? "premium": special_feature ? "special-feature" : status === "hidden" ? "default" : status}
                     className={badgeClass}
                 >
                     {label}
