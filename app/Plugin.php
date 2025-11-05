@@ -180,7 +180,6 @@ class Plugin
         $this->endpointManager->registerEndpoints([
             new Http\Endpoints\ConnectedBrandsEndpoint(),
             new Http\Endpoints\SubscriptionEndpoint(),
-            new Http\Endpoints\UserSettingsEndpoint(),
             new Http\Endpoints\DistributionEndpoint(),
             new Http\Endpoints\AnalyticsEndpoint(
                 new Services\AnalyticsService(
