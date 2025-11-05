@@ -88,7 +88,7 @@ class TimelineStatistics
         $startDate = Carbon::now();
         $endDate = Carbon::now();
 
-        switch ($period) {
+        switch (strtolower($period)) {
             case 'yesterday':
                 $startDate->subDay();
                 $endDate->subDay();
@@ -96,6 +96,10 @@ class TimelineStatistics
             case 'lastweek':
                 $startDate->subDays(7)->startOfWeek();
                 $endDate->subDays(7)->endOfWeek();
+                break;
+            case 'lastmonth':
+                $startDate->subMonths(1)->startOfMonth();
+                $endDate->subMonths(1)->endOfMonth();
                 break;
             case 'last30days':
                 $startDate->subDays(30);
