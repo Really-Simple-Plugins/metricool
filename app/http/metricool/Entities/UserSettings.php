@@ -2,6 +2,7 @@
 
 namespace Metricool\Http\Metricool\Entities;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\IsUpdatable;
 
@@ -50,9 +51,23 @@ class UserSettings
         return $this->fillable;
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function get(): array
     {
         $response = $this->client->get($this->endpoint);
+        return ($response['data'] ?? []);
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function patch(array $data): array
+    {
+        $endpoint = $this->endpoint . '?fields=' . implode('&fields=', array_keys($data));
+        $response = $this->client->patch($endpoint, json_encode($data));
+
         return ($response['data'] ?? []);
     }
 }

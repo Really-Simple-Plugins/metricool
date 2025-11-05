@@ -64,6 +64,16 @@ class TimelineStatistics
         $this->client = $client;
         $this->endpoint .= $this->metric;
         $this->requiresFilter = $filterRequired;
+
+        /**
+         * The distribution statistics API need a filter by default to prevent
+         * Internal Server errors on the remote server. We set the default
+         * filters to the last 30 days.
+         */
+        $this->filters = [
+            'start' => Carbon::now()->subDays(30)->format('Ymd'),
+            'end' => Carbon::now()->format('Ymd'),
+        ];
     }
 
     /**

@@ -24,8 +24,10 @@ return [
         'react_url' => plugin_dir_url(__DIR__) . 'react',
         'dashboard_url' => admin_url('admin.php?page=metricool'),
         'support_url' => 'https://wordpress.org/support/plugin/metricool/',
+        'review_url' => 'https://wordpress.org/support/plugin/metricool/reviews/#new-post',
     ],
     'metricool' => [
+        'tracking_script_url' => 'https://tracker.metricool.com/resources/be.js',
         'upgrade_premium_url' => 'https://app.metricool.com/user-settings/plan',
         'connect_network_url' => 'https://app.metricool.com/evolution/brandSummary',
         'connect_linkedin_url' => 'https://app.metricool.com/evolution/linkedin',
