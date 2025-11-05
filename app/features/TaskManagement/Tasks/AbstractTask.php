@@ -250,7 +250,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function isDismissed(): bool
     {
-        return $this->status === self::STATUS_DISMISSED;
+        return $this->getStatus() === self::STATUS_DISMISSED;
     }
 
     /**
@@ -258,7 +258,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function isHidden(): bool
     {
-        return $this->status === self::STATUS_HIDDEN;
+        return $this->getStatus() === self::STATUS_HIDDEN;
     }
 
     /**
