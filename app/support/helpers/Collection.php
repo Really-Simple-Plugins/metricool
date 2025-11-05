@@ -115,6 +115,14 @@ class Collection implements IteratorAggregate
     }
 
     /**
+     * Return all keys of the collection items.
+     */
+    public function keys(): array
+    {
+        return array_keys($this->items);
+    }
+
+    /**
      * Get the sum of the given values.
      * @param callable|string|null $callback
      * @return float|int
