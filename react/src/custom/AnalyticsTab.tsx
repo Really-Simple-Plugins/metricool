@@ -1,11 +1,12 @@
 import { Button, type ChartConfig, FlexContainer, LineChart, Select, SelectOption } from "../components";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import MetricTile from "./MetricTile.tsx";
 import { clsx } from "clsx";
 import Icon from "../components/src/components/Icon.tsx";
+import { queryClient } from "../main.tsx";
 
 type MetricData = {
     label: string,
@@ -30,37 +31,37 @@ const dateFilterOptions = [
     },
     {
         label: __("Last week", "metricool"),
-        option: "lastWeek",
+        option: "lastweek",
         isUpsell: false,
     },
     {
         label: __("Current month", "metricool"),
-        option: "currentMonth",
+        option: "currentmonth",
         isUpsell: false,
     },
     {
         label: __("Last 30 days", "metricool"),
-        option: "last30Days",
+        option: "last30days",
         isUpsell: false,
     },
     {
         label: __("Previous month", "metricool"),
-        option: "previousMonth",
+        option: "previousmonth",
         isUpsell: false,
     },
     {
         label: __("Last 3 months", "metricool"),
-        option: "last3Months",
+        option: "last3months",
         isUpsell: false,
     },
     {
         label: __("Last 6 months", "metricool"),
-        option: "last6Months",
+        option: "last6months",
         isUpsell: true,
     },
     {
         label: __("Last 12 months", "metricool"),
-        option: "last12Months",
+        option: "last12months",
         isUpsell: true,
     },
 ];
@@ -72,10 +73,6 @@ const AnalyticsTab = () => {
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
     });
-    const dateFormatter = Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" });
-    const dayInMilliSeconds = 1000 * 60 * 60 * 24;
-    const startDate = dateFormatter.format(new Date(new Date().getTime() - dayInMilliSeconds * 30)).replaceAll("-", "");
-    const endDate = dateFormatter.format(new Date()).replaceAll("-", "");
     const [periodFilter, setPeriodFilter] = useState(dateFilterOptions[3].option);
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
@@ -108,7 +105,7 @@ const AnalyticsTab = () => {
 
     const { data: analyticsData, isLoading, error } = useQuery({
         queryKey: ["analytics"],
-        queryFn: () => httpClient?.setRoute("analytics").setFilters({ start: startDate, end: endDate }).get(),
+        queryFn: () => httpClient?.setRoute("analytics").setFilters({ period: periodFilter }).get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): { totals: Record<string, MetricData>, timelineData: TimelineData } => data.data,
     });
@@ -119,6 +116,30 @@ const AnalyticsTab = () => {
             [dataKey]: { ...prevState[dataKey], hidden: !prevState[dataKey].hidden }
         }));
     };
+
+    const { mutate: updateChartData } = useMutation({
+        mutationFn: async ({ period }: {
+            period: string,
+        }) => {
+            const response = await httpClient?.setRoute("analytics").setFilters({ period: period }).get();
+            console.log(response);
+
+            const newChartData = response?.data;
+
+            if (!newChartData) {
+                console.error("Error fetching chart data: ", response?.message);
+                return;
+            }
+
+            return newChartData;
+        },
+        onSuccess: (data) => {
+            const currentChartData: {
+                data: { totals: Record<string, MetricData>, timelineData: TimelineData },
+            } = queryClient.getQueryData(["analytics"]) ?? { data: { totals: {}, timelineData: [] } };
+            queryClient.setQueryData(["analytics"], { ...currentChartData, data: data });
+        }
+    });
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
@@ -160,11 +181,14 @@ const AnalyticsTab = () => {
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
                 <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
                     <Select
-                        defaultValue={"last30Days"}
+                        defaultValue={dateFilterOptions[3].option}
                         icon={{ icon: "upsell", iconClass: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
                         inputSize={"sm"}
                         className={"border-neutral-200 font-semibold !text-black max-w-fit flex-row-reverse"}
-                        onValueChange={(value) => setPeriodFilter(value)}
+                        onValueChange={(value) => {
+                            setPeriodFilter(value);
+                            updateChartData({ period: value });
+                        }}
                         placeholder={dateFilterOptions.find((filterOption) => filterOption.option === periodFilter)?.label}
                     >
                         {dateFilterOptions.map((filterOption) =>
