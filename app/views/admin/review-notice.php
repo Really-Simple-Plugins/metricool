@@ -63,7 +63,7 @@
     <?php endif; ?>
 </style>
 
-<div id="message" class="updated fade notice is-dismissible rsp-metricool-review really-simple-plugins">
+<div id="message" class="updated fade notice rsp-metricool-review really-simple-plugins">
     <div class="rsp-metricool-container">
         <div class="rsp-metricool-review-image"><img src="<?php echo esc_url($logoUrl); ?>" alt="review-logo"></div>
         <form class="rsp-metricool-review-form" action="" method="POST">
@@ -75,11 +75,11 @@
                     <?php esc_html_e('Leave a review', 'metricool'); ?>
                 </a>
                 <div class="dashicons dashicons-calendar"></div>
-                <button type="submit" class="link" name="rsp_metricool_review_choice" value="later">
+                <button type="submit" class="link" name="rsp_metricool_review_choice" value="later" title="<?php echo esc_attr__('Dismiss this notice for 30 days.', 'metricool'); ?>">
                     <?php esc_html_e('Maybe later', 'metricool'); ?>
                 </button>
                 <div class="dashicons dashicons-no-alt"></div>
-                <button type="submit" class="link" name="rsp_metricool_review_choice" value="never">
+                <button type="submit" class="link" name="rsp_metricool_review_choice" value="never" title="<?php echo esc_attr__('Dismiss this notice forever.', 'metricool'); ?>">
                     <?php esc_html_e('Don\'t show again', 'metricool'); ?>
                 </button>
             </div>

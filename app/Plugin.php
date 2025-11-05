@@ -6,6 +6,7 @@ use Metricool\Managers\ControllerManager;
 use Metricool\Managers\EndpointManager;
 use Metricool\Managers\FeatureManager;
 use Metricool\Managers\ProviderManager;
+use Metricool\Services\TrackingScriptService;
 
 class Plugin
 {
@@ -163,6 +164,9 @@ class Plugin
                 new Services\CapabilityService(),
             ),
             new Controllers\ReviewController(),
+            new Controllers\TrackingScriptController(
+                new TrackingScriptService(),
+            ),
         ]);
     }
 
