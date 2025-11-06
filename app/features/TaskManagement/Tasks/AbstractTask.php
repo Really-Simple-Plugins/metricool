@@ -207,7 +207,8 @@ abstract class AbstractTask implements TaskInterface
         if (!$this->isDismissable()) {
             throw new \Exception('Task is required and cannot be dismissed');
         }
-        $this->setStatus(self::STATUS_DISMISSED);
+
+        return $this->setStatus(self::STATUS_DISMISSED);
     }
 
     /**
@@ -215,7 +216,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function complete(): self
     {
-        $this->setStatus(self::STATUS_COMPLETED);
+        return $this->setStatus(self::STATUS_COMPLETED);
     }
 
     /**
@@ -223,7 +224,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function hide(): self
     {
-        $this->setStatus(self::STATUS_HIDDEN);
+        return $this->setStatus(self::STATUS_HIDDEN);
     }
 
     /**
