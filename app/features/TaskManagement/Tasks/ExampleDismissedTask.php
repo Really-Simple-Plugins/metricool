@@ -8,7 +8,7 @@ class ExampleDismissedTask extends AbstractTask
     const IDENTIFIER = 'example_dismissed';
 
     protected bool $required = false;
-    public string $status = 'dismissed';
+    protected string $status = self::STATUS_DISMISSED;
 
     /**
      * @inheritDoc

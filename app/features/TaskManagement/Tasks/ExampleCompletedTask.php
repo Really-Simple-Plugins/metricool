@@ -8,7 +8,7 @@ class ExampleCompletedTask extends AbstractTask
     const IDENTIFIER = 'example_completed';
 
     protected bool $required = false;
-    public string $status = 'completed';
+    protected string $status = self::STATUS_COMPLETED;
 
     /**
      * @inheritDoc

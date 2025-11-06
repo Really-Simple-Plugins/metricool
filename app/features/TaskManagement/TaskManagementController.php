@@ -48,14 +48,6 @@ class TaskManagementController implements FeatureInterface
             new Tasks\LinkedInTask(),
             new Tasks\HistoricalDataTask(),
             new Tasks\FirstConnectionTask(),
-            // Example tasks
-            // new Tasks\ExampleDismissableTask(),
-            // new Tasks\ExamplePremiumTask(),
-            // new Tasks\ExampleRequiredTask(),
-            // new Tasks\ExampleSpecialFeatureTask(),
-            // new Tasks\ExampleUrgentTask(),
-            // new Tasks\ExampleCompletedTask(),
-            // new Tasks\ExampleDismissedTask(),
         ];
 
         return array_filter($pluginTasks, function ($task) {
