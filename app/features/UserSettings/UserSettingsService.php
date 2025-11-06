@@ -30,6 +30,21 @@ class UserSettingsService
         $this->initializeFields($config['fields'] ?? []);
     }
 
+    public function getField(string $fieldName): ?Field
+    {
+        return $this->fields->where('name', $fieldName)->first();
+    }
+
+    public function getStorage(string $storageName): ?AbstractStorage
+    {
+        return $this->storages->where('name', $storageName)->first();
+    }
+
+    public function hasStorage(string $storageName): bool
+    {
+        return $this->getStorage($storageName) !== null;
+    }
+
     /**
      * @throws \Exception
      */
@@ -63,74 +78,46 @@ class UserSettingsService
      */
     public function getSettings(array $fieldNames): array
     {
-        $settings = [];
+        $results = [];
 
         // Group fields by storage to make it easier to retrieve all values from a single storage
         $fieldsByStorage = $this->groupFieldsByStorage($fieldNames);
 
-        foreach ($fieldsByStorage as $storageName => $fieldNames) {
+        foreach ($fieldsByStorage as $storageName => $fields) {
+            $storageFieldNames = array_keys($fields);
             $storage = $this->getStorage($storageName);
 
             // Retrieve all values from storage
-            $values = $storage->getMultiple($fieldNames);
+            $values = $storage->getMultiple($storageFieldNames);
 
-            foreach ($fieldNames as $fieldName) {
-                $field = $this->getField($fieldName);
-                $field->setValue($values[$fieldName] ?? $field->getDefaultValue());
-
-                $settings[$fieldName] = $field->getValue();
+            // Apply the retrieved value to the fields and add it to the results
+            foreach ($fields as $field) {
+                $field->setValue($values[$field->name] ?? $field->getDefaultValue());
+                $results[$field->name] = $field->getValue();
             }
         }
 
-        return $settings;
+        return $results;
     }
 
     public function updateSettings(array $data, $request = null)
     {
-        $errors = new \WP_Error();
-        $validatedData = [];
+        $validatedFields = $this->validateFields($data, $request);
+
+        // If validation failed, return errors
+        if (is_wp_error($validatedFields)) {
+            return $validatedFields;
+        }
+
         $dataByStorage = [];
-
-        foreach ($data as $fieldName => $value) {
-            $field = $this->getField($fieldName);
-
-            if ($field === null) {
-                // Continue to the next field if the field is unknown
-                continue;
-            }
-
-            // Validate the field value
-            $fieldErrors = $field->validate($value, $request);
-
-            if (!empty($fieldErrors)) {
-                foreach ($fieldErrors as $error) {
-                    $errors->add($fieldName, $error, ['field' => $fieldName]);
-                }
-                // Continue to the next field if the field validation failed
-                continue;
-            }
-
-            $storageName = $field->getStorage();
-            $storage = $this->getStorage($storageName);
-
-            if ($storage === null) {
-                $errors->add($fieldName, 'Storage not found', ['field' => $fieldName]);
-                // Continue to the next field if the storage could not be found
-                continue;
-            }
-
-            // Set the validated field value
-            $field->setValue($value);
-
-            // Add the new field value to the validated data
-            $validatedData[$fieldName] = $field->getValue();
-
+        foreach ($validatedFields as $fieldName => $field) {
+            $storage = $this->getStorage($field->getStorage());
             // Group fields by storage to make it easier to store all values of a storage in a single request
-            if (!isset($dataByStorage[$storageName])) {
-                $dataByStorage[$storageName] = [];
+            if (!isset($dataByStorage[$storage->name])) {
+                $dataByStorage[$storage->name] = [];
             }
             // Sanitize field value and add it to the storage data
-            $dataByStorage[$storageName][$fieldName] = $storage->sanitizeValue($value, $field->getType());
+            $dataByStorage[$storage->name][$fieldName] = $storage->sanitizeValue($field->getValue(), $field->getType());
         }
 
         // Save fields to storages
@@ -141,22 +128,55 @@ class UserSettingsService
             $storage->setMultiple($storageData);
         }
 
-        // If validation failed, return errors
+        return array_map(function ($field) {
+            return $field->getValue();
+        }, $validatedFields);
+    }
+
+    /*
+     * @return \WP_Error|Field[]
+     */
+    private function validateFields(array $data)
+    {
+        $errors = new \WP_Error();
+        $validatedData = [];
+
+        foreach ($data as $fieldName => $value) {
+            $field = $this->getField($fieldName);
+
+            if ($field === null) {
+                // Continue to the next field if the field is unknown
+                continue;
+            }
+
+            // Validate the field value
+            $fieldErrors = $field->validate($value);
+
+            if (!empty($fieldErrors)) {
+                foreach ($fieldErrors as $error) {
+                    $errors->add($fieldName, $error, ['field' => $fieldName]);
+                }
+                continue;
+            }
+
+            // Continue to the next field if the storage could not be found
+            if (!$this->hasStorage($field->getStorage())) {
+                $errors->add($fieldName, 'Storage not found: ' . $field->getStorage(), ['field' => $fieldName]);
+                continue;
+            }
+
+            // Set the validated field value
+            $field->setValue($value);
+
+            // Add the new field value to the validated data
+            $validatedData[$fieldName] = $field;
+        }
+
         if ($errors->has_errors()) {
             return $errors;
         }
 
         return $validatedData;
-    }
-
-    public function getField(string $fieldName): ?Field
-    {
-        return $this->fields->where('name', $fieldName)->first();
-    }
-
-    public function getStorage(string $storageName): ?AbstractStorage
-    {
-        return $this->storages->where('name', $storageName)->first();
     }
 
     private function initializeFields(array $fieldsConfig): void
@@ -196,6 +216,9 @@ class UserSettingsService
         }
     }
 
+    /**
+     * @return array<string, Field[]>
+     */
     private function groupFieldsByStorage(array $fieldNames): array
     {
         $fieldsByStorage = [];
@@ -205,7 +228,7 @@ class UserSettingsService
             if (!isset($fieldsByStorage[$storageName])) {
                 $fieldsByStorage[$storageName] = [];
             }
-            $fieldsByStorage[$storageName][] = $field->getName();
+            $fieldsByStorage[$storageName][$fieldName] = $field;
         }
         return $fieldsByStorage;
     }
