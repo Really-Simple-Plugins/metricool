@@ -44,12 +44,6 @@ class NotificationsController implements FeatureInterface
         // Add new notices here
         $pluginNotices = [
             new Notices\FirstConnectionNotice(),
-            // new Notices\ExampleNotice(),
-            // new Notices\ExampleWarning(),
-            // new Notices\ExampleInactiveNotice(),
-            // new Notices\ExampleConnectionsWarning(),
-            // new Notices\ExamplePremiumNotice(),
-            // new Notices\ExamplePremiumWarning(),
         ];
 
         return array_filter($pluginNotices, function ($notice) {
