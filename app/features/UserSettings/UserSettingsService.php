@@ -84,7 +84,6 @@ class UserSettingsService
             $field = $this->getField($fieldName);
 
             if ($field === null) {
-                $errors->add('unknown_field', 'Field not found in user_settings', ['field' => $fieldName]);
                 // continue to the next field if the field is unknown
                 continue;
             }
