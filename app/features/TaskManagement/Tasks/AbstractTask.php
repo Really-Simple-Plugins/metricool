@@ -6,6 +6,8 @@ use Metricool\Interfaces\TaskInterface;
 
 abstract class AbstractTask implements TaskInterface
 {
+    public const DEFAULT_PRIORITY = 10;
+
     public const STATUS_URGENT = 'urgent';
     public const STATUS_OPEN = 'open';
     public const STATUS_COMPLETED = 'completed';
@@ -108,20 +110,29 @@ abstract class AbstractTask implements TaskInterface
      */
     public function getPriority(): int
     {
+        $priority = $this->getPriorityFromStatus();
+
         if ($this->isPremium() || $this->isSpecialFeature()) {
-            return 15;
+            // give premium and special features a higher priority
+            $priority++;
         }
 
-        return $this->getPriorityFromStatus();
+        return $priority;
     }
 
     /**
-     * Returns the priority of the task based on the status.
+     * Returns the priority of the task based on the status. If the status is
+     * not found in STATUS_PRIORITY, the default priority is returned.
      */
     protected function getPriorityFromStatus(): int
     {
-        return self::STATUS_PRIORITY[$this->getStatus()];
+        $status = $this->getStatus();
+        if (!isset(self::STATUS_PRIORITY[$status])) {
+            return self::DEFAULT_PRIORITY;
+        }
+        return self::STATUS_PRIORITY[$status];
     }
+
 
     /**
      * @inheritDoc
