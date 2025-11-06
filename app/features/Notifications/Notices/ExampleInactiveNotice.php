@@ -38,15 +38,4 @@ class ExampleInactiveNotice extends AbstractNotice
     {
         return 'general';
     }
-
-
-    /**
-     * @inheritDoc
-     */
-    public function getAction(): array
-    {
-        return [
-
-        ];
-    }
 }
