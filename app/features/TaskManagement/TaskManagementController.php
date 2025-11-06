@@ -33,12 +33,10 @@ class TaskManagementController implements FeatureInterface
     /**
      * This method returns an array of task objects that should be added to the
      * database.
-     *
-     * @return TaskInterface[]
      * @internal New tasks should be added here. Upgrade the task version if the
-     * task should be updated. If a task should be removed, remove the task from
-     * this list.
-     *
+     *  task should be updated. If a task should be removed, remove the task from
+     *  this list.
+     * @return TaskInterface[]
      */
     private function getTaskObjects(): array
     {

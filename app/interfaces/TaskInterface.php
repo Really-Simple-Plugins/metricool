@@ -28,13 +28,13 @@ interface TaskInterface
 
     /**
      * Method is used to add an action to the UI of the task item.
-     * @return array
      * @example
      * [
      *      'type' => 'button',
      *      'text' => 'Button text',
      *      'link' => 'https://example.com' | '/services/new,
      * ]
+     * @return array
      */
     public function getAction(): array;
 
