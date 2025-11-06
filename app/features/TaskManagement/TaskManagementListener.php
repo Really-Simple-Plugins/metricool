@@ -65,8 +65,8 @@ class TaskManagementListener
     }
 
     /**
-     * This even receives the response of the /v2/profile/subscription endpoint.
-     * Completes HistoricalDataTask
+     * This even receives the active subscription data
+     * @see Event::SUBSCRIPTION_DATA_LOADED
      */
     public function handleSubscriptionLoaded(array $subscription): void
     {
