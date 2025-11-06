@@ -24,7 +24,7 @@ interface TaskInterface
      * This is useful for tasks that are dismissed by the user but should be
      * reactivated when the task is upgraded to a new version.
      */
-    public function reactivateOnUpgrade(): bool;
+    public function isReactivateOnUpgrade(): bool;
 
     /**
      * Method is used to add an action to the UI of the task item.
