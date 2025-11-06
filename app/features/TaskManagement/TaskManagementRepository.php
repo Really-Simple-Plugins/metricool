@@ -74,7 +74,8 @@ class TaskManagementRepository
      */
     public function dismissTask(string $taskId): void
     {
-        $this->addTask($this->getTask($taskId)->dismiss());
+        $dismissedTask = $this->getTask($taskId)->dismiss();
+        $this->addTask($dismissedTask);
     }
 
     /**
@@ -83,7 +84,8 @@ class TaskManagementRepository
      */
     public function completeTask(string $taskId): void
     {
-        $this->addTask($this->getTask($taskId)->complete());
+        $completedTask = $this->getTask($taskId)->complete();
+        $this->addTask($completedTask);
     }
 
     /**
@@ -92,7 +94,8 @@ class TaskManagementRepository
      */
     public function hideTask(string $taskId): void
     {
-        $this->addTask($this->getTask($taskId)->hide());
+        $hiddenTask = $this->getTask($taskId)->hide();
+        $this->addTask($hiddenTask);
     }
 
     /**
@@ -101,12 +104,14 @@ class TaskManagementRepository
      */
     public function flagTaskUrgent(string $taskId): void
     {
-        $this->addTask($this->getTask($taskId)->urgent());
+        $urgentTask = $this->getTask($taskId)->urgent();
+        $this->addTask($urgentTask);
     }
 
     /**
      * Upgrade a task in the repository. Only replace existing tasks with same
      * identifier if the version is lower than the new task version.
+     * @throws \Exception
      */
     public function upgradeTask(TaskInterface $task, bool $save = true): void
     {
@@ -120,7 +125,7 @@ class TaskManagementRepository
 
         // Keep current status if new task does not want to reactivate on
         // upgrade and the existing task has a status
-        if (($task->reactivateOnUpgrade() === false)) {
+        if ($task->isReactivateOnUpgrade() === false) {
             $task->setStatusFromTask($existingTask);
         }
 

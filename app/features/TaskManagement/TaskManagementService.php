@@ -47,6 +47,7 @@ class TaskManagementService
      * the version is lower than the new task version. Add missing tasks and
      * remove tasks that are no longer present.
      * @param TaskInterface[] $tasks
+     * @throws \Exception
      */
     public function upgradeTasks(array $tasks): void
     {
