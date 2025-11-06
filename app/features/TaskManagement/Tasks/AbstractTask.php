@@ -300,16 +300,21 @@ abstract class AbstractTask implements TaskInterface
             return __('Special feature', 'metricool');
         }
 
-        $statusLabels = [
-            'open' => __('Open', 'metricool'),
-            'urgent' => __('Urgent', 'metricool'),
-            'completed' => __('Completed', 'metricool'),
-            'dismissed' => __('Dismissed', 'metricool'),
-        ];
-
         $status = $this->getStatus();
 
-        return ucfirst($statusLabels[$status] ?? $status);
+        $getStatusMethod = 'get' . ucfirst($status) . 'StatusLabel';
+        if (method_exists($this, $getStatusMethod)) {
+            return $this->$getStatusMethod();
+        }
+
+        $statusLabels = [
+            self::STATUS_OPEN => __('Open', 'metricool'),
+            self::STATUS_URGENT => __('Urgent', 'metricool'),
+            self::STATUS_COMPLETED => __('Completed', 'metricool'),
+            self::STATUS_DISMISSED => __('Dismissed', 'metricool'),
+        ];
+
+        return $statusLabels[$status] ?? ucfirst($status);
     }
 
     /**
