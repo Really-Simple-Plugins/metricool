@@ -18,6 +18,7 @@ class TaskManagementRepository
 
     /**
      * Retrieve a single task by its ID
+     * @throws \Exception
      */
     public function getTask(string $taskId): TaskInterface
     {
@@ -60,6 +61,7 @@ class TaskManagementRepository
 
     /**
      * Open a task
+     * @throws \Exception
      */
     public function openTask(string $taskId): void
     {
@@ -68,6 +70,7 @@ class TaskManagementRepository
 
     /**
      * Dismiss a task
+     * @throws \Exception
      */
     public function dismissTask(string $taskId): void
     {
@@ -76,6 +79,7 @@ class TaskManagementRepository
 
     /**
      * Complete a task
+     * @throws \Exception
      */
     public function completeTask(string $taskId): void
     {
@@ -84,6 +88,7 @@ class TaskManagementRepository
 
     /**
      * Hide a task
+     * @throws \Exception
      */
     public function hideTask(string $taskId): void
     {
@@ -92,6 +97,7 @@ class TaskManagementRepository
 
     /**
      * Flag a task as urgent
+     * @throws \Exception
      */
     public function flagTaskUrgent(string $taskId): void
     {

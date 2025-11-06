@@ -2,7 +2,6 @@
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Features\TaskManagement\Tasks\AbstractTask;
 use Metricool\Interfaces\TaskInterface;
 
 class TaskManagementService
@@ -143,6 +142,6 @@ class TaskManagementService
      */
     public function completeTask(string $taskId): void
     {
-        $this->repository->completeTask($taskId, AbstractTask::STATUS_COMPLETED);
+        $this->repository->completeTask($taskId);
     }
 }
