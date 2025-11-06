@@ -26,7 +26,7 @@ class TaskManagementService
      * Get all tasks
      * @return TaskInterface[]
      */
-    public function getAllTasks($strict = false): array
+    public function getAllTasks(bool $strict = false): array
     {
         return $this->repository->getAllTasks($strict);
     }
@@ -107,7 +107,7 @@ class TaskManagementService
      */
     public function dismissTask(string $taskId): void
     {
-        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_DISMISSED);
+        $this->repository->dismissTask($taskId);
     }
 
     /**
@@ -116,7 +116,7 @@ class TaskManagementService
      */
     public function openTask(string $taskId): void
     {
-        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_OPEN);
+        $this->repository->openTask($taskId);
     }
 
     /**
@@ -125,7 +125,7 @@ class TaskManagementService
      */
     public function flagTaskUrgent(string $taskId): void
     {
-        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_URGENT);
+        $this->repository->flagTaskUrgent($taskId);
     }
 
     /**
@@ -134,7 +134,7 @@ class TaskManagementService
      */
     public function hideTask(string $taskId): void
     {
-        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_HIDDEN);
+        $this->repository->hideTask($taskId);
     }
 
     /**
@@ -143,6 +143,6 @@ class TaskManagementService
      */
     public function completeTask(string $taskId): void
     {
-        $this->repository->updateTaskStatus($taskId, AbstractTask::STATUS_COMPLETED);
+        $this->repository->completeTask($taskId, AbstractTask::STATUS_COMPLETED);
     }
 }

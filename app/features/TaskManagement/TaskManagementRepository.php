@@ -19,9 +19,13 @@ class TaskManagementRepository
     /**
      * Retrieve a single task by its ID
      */
-    public function getTask(string $taskId): ?TaskInterface
+    public function getTask(string $taskId): TaskInterface
     {
-        return $this->tasks[$taskId] ?? null;
+        if (!isset($this->tasks[$taskId])) {
+            throw new \InvalidArgumentException('Unknown task');
+        }
+
+        return $this->tasks[$taskId];
     }
 
     /**
@@ -55,29 +59,63 @@ class TaskManagementRepository
     }
 
     /**
+     * Open a task
+     */
+    public function openTask(string $taskId): void
+    {
+        $this->addTask($this->getTask($taskId)->open());
+    }
+
+    /**
+     * Dismiss a task
+     */
+    public function dismissTask(string $taskId): void
+    {
+        $this->addTask($this->getTask($taskId)->dismiss());
+    }
+
+    /**
+     * Complete a task
+     */
+    public function completeTask(string $taskId): void
+    {
+        $this->addTask($this->getTask($taskId)->complete());
+    }
+
+    /**
+     * Hide a task
+     */
+    public function hideTask(string $taskId): void
+    {
+        $this->addTask($this->getTask($taskId)->hide());
+    }
+
+    /**
+     * Flag a task as urgent
+     */
+    public function flagTaskUrgent(string $taskId): void
+    {
+        $this->addTask($this->getTask($taskId)->urgent());
+    }
+
+    /**
      * Upgrade a task in the repository. Only replace existing tasks with same
      * identifier if the version is lower than the new task version.
      */
     public function upgradeTask(TaskInterface $task, bool $save = true): void
     {
         $existingTask = $this->getTask($task->getId());
-        $taskExists = !empty($existingTask);
 
-        $taskIsUpdatable = (
-            !$taskExists
-            || (version_compare($existingTask->getVersion(), $task->getVersion(), '<'))
-        );
+        $taskIsUpdatable = version_compare($existingTask->getVersion(), $task->getVersion(), '<');
 
         if ($taskIsUpdatable === false) {
             return;
         }
 
         // Keep current status if new task does not want to reactivate on
-        // upgrade
-        if ($taskExists && ($task->reactivateOnUpgrade() === false)) {
-            $task->setStatus(
-                $existingTask->getStatus(),
-            );
+        // upgrade and the existing task has a status
+        if (($task->reactivateOnUpgrade() === false)) {
+            $task->setStatusFromTask($existingTask);
         }
 
         // Upgrades existing tasks and add new tasks
@@ -108,23 +146,6 @@ class TaskManagementRepository
         if ($save) {
             $this->saveTasksToDatabase();
         }
-    }
-
-    /**
-     * Update the status of a task if the task exists. If the task is required
-     * and the status is set to 'dismissed', the status will not be updated.
-     * @throws \Exception
-     */
-    public function updateTaskStatus(string $taskId, string $status): void
-    {
-        $task = $this->getTask($taskId);
-
-        if ($task === null) {
-            throw new \Exception('Unknown task');
-        }
-
-        $task->setStatus($status);
-        $this->addTask($task);
     }
 
     /**
