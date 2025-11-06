@@ -18,7 +18,7 @@ class TaskManagementRepository
 
     /**
      * Retrieve a single task by its ID
-     * @throws \Exception
+     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function getTask(string $taskId): TaskInterface
     {
@@ -61,7 +61,7 @@ class TaskManagementRepository
 
     /**
      * Open a task
-     * @throws \Exception
+     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function openTask(string $taskId): void
     {
@@ -71,7 +71,8 @@ class TaskManagementRepository
 
     /**
      * Dismiss a task
-     * @throws \Exception
+     * @throws \InvalidArgumentException when the task cannot be found
+     * @throws \Exception when the task cannot be dismissed
      */
     public function dismissTask(string $taskId): void
     {
@@ -81,7 +82,7 @@ class TaskManagementRepository
 
     /**
      * Complete a task
-     * @throws \Exception
+     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function completeTask(string $taskId): void
     {
@@ -91,7 +92,7 @@ class TaskManagementRepository
 
     /**
      * Hide a task
-     * @throws \Exception
+     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function hideTask(string $taskId): void
     {
@@ -101,7 +102,7 @@ class TaskManagementRepository
 
     /**
      * Flag a task as urgent
-     * @throws \Exception
+     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function flagTaskUrgent(string $taskId): void
     {
@@ -112,7 +113,7 @@ class TaskManagementRepository
     /**
      * Upgrade a task in the repository. Only replace existing tasks with same
      * identifier if the version is lower than the new task version.
-     * @throws \Exception
+     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function upgradeTask(TaskInterface $task, bool $save = true): void
     {
