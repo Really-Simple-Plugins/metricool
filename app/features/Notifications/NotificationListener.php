@@ -19,8 +19,8 @@ class NotificationListener
     }
 
     /**
-     * @param array $socialNetworks List of social media connections filtered from the "networksData"
-     * /v2/settings/brands Metricool API response
+     * @param array $socialNetworks List of social media connections
+     * @see Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED
      */
     public function handleConnectedSocialNetworks(array $socialNetworks): void
     {
