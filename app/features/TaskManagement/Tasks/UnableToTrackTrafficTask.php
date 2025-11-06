@@ -14,7 +14,7 @@ class UnableToTrackTrafficTask extends AbstractTask
      */
     public function __construct()
     {
-        $this->setStatus(self::STATUS_HIDDEN);
+        $this->hide();
     }
 
     /**
