@@ -85,7 +85,6 @@ class UserSettingsService
         return $settings;
     }
 
-
     public function updateSettings(array $data, $request = null)
     {
         $errors = new \WP_Error();
@@ -115,7 +114,7 @@ class UserSettingsService
             $storage = $this->getStorage($storageName);
 
             if ($storage === null) {
-                $errors->add($fieldName, 'Storage not found', ['storage' => $storageName]);
+                $errors->add($fieldName, 'Storage not found', ['field' => $fieldName]);
                 // Continue to the next field if the storage could not be found
                 continue;
             }
