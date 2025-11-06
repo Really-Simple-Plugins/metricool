@@ -36,7 +36,7 @@ class ExampleNotice extends AbstractNotice
      */
     public function getRoute(): string
     {
-        return '';
+        return self::ALL_ROUTES;
     }
 
 

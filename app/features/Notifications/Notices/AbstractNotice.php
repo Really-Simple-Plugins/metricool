@@ -8,6 +8,7 @@ abstract class AbstractNotice implements NoticeInterface
 {
     const TYPE_INFO = 'info';
     const TYPE_WARNING = 'warning';
+    const ALL_ROUTES = '/';
 
     /**
      * Override this constant to define the identifier of the Notice. This
