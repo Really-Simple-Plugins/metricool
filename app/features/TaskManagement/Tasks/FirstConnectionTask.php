@@ -17,7 +17,7 @@ class FirstConnectionTask extends AbstractTask
      */
     public function getText(): string
     {
-        return esc_html__('Connect your first social account to Metricool', 'metricool');
+        return __('Connect your first social account to Metricool', 'metricool');
     }
 
     /**
@@ -26,7 +26,7 @@ class FirstConnectionTask extends AbstractTask
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Connect', 'metricool'),
+            'text' => __('Connect', 'metricool'),
             'link' => MetricoolUrl::adminUrl(App::env('metricool.connect_network_url')),
             'target' => '_blank',
         ];

@@ -12,7 +12,7 @@ class ExampleWarning extends AbstractNotice
      */
     public function getTitle(): string
     {
-        return esc_html__('This is a warning without a route.', 'metricool');
+        return __('This is a warning without a route.', 'metricool');
     }
 
     /**
@@ -20,7 +20,7 @@ class ExampleWarning extends AbstractNotice
      */
     public function getText(): string
     {
-        return esc_html__('This is a warning without a route.', 'metricool');
+        return __('This is a warning without a route.', 'metricool');
     }
 
     /**

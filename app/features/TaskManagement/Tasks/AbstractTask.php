@@ -293,11 +293,11 @@ abstract class AbstractTask implements TaskInterface
     public function getLabel(): string
     {
         if ($this->isPremium()) {
-            return esc_html__('Premium', 'metricool');
+            return __('Premium', 'metricool');
         }
 
         if ($this->isSpecialFeature()) {
-            return esc_html__('Special feature', 'metricool');
+            return __('Special feature', 'metricool');
         }
 
         $statusLabels = [

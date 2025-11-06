@@ -15,7 +15,7 @@ class ExampleConnectionsWarning extends AbstractNotice
      */
     public function getTitle(): string
     {
-        return esc_html__('This notice is a warning.', 'metricool');
+        return __('This notice is a warning.', 'metricool');
     }
 
     /**
@@ -23,7 +23,7 @@ class ExampleConnectionsWarning extends AbstractNotice
      */
     public function getText(): string
     {
-        return esc_html__('This notice is a warning.', 'metricool');
+        return __('This notice is a warning.', 'metricool');
     }
 
     /**
@@ -48,7 +48,7 @@ class ExampleConnectionsWarning extends AbstractNotice
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Connect', 'metricool'),
+            'text' => __('Connect', 'metricool'),
             'link' => MetricoolUrl::adminUrl(App::env('metricool.connect_network_url')),
             'target' => '_blank',
         ];

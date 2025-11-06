@@ -12,7 +12,7 @@ class ExampleInactiveNotice extends AbstractNotice
      */
     public function getTitle(): string
     {
-        return esc_html__('This is an inactive notice.', 'metricool');
+        return __('This is an inactive notice.', 'metricool');
     }
 
     /**
@@ -20,7 +20,7 @@ class ExampleInactiveNotice extends AbstractNotice
      */
     public function getText(): string
     {
-        return esc_html__('This is an inactive notice.', 'metricool');
+        return __('This is an inactive notice.', 'metricool');
     }
 
     /**

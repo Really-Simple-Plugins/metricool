@@ -13,7 +13,7 @@ class ExamplePremiumWarning extends AbstractNotice
      */
     public function getTitle(): string
     {
-        return esc_html__('This is an premium warning.', 'metricool');
+        return __('This is an premium warning.', 'metricool');
     }
 
     /**
@@ -21,7 +21,7 @@ class ExamplePremiumWarning extends AbstractNotice
      */
     public function getText(): string
     {
-        return esc_html__('This is an premium warning.', 'metricool');
+        return __('This is an premium warning.', 'metricool');
     }
 
     /**
@@ -47,7 +47,7 @@ class ExamplePremiumWarning extends AbstractNotice
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Example text', 'metricool'),
+            'text' => __('Example text', 'metricool'),
             'link' => 'https://example.test',
             'target' => '_blank',
         ];

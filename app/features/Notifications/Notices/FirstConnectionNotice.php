@@ -15,7 +15,7 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getTitle(): string
     {
-        return esc_html__('No connections detected', 'metricool');
+        return __('No connections detected', 'metricool');
     }
 
     /**
@@ -23,7 +23,7 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getText(): string
     {
-        return esc_html__('Connect your first social account to Metricool to start scheduling and tracking your content.', 'metricool');
+        return __('Connect your first social account to Metricool to start scheduling and tracking your content.', 'metricool');
     }
 
     /**
@@ -48,7 +48,7 @@ class FirstConnectionNotice extends AbstractNotice
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Connect', 'metricool'),
+            'text' => __('Connect', 'metricool'),
             'link' => MetricoolUrl::adminUrl(App::env('metricool.connect_network_url')),
             'target' => '_blank',
         ];

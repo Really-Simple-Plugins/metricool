@@ -15,7 +15,7 @@ class ExampleUrgentTask extends AbstractTask
      */
     public function getText(): string
     {
-        return esc_html__('This is an urgent task', 'metricool');
+        return __('This is an urgent task', 'metricool');
     }
 
     /**
@@ -24,7 +24,7 @@ class ExampleUrgentTask extends AbstractTask
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Example button', 'metricool'),
+            'text' => __('Example button', 'metricool'),
             'link' => 'https://example.test',
             'target' => '_blank',
         ];
