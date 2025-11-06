@@ -65,7 +65,8 @@ class TaskManagementRepository
      */
     public function openTask(string $taskId): void
     {
-        $this->addTask($this->getTask($taskId)->open());
+        $openTask = $this->getTask($taskId)->open();
+        $this->addTask($openTask);
     }
 
     /**
