@@ -60,7 +60,9 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Build and the ConnectedNetworksResponse body
+     * Build the specific ConnectedNetworksResponse response for the endpoint.
+     * This response returns just the brand names that are connected to the user.
+     * Filtering it server side prevents client-side complexity.
      */
     public function buildResponse(\WP_REST_Request $request): array
     {
