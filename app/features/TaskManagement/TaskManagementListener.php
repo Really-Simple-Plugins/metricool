@@ -36,8 +36,8 @@ class TaskManagementListener
     }
 
     /**
-     * @param array $socialNetworks List of social media connections filtered from the "networksData"
-     * /v2/settings/brands Metricool API response
+     * @param array $socialNetworks List of social media connections
+     * @see Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED
      */
     public function handleSocialConnectedNetworks(array $socialNetworks): void
     {
@@ -89,7 +89,7 @@ class TaskManagementListener
     }
 
     /**
-     * Attempt to dismiss a task. If an exception is thrown, the task will not be completed.
+     * Attempt to dismiss a task. If an exception is thrown, the task will not be dismissed
      */
     protected function dismissTask(string $taskIdentifier)
     {
