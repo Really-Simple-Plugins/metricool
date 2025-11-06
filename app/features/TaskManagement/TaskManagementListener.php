@@ -28,11 +28,13 @@ class TaskManagementListener
      */
     public function handleEditPageLoad(): void
     {
-        if (App::provide('request')->getString('metricool_action') !== Tasks\SchedulePostTask::IDENTIFIER) {
-            return;
+        // Complete the SchedulePostTask if the action is present in the URL
+        if (App::provide('request')->getString('metricool_action') === Tasks\SchedulePostTask::IDENTIFIER) {
+            try {
+                $this->service->completeTask(Tasks\SchedulePostTask::IDENTIFIER);
+            } catch (\Exception $e) {
+            }
         }
-
-        $this->dismissTask(Tasks\SchedulePostTask::IDENTIFIER);
     }
 
     /**
@@ -41,26 +43,17 @@ class TaskManagementListener
      */
     public function handleSocialConnectedNetworks(array $socialNetworks): void
     {
-        if (!count($socialNetworks)) {
-            return;
-        }
+        // Complete or open the tasks that are tied to certain social networks
+        $this->handleTasksForNetworks($socialNetworks);
 
-        // Complete the FirstConnectionTask when a social network is connected
-        if (count($socialNetworks) > 0) {
-            $this->completeTask(Tasks\FirstConnectionTask::IDENTIFIER);
-        }
-
-        // Complete these tasks when a specific social network is connected
-        $connectNetworkTasks = [
-            'facebookData' => Tasks\TwitterTask::class,
-            'linkedinData' => Tasks\LinkedInTask::class,
-        ];
-
-        foreach ($socialNetworks as $networkName) {
-            // Check if a network is associated with a task and complete it
-            if (array_key_exists($networkName, $connectNetworkTasks)) {
-                $this->completeTask($connectNetworkTasks[$networkName]::IDENTIFIER);
+        // Complete or open the FirstConnectionTask based on social network count
+        try {
+            if (count($socialNetworks)) {
+                $this->service->openTask(Tasks\FirstConnectionTask::IDENTIFIER);
+            } else {
+                $this->service->completeTask(Tasks\FirstConnectionTask::IDENTIFIER);
             }
+        } catch (\Exception $e) {
         }
     }
 
@@ -72,30 +65,48 @@ class TaskManagementListener
     {
         $isPremium = strtolower($subscription['planId']) !== 'free';
 
-        if ($isPremium) {
-            $this->completeTask(HistoricalDataTask::IDENTIFIER);
-        }
-    }
-
-    /**
-     * Attempt to complete a task. If an exception is thrown, the task will not be completed.
-     */
-    public function completeTask(string $taskIdentifier): void
-    {
+        // Complete or open the HistoricalDataTask based on subscription status
         try {
-            $this->service->completeTask($taskIdentifier);
+            if ($isPremium) {
+                $this->service->completeTask(HistoricalDataTask::IDENTIFIER);
+            } else {
+                $this->service->openTask(HistoricalDataTask::IDENTIFIER);
+            }
         } catch (\Exception $e) {
         }
     }
 
     /**
-     * Attempt to dismiss a task. If an exception is thrown, the task will not be dismissed
+     * Complete tasks for specific social networks
      */
-    protected function dismissTask(string $taskIdentifier)
+    protected function handleTasksForNetworks(array $socialNetworks): void
     {
-        try {
-            $this->service->dismissTask($taskIdentifier);
-        } catch (\Exception $e) {
+        // Map social network names to task identifiers
+        $connectNetworkTasks = [
+            'facebookData' => Tasks\TwitterTask::class,
+            'linkedinData' => Tasks\LinkedInTask::class,
+        ];
+
+        // Check if any of the connected networks are associated with a task
+        $foundNetworkTasks = array_intersect(array_keys($connectNetworkTasks), $socialNetworks);
+
+        // Complete the task for the connected networks
+        foreach ($foundNetworkTasks as $networkName) {
+            try {
+                $this->service->completeTask($connectNetworkTasks[$networkName]::IDENTIFIER);
+            } catch (\Exception $e) {
+            }
+        }
+
+        // Open the tasks for the missing connected networks
+        $missingNetworks = array_diff(array_keys($connectNetworkTasks), $foundNetworkTasks);
+        foreach ($missingNetworks as $networkName) {
+            try {
+                $this->service->openTask($connectNetworkTasks[$networkName]::IDENTIFIER);
+            } catch (\Exception $e) {
+            }
         }
     }
+
+
 }
