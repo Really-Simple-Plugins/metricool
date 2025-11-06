@@ -92,13 +92,12 @@ class UserSettingsEndpoint
                 $errorData = $updatedSettings->get_error_data($code);
 
                 foreach ($messages as $message) {
-                    $errors[] = [
-                        'message' => $message,
-                        'data' => $errorData
+                    $errors[$errorData['field']] = [
+                        'message' => $message
                     ];
                 }
             }
-            return $this->sendHttpErrorResponse('validation_failed', $errors, 400);
+            return $this->sendHttpResponse(['errors' => $errors], true, 'Validation failed', 422);
         }
 
         return $this->sendHttpResponse($updatedSettings);
