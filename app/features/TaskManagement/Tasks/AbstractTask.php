@@ -6,8 +6,6 @@ use Metricool\Interfaces\TaskInterface;
 
 abstract class AbstractTask implements TaskInterface
 {
-    protected const DEFAULT_PRIORITY = 10;
-
     public const STATUS_URGENT = 'urgent';
     public const STATUS_OPEN = 'open';
     public const STATUS_COMPLETED = 'completed';
@@ -18,21 +16,14 @@ abstract class AbstractTask implements TaskInterface
      * Statuses that are used to determine the state of the task. A state holds
      * properties that are used for a task with this status.
      */
-    protected const STATUS_STATES = [
-        self::STATUS_URGENT => ['priority' => 0],
-        self::STATUS_OPEN => ['priority' => self::DEFAULT_PRIORITY],
-        self::STATUS_COMPLETED => ['priority' => 20],
-        self::STATUS_DISMISSED => ['priority' => 30],
-        self::STATUS_HIDDEN => ['priority' => 40],
+    protected const STATUS_PRIORITY = [
+        self::STATUS_URGENT => 0,
+        self::STATUS_OPEN => 10,
+        self::STATUS_COMPLETED => 20,
+        self::STATUS_DISMISSED => 30,
+        self::STATUS_HIDDEN => 40,
     ];
 
-    /**
-     * These states are used to determine the properties of a task that is not
-     * based on a status.
-     * @see self::getPriority()
-     */
-    protected const STATE_PREMIUM = ['priority' => 15];
-    protected const STATE_SPECIAL_FEATURE = ['priority' => 15];
 
     /**
      * Override this constant to define the identifier of the task. This
@@ -117,26 +108,19 @@ abstract class AbstractTask implements TaskInterface
      */
     public function getPriority(): int
     {
-        if ($this->isPremium()) {
-            return self::STATE_PREMIUM['priority'];
-        }
-        if ($this->isSpecialFeature()) {
-            return self::STATE_SPECIAL_FEATURE['priority'];
+        if ($this->isPremium() || $this->isSpecialFeature()) {
+            return 15;
         }
 
-        $state = self::getStateFromStatus($this->getStatus());
-
-        return $state['priority'] ?? self::DEFAULT_PRIORITY;
+        return $this->getPriorityFromStatus();
     }
 
     /**
      * Returns the priority of the task based on the status.
-     * @param string $status
-     * @return array|null
      */
-    protected function getStateFromStatus(string $status): ?array
+    protected function getPriorityFromStatus(): int
     {
-        return self::STATUS_STATES[$status] ?? null;
+        return self::STATUS_PRIORITY[$this->getStatus()];
     }
 
     /**
@@ -157,15 +141,12 @@ abstract class AbstractTask implements TaskInterface
 
     /**
      * @inheritDoc
-     * @throws \Exception
      */
-    public function setStatus(string $status): void
+    private function setStatus(string $status): self
     {
-        if ($status == self::STATUS_DISMISSED && $this->isDismissable() === false) {
-            throw new \Exception('Task is required and cannot be dismissed');
-        }
-
         $this->status = $status;
+
+        return $this;
     }
 
     /**
@@ -185,21 +166,28 @@ abstract class AbstractTask implements TaskInterface
     }
 
     /**
-     * Activate the task by setting the state to 'open'
-     * @throws \Exception
+     * Sets the status of the task from another task.
      */
-    public function open(): void
+    public function setStatusFromTask(TaskInterface $task): self
     {
-        $this->setStatus(self::STATUS_OPEN);
+        return $this->setStatus($task->getStatus());
     }
 
     /**
-     * Set the task to 'urgent' state
+     * Activate the task by setting the state to 'open'
      * @throws \Exception
      */
-    public function urgent(): void
+    public function open(): self
     {
-        $this->setStatus(self::STATUS_URGENT);
+        return $this->setStatus(self::STATUS_OPEN);
+    }
+
+    /**
+     * Set the task to the 'urgent' state
+     */
+    public function urgent(): self
+    {
+        return $this->setStatus(self::STATUS_URGENT);
     }
 
     /**
@@ -214,25 +202,26 @@ abstract class AbstractTask implements TaskInterface
      * Dismiss the task by setting the state to 'dismissed'
      * @throws \Exception
      */
-    public function dismiss(): void
+    public function dismiss(): self
     {
+        if (!$this->isDismissable()) {
+            throw new \Exception('Task is required and cannot be dismissed');
+        }
         $this->setStatus(self::STATUS_DISMISSED);
     }
 
     /**
      * Complete the task by setting the state to 'completed'
-     * @throws \Exception
      */
-    public function completed(): void
+    public function complete(): self
     {
         $this->setStatus(self::STATUS_COMPLETED);
     }
 
     /**
      * Hide the task by setting the state to 'hidden'
-     * @throws \Exception
      */
-    public function hide(): void
+    public function hide(): self
     {
         $this->setStatus(self::STATUS_HIDDEN);
     }
@@ -292,19 +281,20 @@ abstract class AbstractTask implements TaskInterface
      */
     public function getLabel(): string
     {
+        $status = $this->getStatus();
+
+        // Look for a get{Status}Label method
+        $getStatusLabelMethod = 'get' . ucfirst($status) . 'StatusLabel';
+        if (method_exists($this, $getStatusLabelMethod)) {
+            return $this->$getStatusLabelMethod();
+        }
+
         if ($this->isPremium()) {
             return __('Premium', 'metricool');
         }
 
         if ($this->isSpecialFeature()) {
             return __('Special feature', 'metricool');
-        }
-
-        $status = $this->getStatus();
-
-        $getStatusMethod = 'get' . ucfirst($status) . 'StatusLabel';
-        if (method_exists($this, $getStatusMethod)) {
-            return $this->$getStatusMethod();
         }
 
         $statusLabels = [
