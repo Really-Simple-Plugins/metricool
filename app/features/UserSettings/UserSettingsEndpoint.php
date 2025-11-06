@@ -97,7 +97,7 @@ class UserSettingsEndpoint
                     ];
                 }
             }
-            return $this->sendHttpResponse(['errors' => $errors], true, 'Validation failed', 422);
+            return $this->sendHttpResponse(['errors' => $errors], false, 'Validation failed', 422);
         }
 
         return $this->sendHttpResponse($updatedSettings);
