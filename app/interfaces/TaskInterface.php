@@ -2,26 +2,12 @@
 
 namespace Metricool\Interfaces;
 
-use Metricool\Features\TaskManagement\Tasks\AbstractTask;
-
 interface TaskInterface
 {
     /**
      * Returns the unique identifier of the task
      */
     public function getId(): string;
-
-    /**
-     * Method is used to set that status of the task. For all available
-     * statuses {@see AbstractTask} constants.
-     */
-    public function setStatus(string $status): void;
-
-    /**
-     * Returns the status of the task. For all available statuses
-     * {@see AbstractTask} constants.
-     */
-    public function getStatus(): string;
 
     /**
      * Returns the priority of the task. A lower number is more important.
