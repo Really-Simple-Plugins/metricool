@@ -8,6 +8,10 @@ abstract class AbstractNotice implements NoticeInterface
 {
     const TYPE_INFO = 'info';
     const TYPE_WARNING = 'warning';
+
+    /**
+     * This constant is used to show the notice on all routes.
+     */
     const ALL_ROUTES = '/';
 
     /**
