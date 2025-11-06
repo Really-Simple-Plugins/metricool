@@ -74,7 +74,8 @@ abstract class DistributionResponse extends Response
 
         $chartData = $this->createChartData($results);
         if ($chartData !== null) {
-            $response['chartData'] = $this->createChartData($results);
+            // Only add chartData to the response if there is data to be displayed
+            $response['chartData'] = $chartData;
         }
 
         return $response;
@@ -118,7 +119,7 @@ abstract class DistributionResponse extends Response
      * Leave empty to not include the chart data
      * @see \Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse::getChartColumns()
      */
-    protected function getChartColumns(): ?array
+    protected function getChartColumns(): array
     {
         return [];
     }
