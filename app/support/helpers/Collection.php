@@ -35,7 +35,7 @@ class Collection implements IteratorAggregate
      */
     public function first()
     {
-        return reset($this->items);
+        return reset($this->items) ?: null;
     }
 
     /**

@@ -30,16 +30,32 @@ class UserSettingsService
         $this->initializeFields($config['fields'] ?? []);
     }
 
+    /**
+     * @throws \Exception
+     */
     public function getAllSettings(): array
     {
         $fieldNames = $this->fields->keys();
+
         return $this->getSettings($fieldNames);
     }
 
-    public function getSettingsForSections(string $section): array
+    /**
+     * @throws \Exception
+     */
+    public function getSettingsForSection(string $section): array
     {
         $fieldNames = $this->fields->where('section', $section)->keys();
+
         return $this->getSettings($fieldNames);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public function getSetting($fieldName)
+    {
+        return $this->getSettings([$fieldName]);
     }
 
     /**
@@ -49,31 +65,26 @@ class UserSettingsService
     {
         $settings = [];
 
-        // group fields by storage to make it easier to retrieve all values from a single storage
+        // Group fields by storage to make it easier to retrieve all values from a single storage
         $fieldsByStorage = $this->groupFieldsByStorage($fieldNames);
 
         foreach ($fieldsByStorage as $storageName => $fieldNames) {
             $storage = $this->getStorage($storageName);
+
+            // Retrieve all values from storage
             $values = $storage->getMultiple($fieldNames);
 
             foreach ($fieldNames as $fieldName) {
                 $field = $this->getField($fieldName);
                 $field->setValue($values[$fieldName] ?? $field->getDefaultValue());
 
-                $settings[$fieldName] = [
-                    'value' => $field->getValue(),
-                    'type' => $field->getType(),
-                    'section' => $field->getSection(),
-                ];
+                $settings[$fieldName] = $field->getValue();
             }
         }
 
         return $settings;
     }
 
-    /**
-     * @throws \Exception
-     */
     public function updateSettings(array $data, $request = null)
     {
         $errors = new \WP_Error();
@@ -84,52 +95,50 @@ class UserSettingsService
             $field = $this->getField($fieldName);
 
             if ($field === null) {
-                $errors->add('unknown_field', 'Field not found in user_settings', ['field' => $fieldName]);
-                // continue to the next field if the field is unknown
+                // Continue to the next field if the field is unknown
                 continue;
             }
-
-            $field->setValue($value);
 
             // Validate the field value
             $fieldErrors = $field->validate($value, $request);
 
             if (!empty($fieldErrors)) {
                 foreach ($fieldErrors as $error) {
-                    $errors->add('validation_failed', $error, $fieldName);
+                    $errors->add($fieldName, $error, ['field' => $fieldName]);
                 }
-                // continue to the next field if the field validation failed
+                // Continue to the next field if the field validation failed
                 continue;
             }
+
+            $storageName = $field->getStorage();
+            $storage = $this->getStorage($storageName);
+
+            if ($storage === null) {
+                $errors->add($fieldName, 'Storage not found', ['field' => $fieldName]);
+                // Continue to the next field if the storage could not be found
+                continue;
+            }
+
+            // Set the validated field value
+            $field->setValue($value);
 
             // Add the new field value to the validated data
             $validatedData[$fieldName] = $field->getValue();
 
             // Group fields by storage to make it easier to store all values of a storage in a single request
-            $storageName = $field->getStorage();
             if (!isset($dataByStorage[$storageName])) {
                 $dataByStorage[$storageName] = [];
             }
-            // Add the field value to the storage data
-            $storage = $this->getStorage($storageName);
+            // Sanitize field value and add it to the storage data
             $dataByStorage[$storageName][$fieldName] = $storage->sanitizeValue($value, $field->getType());
         }
 
         // Save fields to storages
         foreach ($dataByStorage as $storageName => $storageData) {
             $storage = $this->getStorage($storageName);
-            if ($storage === null) {
-                $errors->add('unknown_storage', 'Storage not found', ['storage' => $storageName]);
-                // continue to the next storage if storage is unknown
-                continue;
-            }
 
             // Attempt to store data to storage
-            try {
-                $storage->setMultiple($storageData);
-            } catch (\Exception $e) {
-                $errors->add('storage_failed', 'Failed to save to storage', ['storage' => $storageName]);
-            }
+            $storage->setMultiple($storageData);
         }
 
         // If validation failed, return errors
@@ -140,33 +149,15 @@ class UserSettingsService
         return $validatedData;
     }
 
-    /**
-     * @throws \Exception
-     */
     public function getField(string $fieldName): ?Field
     {
-        $field = $this->fields->where('name', $fieldName)->first();
-
-        if (!$field) {
-            throw new \Exception("Field {$fieldName} not found in fields");
-        }
-
-        return $field;
+        return $this->fields->where('name', $fieldName)->first();
     }
 
-    /**
-     * @throws \Exception
-     */
     public function getStorage(string $storageName): ?AbstractStorage
     {
-        $storage = $this->storages->where('name', $storageName)->first();
-        if (!$storage) {
-            throw new \Exception("Storage {$storageName} not found in storages");
-        }
-
-        return $storage;
+        return $this->storages->where('name', $storageName)->first();
     }
-
 
     private function initializeFields(array $fieldsConfig): void
     {
