@@ -3,7 +3,7 @@ import { Button, FlexContainer } from "../components";
 import { useEffect, useState } from "react";
 import ScrollProgressBar from "./ScrollProgressBar.tsx";
 
-const FormFooter = () => {
+const FormFooter = ({ unsavedChanges }: { unsavedChanges: boolean }) => {
     const [scrollProgressPercent, setScrollProgressPercent] = useState<number>(5);
     const [isPageScrollable, setIsPageScrollable] = useState<boolean>(document.documentElement.scrollHeight > window.innerHeight);
 
@@ -40,7 +40,7 @@ const FormFooter = () => {
         )}>
             {isPageScrollable && <ScrollProgressBar scrollProgress={scrollProgressPercent}/>}
             <FlexContainer direction={"row"} className={"justify-end items-center p-2"}>
-                <Button type={"submit"} variant={"black"}>Save changes</Button>
+                <Button disabled={!unsavedChanges} type={"submit"} variant={"black"}>Save changes</Button>
             </FlexContainer>
         </div>
     );
