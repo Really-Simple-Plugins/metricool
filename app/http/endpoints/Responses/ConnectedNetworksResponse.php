@@ -4,7 +4,10 @@ namespace Metricool\Http\Endpoints\Responses;
 
 class ConnectedNetworksResponse extends Response
 {
-    /** @var array $brandSettings Response from Metricool /v2/settings/brands/{blogId} */
+    /**
+     * Response from Metricool /v2/settings/brands/{blogId}
+     * @var array $brandSettings
+     */
     protected array $brandSettings = [];
 
     public function __construct(array $brandSettings)
@@ -19,6 +22,10 @@ class ConnectedNetworksResponse extends Response
     {
         $networks = [];
 
+        if (!isset($this->brandSettings['networksData'])) {
+            return $networks;
+        }
+
         foreach ($this->brandSettings['networksData'] as $network => $networkData) {
             $networkName = str_replace('Data', '', $network);
             $networks[$networkName] = $networkData;
@@ -28,7 +35,7 @@ class ConnectedNetworksResponse extends Response
     }
 
     /**
-     * @inheritDocX
+     * @inheritDoc
      */
     public function body(): array
     {
