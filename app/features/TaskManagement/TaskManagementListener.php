@@ -35,7 +35,8 @@ class TaskManagementListener
     }
 
     /**
-     * @param array $socialNetworks List of social media connections
+     * This event receives the connected social networks data and completes or opens tasks
+     * based on the connected social networks.
      * @see Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED
      */
     public function handleSocialConnectedNetworks(array $socialNetworks): void
@@ -52,7 +53,8 @@ class TaskManagementListener
     }
 
     /**
-     * This even receives the active subscription data
+     * This event receives the active subscription data of the user and completes or opens tasks
+     * based on the subscription data. For example, if the user has a premium subscription
      * @see Event::SUBSCRIPTION_DATA_LOADED
      */
     public function handleSubscriptionLoaded(array $subscription): void
