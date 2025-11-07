@@ -2,6 +2,7 @@ import { FlexContainer } from "../components";
 import Header from "../custom/Header.tsx";
 import SettingsMenu from "../custom/SettingsMenu.tsx";
 import NotificationsSidebar from "../custom/NotificationsSidebar.tsx";
+import { ToastContainer } from "../components";
 
 export const SettingsLayout = ({ children }: React.ComponentProps<"div">) => {
     return (
@@ -12,6 +13,7 @@ export const SettingsLayout = ({ children }: React.ComponentProps<"div">) => {
                 {children}
                 <NotificationsSidebar />
             </FlexContainer>
+            <ToastContainer/>
         </FlexContainer>
     );
 };
