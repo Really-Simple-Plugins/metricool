@@ -88,6 +88,7 @@ const AccountSettings = () => {
         onError: (data: {
             fields: { send_to_alternative_email: { message: string }, alternative_email: { message: string } },
         }) => {
+            showToast.error(__("There was an error updating your settings", "metricool"));
             setError("receiveMonthlySummary", {
                 type: "custom",
                 message: data.fields?.send_to_alternative_email.message
@@ -96,7 +97,6 @@ const AccountSettings = () => {
                 type: "custom",
                 message: data.fields?.alternative_email.message
             });
-            showToast.error(__("There was an error updating your settings", "metricool"));
         }
     });
 
