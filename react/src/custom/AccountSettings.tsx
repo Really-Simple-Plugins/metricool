@@ -51,12 +51,10 @@ const AccountSettings = () => {
 
     const { mutate: onSubmit } = useMutation({
         mutationFn: async ({ receiveMonthlySummary, customEmail }: z.infer<typeof formSchema>) => {
-            console.log(receiveMonthlySummary, customEmail);
             const response = await httpClient?.setRoute("user_settings").setPayload({
                 "send_to_alternative_email": receiveMonthlySummary,
                 "alternative_email": customEmail,
             }).post();
-            console.log(response);
 
             const newFormValues = response?.data;
 
@@ -86,7 +84,6 @@ const AccountSettings = () => {
                 }
             });
             showToast.success(__("Settings have been saved", "metricool"));
-            console.log(data);
         },
         onError: (data: {
             fields: { send_to_alternative_email: { message: string }, alternative_email: { message: string } },
