@@ -12,7 +12,7 @@ import { useEffect } from "react";
 
 const formSchema = z.object({
     receiveMonthlySummary: z.boolean(),
-    customEmail: z.email(__("Please enter a valid email address.", "metricool")),
+    alternativeEmail: z.email(__("Please enter a valid email address.", "metricool")),
 }).required();
 
 const AccountSettings = () => {
@@ -26,7 +26,7 @@ const AccountSettings = () => {
             console.log(data);
             return {
                 receiveMonthlySummary: data.data.send_to_alternative_email,
-                customEmail: data.data.alternative_email,
+                alternativeEmail: data.data.alternative_email,
             };
         },
     });
@@ -44,16 +44,16 @@ const AccountSettings = () => {
         resolver: zodResolver(formSchema),
         defaultValues: {
             receiveMonthlySummary: false,
-            customEmail: "",
+            alternativeEmail: "",
         },
         values,
     });
 
     const { mutate: onSubmit } = useMutation({
-        mutationFn: async ({ receiveMonthlySummary, customEmail }: z.infer<typeof formSchema>) => {
+        mutationFn: async ({ receiveMonthlySummary, alternativeEmail }: z.infer<typeof formSchema>) => {
             const response = await httpClient?.setRoute("user_settings").setPayload({
                 "send_to_alternative_email": receiveMonthlySummary,
-                "alternative_email": customEmail,
+                "alternative_email": alternativeEmail,
             }).post();
 
             const newFormValues = response?.data;
@@ -92,7 +92,7 @@ const AccountSettings = () => {
                 type: "custom",
                 message: data.fields?.send_to_alternative_email.message
             });
-            setError("customEmail", {
+            setError("alternativeEmail", {
                 type: "custom",
                 message: data.fields?.alternative_email.message
             });
@@ -126,14 +126,14 @@ const AccountSettings = () => {
                             <span className={"text-red-500 text-sm"}>{errors.receiveMonthlySummary?.message}</span>
                         </FlexContainer>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
-                            <Label htmlFor={"customEmail"}>{__("Custom e-mail for the monthly summary", "metricool")}</Label>
+                            <Label htmlFor={"alternativeEmail"}>{__("Custom e-mail for the monthly summary", "metricool")}</Label>
                             <Controller
                                 control={control}
                                 render={({ field }) =>
-                                    <Input {...field} id={"customEmail"} placeholder={__("Placeholder", "metricool")}/>}
-                                name={"customEmail"}
+                                    <Input {...field} id={"alternativeEmail"} placeholder={__("Placeholder", "metricool")}/>}
+                                name={"alternativeEmail"}
                             />
-                            <span className={"text-red-500 text-sm"}>{errors.customEmail?.message}</span>
+                            <span className={"text-red-500 text-sm"}>{errors.alternativeEmail?.message}</span>
                         </FlexContainer>
                     </FlexContainer>
                 </Block>
