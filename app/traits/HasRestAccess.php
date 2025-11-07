@@ -63,7 +63,7 @@ trait HasRestAccess
      * Standardized response error format
      *
      * @param string $message - A user friendly error message
-     * @param mixed $data - The specific error message that occurred
+     * @param mixed $data - The data of the error
      * @param int $code - HTTP status code
      * @return \WP_REST_Response
      */
