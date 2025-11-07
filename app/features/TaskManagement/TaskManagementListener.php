@@ -35,8 +35,8 @@ class TaskManagementListener
     }
 
     /**
-     * This event receives the connected social networks data and completes or opens tasks
-     * based on the connected social networks.
+     * This event receives the connected social networks data and completes or
+     * opens tasks
      * @see Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED
      */
     public function handleSocialConnectedNetworks(array $socialNetworks): void
