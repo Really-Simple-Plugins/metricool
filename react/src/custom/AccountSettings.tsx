@@ -39,6 +39,7 @@ const AccountSettings = () => {
         handleSubmit,
         formState: { errors, isDirty },
         control,
+        setError,
     } = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -61,6 +62,7 @@ const AccountSettings = () => {
 
             if (!newFormValues) {
                 console.error("Error updating settings: ", response?.message);
+                showToast.error(__("There was an error updating your settings", "metricool"));
                 return;
             }
 
@@ -86,7 +88,17 @@ const AccountSettings = () => {
             showToast.success(__("Settings have been saved", "metricool"));
             console.log(data);
         },
-        onError: () => {
+        onError: (data: {
+            fields: { send_to_alternative_email: { message: string }, alternative_email: { message: string } },
+        }) => {
+            setError("receiveMonthlySummary", {
+                type: "custom",
+                message: data.fields?.send_to_alternative_email.message
+            });
+            setError("customEmail", {
+                type: "custom",
+                message: data.fields?.alternative_email.message
+            });
             showToast.error(__("There was an error updating your settings", "metricool"));
         }
     });
