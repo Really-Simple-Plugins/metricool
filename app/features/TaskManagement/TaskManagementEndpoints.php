@@ -27,20 +27,18 @@ class TaskManagementEndpoints
      */
     public function addTaskRoutes(array $routes): array
     {
-//        if ($this->adminAccessAllowed() === false) {
-//            return $routes;
-//        }
+        if ($this->adminAccessAllowed() === false) {
+            return $routes;
+        }
 
         $routes['get_tasks'] = [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'getTasksCallback'],
-            'permission_callback' => '__return_true'
         ];
 
         $routes['dismiss_task'] = [
             'methods' => \WP_REST_Server::CREATABLE,
             'callback' => [$this, 'dismissTaskCallback'],
-            'permission_callback' => '__return_true'
         ];
 
         return $routes;
