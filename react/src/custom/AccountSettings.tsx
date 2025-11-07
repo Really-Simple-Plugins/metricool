@@ -135,7 +135,7 @@ const AccountSettings = () => {
                     </FlexContainer>
                 </Block>
             </FlexContainer>
-            <FormFooter/>
+            <FormFooter unsavedChanges={isDirty}/>
             {status === "blocked" && (
                 <Dialog open={status === "blocked"}>
                     <p>{__("You have unsaved changes. Are you sure you want to leave?", "simplybook")}</p>
