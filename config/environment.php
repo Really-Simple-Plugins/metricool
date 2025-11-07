@@ -28,6 +28,7 @@ return [
     ],
     'metricool' => [
         'tracking_script_url' => 'https://tracker.metricool.com/resources/be.js',
+        'create_post_url' => 'https://app.metricool.com/planner/post',
     ],
     'http' => [
         'version' => 'v1',
