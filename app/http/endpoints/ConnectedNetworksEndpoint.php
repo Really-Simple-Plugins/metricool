@@ -55,8 +55,6 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
         }
 
         return $this->sendHttpResponse($response);
-
-
     }
 
     /**
