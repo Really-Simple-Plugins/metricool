@@ -54,10 +54,7 @@ class TaskManagementService
         $deletableTasksList = $this->repository->getAllTasks();
 
         foreach ($tasks as $task) {
-            try {
-                $this->repository->upgradeTask($task, false);
-            } catch (\InvalidArgumentException $e) {
-            }
+            $this->repository->upgradeTask($task, false);
 
             // Current tasks is not deletable so remove it from the list
             unset($deletableTasksList[$task->getId()]);
@@ -105,8 +102,6 @@ class TaskManagementService
     /**
      * Dismiss a task by setting the status to 'dismissed'. Only allowed if
      * the task is not required.
-     * @throws \InvalidArgumentException when the task cannot be found
-     * @throws \Exception when the task cannot be dismissed
      */
     public function dismissTask(string $taskId): void
     {
@@ -115,7 +110,6 @@ class TaskManagementService
 
     /**
      * Open a task by setting the status to 'open'
-     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function openTask(string $taskId): void
     {
@@ -124,7 +118,6 @@ class TaskManagementService
 
     /**
      * Set the task to 'urgent' status
-     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function flagTaskUrgent(string $taskId): void
     {
@@ -133,7 +126,6 @@ class TaskManagementService
 
     /**
      * Hide a task by setting the status to 'hidden'
-     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function hideTask(string $taskId): void
     {
@@ -142,7 +134,6 @@ class TaskManagementService
 
     /**
      * Complete a task by setting the status to 'completed'
-     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function completeTask(string $taskId): void
     {

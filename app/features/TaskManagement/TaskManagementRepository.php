@@ -18,15 +18,10 @@ class TaskManagementRepository
 
     /**
      * Retrieve a single task by its ID
-     * @throws \InvalidArgumentException when the task cannot be found
      */
-    public function getTask(string $taskId): TaskInterface
+    public function getTask(string $taskId): ?TaskInterface
     {
-        if (!isset($this->tasks[$taskId])) {
-            throw new \InvalidArgumentException('Unknown task');
-        }
-
-        return $this->tasks[$taskId];
+        return $this->tasks[$taskId] ?? null;
     }
 
     /**
@@ -60,66 +55,73 @@ class TaskManagementRepository
     }
 
     /**
-     * Open a task
-     * @throws \InvalidArgumentException when the task cannot be found
+     * Open a task in the repository
      */
     public function openTask(string $taskId): void
     {
-        $openTask = $this->getTask($taskId)->open();
-        $this->addTask($openTask);
+        $task = $this->getTask($taskId);
+        if ($task) {
+            $this->addTask($task->open());
+        }
     }
 
     /**
      * Dismiss a task
-     * @throws \InvalidArgumentException when the task cannot be found
-     * @throws \Exception when the task cannot be dismissed
      */
     public function dismissTask(string $taskId): void
     {
-        $dismissedTask = $this->getTask($taskId)->dismiss();
-        $this->addTask($dismissedTask);
+        $task = $this->getTask($taskId);
+        if ($task) {
+            $this->addTask($task->dismiss());
+        }
     }
 
     /**
      * Complete a task
-     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function completeTask(string $taskId): void
     {
-        $completedTask = $this->getTask($taskId)->complete();
-        $this->addTask($completedTask);
+        $task = $this->getTask($taskId);
+        if ($task) {
+            $this->addTask($task->complete());
+        }
     }
 
     /**
      * Hide a task
-     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function hideTask(string $taskId): void
     {
-        $hiddenTask = $this->getTask($taskId)->hide();
-        $this->addTask($hiddenTask);
+        $task = $this->getTask($taskId);
+        if ($task) {
+            $this->addTask($task->hide());
+        }
     }
 
     /**
      * Flag a task as urgent
-     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function flagTaskUrgent(string $taskId): void
     {
-        $urgentTask = $this->getTask($taskId)->urgent();
-        $this->addTask($urgentTask);
+        $task = $this->getTask($taskId);
+        if ($task) {
+            $this->addTask($task->urgent());
+        }
     }
 
     /**
      * Upgrade a task in the repository. Only replace existing tasks with same
      * identifier if the version is lower than the new task version.
-     * @throws \InvalidArgumentException when the task cannot be found
      */
     public function upgradeTask(TaskInterface $task, bool $save = true): void
     {
         $existingTask = $this->getTask($task->getId());
+        $taskExists = !empty($existingTask);
 
-        $taskIsUpdatable = version_compare($existingTask->getVersion(), $task->getVersion(), '<');
+        $taskIsUpdatable = (
+            !$taskExists
+            || (version_compare($existingTask->getVersion(), $task->getVersion(), '<'))
+        );
 
         if ($taskIsUpdatable === false) {
             return;
