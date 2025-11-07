@@ -40,11 +40,10 @@ class TaskManagementService
 
     /**
      * Add or update a task
-     * @param TaskInterface $task
      */
-    public function addTask(TaskInterface $task): void
+    public function addTask(TaskInterface $task, bool $save = true): void
     {
-        $this->repository->addTask($task, true);
+        $this->repository->addTask($task, $save);
     }
 
     /**
