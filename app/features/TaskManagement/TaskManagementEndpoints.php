@@ -70,7 +70,7 @@ class TaskManagementEndpoints
         $task = $this->service->getTask($sanitizedTaskId);
 
         if (!$task) {
-            return $this->sendHttpErrorResponse(__('Task not found'), null, 404);
+            return $this->sendHttpErrorResponse(__('Task not found', 'metricool'), null, 404);
         }
 
         // Attempt to dismiss the task
