@@ -25,8 +25,8 @@ const AccountSettings = () => {
         select: (data) => {
             console.log(data);
             return {
-                receiveMonthlySummary: data.data.send_to_alternative_email.value,
-                customEmail: data.data.alternative_email.value,
+                receiveMonthlySummary: data.data.send_to_alternative_email,
+                customEmail: data.data.alternative_email,
             };
         },
     });
@@ -68,25 +68,19 @@ const AccountSettings = () => {
         },
         onSuccess: (data) => {
             const currentSettingsData: {
-                data: { send_to_alternative_email: { value: boolean }, alternative_email: { value: string } },
+                data: { send_to_alternative_email: boolean, alternative_email: string },
             } = queryClient.getQueryData(["user_settings"]) ?? {
                 data: {
-                    send_to_alternative_email: { value: false },
-                    alternative_email: { value: "" }
+                    send_to_alternative_email: false,
+                    alternative_email: "",
                 }
             };
             queryClient.setQueryData(["user_settings"], {
                 ...currentSettingsData,
                 data: {
                     ...currentSettingsData.data,
-                    send_to_alternative_email: {
-                        ...currentSettingsData.data.send_to_alternative_email,
-                        value: data.send_to_alternative_email
-                    },
-                    alternative_email: {
-                        ...currentSettingsData.data.alternative_email,
-                        value: data.alternative_email
-                    },
+                    send_to_alternative_email: data.send_to_alternative_email,
+                    alternative_email: data.alternative_email,
                 }
             });
             showToast.success(__("Settings have been saved", "metricool"));
