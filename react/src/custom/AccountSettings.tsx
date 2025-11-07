@@ -1,4 +1,4 @@
-import { Block, BlockHeader, Button, Dialog, FlexContainer, Input, Label, Switch, showToast } from "../components";
+import { Block, BlockHeader, Button, Dialog, FlexContainer, Input, Label, showToast, Switch } from "../components";
 import { __ } from "@wordpress/i18n";
 import FormFooter from "./FormFooter.tsx";
 import { zodResolver } from "@hookform/resolvers/zod";
