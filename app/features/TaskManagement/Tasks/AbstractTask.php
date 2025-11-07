@@ -2,6 +2,7 @@
 
 namespace Metricool\Features\TaskManagement\Tasks;
 
+use Metricool\Features\TaskManagement\Tasks\Exceptions\DismissRequiredTaskException;
 use Metricool\Interfaces\TaskInterface;
 
 abstract class AbstractTask implements TaskInterface
@@ -210,8 +211,8 @@ abstract class AbstractTask implements TaskInterface
      */
     public function dismiss(): self
     {
-        if (!$this->isDismissable()) {
-            throw new \Exception('Task is required and cannot be dismissed');
+        if (!$this->isDismissed() && $this->isRequired()) {
+            throw new DismissRequiredTaskException();
         }
 
         return $this->setStatus(self::STATUS_DISMISSED);
@@ -247,14 +248,6 @@ abstract class AbstractTask implements TaskInterface
     public function isDismissed(): bool
     {
         return $this->getStatus() === self::STATUS_DISMISSED;
-    }
-
-    /**
-     * Check if the task can be dismissed.
-     */
-    public function isDismissable(): bool
-    {
-        return $this->required === false;
     }
 
     /**
