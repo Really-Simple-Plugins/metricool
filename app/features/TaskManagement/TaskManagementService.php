@@ -22,6 +22,14 @@ class TaskManagementService
     }
 
     /**
+     * Get a task by its identifier
+     */
+    public function getTask(string $taskId): ?TaskInterface
+    {
+        return $this->repository->getTask($taskId);
+    }
+
+    /**
      * Get all tasks
      * @return TaskInterface[]
      */
@@ -31,7 +39,16 @@ class TaskManagementService
     }
 
     /**
-     * Add multiple tasks at once
+     * Add or update a task
+     * @param TaskInterface $task
+     */
+    public function addTask(TaskInterface $task): void
+    {
+        $this->repository->addTask($task, true);
+    }
+
+    /**
+     * Add or update multiple tasks at once
      * @param TaskInterface[] $tasks
      */
     public function addTasks(array $tasks): void
@@ -69,18 +86,57 @@ class TaskManagementService
     }
 
     /**
-     * Remove tasks that are no longer present in our Task Object list. Such
-     * tasks are now a __PHP_Incomplete_Class and do not implement the
-     * TaskInterface. Because of this we cannot use the task classes.
+     * Open a task in the repository
      */
-    private function removeDeletableTasksAfterUpgrade(array $deletableTasksList, bool $save = true): void
+    public function openTask(string $taskId): void
     {
-        foreach ($deletableTasksList as $taskId => $deletedTask) {
-            $this->repository->removeTaskById($taskId, $save);
+        $task = $this->getTask($taskId);
+        if ($task) {
+            $this->addTask($task->open());
         }
+    }
 
-        if ($save) {
-            $this->repository->saveTasksToDatabase();
+    /**
+     * Dismiss a task
+     */
+    public function dismissTask(string $taskId): void
+    {
+        $task = $this->getTask($taskId);
+        if ($task) {
+            $this->addTask($task->dismiss());
+        }
+    }
+
+    /**
+     * Complete a task
+     */
+    public function completeTask(string $taskId): void
+    {
+        $task = $this->getTask($taskId);
+        if ($task) {
+            $this->addTask($task->complete());
+        }
+    }
+
+    /**
+     * Hide a task
+     */
+    public function hideTask(string $taskId): void
+    {
+        $task = $this->getTask($taskId);
+        if ($task) {
+            $this->addTask($task->hide());
+        }
+    }
+
+    /**
+     * Flag a task as urgent
+     */
+    public function flagTaskUrgent(string $taskId): void
+    {
+        $task = $this->getTask($taskId);
+        if ($task) {
+            $this->addTask($task->urgent());
         }
     }
 
@@ -100,43 +156,18 @@ class TaskManagementService
     }
 
     /**
-     * Dismiss a task by setting the status to 'dismissed'. Only allowed if
-     * the task is not required.
+     * Remove tasks that are no longer present in our Task Object list. Such
+     * tasks are now a __PHP_Incomplete_Class and do not implement the
+     * TaskInterface. Because of this we cannot use the task classes.
      */
-    public function dismissTask(string $taskId): void
+    private function removeDeletableTasksAfterUpgrade(array $deletableTasksList, bool $save = true): void
     {
-        $this->repository->dismissTask($taskId);
-    }
+        foreach ($deletableTasksList as $taskId => $deletedTask) {
+            $this->repository->removeTaskById($taskId, $save);
+        }
 
-    /**
-     * Open a task by setting the status to 'open'
-     */
-    public function openTask(string $taskId): void
-    {
-        $this->repository->openTask($taskId);
-    }
-
-    /**
-     * Set the task to 'urgent' status
-     */
-    public function flagTaskUrgent(string $taskId): void
-    {
-        $this->repository->flagTaskUrgent($taskId);
-    }
-
-    /**
-     * Hide a task by setting the status to 'hidden'
-     */
-    public function hideTask(string $taskId): void
-    {
-        $this->repository->hideTask($taskId);
-    }
-
-    /**
-     * Complete a task by setting the status to 'completed'
-     */
-    public function completeTask(string $taskId): void
-    {
-        $this->repository->completeTask($taskId);
+        if ($save) {
+            $this->repository->saveTasksToDatabase();
+        }
     }
 }

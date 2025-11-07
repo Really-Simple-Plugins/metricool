@@ -63,14 +63,14 @@ trait HasRestAccess
      * Standardized response error format
      *
      * @param string $message - A user friendly error message
-     * @param string $error - The specific error message that occurred
+     * @param mixed $data - The specific error message that occurred
      * @param int $code - HTTP status code
      * @return \WP_REST_Response
      */
-    public function sendHttpErrorResponse(string $message = 'An error occurred', string $error = '', int $code = 500): \WP_REST_Response
+    public function sendHttpErrorResponse(string $message = 'An error occurred', $data = null, int $code = 500): \WP_REST_Response
     {
         return $this->sendHttpResponse([
-            'error' => (defined('WP_DEBUG') && WP_DEBUG ? $error : null)
+            'error' => (defined('WP_DEBUG') && WP_DEBUG ? $data : null)
         ], false, $message, $code);
     }
 }

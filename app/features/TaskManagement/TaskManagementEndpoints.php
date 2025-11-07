@@ -68,9 +68,15 @@ class TaskManagementEndpoints
         $storage = $this->retrieveHttpStorage($request);
 
         $sanitizedTaskId = $storage->getTitle('taskId');
+        $task = $this->service->getTask($sanitizedTaskId);
 
+        if (!$task) {
+            return $this->sendHttpErrorResponse(__('Task not found'), null, 404);
+        }
+
+        // Attempt to dismiss the task
         try {
-            $this->service->dismissTask($sanitizedTaskId);
+            $this->service->dismissTask($task->getId());;
         } catch (\Exception $e) {
             return $this->sendHttpErrorResponse($e->getMessage());
         }

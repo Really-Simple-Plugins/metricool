@@ -43,7 +43,7 @@ class TaskManagementRepository
     }
 
     /**
-     * Add a single task to the repository
+     * Adds or updates a single task to the repository
      */
     public function addTask(TaskInterface $task, bool $save = true): void
     {
@@ -51,61 +51,6 @@ class TaskManagementRepository
 
         if ($save) {
             $this->saveTasksToDatabase();
-        }
-    }
-
-    /**
-     * Open a task in the repository
-     */
-    public function openTask(string $taskId): void
-    {
-        $task = $this->getTask($taskId);
-        if ($task) {
-            $this->addTask($task->open());
-        }
-    }
-
-    /**
-     * Dismiss a task
-     */
-    public function dismissTask(string $taskId): void
-    {
-        $task = $this->getTask($taskId);
-        if ($task) {
-            $this->addTask($task->dismiss());
-        }
-    }
-
-    /**
-     * Complete a task
-     */
-    public function completeTask(string $taskId): void
-    {
-        $task = $this->getTask($taskId);
-        if ($task) {
-            $this->addTask($task->complete());
-        }
-    }
-
-    /**
-     * Hide a task
-     */
-    public function hideTask(string $taskId): void
-    {
-        $task = $this->getTask($taskId);
-        if ($task) {
-            $this->addTask($task->hide());
-        }
-    }
-
-    /**
-     * Flag a task as urgent
-     */
-    public function flagTaskUrgent(string $taskId): void
-    {
-        $task = $this->getTask($taskId);
-        if ($task) {
-            $this->addTask($task->urgent());
         }
     }
 
