@@ -10,6 +10,13 @@ interface TaskInterface
     public function getId(): string;
 
     /**
+     * Returns the status of the task. For all available statuses
+     * {@see AbstractTask} constants.
+     */
+    public function getStatus(): string;
+
+
+    /**
      * Returns the priority of the task. A lower number is more important.
      */
     public function getPriority(): int;
