@@ -26,15 +26,19 @@ class MetricoolUrl
      * Returns the Metricool share URL for the given content and media
      * This is a deeplink to the create-post screen of the Metricool web app
      */
-    public static function shareUrl(string $content, string $media): string
+    public static function shareUrl(string $content, string $media = null): string
     {
         // todo - fetch from settings
-        $queryArgs = array_filter([
+        $queryArgs = [
             'blogId' => (defined('METRICOOL_BLOG_ID') ? METRICOOL_BLOG_ID : ''),
             'userId' => (defined('METRICOOL_USER_ID') ? METRICOOL_USER_ID : ''),
             'post.content' => $content,
-            'post.media' => $media,
-        ]);
-        return add_query_arg($queryArgs, App::env('metricool.create_post_url'));
+        ];
+
+        if ($media) {
+            $queryArgs['post.media'] = $media;
+        }
+
+        return add_query_arg(array_filter($queryArgs), App::env('metricool.create_post_url'));
     }
 }
