@@ -17,7 +17,7 @@ const formSchema = z.object({
 
 const AccountSettings = () => {
     const { httpClient } = useGlobalContext();
-    const { data: values, isLoading, error } = useQuery({
+    const { data: values, isLoading, error: queryError } = useQuery({
         enabled: !!httpClient,
         queryKey: ["user_settings"],
         queryFn: () => httpClient?.setRoute("user_settings").get(),
@@ -37,7 +37,7 @@ const AccountSettings = () => {
 
     const {
         handleSubmit,
-        formState: { errors, isDirty },
+        formState: { errors: formValidationErrors, isDirty },
         control,
         setError,
     } = useForm<z.infer<typeof formSchema>>({
@@ -123,7 +123,7 @@ const AccountSettings = () => {
                                     name={"receiveMonthlySummary"}
                                 />
                             </FlexContainer>
-                            <span className={"text-red-500 text-sm"}>{errors.receiveMonthlySummary?.message}</span>
+                            <span className={"text-red-500 text-sm"}>{formValidationErrors.receiveMonthlySummary?.message}</span>
                         </FlexContainer>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
                             <Label htmlFor={"alternativeEmail"}>{__("Custom e-mail for the monthly summary", "metricool")}</Label>
@@ -133,7 +133,7 @@ const AccountSettings = () => {
                                     <Input {...field} id={"alternativeEmail"} placeholder={__("Placeholder", "metricool")}/>}
                                 name={"alternativeEmail"}
                             />
-                            <span className={"text-red-500 text-sm"}>{errors.alternativeEmail?.message}</span>
+                            <span className={"text-red-500 text-sm"}>{formValidationErrors.alternativeEmail?.message}</span>
                         </FlexContainer>
                     </FlexContainer>
                 </Block>
