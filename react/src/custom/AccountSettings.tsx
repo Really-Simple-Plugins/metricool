@@ -86,11 +86,11 @@ const AccountSettings = () => {
             showToast.error(__("There was an error updating your settings", "metricool"));
             setError("receiveMonthlySummary", {
                 type: "custom",
-                message: data.fields?.send_to_alternative_email.message
+                message: data.fields?.send_to_alternative_email?.message,
             });
             setError("alternativeEmail", {
                 type: "custom",
-                message: data.fields?.alternative_email.message
+                message: data.fields?.alternative_email?.message,
             });
         }
     });
