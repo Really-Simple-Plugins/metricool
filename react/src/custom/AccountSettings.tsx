@@ -8,7 +8,6 @@ import { useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../main.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
-import { useEffect } from "react";
 
 const formSchema = z.object({
     receiveMonthlySummary: z.boolean(),
@@ -30,10 +29,6 @@ const AccountSettings = () => {
             };
         },
     });
-
-    useEffect(() => {
-        console.log(values, isLoading, error);
-    }, [values, isLoading, error]);
 
     const {
         handleSubmit,
