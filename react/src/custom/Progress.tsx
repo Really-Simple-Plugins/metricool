@@ -71,7 +71,7 @@ const Progress = () => {
     };
 
     return (
-        <Block>
+        <Block className={"min-h-[500px] max-h-[500px]"}>
             <BlockHeader
                 title={__("Progress", "metricool")}
                 action={taskData && (

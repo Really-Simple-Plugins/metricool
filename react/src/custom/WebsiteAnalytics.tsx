@@ -24,7 +24,7 @@ const WebsiteAnalytics = () => {
     }];
 
     return (
-        <Block className={"xl:max-w-[calc(50%-(--spacing(2)))]"}>
+        <Block className={"min-h-[500px] max-h-[500px] xl:max-w-[calc(50%-(--spacing(2)))]"}>
             <BlockHeader
                 title={__("Website Analytics", "metricool")}
                 action={(
