@@ -1,4 +1,4 @@
-import { Block, BlockHeader, Button, Dialog, FlexContainer, Input, Label, showToast, Switch } from "../components";
+import { Block, BlockHeader, Button, Dialog, FlexContainer, Input, Label, showToast, Switch, Icon } from "../components";
 import { __ } from "@wordpress/i18n";
 import FormFooter from "./FormFooter.tsx";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -107,30 +107,40 @@ const AccountSettings = () => {
             <FlexContainer direction={"column"}>
                 <Block className={"rounded-t-md rounded-b-none"}>
                     <BlockHeader title={__("Monthly summary", "metricool")}/>
-                    <FlexContainer direction={"column"}>
-                        <FlexContainer direction={"column"} className={"!gap-2"}>
-                            <FlexContainer direction={"row"} className={"w-full justify-between"}>
-                                <Label htmlFor={"receiveMonthlySummary"}>{__("Receive monthly summary", "metricool")}</Label>
+                    {isLoading ? (
+                        <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                            <Icon icon={"loading"} iconClass={"size-5"}/>,
+                        </FlexContainer>
+                    ) : queryError ? (
+                        <div>
+                            {__("There was an error fetching your monthly summary settings", "metricool")}
+                        </div>
+                    ) : (
+                        <FlexContainer direction={"column"}>
+                            <FlexContainer direction={"column"} className={"!gap-2"}>
+                                <FlexContainer direction={"row"} className={"w-full justify-between"}>
+                                    <Label htmlFor={"receiveMonthlySummary"}>{__("Receive monthly summary", "metricool")}</Label>
+                                    <Controller
+                                        control={control}
+                                        render={({ field }) =>
+                                            <Switch checked={field.value} onCheckedChange={field.onChange}/>}
+                                        name={"receiveMonthlySummary"}
+                                    />
+                                </FlexContainer>
+                                <span className={"text-red-500 text-sm"}>{formValidationErrors.receiveMonthlySummary?.message}</span>
+                            </FlexContainer>
+                            <FlexContainer direction={"column"} className={"!gap-2"}>
+                                <Label htmlFor={"alternativeEmail"}>{__("Custom e-mail for the monthly summary", "metricool")}</Label>
                                 <Controller
                                     control={control}
                                     render={({ field }) =>
-                                        <Switch checked={field.value} onCheckedChange={field.onChange}/>}
-                                    name={"receiveMonthlySummary"}
+                                        <Input {...field} id={"alternativeEmail"} placeholder={__("Placeholder", "metricool")}/>}
+                                    name={"alternativeEmail"}
                                 />
+                                <span className={"text-red-500 text-sm"}>{formValidationErrors.alternativeEmail?.message}</span>
                             </FlexContainer>
-                            <span className={"text-red-500 text-sm"}>{formValidationErrors.receiveMonthlySummary?.message}</span>
                         </FlexContainer>
-                        <FlexContainer direction={"column"} className={"!gap-2"}>
-                            <Label htmlFor={"alternativeEmail"}>{__("Custom e-mail for the monthly summary", "metricool")}</Label>
-                            <Controller
-                                control={control}
-                                render={({ field }) =>
-                                    <Input {...field} id={"alternativeEmail"} placeholder={__("Placeholder", "metricool")}/>}
-                                name={"alternativeEmail"}
-                            />
-                            <span className={"text-red-500 text-sm"}>{formValidationErrors.alternativeEmail?.message}</span>
-                        </FlexContainer>
-                    </FlexContainer>
+                    )}
                 </Block>
             </FlexContainer>
             <FormFooter unsavedChanges={isDirty}/>
