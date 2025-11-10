@@ -1,7 +1,7 @@
 import { Alert, Block, BlockHeader, FlexContainer } from "../components";
 import { __ } from "@wordpress/i18n";
 import { useQuery } from "@tanstack/react-query";
-import { useLocation } from '@tanstack/react-router';
+import { useLocation } from "@tanstack/react-router";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useEffect } from "react";
 
@@ -33,7 +33,10 @@ const NotificationsSidebar = () => {
         staleTime: 1000 * 60, // 1 minute
         select: (data): Record<string, Notice[]> => {
             console.log(data);
-            const noticesWithVisibility = data.data.map((notice: Notice) => ({...notice, visible: notice.visible ? notice.visible : notice.active && (notice.route === "general" || notice.route === pathname)}));
+            const noticesWithVisibility = data.data.map((notice: Notice) => ({
+                ...notice,
+                visible: notice.visible ? notice.visible : notice.active && (notice.route === "general" || notice.route === pathname)
+            }));
             return {
                 allNotifications: noticesWithVisibility,
                 activeNotifications: noticesWithVisibility.filter((notice: Notice) => notice.active),
