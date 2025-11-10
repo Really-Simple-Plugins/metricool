@@ -131,13 +131,21 @@ abstract class AbstractTask implements TaskInterface
     public function getLabel(): string
     {
         $status = $this->getStatus();
-
+        
         // Get the label from method if it exists
         $getStatusLabelMethod = 'get' . ucfirst($status) . 'StatusLabel';
         if (method_exists($this, $getStatusLabelMethod)) {
             return $this->$getStatusLabelMethod();
         }
 
+        return ucfirst($status);
+    }
+
+    /**
+     * Get the label for the status 'open'
+     */
+    public function getOpenStatusLabel()
+    {
         if ($this->isPremium()) {
             return __('Premium', 'metricool');
         }
@@ -146,14 +154,31 @@ abstract class AbstractTask implements TaskInterface
             return __('Special feature', 'metricool');
         }
 
-        $statusLabels = [
-            self::STATUS_OPEN => __('Open', 'metricool'),
-            self::STATUS_URGENT => __('Urgent', 'metricool'),
-            self::STATUS_COMPLETED => __('Completed', 'metricool'),
-            self::STATUS_DISMISSED => __('Dismissed', 'metricool'),
-        ];
+        return __('Open', 'metricool');
+    }
 
-        return $statusLabels[$status] ?? ucfirst($status);
+    /**
+     * Get the label for the status 'urgent'
+     */
+    public function getUrgentStatusLabel()
+    {
+        return __('Urgent', 'metricool');
+    }
+
+    /**
+     * Get the label for the status 'completed'
+     */
+    public function getCompletedStatusLabel()
+    {
+        return __('Completed', 'metricool');
+    }
+
+    /**
+     * Get the label for the status 'dismissed'
+     */
+    public function getDismissedStatusLabel()
+    {
+        return __('Dismissed', 'metricool');
     }
 
     /**
