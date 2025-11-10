@@ -188,6 +188,18 @@ class MetricoolClient
     {
         $baseUri = $this->isTesting() ? $this->stagingApiUrl : $this->apiUrl;
 
+        $query = http_build_query(array_filter([
+            'userId' => $this->userId,
+            'blogId' => $this->blogId,
+        ]));
+
+        // Dirty filthy hack to allow for non-standard query params
+        // Metricool API supports urls with the same parameter multiple times
+        // Example /v2/settings/users/:id?fields=alternativeEmail&fields=sendToAlternativeEmail&userId=3864308&blogId=2221200
+        $url = (strpos($url, '?') === false)
+            ? $url . '?' . $query
+            : $url . '&' . $query;
+
         return trailingslashit($baseUri) . $url;
     }
 
