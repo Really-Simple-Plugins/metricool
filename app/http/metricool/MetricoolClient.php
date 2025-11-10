@@ -47,7 +47,7 @@ class MetricoolClient
     {
         return !empty($this->blogId);
     }
-    
+
     public function getBlogId(): string
     {
         return $this->blogId;
@@ -188,12 +188,7 @@ class MetricoolClient
     {
         $baseUri = $this->isTesting() ? $this->stagingApiUrl : $this->apiUrl;
 
-        $queryArguments = array_filter([
-            'userId' => $this->userId,
-            'blogId' => $this->blogId,
-        ]);
-
-        return add_query_arg($queryArguments, trailingslashit($baseUri) . $url);
+        return trailingslashit($baseUri) . $url;
     }
 
     /**
