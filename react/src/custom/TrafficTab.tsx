@@ -1,4 +1,4 @@
-import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer } from "../components";
+import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer, Icon } from "../components";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
@@ -34,17 +34,17 @@ const TrafficTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {isLoading && (
-                <div>LOADING</div>
-            )}
-            {trafficData && (
+            {isLoading ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                </FlexContainer>
+            ) : error ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center"}>
+                    {__("There was an error fetching the data", "metricool")}
+                </FlexContainer>
+            ) : trafficData && (
                 <FlexContainer direction={"column"}>
                     <DataTable data={trafficData.tableData} columns={columns} tableSettings={{ pageSize: 7 }}/>
-                </FlexContainer>
-            )}
-            {error && (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data.", "metricool")}
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>

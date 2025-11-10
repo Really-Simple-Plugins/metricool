@@ -1,4 +1,4 @@
-import { Block, BlockHeader, FlexContainer } from "../components";
+import { Block, BlockHeader, FlexContainer, Icon } from "../components";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import { useEffect, useState } from "react";
@@ -78,10 +78,15 @@ const Progress = () => {
                     <TabNavigation activeTab={activeTab} onTabClick={onTabChange} separator={true} tabs={tabs}/>
                 )}
             />
-            {isLoading && (
-                <div>LOADING</div>
-            )}
-            {taskData && (
+            {isLoading ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                </FlexContainer>
+            ) : error ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center"}>
+                    {__("There was an error fetching your Tasks", "metricool")}
+                </FlexContainer>
+            ) : taskData && (
                 <FlexContainer direction={"column"}>
                     <div className={"w-full bg-neutral-200 rounded-md h-5"}>
                         <div
@@ -115,9 +120,6 @@ const Progress = () => {
                         }
                     </div>
                 </FlexContainer>
-            )}
-            {error && (
-                <div>"error"</div>
             )}
         </Block>
     );

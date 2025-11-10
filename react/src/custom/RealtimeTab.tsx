@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { Button, FlexContainer, LineChart } from "../components";
+import { Button, FlexContainer, Icon, LineChart } from "../components";
 import MetricTile from "./MetricTile.tsx";
 
 const RealtimeTab = () => {
@@ -25,10 +25,15 @@ const RealtimeTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {isLoading && (
-                <div>LOADING</div>
-            )}
-            {realTimeData && (
+            {isLoading ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                </FlexContainer>
+            ) : error ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center"}>
+                    {__("There was an error fetching the data", "metricool")}
+                </FlexContainer>
+            ) : realTimeData && (
                 <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"justify-between"}>
                         <div className={"text-md font-semibold"}>{__("Last 30 Minutes", "metricool")}</div>
@@ -50,11 +55,6 @@ const RealtimeTab = () => {
                         chartConfig={chartConfig}
                         chartData={realTimeData.timelineData}
                     />
-                </FlexContainer>
-            )}
-            {error && (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data.", "metricool")}
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>

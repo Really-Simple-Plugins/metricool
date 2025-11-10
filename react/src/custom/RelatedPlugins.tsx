@@ -1,4 +1,4 @@
-import { Block, BlockHeader, FlexContainer } from "../components";
+import { Block, BlockHeader, FlexContainer, Icon } from "../components";
 import { __ } from "@wordpress/i18n";
 import ListItem from "./ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -111,10 +111,15 @@ const RelatedPlugins = () => {
         <Block variant={"transparent"}>
             <BlockHeader title={__("Related Plugins", "metricool")}/>
             <FlexContainer direction={"column"} className={"!gap-2"}>
-                {isLoading && (
-                    <div>LOADING</div>
-                )}
-                {relatedPlugins && Object.entries(relatedPlugins).map(([pluginKey, pluginData]) => (
+                {isLoading ? (
+                    <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                        <Icon icon={"loading"} iconClass={"size-5"}/>
+                    </FlexContainer>
+                ) : error ? (
+                    <FlexContainer direction={"row"} className={"justify-center items-center"}>
+                        {__("There was an error fetching the related plugins.", "metricool")}
+                    </FlexContainer>
+                ) : relatedPlugins && Object.entries(relatedPlugins).map(([pluginKey, pluginData]) => (
                     <ListItem
                         icon={"circle"}
                         iconColor={pluginData.options_prefix.split("_")[0]}
@@ -126,11 +131,6 @@ const RelatedPlugins = () => {
                         {pluginData.title}
                     </ListItem>
                 ))}
-                {error && (
-                    <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                        {__("There was an error fetching the data.", "metricool")}
-                    </FlexContainer>
-                )}
             </FlexContainer>
         </Block>
     );

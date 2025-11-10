@@ -143,10 +143,15 @@ const AnalyticsTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {isLoading && (
-                <div>LOADING</div>
-            )}
-            {analyticsData && (
+            {isLoading ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                </FlexContainer>
+            ) : error ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center"}>
+                    {__("There was an error fetching the data", "metricool")}
+                </FlexContainer>
+            ) : analyticsData && (
                 <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>
                         {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
@@ -171,11 +176,6 @@ const AnalyticsTab = () => {
                         }}
                         chartData={analyticsData.timelineData}
                         linesSettings={{ type: "monotone" }}/>
-                </FlexContainer>
-            )}
-            {error && (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data.", "metricool")}
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"justify-between items-center"}>

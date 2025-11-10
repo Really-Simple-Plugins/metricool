@@ -1,4 +1,4 @@
-import { Block, BlockHeader, Button, FlexContainer, type IconProps } from "../components";
+import { Block, BlockHeader, Button, FlexContainer, Icon, type IconProps } from "../components";
 import { __ } from "@wordpress/i18n";
 import AccountTile from "./AccountTile.tsx";
 import { useQuery } from "@tanstack/react-query";
@@ -61,29 +61,31 @@ const ConnectedAccounts = () => {
     return (
         <Block>
             <BlockHeader title={__("Connected Accounts", "metricool")}/>
-            {isLoading && (
-                <div>LOADING</div>
-            )}
-            {connectedAccountsData && (
-                <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
-                    {connectedAccountsData.map((account) => (
-                        <AccountTile {...account} link={metricoolSSOLink} />
-                    ))}
-                </div>
-            )}
-            {error && (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching your connected accounts.", "metricool")}
-                </FlexContainer>
-            )}
-            <Button
-                variant={"primary-gradient-ghost"}
-                icon={"external-link"}
-                iconPosition={"right"}
-                iconClass={"svg-gradient"}
-                link={metricoolSSOLink}>
-                {__("Connected Accounts", "metricool")}
-            </Button>
+            <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
+                {isLoading ? (
+                    <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                        <Icon icon={"loading"} iconClass={"size-5"}/>
+                    </FlexContainer>
+                ) : error ? (
+                    <FlexContainer direction={"row"} className={"justify-center items-center"}>
+                        {__("There was an error fetching your connected accounts.", "metricool")}
+                    </FlexContainer>
+                ) : connectedAccountsData && (
+                    <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
+                        {connectedAccountsData.map((account) => (
+                            <AccountTile {...account} link={metricoolSSOLink} />
+                        ))}
+                    </div>
+                )}
+                <Button
+                    variant={"primary-gradient-ghost"}
+                    icon={"external-link"}
+                    iconPosition={"right"}
+                    iconClass={"svg-gradient"}
+                    link={metricoolSSOLink}>
+                    {__("Connected Accounts", "metricool")}
+                </Button>
+            </FlexContainer>
         </Block>
     );
 };

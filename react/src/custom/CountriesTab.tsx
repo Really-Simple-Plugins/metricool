@@ -1,4 +1,4 @@
-import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer } from "../components";
+import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer, Icon } from "../components";
 import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
@@ -43,10 +43,15 @@ const CountriesTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow !gap-2"}>
-            {isLoading && (
-                <div>LOADING</div>
-            )}
-            {countryData && (
+            {isLoading ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                </FlexContainer>
+            ) : error ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center"}>
+                    {__("There was an error fetching the data", "metricool")}
+                </FlexContainer>
+            ) : countryData && (
                 <FlexContainer direction={"column"} className={"!gap-2"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>
                         <div className={"min-h-[185px]"}>
@@ -60,11 +65,6 @@ const CountriesTab = () => {
                         </div>
                     </FlexContainer>
                     <DataTable columns={columns} data={countryData.tableData} tableSettings={{ pageSize: 3 }}/>
-                </FlexContainer>
-            )}
-            {error && (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data.", "metricool")}
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>

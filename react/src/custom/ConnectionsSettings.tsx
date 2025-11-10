@@ -3,6 +3,7 @@ import {
     BlockHeader,
     Button,
     FlexContainer,
+    Icon,
     type IconProps
 } from "../components";
 import { __ } from "@wordpress/i18n";
@@ -169,21 +170,20 @@ const ConnectionsSettings = () => {
                         description={__("The accounts that are connected to Metricool", "metricool")}
                     />
                     <FlexContainer direction={"column"}>
-                        {isLoading && (
-                            <div>LOADING</div>
-                        )}
-                        {connectedAccountsData && (
+                        {isLoading ? (
+                            <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                                <Icon icon={"loading"} iconClass={"size-5"}/>
+                            </FlexContainer>
+                        ) : error ? (
+                            <FlexContainer direction={"row"} className={"justify-center items-center"}>
+                                {__("There was an error fetching your connected accounts.", "metricool")}
+                            </FlexContainer>
+                        ) : connectedAccountsData && (
                             <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
                                 {connectedAccountsData.map((account) => (
                                     <AccountTile {...account} />
                                 ))}
-
                             </div>
-                        )}
-                        {error && (
-                            <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                                {__("There was an error fetching your connected accounts.", "metricool")}
-                            </FlexContainer>
                         )}
                     </FlexContainer>
                     <FlexContainer direction={"row"} className={"justify-end"}>
