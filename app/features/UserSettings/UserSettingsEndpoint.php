@@ -27,14 +27,13 @@ class UserSettingsEndpoint
      */
     public function addRoutes(array $routes): array
     {
-//        if ($this->adminAccessAllowed() === false) {
-//            return $routes;
-//        }
+        if ($this->adminAccessAllowed() === false) {
+            return $routes;
+        }
 
         $routeParameters = [
             'methods' => \WP_REST_Server::READABLE . ', ' . \WP_REST_Server::EDITABLE,
             'callback' => [$this, 'callback'],
-            'permission_callback' => '__return_true',
         ];
 
         $routes['user_settings'] = $routeParameters;
@@ -95,7 +94,7 @@ class UserSettingsEndpoint
                     ];
                 }
             }
-            return $this->sendHttpResponse(['errors' => $errors], false, 'Validation failed', 422);
+            return $this->sendHttpErrorResponse(__('Validation failed', 'metricool'), ['errors' => $errors], 422);
         }
 
         return $this->sendHttpResponse($updatedSettings);
