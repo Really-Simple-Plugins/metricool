@@ -8,7 +8,9 @@ const Header = () => {
     return (
         <div className={"bg-white min-w-full mx-auto px-4 flex justify-between items-center"}>
             <div className={"flex gap-8"}>
-                <img src={`${metricool.assets_url}img/mc-logo.svg`} alt={"Metricool logo"}/>
+                <div className={"hidden sm:flex min-w-[4.375rem] min-h-[4.375rem] items-center justify-center"}>
+                    <img src={`${metricool.assets_url}img/mc-logo.svg`} alt={"Metricool logo"}/>
+                </div>
                 <div className={"flex gap-4"}>
                     <HeaderTab link={"/"}>
                         {__("Dashboard", "metricool")}
