@@ -2,6 +2,8 @@
 
 namespace Metricool\Features\UserSettings\Storage;
 
+use StorageRequiredException;
+
 class ApiStorage extends AbstractStorage
 {
     protected object $client;
@@ -9,10 +11,14 @@ class ApiStorage extends AbstractStorage
 
     public function __construct($name, $config)
     {
-        $this->name = $name;
+        if (!isset($config['client'])) {
+            throw new StorageRequiredException('Client is required for API storage: ' . $name);
+        }
+
         $this->client = $config['client'];
-        $this->method = $config['method'] ?? 'patch';
-        $this->casing = $config['casing'] ?? 'camelCase';
+        $this->method = $config['method'] ?? 'post';
+
+        parent::__construct($name, $config);
     }
 
     /**
@@ -60,25 +66,4 @@ class ApiStorage extends AbstractStorage
 
         return $this->client->{$this->method}($requestData);
     }
-
-    public function sanitizeValue($value, string $type)
-    {
-        switch ($type) {
-            case 'boolean':
-            case 'bool':
-                return $value ? 1 : 0;
-            case 'email':
-                return sanitize_email($value);
-            case 'string':
-                return sanitize_text_field($value);
-            case 'array':
-                return is_array($value) ? array_map('sanitize_text_field', $value) : [];
-            case 'integer':
-            case 'int':
-                return filter_var($value, FILTER_VALIDATE_INT);
-            default:
-                return $value;
-        }
-    }
-
 }

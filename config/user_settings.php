@@ -1,25 +1,23 @@
 <?php
 
-use Metricool\App;
-
 return [
     'fields' => [
-        'send_to_alternative_email' => [
+        'sendToAlternativeEmail' => [
             'type' => 'boolean',
             'section' => 'account',
             'storage' => 'metricool',
         ],
-        'alternative_email' => [
+        'alternativeEmail' => [
             'type' => 'email',
             'section' => 'account',
             'storage' => 'metricool',
         ],
-        'tracking_script_active' => [
+        'trackingScriptActive' => [
             'type' => 'boolean',
             'default_value' => true,
             'section' => 'tracking',
         ],
-        'tracking_script_hash' => [
+        'trackingScriptHash' => [
             'required' => true,
             'type' => 'string',
             'section' => 'tracking',
@@ -28,11 +26,12 @@ return [
     ],
     'storages' => [
         'database' => [
+            'type' => 'database',
             'prefix' => 'metricool_',
         ],
         'metricool' => [
             'type' => 'api',
-            'client' => App::provide('client')->userSettings(),
+            
             'method' => 'patch',
             'casing' => 'camel_case',
         ],
