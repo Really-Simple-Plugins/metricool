@@ -66,34 +66,34 @@ class Field
             case 'bool':
                 // accept true, false, 0, and 1 and "1", "0", "true" or "false" as boolean values
                 if (!is_bool($value) && !in_array($value, ['0', '1', 'true', 'false'])) {
-                    $errors[] = __('Field must be a boolean value', 'metricool');
+                    $errors[] = __('Please enter a valid boolean', 'metricool');
                 }
                 break;
             case 'email':
                 if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    $errors[] = __('Field must be a valid email address', 'metricool');
+                    $errors[] = __('Please enter a valid email address', 'metricool');
                 }
                 break;
             case 'string':
                 if (!is_string($value) && !is_numeric($value)) {
-                    $errors[] = __('Field must be a string', 'metricool');
+                    $errors[] = __('Please enter a valid string', 'metricool');
                 }
                 break;
             case 'integer':
             case 'int':
                 if (!is_int($value)) {
-                    $errors[] = __('Field must be a string', 'metricool');
+                    $errors[] = __('Please enter a valid number', 'metricool');
                 }
                 break;
             case 'array':
                 if (!is_array($value)) {
-                    $errors[] = __('Field must be an array', 'metricool');
+                    $errors[] = __('Please enter a valid array', 'metricool');
                 }
                 break;
         }
 
         if ($this->required && ($value === '' || is_null($value))) {
-            $errors[] = __('Field is required', 'metricool');
+            $errors[] = __('Please enter a value', 'metricool');
         }
 
         return $errors;

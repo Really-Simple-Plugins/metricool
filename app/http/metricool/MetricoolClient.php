@@ -195,7 +195,7 @@ class MetricoolClient
 
         // Dirty filthy hack to allow for non-standard query params
         // Metricool API supports urls with the same parameter multiple times
-        // Example /v2/settings/users/:id?fields=alternativeEmail&fields=sendToAlternativeEmail&userId=3864308&blogId=2221200
+        // Example /v2/settings/users/:id?fields=alternativeEmail&fields=sendToAlternativeEmail
         $url = (strpos($url, '?') === false)
             ? $url . '?' . $query
             : $url . '&' . $query;

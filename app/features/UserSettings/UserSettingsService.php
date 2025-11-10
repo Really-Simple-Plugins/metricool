@@ -3,15 +3,15 @@
 namespace Metricool\Features\UserSettings;
 
 use Metricool\App;
+use Metricool\Features\UserSettings\Exceptions\StorageNotFoundException;
 use Metricool\Features\UserSettings\Fields\Field;
 use Metricool\Features\UserSettings\Storage\AbstractStorage;
 use Metricool\Features\UserSettings\Storage\ApiStorage;
 use Metricool\Features\UserSettings\Storage\DatabaseStorage;
-use Metricool\Features\UserSettings\Storage\Exceptions\StorageClientRequiredException;
 use Metricool\Helpers\Collection;
 
 // todo: add support for custom storages
-// todo: add support for custom fields
+// todo: add support for custom fields?
 
 /**
  * This service is responsible for storing and retrieving user settings.
@@ -31,22 +31,24 @@ class UserSettingsService
         $this->initializeFields($config['fields'] ?? []);
     }
 
+    /**
+     * Returns the field instance
+     */
     public function getField(string $fieldName): ?Field
     {
         return $this->fields->where('name', $fieldName)->first();
     }
 
+    /**
+     * Returns the storage instance
+     */
     public function getStorage(string $storageName): ?AbstractStorage
     {
         return $this->storages->where('name', $storageName)->first();
     }
 
-    public function hasStorage(string $storageName): bool
-    {
-        return $this->getStorage($storageName) !== null;
-    }
-
     /**
+     * Return an array with keys and values of all the settings
      * @throws \Exception
      */
     public function getAllSettings(): array
@@ -57,6 +59,7 @@ class UserSettingsService
     }
 
     /**
+     * Return an array with keys and values of all the settings for this section
      * @throws \Exception
      */
     public function getSettingsForSection(string $section): array
@@ -67,14 +70,7 @@ class UserSettingsService
     }
 
     /**
-     * @throws \Exception
-     */
-    public function getSetting($fieldName)
-    {
-        return $this->getSettings([$fieldName]);
-    }
-
-    /**
+     * Return an array with keys and values of the fieldNames
      * @throws \Exception
      */
     public function getSettings(array $fieldNames): array
@@ -102,14 +98,9 @@ class UserSettingsService
     }
 
     /**
-     * @return array
-     * @throws \Exception
+     * Validate and update settings from data and return their updated values
+     * @return \WP_Error|Field[] Returns WP_Error when validation failed
      */
-    public function getSettingValue($fieldName)
-    {
-        return $this->getSettings([$fieldName]);
-    }
-
     public function updateSettings(array $data, $request = null)
     {
         $validatedFields = $this->validateFields($data, $request);
@@ -119,13 +110,15 @@ class UserSettingsService
             return $validatedFields;
         }
 
+        // Group fields by storage to make it easier to store all values of a storage in a single request
         $dataByStorage = [];
         foreach ($validatedFields as $fieldName => $field) {
             $storage = $this->getStorage($field->getStorage());
-            // Group fields by storage to make it easier to store all values of a storage in a single request
+
             if (!isset($dataByStorage[$storage->name])) {
                 $dataByStorage[$storage->name] = [];
             }
+
             // Add field value to the storage data
             $dataByStorage[$storage->name][$fieldName] = $field->getValue();
         }
@@ -138,15 +131,17 @@ class UserSettingsService
             $storage->setMultiple($storageData);
         }
 
+        // Return the validated field values
         return array_map(function ($field) {
             return $field->getValue();
         }, $validatedFields);
     }
 
-    /*
-     * @return \WP_Error|Field[]
+    /**
+     * Validate the fields and return their validated values.
+     * @return \WP_Error|Field[] Returns WP_Error when validation failed
      */
-    private function validateFields(array $data)
+    private function validateFields(array $data, \WP_REST_Request $request)
     {
         $errors = new \WP_Error();
         $validatedData = [];
@@ -183,23 +178,9 @@ class UserSettingsService
         return $validatedData;
     }
 
-    private function initializeFields(array $fieldsConfig): void
-    {
-        $fields = [];
-        foreach ($fieldsConfig as $name => $config) {
-            $field = new Field($name, $config);
-
-            // Continue to the next field if the storage could not be found
-            if (!$this->hasStorage($field->getStorage())) {
-                throw new StorageClientRequiredException('Storage "' . $field->getStorage() . '" not found for field: ' . $field->getName());
-            }
-
-            $fields[$name] = $field;
-        }
-
-        $this->fields = new Collection($fields);
-    }
-
+    /**
+     * Initialize storages from user_settings configuration
+     */
     private function initializeStorages(array $storagesConfig): void
     {
         $storages = [];
@@ -210,9 +191,33 @@ class UserSettingsService
         $this->storages = new Collection($storages);
     }
 
+    /**
+     * Initialize fields from user_settings configuration
+     */
+    private function initializeFields(array $fieldsConfig): void
+    {
+        $fields = [];
+        foreach ($fieldsConfig as $name => $config) {
+            $field = new Field($name, $config);
+            $storage = $this->getStorage($field->getStorage());
+
+            // Abort when storage not present in config
+            if ($storage == null) {
+                throw new StorageNotFoundException('Storage "' . $field->getStorage() . '" not found for field: ' . $field->getName());
+            }
+
+            $fields[$name] = $field;
+        }
+
+        $this->fields = new Collection($fields);
+    }
+
+    /**
+     * Creates a storage instance from config
+     */
     private function createStorage(string $name, array $config): AbstractStorage
     {
-        switch ($config['type'] ?? 'database') {
+        switch ($config['type']) {
             case 'api':
                 return new ApiStorage($name, $config);
             case 'database':
@@ -222,6 +227,7 @@ class UserSettingsService
     }
 
     /**
+     * Creates an associative array with the field names grouped by storage.
      * @return array<string, Field[]>
      */
     private function groupFieldsByStorage(array $fieldNames): array

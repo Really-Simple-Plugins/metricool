@@ -30,6 +30,8 @@ class UserSettings
      */
     public function patch(array $data): array
     {
+        // Don't build the query parameters with http_build_query because we need
+        // the fields query_var multiple times.
         $endpoint = $this->endpoint . '?fields=' . implode('&fields=', array_keys($data));
         $data = json_encode($data);
 
