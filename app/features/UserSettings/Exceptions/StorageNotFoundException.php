@@ -6,6 +6,6 @@ class StorageNotFoundException extends \RuntimeException
 {
     public function __construct(string $message)
     {
-        rerturn
+        parent::__construct($message);
     }
 }
