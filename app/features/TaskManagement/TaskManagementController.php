@@ -46,6 +46,7 @@ class TaskManagementController implements FeatureInterface
             new Tasks\LinkedInTask(),
             new Tasks\HistoricalDataTask(),
             new Tasks\FirstConnectionTask(),
+            new Tasks\SchedulePostTask(),
         ];
 
         return array_filter($pluginTasks, function ($task) {
