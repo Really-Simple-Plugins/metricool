@@ -1,4 +1,4 @@
-import { Block, BlockHeader, Button, Dialog, FlexContainer, Input, Label, showToast, Switch, Icon } from "../components";
+import { Block, BlockHeader, FlexContainer, Input, Label, showToast, Switch, Icon } from "../components";
 import { __ } from "@wordpress/i18n";
 import FormFooter from "./FormFooter.tsx";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -99,10 +99,18 @@ const AccountSettings = () => {
         }
     });
 
-    //noinspection JSVoidFunctionReturnValueUsed - useBlocker is not void if withResolver is passed as option, but PHPStorm doesn't realise this
-    const { proceed, reset, status } = useBlocker({
-        shouldBlockFn: () => isDirty,
-        withResolver: true,
+    useBlocker({
+        shouldBlockFn: () => {
+            if (!isDirty) {
+                return false; // Dont block
+            }
+
+            const shouldLeave = window.confirm(
+                __("This page is asking you to confirm that you want to leave — information you’ve entered may not be saved.", "metricool"),
+            );
+
+            return !shouldLeave;
+        },
         enableBeforeUnload: isDirty,
     });
 
@@ -148,16 +156,6 @@ const AccountSettings = () => {
                 </Block>
             </FlexContainer>
             <FormFooter unsavedChanges={isDirty}/>
-            {status === "blocked" && (
-                <Dialog open={status === "blocked"}>
-                    <p>{__("You have unsaved changes. Are you sure you want to leave?", "simplybook")}</p>
-                    <p>{__("Your changes will be lost.", "simplybook")}</p>
-                    <FlexContainer direction={"row"} className={"w-full justify-center"}>
-                        <Button variant={"black"} onClick={proceed}>{__("Leave", "metricool")}</Button>
-                        <Button variant={"black"} onClick={reset}>{__("Stay", "metricool")}</Button>
-                    </FlexContainer>
-                </Dialog>
-            )}
         </form>
     );
 };
