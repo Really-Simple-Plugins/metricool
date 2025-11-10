@@ -7,6 +7,7 @@ use Metricool\Features\UserSettings\Fields\Field;
 use Metricool\Features\UserSettings\Storage\AbstractStorage;
 use Metricool\Features\UserSettings\Storage\ApiStorage;
 use Metricool\Features\UserSettings\Storage\DatabaseStorage;
+use Metricool\Features\UserSettings\Storage\Exceptions\StorageClientRequiredException;
 use Metricool\Helpers\Collection;
 
 // todo: add support for custom storages
@@ -100,6 +101,15 @@ class UserSettingsService
         return $results;
     }
 
+    /**
+     * @return array
+     * @throws \Exception
+     */
+    public function getSettingValue($fieldName)
+    {
+        return $this->getSettings([$fieldName]);
+    }
+
     public function updateSettings(array $data, $request = null)
     {
         $validatedFields = $this->validateFields($data, $request);
@@ -116,8 +126,8 @@ class UserSettingsService
             if (!isset($dataByStorage[$storage->name])) {
                 $dataByStorage[$storage->name] = [];
             }
-            // Sanitize field value and add it to the storage data
-            $dataByStorage[$storage->name][$fieldName] = $storage->sanitizeValue($field->getValue(), $field->getType());
+            // Add field value to the storage data
+            $dataByStorage[$storage->name][$fieldName] = $field->getValue();
         }
 
         // Save fields to storages
@@ -159,12 +169,6 @@ class UserSettingsService
                 continue;
             }
 
-            // Continue to the next field if the storage could not be found
-            if (!$this->hasStorage($field->getStorage())) {
-                $errors->add($fieldName, 'Storage not found: ' . $field->getStorage(), ['field' => $fieldName]);
-                continue;
-            }
-
             // Set the validated field value
             $field->setValue($value);
 
@@ -183,7 +187,14 @@ class UserSettingsService
     {
         $fields = [];
         foreach ($fieldsConfig as $name => $config) {
-            $fields[$name] = new Field($name, $config);
+            $field = new Field($name, $config);
+
+            // Continue to the next field if the storage could not be found
+            if (!$this->hasStorage($field->getStorage())) {
+                throw new StorageClientRequiredException('Storage "' . $field->getStorage() . '" not found for field: ' . $field->getName());
+            }
+
+            $fields[$name] = $field;
         }
 
         $this->fields = new Collection($fields);
