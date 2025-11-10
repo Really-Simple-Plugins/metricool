@@ -68,6 +68,7 @@ const dateFilterOptions = [
 
 const AnalyticsTab = () => {
     const { httpClient, metricool } = useGlobalContext();
+    const metricoolSSOLink = `https://app.metricool.com/user-settings/plan?blogId=${metricool.blogId}&userId=${metricool.userId}`;
     const numberFormatter = Intl.NumberFormat(metricool.locale, {
         notation: "compact",
         minimumFractionDigits: 0,
@@ -117,7 +118,7 @@ const AnalyticsTab = () => {
         }));
     };
 
-    const { mutate: updateChartData } = useMutation({
+    const { mutate: updateChartData, isPending } = useMutation({
         mutationFn: async ({ period }: {
             period: string,
         }) => {
@@ -152,7 +153,7 @@ const AnalyticsTab = () => {
                     {__("There was an error fetching the data", "metricool")}
                 </FlexContainer>
             ) : analyticsData && (
-                <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 !gap-2 p-2"}>
+                <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>
                         {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
                             <MetricTile
@@ -168,7 +169,15 @@ const AnalyticsTab = () => {
                         ))}
                     </FlexContainer>
                     <hr className={"-mx-2"}/>
+                    {isPending && (
+                        <div className={"absolute w-full h-full bg-white opacity-45"}>
+                            <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                                <Icon icon={"loading"} iconClass={"size-5"}/>
+                            </FlexContainer>
+                        </div>
+                    )}
                     <LineChart
+                        className={clsx(isPending && "opacity-45")}
                         chartConfig={chartConfig}
                         chartSettings={{
                             xAxisKey: lineChartXAxisDataKey,
@@ -194,8 +203,9 @@ const AnalyticsTab = () => {
                         {dateFilterOptions.map((filterOption) =>
                             filterOption.isUpsell ? (
                                 <FlexContainer
+                                    onClick={() => {window.open(metricoolSSOLink); window.focus();}}
                                     direction={"row"}
-                                    className={clsx("items-center rounded-xs py-1.5 px-2 !gap-2 text-sm outline-hidden select-none font-semibold bg-secondary-light hover:bg-upsell focus:bg-upsell")}
+                                    className={clsx("items-center rounded-xs py-1.5 px-2 !gap-2 text-sm outline-hidden select-none font-semibold cursor-pointer bg-secondary-light hover:bg-upsell focus:bg-upsell")}
                                 >
                                     <span className="flex size-3.5 items-center justify-center">
                                         <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
