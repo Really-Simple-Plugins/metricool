@@ -3,7 +3,6 @@ import { __ } from "@wordpress/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "@tanstack/react-router";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
-import { useEffect } from "react";
 
 export type Notice = {
     action: {
@@ -32,7 +31,6 @@ const NotificationsSidebar = () => {
         queryFn: () => httpClient?.setRoute("get_notices").get(),
         staleTime: 1000 * 60, // 1 minute
         select: (data): Record<string, Notice[]> => {
-            console.log(data);
             const noticesWithVisibility = data.data.map((notice: Notice) => ({
                 ...notice,
                 visible: notice.visible ? notice.visible : notice.active && (notice.route === "general" || notice.route === pathname)
@@ -44,10 +42,6 @@ const NotificationsSidebar = () => {
             };
         },
     });
-
-    useEffect(() => {
-        console.log(noticeData, isLoading, error,);
-    }, [noticeData, isLoading, error,]);
 
     return (
         <Block variant={"transparent"} className={"px-0"}>
