@@ -2,7 +2,7 @@
 
 namespace Metricool\Features\UserSettings\Storage;
 
-use StorageRequiredException;
+use Metricool\Features\UserSettings\Storage\Exceptions\StorageClientRequiredException;
 
 class ApiStorage extends AbstractStorage
 {
@@ -12,7 +12,7 @@ class ApiStorage extends AbstractStorage
     public function __construct($name, $config)
     {
         if (!isset($config['client'])) {
-            throw new StorageRequiredException('Client is required for API storage: ' . $name);
+            throw new StorageClientRequiredException('Client is required for API storage: ' . $name . '. Please add it to the config.');
         }
 
         $this->client = $config['client'];
@@ -36,13 +36,16 @@ class ApiStorage extends AbstractStorage
      */
     public function getMultiple(array $keys): array
     {
+        // Retrieve all values from the API client
         $data = $this->client->get();
 
+        // Get the requested values from the API response
         $results = [];
         foreach ($keys as $key) {
             $results[$key] = $data[$this->convertCase($key)] ?? null;
         }
 
+        // Return the requested values
         return $results;
     }
 
@@ -59,11 +62,13 @@ class ApiStorage extends AbstractStorage
      */
     public function setMultiple(array $data)
     {
+        // Create the request data
         $requestData = [];
         foreach ($data as $key => $value) {
             $requestData[$this->convertCase($key)] = $value;
         }
 
+        // Send the request to the API client
         return $this->client->{$this->method}($requestData);
     }
 }
