@@ -226,6 +226,5 @@ class MetricoolClient
                 implode(', ', $validationErrors)
             );
         }
-
     }
 }
