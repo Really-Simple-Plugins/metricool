@@ -10,7 +10,7 @@ import { queryClient } from "../main.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 
 const formSchema = z.object({
-    receiveMonthlySummary: z.boolean(),
+    sendToAlternativeEmail: z.boolean(),
     alternativeEmail: z.email(__("Please enter a valid email address", "metricool")),
 }).required();
 
@@ -24,8 +24,8 @@ const AccountSettings = () => {
         select: (data): z.infer<typeof formSchema> => {
             console.log(data);
             return {
-                receiveMonthlySummary: data.data.send_to_alternative_email,
-                alternativeEmail: data.data.alternative_email,
+                sendToAlternativeEmail: data.data.sendToAlternativeEmail,
+                alternativeEmail: data.data.alternativeEmail,
             };
         },
     });
@@ -38,17 +38,17 @@ const AccountSettings = () => {
     } = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            receiveMonthlySummary: false,
+            sendToAlternativeEmail: false,
             alternativeEmail: "",
         },
         values,
     });
 
     const { mutate: onSubmit } = useMutation({
-        mutationFn: async ({ receiveMonthlySummary, alternativeEmail }: z.infer<typeof formSchema>) => {
+        mutationFn: async ({ sendToAlternativeEmail, alternativeEmail }: z.infer<typeof formSchema>) => {
             const response = await httpClient?.setRoute("user_settings").setPayload({
-                "send_to_alternative_email": receiveMonthlySummary,
-                "alternative_email": alternativeEmail,
+                "sendToAlternativeEmail": sendToAlternativeEmail,
+                "alternativeEmail": alternativeEmail,
             }).post();
 
             const newFormValues = response?.data;
@@ -63,34 +63,34 @@ const AccountSettings = () => {
         },
         onSuccess: (data) => {
             const currentSettingsData: {
-                data: { send_to_alternative_email: boolean, alternative_email: string },
+                data: z.infer<typeof formSchema>,
             } = queryClient.getQueryData(["user_settings"]) ?? {
                 data: {
-                    send_to_alternative_email: false,
-                    alternative_email: "",
+                    sendToAlternativeEmail: false,
+                    alternativeEmail: "",
                 }
             };
             queryClient.setQueryData(["user_settings"], {
                 ...currentSettingsData,
                 data: {
                     ...currentSettingsData.data,
-                    send_to_alternative_email: data.send_to_alternative_email,
-                    alternative_email: data.alternative_email,
+                    sendToAlternativeEmail: data.sendToAlternativeEmail,
+                    alternativeEmail: data.alternativeEmail,
                 }
             });
             showToast.success(__("Settings have been saved", "metricool"));
         },
         onError: (data: {
-            fields: { send_to_alternative_email: { message: string }, alternative_email: { message: string } },
+            fields: { sendToAlternativeEmail: { message: string }, alternativeEmail: { message: string } },
         }) => {
             showToast.error(__("There was an error updating your settings", "metricool"));
-            setError("receiveMonthlySummary", {
+            setError("sendToAlternativeEmail", {
                 type: "custom",
-                message: data.fields?.send_to_alternative_email?.message,
+                message: data.fields?.sendToAlternativeEmail?.message,
             });
             setError("alternativeEmail", {
                 type: "custom",
-                message: data.fields?.alternative_email?.message,
+                message: data.fields?.alternativeEmail?.message,
             });
         }
     });
@@ -119,15 +119,15 @@ const AccountSettings = () => {
                         <FlexContainer direction={"column"}>
                             <FlexContainer direction={"column"} className={"!gap-2"}>
                                 <FlexContainer direction={"row"} className={"w-full justify-between"}>
-                                    <Label htmlFor={"receiveMonthlySummary"}>{__("Receive monthly summary", "metricool")}</Label>
+                                    <Label htmlFor={"sendToAlternativeEmail"}>{__("Receive monthly summary", "metricool")}</Label>
                                     <Controller
                                         control={control}
                                         render={({ field }) =>
                                             <Switch checked={field.value} onCheckedChange={field.onChange}/>}
-                                        name={"receiveMonthlySummary"}
+                                        name={"sendToAlternativeEmail"}
                                     />
                                 </FlexContainer>
-                                <span className={"text-red-500 text-sm"}>{formValidationErrors.receiveMonthlySummary?.message}</span>
+                                <span className={"text-red-500 text-sm"}>{formValidationErrors.sendToAlternativeEmail?.message}</span>
                             </FlexContainer>
                             <FlexContainer direction={"column"} className={"!gap-2"}>
                                 <Label htmlFor={"alternativeEmail"}>{__("Custom e-mail for the monthly summary", "metricool")}</Label>
