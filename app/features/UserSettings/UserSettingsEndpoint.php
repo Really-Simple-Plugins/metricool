@@ -43,7 +43,6 @@ class UserSettingsEndpoint
         return $routes;
     }
 
-
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
         switch ($request->get_method()) {
@@ -72,7 +71,6 @@ class UserSettingsEndpoint
 
         return $this->sendHttpResponse($settings);
     }
-
 
     protected function updateUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {

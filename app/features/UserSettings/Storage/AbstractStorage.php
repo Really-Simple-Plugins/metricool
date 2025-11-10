@@ -7,7 +7,7 @@ use Metricool\Utility\StringUtility;
 abstract class AbstractStorage
 {
     public string $name;
-    protected ?string $casing = null;
+    protected string $casing = 'snake_case';
 
     abstract public function get(string $key);
 
@@ -26,6 +26,8 @@ abstract class AbstractStorage
                 return StringUtility::snakeToPascalCase($key);
             case 'camel_case':
                 return StringUtility::snakeToCamelCase($key);
+            case 'snake_case':
+                return StringUtility::camelToSnakeCase($key);
             default:
                 return $key;
         }

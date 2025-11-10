@@ -196,17 +196,11 @@ class UserSettingsService
             $storages[$name] = $this->createStorage($name, $config);
         }
 
-        // Add default database storage if not defined
-        if (!isset($this->storages['database'])) {
-            $storages['database'] = new DatabaseStorage('database', ['prefix' => '']);
-        }
-
         $this->storages = new Collection($storages);
     }
 
     private function createStorage(string $name, array $config): AbstractStorage
     {
-
         switch ($config['type'] ?? 'database') {
             case 'api':
                 return new ApiStorage($name, $config);
