@@ -21,7 +21,7 @@ const AccountSettings = () => {
         queryKey: ["user_settings"],
         queryFn: () => httpClient?.setRoute("user_settings").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data) => {
+        select: (data): z.infer<typeof formSchema> => {
             console.log(data);
             return {
                 receiveMonthlySummary: data.data.send_to_alternative_email,
