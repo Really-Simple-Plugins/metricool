@@ -2,8 +2,6 @@
 
 namespace Metricool\Interfaces;
 
-use Metricool\Features\TaskManagement\Tasks\AbstractTask;
-
 interface TaskInterface
 {
     /**
@@ -12,16 +10,16 @@ interface TaskInterface
     public function getId(): string;
 
     /**
-     * Method is used to set that status of the task. For all available
-     * statuses {@see AbstractTask} constants.
-     */
-    public function setStatus(string $status): void;
-
-    /**
      * Returns the status of the task. For all available statuses
      * {@see AbstractTask} constants.
      */
     public function getStatus(): string;
+
+
+    /**
+     * Returns the priority of the task. A lower number is more important.
+     */
+    public function getPriority(): int;
 
     /**
      * Returns the version of the task
@@ -33,8 +31,7 @@ interface TaskInterface
      * This is useful for tasks that are dismissed by the user but should be
      * reactivated when the task is upgraded to a new version.
      */
-    public function reactivateOnUpgrade(): bool;
-
+    public function isReactivateOnUpgrade(): bool;
 
     /**
      * Method is used to add an action to the UI of the task item.

@@ -2,8 +2,8 @@
 
 namespace Metricool\Features\Notifications;
 
-use Metricool\Interfaces\NoticeInterface;
 use Metricool\Interfaces\FeatureInterface;
+use Metricool\Interfaces\NoticeInterface;
 
 class NotificationsController implements FeatureInterface
 {

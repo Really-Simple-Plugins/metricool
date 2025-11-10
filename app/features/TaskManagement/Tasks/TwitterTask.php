@@ -2,7 +2,9 @@
 
 namespace Metricool\Features\TaskManagement\Tasks;
 
-// todo - add listener
+use Metricool\App;
+use Metricool\Helpers\MetricoolUrl;
+
 class TwitterTask extends AbstractTask
 {
     const IDENTIFIER = 'connect_twitter';
@@ -22,7 +24,7 @@ class TwitterTask extends AbstractTask
      */
     public function getText(): string
     {
-        return esc_html__('Connect your Twitter account', 'metricool');
+        return __('Connect your Twitter account', 'metricool');
     }
 
     /**
@@ -31,8 +33,8 @@ class TwitterTask extends AbstractTask
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Connect', 'metricool'),
-            'link' => 'https://app.metricool.com/evolution/twitter',
+            'text' => __('Connect', 'metricool'),
+            'link' => MetricoolUrl::adminUrl(App::env('metricool.connect_twitter_url')),
             'target' => '_blank',
         ];
     }

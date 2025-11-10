@@ -14,7 +14,7 @@ class UnableToTrackTrafficTask extends AbstractTask
      */
     public function __construct()
     {
-        $this->setStatus(self::STATUS_HIDDEN);
+        $this->hide();
     }
 
     /**
@@ -22,7 +22,7 @@ class UnableToTrackTrafficTask extends AbstractTask
      */
     public function getText(): string
     {
-        return esc_html__('Unable to track traffic on your site', 'metricool');
+        return __('Unable to track traffic on your site', 'metricool');
     }
 
     /**
@@ -39,7 +39,7 @@ class UnableToTrackTrafficTask extends AbstractTask
         $link = add_query_arg($queryArgs, 'https://app.metricool.com/evolution/web');
 
         return [
-            'text' => esc_html__('Validate connection', 'metricool'),
+            'text' => __('Validate connection', 'metricool'),
             'link' => $link,
             'target' => '_blank',
         ];

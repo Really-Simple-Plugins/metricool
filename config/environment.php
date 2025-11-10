@@ -27,6 +27,10 @@ return [
         'review_url' => 'https://wordpress.org/support/plugin/metricool/reviews/#new-post',
     ],
     'metricool' => [
+        'upgrade_premium_url' => 'https://app.metricool.com/user-settings/plan',
+        'connect_network_url' => 'https://app.metricool.com/evolution/brandSummary',
+        'connect_linkedin_url' => 'https://app.metricool.com/evolution/linkedin',
+        'connect_twitter_url' => 'https://app.metricool.com/evolution/twitter',
         'tracking_script_url' => 'https://tracker.metricool.com/resources/be.js',
         'create_post_url' => 'https://app.metricool.com/planner/post',
     ],

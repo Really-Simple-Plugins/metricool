@@ -3,10 +3,10 @@
 namespace Metricool\Http\Metricool;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * @todo Add error handling either with try-catches here, in the resources or
@@ -46,6 +46,11 @@ class MetricoolClient
     public function hasBlogId(): string
     {
         return !empty($this->blogId);
+    }
+    
+    public function getBlogId(): string
+    {
+        return $this->blogId;
     }
 
     public function setUserToken(string $userToken): void

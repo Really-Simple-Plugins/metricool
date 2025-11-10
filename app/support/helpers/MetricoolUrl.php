@@ -18,6 +18,7 @@ class MetricoolUrl
             'blogId' => (defined('METRICOOL_BLOG_ID') ? METRICOOL_BLOG_ID : ''),
             'userId' => (defined('METRICOOL_USER_ID') ? METRICOOL_USER_ID : ''),
         ]);
+
         return add_query_arg($queryArgs, $url);
     }
 

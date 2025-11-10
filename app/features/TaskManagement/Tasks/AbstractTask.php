@@ -2,16 +2,31 @@
 
 namespace Metricool\Features\TaskManagement\Tasks;
 
+use Metricool\Features\TaskManagement\Tasks\Exceptions\DismissRequiredTaskException;
 use Metricool\Interfaces\TaskInterface;
 
 abstract class AbstractTask implements TaskInterface
 {
-    const STATUS_OPEN = 'open';
-    const STATUS_URGENT = 'urgent';
-    const STATUS_DISMISSED = 'dismissed';
-    const STATUS_COMPLETED = 'completed';
-    const STATUS_PREMIUM = 'premium';
-    const STATUS_HIDDEN = 'hidden';
+    public const DEFAULT_PRIORITY = 10;
+
+    public const STATUS_URGENT = 'urgent';
+    public const STATUS_OPEN = 'open';
+    public const STATUS_COMPLETED = 'completed';
+    public const STATUS_DISMISSED = 'dismissed';
+    public const STATUS_HIDDEN = 'hidden';
+
+    /**
+     * Statuses that are used to determine the state of the task. A state holds
+     * properties that are used for a task with this status.
+     */
+    protected const STATUS_PRIORITY = [
+        self::STATUS_URGENT => 0,
+        self::STATUS_OPEN => 10,
+        self::STATUS_COMPLETED => 20,
+        self::STATUS_DISMISSED => 30,
+        self::STATUS_HIDDEN => 40,
+    ];
+
 
     /**
      * Override this constant to define the identifier of the task. This
@@ -58,7 +73,7 @@ abstract class AbstractTask implements TaskInterface
      * use the {@see setStatus()} method in the construct of the task. See
      * {@see AddMandatoryProviderTask} for an example.
      */
-    private string $status;
+    protected string $status;
 
     /**
      * Override this method to define the text that should be displayed to the
@@ -94,9 +109,51 @@ abstract class AbstractTask implements TaskInterface
     /**
      * @inheritDoc
      */
-    public function reactivateOnUpgrade(): bool
+    public function getPriority(): int
     {
-        return $this->reactivateOnUpgrade ?? false;
+        // Get the priority from the status
+        $priority = $this->getPriorityFromStatus();
+
+        // Give premium and special features a higher priority
+        if ($this->isPremium() || $this->isSpecialFeature()) {
+            $priority++;
+        }
+
+        return $priority;
+    }
+
+    /**
+     * Build the label for the task. This is used to display the task in the
+     * tasks dashboard component. The label is used to indicate if the task
+     * is premium or a special feature. If not, the label reflects the status.
+     * Override with get{Status}Label method, for example: getUrgentLabel()
+     */
+    public function getLabel(): string
+    {
+        $status = $this->getStatus();
+
+        // Get the label from method if it exists
+        $getStatusLabelMethod = 'get' . ucfirst($status) . 'StatusLabel';
+        if (method_exists($this, $getStatusLabelMethod)) {
+            return $this->$getStatusLabelMethod();
+        }
+
+        if ($this->isPremium()) {
+            return __('Premium', 'metricool');
+        }
+
+        if ($this->isSpecialFeature()) {
+            return __('Special feature', 'metricool');
+        }
+
+        $statusLabels = [
+            self::STATUS_OPEN => __('Open', 'metricool'),
+            self::STATUS_URGENT => __('Urgent', 'metricool'),
+            self::STATUS_COMPLETED => __('Completed', 'metricool'),
+            self::STATUS_DISMISSED => __('Dismissed', 'metricool'),
+        ];
+
+        return $statusLabels[$status] ?? ucfirst($status);
     }
 
     /**
@@ -108,68 +165,97 @@ abstract class AbstractTask implements TaskInterface
     }
 
     /**
-     * @inheritDoc
+     * Sets the premium property of the task.
      */
-    public function setStatus(string $status): void
+    public function setPremium(bool $isPremium): void
     {
-        $knownStatuses = [
-            self::STATUS_OPEN,
-            self::STATUS_URGENT,
-            self::STATUS_DISMISSED,
-            self::STATUS_COMPLETED,
-            self::STATUS_PREMIUM,
-            self::STATUS_HIDDEN,
-        ];
-        if (!in_array($status, $knownStatuses)) {
-            return; // Not allowed
+        $this->premium = $isPremium;;
+    }
+
+    /**
+     * Sets the special feature property of the task.
+     */
+    public function setSpecialFeature(bool $isSpecialFeature): void
+    {
+        $this->specialFeature = $isSpecialFeature;
+    }
+
+    /**
+     * Sets the status of the task from another task.
+     */
+    public function setStatusFromTask(TaskInterface $task): self
+    {
+        return $this->setStatus($task->getStatus());
+    }
+
+    /**
+     * Activate the task by setting the state to 'open'
+     * @throws \Exception
+     */
+    public function open(): self
+    {
+        return $this->setStatus(self::STATUS_OPEN);
+    }
+
+    /**
+     * Set the task to the 'urgent' state
+     */
+    public function urgent(): self
+    {
+        return $this->setStatus(self::STATUS_URGENT);
+    }
+
+    /**
+     * Dismiss the task by setting the state to 'dismissed'
+     * @throws \Exception
+     */
+    public function dismiss(): self
+    {
+        if (!$this->isDismissed() && $this->isRequired()) {
+            throw new DismissRequiredTaskException();
         }
 
-        $this->status = $status;
+        return $this->setStatus(self::STATUS_DISMISSED);
     }
 
     /**
-     * Activate the task by setting the status to 'open'
+     * Complete the task by setting the state to 'completed'
      */
-    public function open(): void
+    public function complete(): self
     {
-        $this->status = self::STATUS_OPEN;
+        return $this->setStatus(self::STATUS_COMPLETED);
     }
 
     /**
-     * Set the task to 'urgent' status
+     * Hide the task by setting the state to 'hidden'
      */
-    public function urgent(): void
+    public function hide(): self
     {
-        $this->status = self::STATUS_URGENT;
+        return $this->setStatus(self::STATUS_HIDDEN);
     }
 
     /**
-     * Dismiss the task by setting the status to 'dismissed'. Only allowed if
-     * the task is not required.
+     * Reads if the task is completed
      */
-    public function dismiss(): void
+    public function isCompleted(): bool
     {
-        if ($this->required) {
-            return; // Not allowed
-        }
-
-        $this->status = self::STATUS_DISMISSED;
+        return $this->getStatus() === self::STATUS_COMPLETED;
     }
 
     /**
-     * Complete the task by setting the status to 'completed'
+     * Reads if the task is dismissed
      */
-    public function completed(): void
+    public function isDismissed(): bool
     {
-        $this->status = self::STATUS_COMPLETED;
+        return $this->getStatus() === self::STATUS_DISMISSED;
     }
 
     /**
-     * Hide the task by setting the status to 'hidden'
+     * Reads if the task is required
      */
-    public function hide(): void
+    public function isHidden(): bool
     {
-        $this->status = self::STATUS_HIDDEN;
+        return $this->getStatus() === self::STATUS_HIDDEN;
     }
 
     /**
@@ -197,21 +283,34 @@ abstract class AbstractTask implements TaskInterface
     }
 
     /**
-     * Build the label for the task. This is used to display the task in the
-     * tasks dashboard component. The label is used to indicate if the task
-     * is premium or a special feature. If not, the label reflects the status.
+     * @inheritDoc
      */
-    public function getLabel(): string
+    public function isReactivateOnUpgrade(): bool
     {
-        if ($this->isPremium()) {
-            return esc_html__('Premium', 'metricool');
-        }
+        return $this->reactivateOnUpgrade ?? false;
+    }
 
-        if ($this->isSpecialFeature()) {
-            return esc_html__('Special feature', 'metricool');
-        }
+    /**
+     * Sets the status of the task.
+     */
+    private function setStatus(string $status): self
+    {
+        $this->status = $status;
 
-        return ucfirst($this->getStatus());
+        return $this;
+    }
+
+    /**
+     * Returns the priority of the task based on the status. If the status is
+     * not found in STATUS_PRIORITY, the default priority is returned.
+     */
+    protected function getPriorityFromStatus(): int
+    {
+        $status = $this->getStatus();
+        if (!isset(self::STATUS_PRIORITY[$status])) {
+            return self::DEFAULT_PRIORITY;
+        }
+        return self::STATUS_PRIORITY[$status];
     }
 
     /**
@@ -224,6 +323,7 @@ abstract class AbstractTask implements TaskInterface
             'text' => $this->getText(),
             'label' => $this->getLabel(),
             'status' => $this->getStatus(),
+            'priority' => $this->getPriority(),
             'premium' => $this->isPremium(),
             'special_feature' => $this->isSpecialFeature(),
             'type' => $this->isRequired() ? 'required' : 'optional',
