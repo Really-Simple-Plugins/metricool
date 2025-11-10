@@ -2,12 +2,9 @@
 
 namespace Metricool\Features\Notifications\Notices;
 
-use Metricool\App;
-use Metricool\Helpers\MetricoolUrl;
-
-class FirstConnectionNotice extends AbstractNotice
+class ExampleNotice extends AbstractNotice
 {
-    const IDENTIFIER = 'first_connection';
+    const IDENTIFIER = 'example_notice';
     protected bool $active = true;
 
     /**
@@ -15,7 +12,7 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getTitle(): string
     {
-        return __('No connections detected', 'metricool');
+        return __('This is a notice without a route.', 'metricool');
     }
 
     /**
@@ -23,7 +20,7 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getText(): string
     {
-        return __('Connect your first social account to Metricool to start scheduling and tracking your content.', 'metricool');
+        return __('This is a notice without a route.', 'metricool');
     }
 
     /**
@@ -39,8 +36,9 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getRoute(): string
     {
-        return 'connections';
+        return self::ALL_ROUTES;
     }
+
 
     /**
      * @inheritDoc
@@ -48,8 +46,8 @@ class FirstConnectionNotice extends AbstractNotice
     public function getAction(): array
     {
         return [
-            'text' => __('Connect', 'metricool'),
-            'link' => MetricoolUrl::adminUrl(App::env('metricool.connect_network_url')),
+            'text' => __('Example text', 'metricool'),
+            'link' => 'https://example.test',
             'target' => '_blank',
         ];
     }

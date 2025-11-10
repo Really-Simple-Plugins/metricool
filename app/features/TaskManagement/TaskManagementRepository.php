@@ -2,9 +2,7 @@
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Helpers\Event;
 use Metricool\Interfaces\TaskInterface;
-use Metricool\Features\TaskManagement\Tasks\AbstractTask;
 
 class TaskManagementRepository
 {
@@ -37,7 +35,7 @@ class TaskManagementRepository
         // If strict mode is enabled, remove tasks that are hidden
         if ($strict) {
             $tasks = array_filter($tasks, function ($task) {
-                return $task->getStatus() !== AbstractTask::STATUS_HIDDEN;
+                return $task->isHidden() === false;
             });
         }
 
@@ -45,7 +43,7 @@ class TaskManagementRepository
     }
 
     /**
-     * Add a single task to the repository
+     * Adds or updates a single task to the repository
      */
     public function addTask(TaskInterface $task, bool $save = true): void
     {
@@ -75,11 +73,9 @@ class TaskManagementRepository
         }
 
         // Keep current status if new task does not want to reactivate on
-        // upgrade
-        if ($taskExists && ($task->reactivateOnUpgrade() === false)) {
-            $task->setStatus(
-                $existingTask->getStatus(),
-            );
+        // upgrade and the existing task has a status
+        if ($task->isReactivateOnUpgrade() === false) {
+            $task->setStatusFromTask($existingTask);
         }
 
         // Upgrades existing tasks and add new tasks
@@ -110,25 +106,6 @@ class TaskManagementRepository
         if ($save) {
             $this->saveTasksToDatabase();
         }
-    }
-
-    /**
-     * Update the status of a task if the task exists. If the task is required
-     * and the status is set to 'dismissed', the status will not be updated.
-     */
-    public function updateTaskStatus(string $taskId, string $status): void
-    {
-        $task = $this->getTask($taskId);
-        if ($task === null) {
-            return;
-        }
-
-        if ($task->isRequired() && $status === AbstractTask::STATUS_DISMISSED) {
-            return; // Not allowed
-        }
-
-        $task->setStatus($status);
-        $this->addTask($task);
     }
 
     /**

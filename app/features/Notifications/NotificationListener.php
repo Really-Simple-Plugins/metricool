@@ -15,17 +15,21 @@ class NotificationListener
 
     public function listen(): void
     {
-        add_action('metricool_event_' . Event::EXAMPLE_EVENT, [$this, 'handleExampleEvent']);
+        add_action('metricool_event_' . Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, [$this, 'handleConnectedSocialNetworks']);
     }
-
+    
     /**
-     * Handle the example event to update task status.
+     * This event receives the connected social networks data and activates or
+     * deactivates notices
+     * @see Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED
      */
-    public function handleExampleEvent(array $arguments): void
+    public function handleConnectedSocialNetworks(array $socialNetworks): void
     {
-        // todo
-        // $this->service->activate(
-            // Notices\FailedAuthenticationNotice::IDENTIFIER
-        // );
+        // Deactivate the FirstConnectionNotice when a social network is connected
+        if (count($socialNetworks) > 0) {
+            $this->service->deactivate(Notices\FirstConnectionNotice::IDENTIFIER);
+        } else {
+            $this->service->activate(Notices\FirstConnectionNotice::IDENTIFIER);
+        }
     }
 }
