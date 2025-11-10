@@ -11,7 +11,7 @@ use Metricool\Features\UserSettings\Storage\DatabaseStorage;
 use Metricool\Helpers\Collection;
 
 // todo: add support for custom storages
-// todo: add support for custom fields
+// todo: add support for custom fields?
 
 /**
  * This service is responsible for storing and retrieving user settings.
