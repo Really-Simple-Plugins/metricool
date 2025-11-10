@@ -26,10 +26,10 @@ class DatabaseStorage extends AbstractStorage
         }
         return $result;
     }
-    
+
     public function set(string $key, $value): void
     {
-        update_option($this->prefix . $this->convertCase($key), (string) $value);
+        update_option($this->prefix . $this->convertCase($key), $value);
     }
 
     public function setMultiple(array $data): bool

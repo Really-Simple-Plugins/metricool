@@ -23,26 +23,6 @@ abstract class AbstractStorage
 
     abstract public function setMultiple(array $data);
 
-    public function sanitizeValue($value, string $type)
-    {
-        switch ($type) {
-            case 'boolean':
-            case 'bool':
-                return $value ? 1 : 0;
-            case 'email':
-                return sanitize_email($value);
-            case 'string':
-                return sanitize_text_field($value);
-            case 'array':
-                return is_array($value) ? array_map('sanitize_text_field', $value) : [];
-            case 'integer':
-            case 'int':
-                return filter_var($value, FILTER_VALIDATE_INT);
-            default:
-                return $value;
-        }
-    }
-
     protected function convertCase(string $key): string
     {
         switch ($this->casing) {
