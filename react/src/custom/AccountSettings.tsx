@@ -81,17 +81,21 @@ const AccountSettings = () => {
             showToast.success(__("Settings have been saved", "metricool"));
         },
         onError: (data: {
-            fields: { sendToAlternativeEmail: { message: string }, alternativeEmail: { message: string } },
+            fields?: Record<keyof z.infer<typeof formSchema>, { message: string }>,
         }) => {
             showToast.error(__("There was an error updating your settings", "metricool"));
-            setError("sendToAlternativeEmail", {
-                type: "custom",
-                message: data.fields?.sendToAlternativeEmail?.message,
-            });
-            setError("alternativeEmail", {
-                type: "custom",
-                message: data.fields?.alternativeEmail?.message,
-            });
+            if (data.fields) {
+                try {
+                    (Object.entries(data.fields) as [keyof z.infer<typeof formSchema>, {message: string}][]).forEach(([fieldKey, fieldContent]) => {
+                        setError(fieldKey, {
+                            type: "custom",
+                            message: fieldContent?.message,
+                        });
+                    });
+                } catch (error) {
+                    console.error("There was an error setting the form errors: " + error);
+                }
+            }
         }
     });
 
