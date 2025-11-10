@@ -43,7 +43,6 @@ class UserSettingsEndpoint
         return $routes;
     }
 
-
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
         switch ($request->get_method()) {
@@ -73,7 +72,6 @@ class UserSettingsEndpoint
         return $this->sendHttpResponse($settings);
     }
 
-
     protected function updateUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {
         $params = $request->get_params();
@@ -97,7 +95,7 @@ class UserSettingsEndpoint
                     ];
                 }
             }
-            return $this->sendHttpResponse(['errors' => $errors], true, 'Validation failed', 422);
+            return $this->sendHttpResponse(['errors' => $errors], false, 'Validation failed', 422);
         }
 
         return $this->sendHttpResponse($updatedSettings);

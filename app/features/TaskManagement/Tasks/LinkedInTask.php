@@ -24,7 +24,7 @@ class LinkedInTask extends AbstractTask
      */
     public function getText(): string
     {
-        return esc_html__('Connect your LinkedIn account', 'metricool');
+        return __('Connect your LinkedIn account', 'metricool');
     }
 
     /**
@@ -33,7 +33,7 @@ class LinkedInTask extends AbstractTask
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Connect', 'metricool'),
+            'text' => __('Connect', 'metricool'),
             'link' => MetricoolUrl::adminUrl(App::env('metricool.connect_linkedin_url')),
             'target' => '_blank',
         ];

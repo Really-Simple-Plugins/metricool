@@ -2,11 +2,12 @@
 
 namespace Metricool\Features\TaskManagement\Tasks;
 
+use Metricool\Features\TaskManagement\Tasks\Exceptions\DismissRequiredTaskException;
 use Metricool\Interfaces\TaskInterface;
 
 abstract class AbstractTask implements TaskInterface
 {
-    protected const DEFAULT_PRIORITY = 10;
+    public const DEFAULT_PRIORITY = 10;
 
     public const STATUS_URGENT = 'urgent';
     public const STATUS_OPEN = 'open';
@@ -18,21 +19,14 @@ abstract class AbstractTask implements TaskInterface
      * Statuses that are used to determine the state of the task. A state holds
      * properties that are used for a task with this status.
      */
-    protected const STATUS_STATES = [
-        self::STATUS_URGENT => ['priority' => 0],
-        self::STATUS_OPEN => ['priority' => self::DEFAULT_PRIORITY],
-        self::STATUS_COMPLETED => ['priority' => 20],
-        self::STATUS_DISMISSED => ['priority' => 30],
-        self::STATUS_HIDDEN => ['priority' => 40],
+    protected const STATUS_PRIORITY = [
+        self::STATUS_URGENT => 0,
+        self::STATUS_OPEN => 10,
+        self::STATUS_COMPLETED => 20,
+        self::STATUS_DISMISSED => 30,
+        self::STATUS_HIDDEN => 40,
     ];
 
-    /**
-     * These states are used to determine the properties of a task that is not
-     * based on a status.
-     * @see self::getPriority()
-     */
-    protected const STATE_PREMIUM = ['priority' => 15];
-    protected const STATE_SPECIAL_FEATURE = ['priority' => 15];
 
     /**
      * Override this constant to define the identifier of the task. This
@@ -117,34 +111,74 @@ abstract class AbstractTask implements TaskInterface
      */
     public function getPriority(): int
     {
+        // Get the priority from the status
+        $priority = $this->getPriorityFromStatus();
+
+        // Give premium and special features a higher priority
+        if ($this->isPremium() || $this->isSpecialFeature()) {
+            $priority++;
+        }
+
+        return $priority;
+    }
+
+    /**
+     * Build the label for the task. This is used to display the task in the
+     * tasks dashboard component. The label is used to indicate if the task
+     * is premium or a special feature. If not, the label reflects the status.
+     * Override with get{Status}Label method, for example: getUrgentLabel()
+     */
+    public function getLabel(): string
+    {
+        $status = $this->getStatus();
+        
+        // Get the label from method if it exists
+        $getStatusLabelMethod = 'get' . ucfirst($status) . 'StatusLabel';
+        if (method_exists($this, $getStatusLabelMethod)) {
+            return $this->$getStatusLabelMethod();
+        }
+
+        return ucfirst($status);
+    }
+
+    /**
+     * Get the label for the status 'open'
+     */
+    public function getOpenStatusLabel()
+    {
         if ($this->isPremium()) {
-            return self::STATE_PREMIUM['priority'];
+            return __('Premium', 'metricool');
         }
+
         if ($this->isSpecialFeature()) {
-            return self::STATE_SPECIAL_FEATURE['priority'];
+            return __('Special feature', 'metricool');
         }
 
-        $state = self::getStateFromStatus($this->getStatus());
-
-        return $state['priority'] ?? self::DEFAULT_PRIORITY;
+        return __('Open', 'metricool');
     }
 
     /**
-     * Returns the priority of the task based on the status.
-     * @param string $status
-     * @return array|null
+     * Get the label for the status 'urgent'
      */
-    protected function getStateFromStatus(string $status): ?array
+    public function getUrgentStatusLabel()
     {
-        return self::STATUS_STATES[$status] ?? null;
+        return __('Urgent', 'metricool');
     }
 
     /**
-     * @inheritDoc
+     * Get the label for the status 'completed'
      */
-    public function reactivateOnUpgrade(): bool
+    public function getCompletedStatusLabel()
     {
-        return $this->reactivateOnUpgrade ?? false;
+        return __('Completed', 'metricool');
+    }
+
+    /**
+     * Get the label for the status 'dismissed'
+     */
+    public function getDismissedStatusLabel()
+    {
+        return __('Dismissed', 'metricool');
     }
 
     /**
@@ -153,19 +187,6 @@ abstract class AbstractTask implements TaskInterface
     public function getAction(): array
     {
         return [];
-    }
-
-    /**
-     * @inheritDoc
-     * @throws \Exception
-     */
-    public function setStatus(string $status): void
-    {
-        if ($status == self::STATUS_DISMISSED && $this->isDismissable() === false) {
-            throw new \Exception('Task is required and cannot be dismissed');
-        }
-
-        $this->status = $status;
     }
 
     /**
@@ -185,56 +206,57 @@ abstract class AbstractTask implements TaskInterface
     }
 
     /**
+     * Sets the status of the task from another task.
+     */
+    public function setStatusFromTask(TaskInterface $task): self
+    {
+        return $this->setStatus($task->getStatus());
+    }
+
+    /**
      * Activate the task by setting the state to 'open'
      * @throws \Exception
      */
-    public function open(): void
+    public function open(): self
     {
-        $this->setStatus(self::STATUS_OPEN);
+        return $this->setStatus(self::STATUS_OPEN);
     }
 
     /**
-     * Set the task to 'urgent' state
-     * @throws \Exception
+     * Set the task to the 'urgent' state
      */
-    public function urgent(): void
+    public function urgent(): self
     {
-        $this->setStatus(self::STATUS_URGENT);
-    }
-
-    /**
-     * Check if the task can be dismissed.
-     */
-    public function isDismissable(): bool
-    {
-        return $this->required === false;
+        return $this->setStatus(self::STATUS_URGENT);
     }
 
     /**
      * Dismiss the task by setting the state to 'dismissed'
      * @throws \Exception
      */
-    public function dismiss(): void
+    public function dismiss(): self
     {
-        $this->setStatus(self::STATUS_DISMISSED);
+        if (!$this->isDismissed() && $this->isRequired()) {
+            throw new DismissRequiredTaskException();
+        }
+
+        return $this->setStatus(self::STATUS_DISMISSED);
     }
 
     /**
      * Complete the task by setting the state to 'completed'
-     * @throws \Exception
      */
-    public function completed(): void
+    public function complete(): self
     {
-        $this->setStatus(self::STATUS_COMPLETED);
+        return $this->setStatus(self::STATUS_COMPLETED);
     }
 
     /**
      * Hide the task by setting the state to 'hidden'
-     * @throws \Exception
      */
-    public function hide(): void
+    public function hide(): self
     {
-        $this->setStatus(self::STATUS_HIDDEN);
+        return $this->setStatus(self::STATUS_HIDDEN);
     }
 
     /**
@@ -250,7 +272,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function isDismissed(): bool
     {
-        return $this->status === self::STATUS_DISMISSED;
+        return $this->getStatus() === self::STATUS_DISMISSED;
     }
 
     /**
@@ -258,7 +280,7 @@ abstract class AbstractTask implements TaskInterface
      */
     public function isHidden(): bool
     {
-        return $this->status === self::STATUS_HIDDEN;
+        return $this->getStatus() === self::STATUS_HIDDEN;
     }
 
     /**
@@ -286,21 +308,34 @@ abstract class AbstractTask implements TaskInterface
     }
 
     /**
-     * Build the label for the task. This is used to display the task in the
-     * tasks dashboard component. The label is used to indicate if the task
-     * is premium or a special feature. If not, the label reflects the status.
+     * @inheritDoc
      */
-    public function getLabel(): string
+    public function isReactivateOnUpgrade(): bool
     {
-        if ($this->isPremium()) {
-            return esc_html__('Premium', 'metricool');
-        }
+        return $this->reactivateOnUpgrade ?? false;
+    }
 
-        if ($this->isSpecialFeature()) {
-            return esc_html__('Special feature', 'metricool');
-        }
+    /**
+     * Sets the status of the task.
+     */
+    private function setStatus(string $status): self
+    {
+        $this->status = $status;
 
-        return ucfirst($this->getStatus());
+        return $this;
+    }
+
+    /**
+     * Returns the priority of the task based on the status. If the status is
+     * not found in STATUS_PRIORITY, the default priority is returned.
+     */
+    protected function getPriorityFromStatus(): int
+    {
+        $status = $this->getStatus();
+        if (!isset(self::STATUS_PRIORITY[$status])) {
+            return self::DEFAULT_PRIORITY;
+        }
+        return self::STATUS_PRIORITY[$status];
     }
 
     /**

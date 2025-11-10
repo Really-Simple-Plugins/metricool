@@ -8,8 +8,9 @@ class DatabaseStorage extends AbstractStorage
 
     public function __construct($name, array $config)
     {
-        $this->name = $name;
         $this->prefix = $config['prefix'] ?? '';
+
+        parent::__construct($name, $config);
     }
 
     public function get(string $key)
@@ -21,22 +22,16 @@ class DatabaseStorage extends AbstractStorage
     {
         $result = [];
         foreach ($keys as $key) {
-            $result[$key] = $this->get($key);
+            $result[$key] = $this->get($this->convertCase($key));
         }
         return $result;
     }
-
-    /**
-     * @throws \Exception
-     */
+    
     public function set(string $key, $value): void
     {
-        update_option($this->prefix . $key, (string) $value);
+        update_option($this->prefix . $this->convertCase($key), (string) $value);
     }
 
-    /**
-     * @throws \Exception
-     */
     public function setMultiple(array $data): bool
     {
         foreach ($data as $key => $value) {
@@ -44,25 +39,5 @@ class DatabaseStorage extends AbstractStorage
         }
 
         return true;
-    }
-
-    public function sanitizeValue($value, string $type)
-    {
-        switch ($type) {
-            case 'boolean':
-            case 'bool':
-                return filter_var($value, FILTER_VALIDATE_BOOLEAN);
-            case 'email':
-                return sanitize_email($value);
-            case 'string':
-                return sanitize_text_field($value);
-            case 'array':
-                return is_array($value) ? array_map('sanitize_text_field', $value) : [];
-            case 'integer':
-            case 'int':
-                return filter_var($value, FILTER_VALIDATE_INT);
-            default:
-                return $value;
-        }
     }
 }

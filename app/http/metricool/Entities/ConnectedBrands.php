@@ -11,9 +11,6 @@ class ConnectedBrands
     protected MetricoolClient $client;
     private string $endpoint = 'v2/settings/brands/';
 
-    /**
-     * @throws \Exception
-     */
     public function __construct(MetricoolClient $client)
     {
         $this->client = $client;
@@ -39,15 +36,26 @@ class ConnectedBrands
 
         // Dispatch event to notify about the connected social networks?
         if (isset($result['data']['networksData'])) {
-            // filter out networks that are not social media
-            $connectionNames = array_keys($result['data']['networksData']);
-            $connectedSocialNetworks = array_filter($connectionNames, function ($connectionName) {
-                return !str_contains('webData', $connectionName) && !str_contains('Ads', $connectionName);
-            });
-
-            Event::dispatch(Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, $connectedSocialNetworks);
+            $this->dispatchNetworksDataLoaded($result['data']['networksData']);
         }
 
         return $result['data'];
+    }
+
+    /**
+     * Dispatch the CONNECTED_SOCIAL_NETWORKS_DATA_LOADED event to notify about
+     * the connected social networks
+     */
+    protected function dispatchNetworksDataLoaded(array $networksData): void
+    {
+        // get just the connection names
+        $connectionNames = array_keys($networksData);
+        
+        // filter out networks that are not social media (webData, googleAds, etc)
+        $connectedSocialNetworks = array_filter($connectionNames, function ($connectionName) {
+            return !str_contains('webData', $connectionName) && !str_contains('Ads', $connectionName);
+        });
+
+        Event::dispatch(Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, $connectedSocialNetworks);
     }
 }

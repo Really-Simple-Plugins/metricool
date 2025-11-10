@@ -14,7 +14,7 @@ class ExampleSpecialFeatureTask extends AbstractTask
      */
     public function getText(): string
     {
-        return esc_html__('This is a Special Feature task', 'metricool');
+        return __('This is a Special Feature task', 'metricool');
     }
 
     /**
@@ -23,7 +23,7 @@ class ExampleSpecialFeatureTask extends AbstractTask
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Example button', 'metricool'),
+            'text' => __('Example button', 'metricool'),
             'link' => 'https://example.test',
             'target' => '_blank',
         ];

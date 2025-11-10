@@ -33,12 +33,10 @@ class TaskManagementController implements FeatureInterface
     /**
      * This method returns an array of task objects that should be added to the
      * database.
-     *
-     * @return TaskInterface[]
      * @internal New tasks should be added here. Upgrade the task version if the
      * task should be updated. If a task should be removed, remove the task from
      * this list.
-     *
+     * @return TaskInterface[]
      */
     private function getTaskObjects(): array
     {
@@ -48,14 +46,6 @@ class TaskManagementController implements FeatureInterface
             new Tasks\LinkedInTask(),
             new Tasks\HistoricalDataTask(),
             new Tasks\FirstConnectionTask(),
-            // Example tasks
-            new Tasks\ExampleDismissableTask(),
-            new Tasks\ExamplePremiumTask(),
-            new Tasks\ExampleRequiredTask(),
-            new Tasks\ExampleSpecialFeatureTask(),
-            new Tasks\ExampleUrgentTask(),
-            new Tasks\ExampleCompletedTask(),
-            new Tasks\ExampleDismissedTask(),
         ];
 
         return array_filter($pluginTasks, function ($task) {
@@ -82,6 +72,7 @@ class TaskManagementController implements FeatureInterface
      * This method makes sure that if new tasks are added in the update that
      * these tasks are added in the database. Existing tasks will be updated
      * if the version is higher than the current existing task with the same id.
+     * @throws \Exception
      */
     public function upgradeTasks(): void
     {

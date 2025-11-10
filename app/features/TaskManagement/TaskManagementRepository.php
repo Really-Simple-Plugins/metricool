@@ -43,7 +43,7 @@ class TaskManagementRepository
     }
 
     /**
-     * Add a single task to the repository
+     * Adds or updates a single task to the repository
      */
     public function addTask(TaskInterface $task, bool $save = true): void
     {
@@ -73,11 +73,9 @@ class TaskManagementRepository
         }
 
         // Keep current status if new task does not want to reactivate on
-        // upgrade
-        if ($taskExists && ($task->reactivateOnUpgrade() === false)) {
-            $task->setStatus(
-                $existingTask->getStatus(),
-            );
+        // upgrade and the existing task has a status
+        if ($task->isReactivateOnUpgrade() === false) {
+            $task->setStatusFromTask($existingTask);
         }
 
         // Upgrades existing tasks and add new tasks
@@ -108,23 +106,6 @@ class TaskManagementRepository
         if ($save) {
             $this->saveTasksToDatabase();
         }
-    }
-
-    /**
-     * Update the status of a task if the task exists. If the task is required
-     * and the status is set to 'dismissed', the status will not be updated.
-     * @throws \Exception
-     */
-    public function updateTaskStatus(string $taskId, string $status): void
-    {
-        $task = $this->getTask($taskId);
-
-        if ($task === null) {
-            throw new \Exception('Unknown task');
-        }
-
-        $task->setStatus($status);
-        $this->addTask($task);
     }
 
     /**

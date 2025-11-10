@@ -2,6 +2,7 @@
 
 namespace Metricool\Features\TaskManagement;
 
+use Metricool\Features\TaskManagement\Tasks\Exceptions\DismissRequiredTaskException;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -65,16 +66,20 @@ class TaskManagementEndpoints
     {
         $storage = $this->retrieveHttpStorage($request);
 
-        $request->get_param('taskId');
-
         $sanitizedTaskId = $storage->getTitle('taskId');
+        $task = $this->service->getTask($sanitizedTaskId);
 
-        try {
-            $this->service->dismissTask($sanitizedTaskId);
-        } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse($e->getMessage());
+        if (!$task) {
+            return $this->sendHttpErrorResponse(__('Task not found', 'metricool'), null, 404);
         }
 
-        return $this->sendHttpResponse();
+        // Attempt to dismiss the task
+        try {
+            $this->service->dismissTask($task->getId());
+        } catch (DismissRequiredTaskException $e) {
+            return $this->sendHttpErrorResponse(__('This task cannot be dismissed because it is required', 'metricool'));
+        }
+
+        return $this->sendHttpResponse(['taskId' => $sanitizedTaskId], true, __('Task dismissed successfully', 'metricool'));
     }
 }

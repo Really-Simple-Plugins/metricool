@@ -51,14 +51,17 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
         try {
             $response = $this->buildResponse($request);
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(esc_html__('Failed to load brands data', 'metricool'), $e->getMessage());
+            return $this->sendHttpErrorResponse(__('Failed to load brands data', 'metricool'), $e->getMessage());
         }
 
         return $this->sendHttpResponse($response);
-
-
     }
 
+    /**
+     * Build the specific ConnectedNetworksResponse response for the endpoint.
+     * This response returns just the brand names that are connected to the user.
+     * Filtering it server side prevents client-side complexity.
+     */
     public function buildResponse(\WP_REST_Request $request): array
     {
         $connectedBrand = App::provide('client')->connectedBrands()->get();

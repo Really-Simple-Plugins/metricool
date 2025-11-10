@@ -24,7 +24,7 @@ class HistoricalDataTask extends AbstractTask
      */
     public function getText(): string
     {
-        return esc_html__('Gain access to analytics with unlimited historical data.', 'metricool');
+        return __('Gain access to analytics with unlimited historical data.', 'metricool');
     }
 
     /**
@@ -33,7 +33,7 @@ class HistoricalDataTask extends AbstractTask
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Upgrade', 'metricool'),
+            'text' => __('Upgrade', 'metricool'),
             'link' => MetricoolUrl::adminUrl(App::env('metricool.upgrade_premium_url')),
             'target' => '_blank',
         ];

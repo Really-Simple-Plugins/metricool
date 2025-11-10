@@ -8,14 +8,14 @@ class ExampleDismissedTask extends AbstractTask
     const IDENTIFIER = 'example_dismissed';
 
     protected bool $required = false;
-    public string $status = 'dismissed';
+    protected string $status = self::STATUS_DISMISSED;
 
     /**
      * @inheritDoc
      */
     public function getText(): string
     {
-        return esc_html__('This is a dismissed task', 'metricool');
+        return __('This is a dismissed task', 'metricool');
     }
 
     /**
@@ -24,7 +24,7 @@ class ExampleDismissedTask extends AbstractTask
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Example button', 'metricool'),
+            'text' => __('Example button', 'metricool'),
             'link' => 'https://example.test',
             'target' => '_blank',
         ];
