@@ -1,5 +1,7 @@
 <?php
 
+use Metricool\App;
+
 return [
     'fields' => [
         'sendToAlternativeEmail' => [
@@ -31,7 +33,7 @@ return [
         ],
         'metricool' => [
             'type' => 'api',
-            
+            'client' => App::provide('client')->userSettings(),
             'method' => 'patch',
             'casing' => 'camel_case',
         ],
