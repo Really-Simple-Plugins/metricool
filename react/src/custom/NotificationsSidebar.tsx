@@ -26,7 +26,7 @@ const NotificationsSidebar = () => {
     const pathname = useLocation({
         select: (location) => location.pathname.split("/").at(-1),
     });
-    const { data: noticeData, isLoading, error } = useQuery({
+    const { data: noticeData, isLoading, error, isFetched } = useQuery({
         enabled: !!httpClient,
         queryKey: ["notices"],
         queryFn: () => httpClient?.setRoute("get_notices").get(),
@@ -60,7 +60,7 @@ const NotificationsSidebar = () => {
                 <FlexContainer direction={"row"} className={"justify-center items-center"}>
                     {__("There was an error fetching your Notifications", "metricool")}
                 </FlexContainer>
-            ) : noticeData?.visibleNotifications && noticeData?.visibleNotifications?.length > 0 ? (
+            ) : noticeData?.visibleNotifications && noticeData?.visibleNotifications?.length > 0 && (
                 noticeData.visibleNotifications.map((notice) => (
                     <Alert key={notice.id} title={notice.title} variant={notice.type}>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
@@ -75,7 +75,8 @@ const NotificationsSidebar = () => {
                         </FlexContainer>
                     </Alert>
                 ))
-            ) : (
+            )}
+            {isFetched && noticeData?.visibleNotifications?.length === 0 && (
                 <div className={"text-gray-400 italic"}>
                     {__("You currently have no notifications.", "metricool")}
                 </div>
