@@ -2,6 +2,7 @@
 
 namespace Metricool\Http\Metricool\Entities;
 
+use Metricool\Helpers\Event;
 use Metricool\Http\Metricool\MetricoolClient;
 
 class Subscription
@@ -13,10 +14,14 @@ class Subscription
     {
         $this->client = $client;
     }
-
+    
     public function get(): array
     {
         $response = $this->client->get($this->endpoint);
-        return ($response['data'] ?? []);
+        $data = ($response['data'] ?? []);
+
+        Event::dispatch(Event::SUBSCRIPTION_DATA_LOADED, $data);
+
+        return $data;
     }
 }

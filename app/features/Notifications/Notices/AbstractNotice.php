@@ -10,6 +10,11 @@ abstract class AbstractNotice implements NoticeInterface
     const TYPE_WARNING = 'warning';
 
     /**
+     * This constant is used to show the notice on all routes.
+     */
+    const ALL_ROUTES = '/';
+
+    /**
      * Override this constant to define the identifier of the Notice. This
      * identifier is used to identify the Notice in the database and in the UI.
      */

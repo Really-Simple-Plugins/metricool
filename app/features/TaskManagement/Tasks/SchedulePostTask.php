@@ -11,7 +11,7 @@ class SchedulePostTask extends AbstractTask
      */
     public function getText(): string
     {
-        return esc_html__('Schedule a post to promote your site!', 'metricool');
+        return __('Schedule a post to promote your site!', 'metricool');
     }
 
     /**
@@ -20,7 +20,7 @@ class SchedulePostTask extends AbstractTask
     public function getAction(): array
     {
         return [
-            'text' => esc_html__('Schedule a post', 'metricool'),
+            'text' => __('Schedule a post', 'metricool'),
             'link' => admin_url('edit.php?metricool_action=' . self::IDENTIFIER),
         ];
     }

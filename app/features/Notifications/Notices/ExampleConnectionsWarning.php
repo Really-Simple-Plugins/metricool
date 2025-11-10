@@ -5,9 +5,9 @@ namespace Metricool\Features\Notifications\Notices;
 use Metricool\App;
 use Metricool\Helpers\MetricoolUrl;
 
-class FirstConnectionNotice extends AbstractNotice
+class ExampleConnectionsWarning extends AbstractNotice
 {
-    const IDENTIFIER = 'first_connection';
+    const IDENTIFIER = 'example_connections_warning';
     protected bool $active = true;
 
     /**
@@ -15,7 +15,7 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getTitle(): string
     {
-        return __('No connections detected', 'metricool');
+        return __('This notice is a warning.', 'metricool');
     }
 
     /**
@@ -23,7 +23,7 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getText(): string
     {
-        return __('Connect your first social account to Metricool to start scheduling and tracking your content.', 'metricool');
+        return __('This notice is a warning.', 'metricool');
     }
 
     /**
@@ -31,7 +31,7 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getType(): string
     {
-        return self::TYPE_INFO;
+        return self::TYPE_WARNING;
     }
 
     /**
@@ -39,7 +39,7 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getRoute(): string
     {
-        return 'connections';
+        return 'general';
     }
 
     /**

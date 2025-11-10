@@ -179,6 +179,7 @@ class Plugin
     {
         $this->endpointManager->registerEndpoints([
             new Http\Endpoints\ConnectedBrandsEndpoint(),
+            new Http\Endpoints\ConnectedNetworksEndpoint(),
             new Http\Endpoints\SubscriptionEndpoint(),
             new Http\Endpoints\DistributionEndpoint(),
             new Http\Endpoints\AnalyticsEndpoint(
