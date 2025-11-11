@@ -35,6 +35,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-web",
                     unconnectedClasses: "bg-web border-web",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.web && data.data.web.url && { userName: data.data.web.url }),
                 },
                 {
@@ -43,6 +44,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-blog",
                     unconnectedClasses: "bg-blog border-blog",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.web && data.data.web.feedRss && { userName: data.data.web.feedRss }),
                 },
                 {
@@ -51,6 +53,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-facebook",
                     unconnectedClasses: "bg-facebook border-facebook",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/facebookPage?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.facebook && { userName: data.data.facebook.username }),
                 },
                 {
@@ -59,6 +62,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-instagram",
                     unconnectedClasses: "bg-instagram border-instagram",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/instagram?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.instagram && { userName: data.data.instagram.username }),
                 },
                 {
@@ -67,6 +71,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-threads",
                     unconnectedClasses: "bg-threads border-threads",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/threads?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.threads && { userName: data.data.threads.username }),
                 },
                 {
@@ -75,6 +80,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-x",
                     unconnectedClasses: "bg-x border-x",
                     upsell: true,
+                    link: `https://app.metricool.com/evolution/twitter?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.twitter && { userName: data.data.twitter.username }),
                 },
                 {
@@ -83,6 +89,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-bluesky",
                     unconnectedClasses: "bg-bluesky border-bluesky",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/bluesky?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.bluesky && { userName: data.data.bluesky.username }),
                 },
                 {
@@ -91,6 +98,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-linkedin",
                     unconnectedClasses: "bg-linkedin border-linkedin",
                     upsell: true,
+                    link: `https://app.metricool.com/evolution/linkedin?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.linkedin && { userName: data.data.linkedin.username }),
                 },
                 {
@@ -99,6 +107,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-pinterest",
                     unconnectedClasses: "bg-pinterest border-pinterest",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/pinterest?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.pinterest && { userName: data.data.pinterest.username }),
                 },
                 {
@@ -107,6 +116,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-tiktok",
                     unconnectedClasses: "bg-tiktok border-tiktok",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/tiktok?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.tiktok && { userName: data.data.tiktok.username }),
                 },
                 {
@@ -115,6 +125,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-gbp",
                     unconnectedClasses: "bg-gbp border-gbp",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/gmb?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.gbp && { userName: data.data.gbp.username }),
                 },
                 {
@@ -123,6 +134,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-youtube",
                     unconnectedClasses: "bg-youtube border-youtube",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/youtube?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.youtube && { userName: data.data.youtube.username }),
                 },
                 {
@@ -131,6 +143,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-twitch",
                     unconnectedClasses: "bg-twitch border-twitch",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/twitch?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.twitch && { userName: data.data.twitch.username }),
                 },
                 {
@@ -139,6 +152,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-facebook",
                     unconnectedClasses: "bg-facebook border-facebook",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/facebookAds?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.facebookAds && { userName: data.data.facebookAds.username }),
                 },
                 {
@@ -147,6 +161,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-ga",
                     unconnectedClasses: "bg-ga border-ga",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/googleAds?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.googleAds && { userName: data.data.googleAds.providerUserId }),
                 },
                 {
@@ -155,6 +170,7 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-tiktok",
                     unconnectedClasses: "bg-tiktok border-tiktok",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/tiktokAds?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.tiktokAds && { userName: data.data.tiktokAds.username }),
                 },
             ]);

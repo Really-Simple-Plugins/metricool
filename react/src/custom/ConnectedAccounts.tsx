@@ -11,6 +11,7 @@ type ConnectedAccount = {
     unconnectedClasses: string,
     upsell: boolean,
     userName?: string,
+    link: string,
 };
 
 const ConnectedAccounts = () => {
@@ -28,6 +29,7 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-[#5c90a8]",
                     unconnectedClasses: "bg-[#5c90a8] border-[#5c90a8]",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.web && data.data.web.url && { userName: data.data.web.url }),
                 },
                 {
@@ -36,6 +38,7 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-black",
                     unconnectedClasses: "bg-black border-black",
                     upsell: true,
+                    link: `https://app.metricool.com/evolution/twitter?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.twitter && { userName: data.data.twitter.username }),
                 },
                 {
@@ -44,6 +47,7 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-youtube",
                     unconnectedClasses: "bg-youtube border-youtube",
                     upsell: false,
+                    link: `https://app.metricool.com/evolution/youtube?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.youtube && { userName: data.data.youtube.username }),
                 },
                 {
@@ -52,6 +56,7 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-linkedin",
                     unconnectedClasses: "bg-linkedin border-linkedin",
                     upsell: true,
+                    link: `https://app.metricool.com/evolution/linkedin?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.linkedin && { userName: data.data.linkedin.username }),
                 },
             ]);
@@ -73,7 +78,7 @@ const ConnectedAccounts = () => {
                 ) : connectedAccountsData && (
                     <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
                         {connectedAccountsData.map((account) => (
-                            <AccountTile {...account} link={metricoolSSOLink} />
+                            <AccountTile {...account} />
                         ))}
                     </div>
                 )}
