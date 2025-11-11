@@ -44,7 +44,7 @@ const TrafficTab = () => {
                 </FlexContainer>
             ) : trafficData && (
                 <FlexContainer direction={"column"}>
-                    <DataTable data={trafficData.tableData} columns={columns} tableSettings={{ pageSize: 7 }}/>
+                    <DataTable data={trafficData.tableData} columns={columns} tableSettings={{ pageSize: 8 }}/>
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>
