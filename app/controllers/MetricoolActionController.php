@@ -34,20 +34,22 @@ class MetricoolActionController implements ControllerInterface
      */
     public function handleActions(): void
     {
+        $request = App::provide('request')->fromGlobal();
+
         // don't do anything when no action or nonce
-        if (!isset($_REQUEST['metricool_action']) && !isset($_REQUEST['_metricool_action_nonce'])) {
+        if ($request->isEmpty('metricool_action') && $request->isEmpty('_metricool_action_nonce')) {
             return;
         }
 
         // validate nonce
-        if (isset($_REQUEST['_metricool_action_nonce'])) {
-            if (!wp_verify_nonce($_REQUEST['_metricool_action_nonce'], 'metricool_action')) {
+        if ($request->has('_metricool_action_nonce')) {
+            if (!wp_verify_nonce($request->get('_metricool_action_nonce'), 'metricool_action')) {
                 wp_die(__('Invalid nonce.'));
             }
         }
 
         // execute the action
-        switch ($_REQUEST['metricool_action']) {
+        switch ($request->get('metricool_action')) {
             case 'share_post':
                 $this->handleSharePostAction();
                 break;
@@ -112,17 +114,25 @@ class MetricoolActionController implements ControllerInterface
      */
     protected function handleSharePostAction(): void
     {
-        if (!isset($_REQUEST['metricool_post_id'])) {
+        $request = App::provide('request')->fromGlobal();
+
+        if ($request->isEmpty('metricool_post_id')) {
             return;
         }
+        
+        $postId = $request->get('metricool_post_id');
 
-        $postId = $_REQUEST['metricool_post_id'];
+        // Check if post exists
+        if (!get_post_status($postId)) {
+            return;
+        }
 
         // todo: check post content with product owner
         $content = get_the_title($postId) . ' - ' . get_permalink($postId);
         // todo: test media (impossible to do locally)
         $media = get_the_post_thumbnail($postId, 'large');
 
+        // Generate the deeplink
         $url = MetricoolUrl::shareUrl($content, $media);
 
         Event::dispatch(Event::POST_SCHEDULED);
