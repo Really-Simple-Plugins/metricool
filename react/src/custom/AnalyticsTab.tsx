@@ -1,19 +1,27 @@
-import { FlexContainer } from "../components";
-import { Button, type ChartConfig, LineChart, Select, SelectOption } from "../components";
+import { Button, type ChartConfig, FlexContainer, LineChart, Select, SelectOption } from "../components";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import MetricTile from "./MetricTile.tsx";
 import { clsx } from "clsx";
 import Icon from "../components/src/components/Icon.tsx";
+import { queryClient } from "../main.tsx";
 
-const formatTimelineDataIntoChartData = (timelineData: string[][], dataKey: string, locale: string) => {
-    return timelineData.map(([timeStamp, amount]) => ({
-        date: new Date(Number(timeStamp)).toLocaleDateString(locale, { month: "short", day: "numeric" }),
-        [dataKey]: Number(amount),
-    }));
-};
+type MetricData = {
+    label: string,
+    totalAmount: number,
+    trend: "stable" | "up" | "down",
+}
+
+type TimelineData = {
+    date: string,
+    pageViews: number,
+    comments: number,
+    posts: number,
+    visits: number,
+    visitors: number,
+}[]
 
 const dateFilterOptions = [
     {
@@ -23,53 +31,50 @@ const dateFilterOptions = [
     },
     {
         label: __("Last week", "metricool"),
-        option: "lastWeek",
+        option: "lastweek",
         isUpsell: false,
     },
     {
         label: __("Current month", "metricool"),
-        option: "currentMonth",
+        option: "currentmonth",
         isUpsell: false,
     },
     {
         label: __("Last 30 days", "metricool"),
-        option: "last30Days",
+        option: "last30days",
         isUpsell: false,
     },
     {
         label: __("Previous month", "metricool"),
-        option: "previousMonth",
+        option: "previousmonth",
         isUpsell: false,
     },
     {
         label: __("Last 3 months", "metricool"),
-        option: "last3Months",
+        option: "last3months",
         isUpsell: false,
     },
     {
         label: __("Last 6 months", "metricool"),
-        option: "last6Months",
+        option: "last6months",
         isUpsell: true,
     },
     {
         label: __("Last 12 months", "metricool"),
-        option: "last12Months",
+        option: "last12months",
         isUpsell: true,
     },
 ];
 
 const AnalyticsTab = () => {
-    const { httpClient, metricool } = useGlobalContext();
+    const { httpClient, metricool, dispatch, dashboardSettings } = useGlobalContext();
+    const metricoolSSOLink = `https://app.metricool.com/user-settings/plan?blogId=${metricool.blogId}&userId=${metricool.userId}`;
     const numberFormatter = Intl.NumberFormat(metricool.locale, {
         notation: "compact",
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
     });
-    const dateFormatter = Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", day: "2-digit" });
-    const dayInMilliSeconds = 1000 * 60 * 60 * 24;
-    const startDate = dateFormatter.format(new Date(new Date().getTime() - dayInMilliSeconds * 30)).replaceAll("-", "");
-    const endDate = dateFormatter.format(new Date()).replaceAll("-", "");
-    const [periodFilter, setPeriodFilter] = useState(dateFilterOptions[3].option);
+    const [periodFilter, setPeriodFilter] = useState(dashboardSettings.analytics?.activePeriodFilter ?? dateFilterOptions[3].option);
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
@@ -97,61 +102,14 @@ const AnalyticsTab = () => {
             hidden: false,
         },
     });
-    const lineChartXAxisDataKey = "date";
+    const lineChartXAxisDataKey = "label";
 
     const { data: analyticsData, isLoading, error } = useQuery({
         queryKey: ["analytics"],
-        queryFn: () => httpClient?.setRoute("analytics").setFilters({ start: startDate, end: endDate }).get(),
+        queryFn: () => httpClient?.setRoute("analytics").setFilters({ period: periodFilter }).get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data) => {
-            console.log(data);
-            const formattedPageViews = formatTimelineDataIntoChartData(data.data.pageViews.data, "pageViews", metricool.locale);
-            const formattedVisits = formatTimelineDataIntoChartData(data.data.visits.data, "visits", metricool.locale);
-            const formattedVisitors = formatTimelineDataIntoChartData(data.data.visitors.data, "visitors", metricool.locale);
-            const formattedPosts = formatTimelineDataIntoChartData(data.data.posts.data, "posts", metricool.locale);
-            const formattedComments = formatTimelineDataIntoChartData(data.data.comments.data, "comments", metricool.locale);
-            return {
-                totals: {
-                    pageViews: {
-                        totalAmount: data.data.pageViews.data.reduce((accumulated: number, [, amount]: string[]) => (Number(accumulated) + Number(amount)), 0),
-                        trend: data.data.pageViews.trend,
-                    },
-                    visits: {
-                        totalAmount: data.data.visits.data.reduce((accumulated: number, [, amount]: string[]) => (Number(accumulated) + Number(amount)), 0),
-                        trend: data.data.visits.trend,
-                    },
-                    visitors: {
-                        totalAmount: data.data.visitors.data.reduce((accumulated: number, [, amount]: string[]) => (Number(accumulated) + Number(amount)), 0),
-                        trend: data.data.visitors.trend,
-                    },
-                    posts: {
-                        totalAmount: data.data.posts.data.reduce((accumulated: number, [, amount]: string[]) => (Number(accumulated) + Number(amount)), 0),
-                        trend: data.data.posts.trend,
-                    },
-                    comments: {
-                        totalAmount: data.data.comments.data.reduce((accumulated: number, [, amount]: string[]) => (Number(accumulated) + Number(amount)), 0),
-                        trend: data.data.comments.trend,
-                    },
-                },
-                timelineData: formattedPageViews.map((pageViewChartData, index) => ({
-                    ...pageViewChartData,
-                    visits: formattedVisits[index].visits,
-                    visitors: formattedVisitors[index].visitors,
-                    posts: formattedPosts[index] ? formattedPosts[index].posts : 0,
-                    comments: formattedComments[index] ? formattedComments[index].comments : 0,
-                }))
-            };
-        }
+        select: (data): { totals: Record<string, MetricData>, timelineData: TimelineData } => data.data,
     });
-
-    useEffect(() => {
-        console.log("analytics");
-        console.log(analyticsData, isLoading, error);
-
-        console.log("formatted", startDate, endDate);
-
-        console.log(Object.entries(chartConfig));
-    }, [error, isLoading, analyticsData]);
 
     const toggleMetric = (dataKey: string) => {
         setChartConfig((prevState) => ({
@@ -160,59 +118,100 @@ const AnalyticsTab = () => {
         }));
     };
 
+    const { mutate: updateChartData, isPending } = useMutation({
+        mutationFn: async ({ period }: {
+            period: string,
+        }) => {
+            const response = await httpClient?.setRoute("analytics").setFilters({ period: period }).get();
+
+            const newChartData = response?.data;
+
+            if (!newChartData) {
+                console.error("Error fetching chart data: ", response?.message);
+                return;
+            }
+
+            return newChartData;
+        },
+        onSuccess: (data) => {
+            const currentChartData: {
+                data: { totals: Record<string, MetricData>, timelineData: TimelineData },
+            } = queryClient.getQueryData(["analytics"]) ?? { data: { totals: {}, timelineData: [] } };
+            queryClient.setQueryData(["analytics"], { ...currentChartData, data: data });
+        }
+    });
+
     return (
-        <FlexContainer direction={"column"} className={"min-h-[290px] justify-between grow"}>
-            {isLoading && (
-                <div>LOADING</div>
-            )}
-            {analyticsData && (
-                <FlexContainer direction={"column"} className={"rounded-md bg-gray-50"}>
-                    <FlexContainer direction={"row"} className={"justify-between p-2 flex-wrap"}>
-                        <div className={"text-md font-semibold"}>{__("Website", "metricool")}</div>
-                        <FlexContainer direction={"row"} className={"flex-wrap justify-end w-full"}>
-                            {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
-                                <MetricTile
-                                    onClick={() => toggleMetric(metricKey)}
-                                    metric={numberFormatter.format(metricData.totalAmount)}
-                                    trend={metricData.trend}
-                                    variant={chartConfig[metricKey].color}
-                                    inactive={chartConfig[metricKey].hidden}
-                                    disabled={metricData.totalAmount === 0}
-                                >
-                                    {chartConfig[metricKey].label}
-                                </MetricTile>
-                            ))}
-                        </FlexContainer>
-                    </FlexContainer>
-                    <hr/>
-                    <LineChart chartConfig={chartConfig} chartSettings={{ xAxisKey: lineChartXAxisDataKey }} chartData={analyticsData.timelineData} linesSettings={{ type: "linear" }}/>
+        <FlexContainer direction={"column"} className={"justify-between grow"}>
+            {isLoading ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                    <Icon icon={"loading"} iconClass={"size-5"}/>
                 </FlexContainer>
-            )}
-            {error && (
+            ) : error ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data.", "metricool")}
+                    {__("There was an error fetching the data", "metricool")}
+                </FlexContainer>
+            ) : analyticsData && (
+                <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
+                    <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>
+                        {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
+                            <MetricTile
+                                onClick={() => toggleMetric(metricKey)}
+                                metric={numberFormatter.format(metricData.totalAmount)}
+                                trend={metricData.trend}
+                                variant={chartConfig[metricKey].color}
+                                inactive={chartConfig[metricKey].hidden}
+                                disabled={metricData.totalAmount === 0}
+                            >
+                                {chartConfig[metricKey].label}
+                            </MetricTile>
+                        ))}
+                    </FlexContainer>
+                    <hr className={"-mx-2"}/>
+                    {isPending && (
+                        <div className={"absolute w-full h-full bg-white opacity-45"}>
+                            <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                                <Icon icon={"loading"} iconClass={"size-5"}/>
+                            </FlexContainer>
+                        </div>
+                    )}
+                    <LineChart
+                        className={clsx(isPending && "opacity-45")}
+                        chartConfig={chartConfig}
+                        chartSettings={{
+                            xAxisKey: lineChartXAxisDataKey,
+                            general: { height: 290 },
+                        }}
+                        chartData={analyticsData.timelineData}
+                        linesSettings={{ type: "monotone" }}/>
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
-                <FlexContainer direction={"row"} className={"sm:flex-col xl:flex-row flex-wrap"}>
+                <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
                     <Select
-                        defaultValue={"last30Days"}
+                        defaultValue={periodFilter}
                         icon={{ icon: "upsell", iconClass: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
                         inputSize={"sm"}
                         className={"border-neutral-200 font-semibold !text-black max-w-fit flex-row-reverse"}
-                        onValueChange={(value) => setPeriodFilter(value)}
+                        onValueChange={(value) => {
+                            setPeriodFilter(value);
+                            dispatch({dispatchType: "setDashboardSetting", change: {dashboardSettings: { analytics: {activePeriodFilter: value} }}})
+                            updateChartData({ period: value });
+                        }}
                         placeholder={dateFilterOptions.find((filterOption) => filterOption.option === periodFilter)?.label}
                     >
-                        {dateFilterOptions.map((filterOption) => filterOption.isUpsell ? (
-                            <FlexContainer
-                                direction={"row"}
-                                className={clsx("items-center rounded-xs py-1.5 pr-8 pl-2 !gap-2 text-sm outline-hidden select-none font-semibold bg-secondary-light hover:bg-upsell focus:bg-upsell")}
-                            >
-                                <span className="flex size-3.5 items-center justify-center">
-                                    <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
-                                </span>
-                                {filterOption.label}
-                            </FlexContainer>
+                        {dateFilterOptions.map((filterOption) =>
+                            filterOption.isUpsell ? (
+                                <FlexContainer
+                                    onClick={() => {window.open(metricoolSSOLink); window.focus();}}
+                                    direction={"row"}
+                                    className={clsx("items-center rounded-xs py-1.5 px-2 !gap-2 text-sm outline-hidden select-none font-semibold cursor-pointer bg-secondary-light hover:bg-upsell focus:bg-upsell")}
+                                >
+                                    <span className="flex size-3.5 items-center justify-center">
+                                        <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
+                                    </span>
+                                    {filterOption.label}
+                                </FlexContainer>
                             ) : (
                                 <SelectOption
                                     value={filterOption.option}
@@ -223,14 +222,23 @@ const AnalyticsTab = () => {
                             )
                         )}
                     </Select>
-                    <Button variant={"upsell"} size={"sm"} icon={"file"} iconPosition={"left"}>
-                        {__("Generate Report", "metricool")}
-                    </Button>
-                    <Button variant={"upsell"} size={"sm"} icon={"download"} iconPosition={"left"}>
-                        {__("Download CSV", "metricool")}
+                    <Button
+                        variant={"upsell"}
+                        size={"sm"}
+                        icon={"file"}
+                        iconPosition={"left"}
+                        link={`https://app.metricool.com/evolution/reports?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                    >
+                        {__("Report", "metricool")}
                     </Button>
                 </FlexContainer>
-                <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"}>
+                <Button
+                    variant={"primary-gradient-ghost"}
+                    icon={"external-link"}
+                    iconPosition={"right"}
+                    iconClass={"svg-gradient"}
+                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                >
                     {__("View Analytics", "metricool")}
                 </Button>
             </FlexContainer>

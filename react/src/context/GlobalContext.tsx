@@ -1,17 +1,13 @@
-import React, {
-    createContext,
-    useContext,
-    useReducer,
-    useEffect,
-    type Dispatch,
-} from 'react';
+import React, { createContext, type Dispatch, useContext, useEffect, useReducer, } from "react";
 import HttpClient from "../api/HttpClient.tsx";
+import { setLocaleData } from "@wordpress/i18n";
 
 interface GlobalContext {
     globalState: GlobalState,
     metricool: typeof defaultMetricoolData,
     httpClient: GlobalState["httpClient"],
     dispatch: Dispatch<ReducerAction>,
+    dashboardSettings: GlobalState["dashboardSettings"],
 }
 
 const defaultMetricoolData = {
@@ -27,11 +23,14 @@ const defaultMetricoolData = {
     is_onboarding_completed: false,
     support: null,
     locale: "",
-}
+    blogId: "",
+    userId: "",
+};
 
 interface GlobalState {
     metricool: typeof defaultMetricoolData;
     httpClient: HttpClient | null;
+    dashboardSettings: Record<string, Record<string, string>>;
 }
 
 /**
@@ -55,6 +54,7 @@ export const useGlobalContext = () => {
 const initialGlobalState: GlobalState = {
     metricool: defaultMetricoolData,
     httpClient: null,
+    dashboardSettings: {},
 };
 
 /**
@@ -71,8 +71,9 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
     useEffect(() => {
         // @ts-expect-error the metricool variable is globally set in the DashboardController
         // but the tsc complains it can't find it
-        dispatch({ dispatchType: 'setMetricoolVariables', change: { metricool: { ...window.metricool.values } } });
-        dispatch({ dispatchType: 'initialiseHttpClient'});
+        dispatch({ dispatchType: "setMetricoolVariables", change: { metricool: { ...window.metricool.values } } });
+        dispatch({ dispatchType: "initialiseHttpClient" });
+        dispatch({ dispatchType: "setTranslations" });
         // @ts-expect-error same as above
         // setting to undefined so it is no longer accessible in the devtools
         window.metricool = undefined;
@@ -80,7 +81,13 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 
     return (
         <GlobalContext.Provider
-            value={{ globalState, metricool: globalState.metricool, httpClient: globalState.httpClient, dispatch }}
+            value={{
+                globalState,
+                metricool: globalState.metricool,
+                httpClient: globalState.httpClient,
+                dispatch,
+                dashboardSettings: globalState.dashboardSettings,
+            }}
         >
             {children}
         </GlobalContext.Provider>
@@ -96,29 +103,50 @@ interface ReducerAction {
 
 const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalState => {
     switch (action.dispatchType) {
-        case 'setMetricoolVariables': {
+        case "setMetricoolVariables": {
             if (!action.change) {
                 throw new Error("No new values provided");
             }
-            if (!action.change.metricool){
-                return {...state}
+            if (!action.change.metricool) {
+                return { ...state };
             }
             return { ...state, metricool: { ...action.change.metricool, is_onboarding_completed: true } };
         }
-        case 'initialiseHttpClient': {
-            if (state.metricool.rest_url && state.metricool.rest_namespace && state.metricool.rest_version && state.metricool.x_wp_nonce && state.metricool.nonce){
+        case "setTranslations": {
+            if (!state.metricool) {
+                throw new Error("No metricool data");
+            }
+            state.metricool.json_translations.forEach((translationString) => {
+                const translations = JSON.parse(translationString);
+                const localeData = translations.locale_data?.metricool;
+                if (!localeData) {
+                    return;
+                }
+                localeData[""].domain = "metricool";
+                setLocaleData(localeData, "metricool");
+            });
+            return { ...state };
+        }
+        case "initialiseHttpClient": {
+            if (state.metricool.rest_url && state.metricool.rest_namespace && state.metricool.rest_version && state.metricool.x_wp_nonce && state.metricool.nonce) {
                 const MC_API_URL = state.metricool.rest_url + state.metricool.rest_namespace + "/" + state.metricool.rest_version + "/";
                 const httpClient: HttpClient = new HttpClient({
                     NONCE: state.metricool.nonce,
                     X_WP_NONCE: state.metricool.x_wp_nonce,
                     MC_API_URL: MC_API_URL,
-                })
+                });
                 return { ...state, httpClient: httpClient };
             }
-            return {...state}
+            return { ...state };
+        }
+        case "setDashboardSetting": {
+            if (!action.change) {
+                throw new Error("No new values provided");
+            }
+            return { ...state, dashboardSettings: { ...state.dashboardSettings, ...action?.change?.dashboardSettings } };
         }
         default: {
-            throw new Error('Unknown action: ' + action.dispatchType);
+            throw new Error("Unknown action: " + action.dispatchType);
         }
     }
 };

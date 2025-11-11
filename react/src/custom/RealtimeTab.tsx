@@ -1,31 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { Button, LineChart } from "../components";
-import { FlexContainer } from "../components";
+import { Button, FlexContainer, Icon, LineChart } from "../components";
 import MetricTile from "./MetricTile.tsx";
-
-const formatTimelineDataIntoChartData = (timelineData: object, dataKey: string, locale: string) => {
-    return Object.entries(timelineData).sort().map(([pageViewTimeStamp, pageViewAmount]) => ({
-        [dataKey]: new Date(Number(pageViewTimeStamp)).toLocaleTimeString(locale, { timeStyle: "short" }).toLowerCase().replace(" ", ""),
-        pageViews: pageViewAmount
-    }));
-};
 
 const RealtimeTab = () => {
     const { httpClient, metricool } = useGlobalContext();
-    const lineChartXAxisDataKey = "timestamp";
+    const lineChartXAxisDataKey = "label";
 
     const { data: realTimeData, isLoading, error } = useQuery({
         queryKey: ["analytics", "realtime"],
-        queryFn: () => httpClient?.setRoute("realtime/sessions").get(),
+        queryFn: () => httpClient?.setRoute("realtime").get(),
         staleTime: 1000 * 60, // 1 minute
         refetchInterval: 1000 * 60, // 1 minute
-        select: (data) => ({
-            realTimeChartData: formatTimelineDataIntoChartData(data.data.timeline, lineChartXAxisDataKey, metricool.locale),
-            totalPageViews: Object.values<number>(data.data.timeline).reduce((accumulatedPageViews, currentPageViews) => accumulatedPageViews + currentPageViews),
-            totalVisitors: data.data.sessions.length,
-        }),
+        select: (data) => data.data,
     });
 
     const chartConfig = {
@@ -36,34 +24,47 @@ const RealtimeTab = () => {
     };
 
     return (
-        <FlexContainer direction={"column"} className={"min-h-[290px] justify-between grow"}>
-            {isLoading && (
-                <div>LOADING</div>
-            )}
-            {realTimeData && (
-                <FlexContainer direction={"column"} className={"rounded-md bg-gray-50"}>
-                    <FlexContainer direction={"row"} className={"justify-between pt-2 pl-2"}>
+        <FlexContainer direction={"column"} className={"justify-between grow"}>
+            {isLoading ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                </FlexContainer>
+            ) : error ? (
+                <FlexContainer direction={"row"} className={"justify-center items-center"}>
+                    {__("There was an error fetching the data", "metricool")}
+                </FlexContainer>
+            ) : realTimeData && (
+                <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 !gap-2 p-2"}>
+                    <FlexContainer direction={"row"} className={"justify-between"}>
                         <div className={"text-md font-semibold"}>{__("Last 30 Minutes", "metricool")}</div>
-                        <FlexContainer direction={"row"}>
-                            <MetricTile metric={realTimeData.totalPageViews} variant={"tertiary"}>
+                        <FlexContainer direction={"row"} className={"!gap-2"}>
+                            <MetricTile metric={realTimeData.totals.pageViews.totalAmount} variant={"tertiary"}>
                                 {__("Page Views", "metricool")}
                             </MetricTile>
-                            <MetricTile metric={realTimeData.totalVisitors} variant={"primary"}>
+                            <MetricTile metric={realTimeData.totals.visitors.totalAmount} variant={"primary"}>
                                 {__("Visitors", "metricool")}
                             </MetricTile>
                         </FlexContainer>
                     </FlexContainer>
-                    <hr/>
-                    <LineChart chartSettings={{xAxisKey: lineChartXAxisDataKey}} chartConfig={chartConfig} chartData={realTimeData.realTimeChartData} />
-                </FlexContainer>
-            )}
-            {error && (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data.", "metricool")}
+                    <hr  className={"-mx-2"}/>
+                    <LineChart
+                        chartSettings={{
+                            xAxisKey: lineChartXAxisDataKey,
+                            general: { height: 290 },
+                        }}
+                        chartConfig={chartConfig}
+                        chartData={realTimeData.timelineData}
+                    />
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>
-                <Button variant={"primary-gradient-ghost"} icon={"external-link"} iconPosition={"right"} iconClass={"svg-gradient"}>
+                <Button
+                    variant={"primary-gradient-ghost"}
+                    icon={"external-link"}
+                    iconPosition={"right"}
+                    iconClass={"svg-gradient"}
+                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                >
                     {__("View Analytics", "metricool")}
                 </Button>
             </FlexContainer>
