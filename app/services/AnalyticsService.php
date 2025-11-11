@@ -67,7 +67,6 @@ class AnalyticsService
         return $totals;
     }
 
-
     /**
      * Gets the results of a metric
      * @return Collection<int, TimelineDTO>
@@ -122,7 +121,30 @@ class AnalyticsService
      */
     public function getTimelineData(): array
     {
-        return (new StatsTimelineBuilder())->setMetrics($this->metrics)
+        $builder = new StatsTimelineBuilder();
+
+        // todo: Not sure if this ok. Because period filter is deep inside the TimelineStatistics class we cannot access it from here.
+        // to fix it would require a complete rework of the filter system
+
+        // Switch date format based on period filter
+        switch ($this->requestFilters['period'] ?? null) {
+            case 'yesterday':
+                $builder->setDateFormat('H:i');
+                break;
+            case 'lastweek':
+                $builder->setDateFormat('D j M');
+                break;
+            case 'lastmonth':
+            case 'previousmonth':
+            case 'last30days':
+                $builder->setDateFormat('j M');
+                break;
+            default:
+                $builder->setDateFormat('d-m');
+        }
+
+
+        return $builder->setMetrics($this->metrics)
             ->build();
     }
 }
