@@ -8,6 +8,7 @@ use Metricool\Helpers\Collection;
 use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 use Metricool\Services\Analytics\TrendService;
+use Metricool\Utility\DateUtility;
 
 class AnalyticsService
 {
@@ -129,7 +130,7 @@ class AnalyticsService
         // Switch date format based on period filter
         switch ($this->requestFilters['period'] ?? null) {
             case 'yesterday':
-                $builder->setDateFormat('H:i');
+                $builder->setDateFormat('LT');
                 break;
             case 'lastweek':
                 $builder->setDateFormat('D j M');
@@ -137,12 +138,11 @@ class AnalyticsService
             case 'lastmonth':
             case 'previousmonth':
             case 'last30days':
-                $builder->setDateFormat('j M');
+                $builder->setDateFormat('M MMM');
                 break;
             default:
-                $builder->setDateFormat('d-m');
+                $builder->setDateFormat(DateUtility::getLocalIsoDateFormat());
         }
-
 
         return $builder->setMetrics($this->metrics)
             ->build();
