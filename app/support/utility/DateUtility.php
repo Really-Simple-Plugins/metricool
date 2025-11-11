@@ -6,6 +6,10 @@ use IntlDateFormatter;
 
 class DateUtility
 {
+    /**
+     * Use this function to retrieve if the month comes before the day in the
+     * user's local date format.
+     */
     public static function localIsoDateMonthFormat(): string
     {
         $formatter = new IntlDateFormatter(
