@@ -44,7 +44,7 @@ const AccountSettings = () => {
         values,
     });
 
-    const { mutate: onSubmit } = useMutation({
+    const { mutate: onSubmit, isPending } = useMutation({
         mutationFn: async ({ sendToAlternativeEmail, alternativeEmail }: z.infer<typeof formSchema>) => {
             const response = await httpClient?.setRoute("user_settings").setPayload({
                 "sendToAlternativeEmail": sendToAlternativeEmail,
@@ -155,7 +155,7 @@ const AccountSettings = () => {
                     )}
                 </Block>
             </FlexContainer>
-            <FormFooter unsavedChanges={isDirty}/>
+            <FormFooter formHasUnsavedChanges={isDirty} formIsSubmitting={isPending} formHasErrors={Object.keys(formValidationErrors).length > 0}/>
         </form>
     );
 };

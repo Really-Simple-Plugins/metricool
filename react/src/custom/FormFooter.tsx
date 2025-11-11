@@ -2,8 +2,15 @@ import { clsx } from "clsx";
 import { Button, FlexContainer } from "../components";
 import { useEffect, useState } from "react";
 import ScrollProgressBar from "./ScrollProgressBar.tsx";
+import { __ } from "@wordpress/i18n";
 
-const FormFooter = ({ unsavedChanges }: { unsavedChanges: boolean }) => {
+type FormFooterProps = {
+    formHasUnsavedChanges: boolean,
+    formIsSubmitting: boolean,
+    formHasErrors: boolean,
+};
+
+const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = false }: FormFooterProps) => {
     const [scrollProgressPercent, setScrollProgressPercent] = useState<number>(5);
     const [isPageScrollable, setIsPageScrollable] = useState<boolean>(document.documentElement.scrollHeight > window.innerHeight);
 
@@ -34,13 +41,21 @@ const FormFooter = ({ unsavedChanges }: { unsavedChanges: boolean }) => {
         return () => window.removeEventListener("scroll", updateScrollProgress);
     }, [isPageScrollable]);
 
+    // Form states for Design page
+    const settingsStates = [
+        { condition: formIsSubmitting, message: __("Saving...", "metricool") },
+        { condition: formHasErrors, message: __("Form contains errors", "metricool") },
+        { condition: formHasUnsavedChanges, message: __("You have unsaved changes", "metricool") },
+    ];
+
     return (
         <div className={clsx("sticky bottom-0 start-0 z-10 shadow-lg bg-gray-50 w-full transition-all ease-in-out duration-200 rounded-none",
             (!isPageScrollable || scrollProgressPercent >= 88) && "rounded-b-md",
         )}>
             {isPageScrollable && <ScrollProgressBar scrollProgress={scrollProgressPercent}/>}
             <FlexContainer direction={"row"} className={"justify-end items-center p-2"}>
-                <Button disabled={!unsavedChanges} type={"submit"} variant={"black"}>Save changes</Button>
+                {settingsStates.find(state => state.condition)?.message}
+                <Button disabled={!formHasUnsavedChanges} type={"submit"} variant={"black"}>Save changes</Button>
             </FlexContainer>
         </div>
     );
