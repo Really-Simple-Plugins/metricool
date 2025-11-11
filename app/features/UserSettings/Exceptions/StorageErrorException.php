@@ -2,7 +2,7 @@
 
 namespace Metricool\Features\UserSettings\Exceptions;
 
-class UnknownStorageTypeException extends \RuntimeException
+class StorageErrorException extends \RuntimeException
 {
     public function __construct($message)
     {
