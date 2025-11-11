@@ -3,14 +3,15 @@
 namespace Metricool\Features\UserSettings;
 
 use Metricool\App;
+use Metricool\Features\UserSettings\Exceptions\StorageErrorException;
 use Metricool\Features\UserSettings\Exceptions\StorageNotFoundException;
+use Metricool\Features\UserSettings\Fields\Exceptions\ValidationFailedException;
 use Metricool\Features\UserSettings\Fields\Field;
 use Metricool\Features\UserSettings\Storage\AbstractStorage;
-use Metricool\Features\UserSettings\Storage\ApiStorage;
-use Metricool\Features\UserSettings\Storage\DatabaseStorage;
+use Metricool\Features\UserSettings\Storage\CustomStorage;
+use Metricool\Features\UserSettings\Storage\OptionsStorage;
 use Metricool\Helpers\Collection;
 
-// todo: add support for custom storages
 // todo: add support for custom fields?
 
 /**
@@ -70,26 +71,28 @@ class UserSettingsService
     }
 
     /**
-     * Return an array with keys and values of the fieldNames
+     * Return an array with setting names and values of the fieldNames
      * @throws \Exception
      */
     public function getSettings(array $fieldNames): array
     {
         $results = [];
 
-        // Group fields by storage to make it easier to retrieve all values from a single storage
+        // Get fields by storage to make it easier to retrieve all values with a single request
         $fieldsByStorage = $this->groupFieldsByStorage($fieldNames);
 
         foreach ($fieldsByStorage as $storageName => $fields) {
-            $storageFieldNames = array_keys($fields);
             $storage = $this->getStorage($storageName);
 
             // Retrieve all values from storage
-            $values = $storage->getMultiple($storageFieldNames);
+            $values = $storage->getMultiple(array_keys($fields));
 
             // Apply the retrieved value to the fields and add it to the results
             foreach ($fields as $field) {
-                $field->setValue($values[$field->name] ?? $field->getDefaultValue());
+                if (isset($values[$field->name])) {
+                    $field->setValue($values[$field->name]);
+                }
+
                 $results[$field->name] = $field->getValue();
             }
         }
@@ -98,40 +101,41 @@ class UserSettingsService
     }
 
     /**
-     * Validate and update settings from data and return their updated values
+     * Validate and update settings and return their updated values
      * @return \WP_Error|Field[] Returns WP_Error when validation failed
+     * @throws \Exception
      */
     public function updateSettings(array $data, $request = null)
     {
         $validatedFields = $this->validateFields($data, $request);
 
-        // If validation failed, return errors
+        // If validation failed, return the errors
         if (is_wp_error($validatedFields)) {
             return $validatedFields;
         }
 
-        // Group fields by storage to make it easier to store all values of a storage in a single request
+        // Group the validated fields by storage to store all values in a single request
         $dataByStorage = [];
         foreach ($validatedFields as $fieldName => $field) {
-            $storage = $this->getStorage($field->getStorage());
+            $storageName = $field->getStorageName();
 
             if (!isset($dataByStorage[$storage->name])) {
-                $dataByStorage[$storage->name] = [];
+                $dataByStorage[$storageName] = [];
             }
 
-            // Add field value to the storage data
-            $dataByStorage[$storage->name][$fieldName] = $field->getValue();
+            $dataByStorage[$storageName][$fieldName] = $field->getValue();
         }
 
-        // Save fields to storages
-        foreach ($dataByStorage as $storageName => $storageData) {
-            $storage = $this->getStorage($storageName);
-
-            // Attempt to store data to storage
-            $storage->setMultiple($storageData);
+        // Attempt to save fields to storages
+        try {
+            foreach ($dataByStorage as $storageName => $storageData) {
+                $this->getStorage($storageName)->setMultiple($storageData);
+            }
+        } catch (\Exception $e) {
+            throw new StorageErrorException($e->getMessage());
         }
 
-        // Return the validated field values
+        // Return the validated field keys and their values
         return array_map(function ($field) {
             return $field->getValue();
         }, $validatedFields);
@@ -139,7 +143,8 @@ class UserSettingsService
 
     /**
      * Validate the fields and return their validated values.
-     * @return \WP_Error|Field[] Returns WP_Error when validation failed
+     * @return \WP_Error|Field[] Returns WP_Error when validation failed,
+     * otherwise and array of validated Fields
      */
     private function validateFields(array $data, \WP_REST_Request $request)
     {
@@ -155,12 +160,10 @@ class UserSettingsService
             }
 
             // Validate the field value
-            $fieldErrors = $field->validate($value);
-
-            if (!empty($fieldErrors)) {
-                foreach ($fieldErrors as $error) {
-                    $errors->add($fieldName, $error, ['field' => $fieldName]);
-                }
+            try {
+                $field->validate($value, $request);
+            } catch (ValidationFailedException $e) {
+                $errors->add($fieldName, $e->getMessage(), ['field' => $fieldName]);
                 continue;
             }
 
@@ -199,11 +202,11 @@ class UserSettingsService
         $fields = [];
         foreach ($fieldsConfig as $name => $config) {
             $field = new Field($name, $config);
-            $storage = $this->getStorage($field->getStorage());
+            $storage = $this->getStorage($field->getStorageName());
 
             // Abort when storage not present in config
             if ($storage == null) {
-                throw new StorageNotFoundException('Storage "' . $field->getStorage() . '" not found for field: ' . $field->getName());
+                throw new StorageNotFoundException('Storage "' . $field->getStorageName() . '" not found for field: ' . $field->getName());
             }
 
             $fields[$name] = $field;
@@ -217,28 +220,32 @@ class UserSettingsService
      */
     private function createStorage(string $name, array $config): AbstractStorage
     {
-        switch ($config['type']) {
-            case 'api':
-                return new ApiStorage($name, $config);
-            case 'database':
+        switch ($config['type'] ?? null) {
+            case 'options':
+                return new OptionsStorage($name, $config);
+            case 'custom':
+                return new CustomStorage($name, $config);
             default:
-                return new DatabaseStorage($name, $config);
+                throw new Exceptions\UnknownStorageTypeException(
+                    'Storage "' . $name . '" storage type: "' . $config['type'] . '" is not supported'
+                );
         }
     }
 
     /**
-     * Creates an associative array with the field names grouped by storage.
-     * @return array<string, Field[]>
+     * Creates an associative array with the fields grouped by storage.
      */
     private function groupFieldsByStorage(array $fieldNames): array
     {
         $fieldsByStorage = [];
         foreach ($fieldNames as $fieldName) {
             $field = $this->getField($fieldName);
-            $storageName = $field->getStorage();
+            $storageName = $field->getStorageName();
+
             if (!isset($fieldsByStorage[$storageName])) {
                 $fieldsByStorage[$storageName] = [];
             }
+
             $fieldsByStorage[$storageName][$fieldName] = $field;
         }
         return $fieldsByStorage;
