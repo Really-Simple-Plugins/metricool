@@ -123,24 +123,26 @@ class AnalyticsService
     {
         $builder = new StatsTimelineBuilder();
 
-        if (isset($this->requestFilters['period'])) {
-            // switch date format when period filter is applied
-            switch ($this->requestFilters['period']) {
-                case 'yesterday':
-                    $builder->setDateFormat('H:i');
-                    break;
-                case 'lastweek':
-                    $builder->setDateFormat('D j M');
-                    break;
-                case 'lastmonth':
-                case 'previousmonth':
-                case 'last30days':
-                    $builder->setDateFormat('j M');
-                    break;
-                default:
-                    $builder->setDateFormat('d-m');
-            }
+        // todo: Not sure if this ok. Because period filter is deep inside the TimelineStatistics class we cannot access it from here.
+        // to fix it would require a complete rework of the filter system
+
+        // Switch date format based on period filter
+        switch ($this->requestFilters['period'] ?? null) {
+            case 'yesterday':
+                $builder->setDateFormat('H:i');
+                break;
+            case 'lastweek':
+                $builder->setDateFormat('D j M');
+                break;
+            case 'lastmonth':
+            case 'previousmonth':
+            case 'last30days':
+                $builder->setDateFormat('j M');
+                break;
+            default:
+                $builder->setDateFormat('d-m');
         }
+
 
         return $builder->setMetrics($this->metrics)
             ->build();
