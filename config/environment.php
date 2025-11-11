@@ -6,7 +6,7 @@
 return [
     'plugin' => [
         'name' => 'Metricool',
-        'version' => '2.0.0',
+        'version' => '2.0.0-alpha.1',
         'pro' => true,
         'path' => dirname(__DIR__),
         'base_path' => dirname(__DIR__) . '/' . plugin_basename(dirname(__DIR__)) . '.php',
