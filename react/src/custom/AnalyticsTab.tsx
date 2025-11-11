@@ -123,7 +123,6 @@ const AnalyticsTab = () => {
             period: string,
         }) => {
             const response = await httpClient?.setRoute("analytics").setFilters({ period: period }).get();
-            console.log(response);
 
             const newChartData = response?.data;
 

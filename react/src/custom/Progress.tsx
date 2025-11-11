@@ -1,7 +1,7 @@
 import { Block, BlockHeader, FlexContainer, Icon } from "../components";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Task, { type TaskProps } from "./Task.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -40,7 +40,6 @@ const Progress = () => {
             const response = await httpClient?.setRoute("dismiss_task").setPayload({
                 "taskId": taskId,
             }).post();
-            console.log(response);
 
             const taskDismissed = response?.data;
 
@@ -55,10 +54,6 @@ const Progress = () => {
             await refetch();
         }
     });
-
-    useEffect(() => {
-        console.log(taskData, isLoading, error);
-    }, [taskData, isLoading, error]);
 
     const [activeTab, setActiveTab] = useState(1);
     const tabs = [{

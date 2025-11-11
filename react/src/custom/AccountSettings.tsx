@@ -21,13 +21,10 @@ const AccountSettings = () => {
         queryKey: ["user_settings"],
         queryFn: () => httpClient?.setRoute("user_settings").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): z.infer<typeof formSchema> => {
-            console.log(data);
-            return {
-                sendToAlternativeEmail: data.data.sendToAlternativeEmail,
-                alternativeEmail: data.data.alternativeEmail,
-            };
-        },
+        select: (data): z.infer<typeof formSchema> => ({
+            sendToAlternativeEmail: data.data.sendToAlternativeEmail,
+            alternativeEmail: data.data.alternativeEmail,
+        })
     });
 
     const {

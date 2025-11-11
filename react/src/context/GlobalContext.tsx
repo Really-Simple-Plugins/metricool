@@ -116,7 +116,6 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
             if (!state.metricool) {
                 throw new Error("No metricool data");
             }
-            console.log(state.metricool);
             state.metricool.json_translations.forEach((translationString) => {
                 const translations = JSON.parse(translationString);
                 const localeData = translations.locale_data?.metricool;
