@@ -2,13 +2,20 @@
 
 namespace Metricool\Features\UserSettings\Storage;
 
-class DatabaseStorage extends AbstractStorage
+use http\Exception\InvalidArgumentException;
+
+class OptionsStorage extends AbstractStorage
 {
     private string $prefix;
 
     public function __construct($name, array $config)
     {
-        $this->prefix = $config['prefix'] ?? '';
+        if (!isset($config['prefix'])) {
+            throw new InvalidArgumentException('Prefix is required for OptionsStorage: ' . $name);
+        }
+
+        $this->prefix = $config['prefix'];
+        $this->casing = $config['casing'] ?? 'snakeCase';
 
         parent::__construct($name, $config);
     }
@@ -32,12 +39,10 @@ class DatabaseStorage extends AbstractStorage
         update_option($this->prefix . $this->convertCase($key), $value);
     }
 
-    public function setMultiple(array $data): bool
+    public function setMultiple(array $data): void
     {
         foreach ($data as $key => $value) {
             $this->set($key, $value);
         }
-
-        return true;
     }
 }
