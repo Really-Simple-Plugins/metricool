@@ -67,14 +67,14 @@ const dateFilterOptions = [
 ];
 
 const AnalyticsTab = () => {
-    const { httpClient, metricool } = useGlobalContext();
+    const { httpClient, metricool, dispatch, dashboardSettings } = useGlobalContext();
     const metricoolSSOLink = `https://app.metricool.com/user-settings/plan?blogId=${metricool.blogId}&userId=${metricool.userId}`;
     const numberFormatter = Intl.NumberFormat(metricool.locale, {
         notation: "compact",
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
     });
-    const [periodFilter, setPeriodFilter] = useState(dateFilterOptions[3].option);
+    const [periodFilter, setPeriodFilter] = useState(dashboardSettings.analytics?.activePeriodFilter ?? dateFilterOptions[3].option);
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
@@ -190,12 +190,13 @@ const AnalyticsTab = () => {
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
                 <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
                     <Select
-                        defaultValue={dateFilterOptions[3].option}
+                        defaultValue={periodFilter}
                         icon={{ icon: "upsell", iconClass: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
                         inputSize={"sm"}
                         className={"border-neutral-200 font-semibold !text-black max-w-fit flex-row-reverse"}
                         onValueChange={(value) => {
                             setPeriodFilter(value);
+                            dispatch({dispatchType: "setDashboardSetting", change: {dashboardSettings: { analytics: {activePeriodFilter: value} }}})
                             updateChartData({ period: value });
                         }}
                         placeholder={dateFilterOptions.find((filterOption) => filterOption.option === periodFilter)?.label}

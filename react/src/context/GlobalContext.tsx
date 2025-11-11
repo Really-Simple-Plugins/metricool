@@ -7,6 +7,7 @@ interface GlobalContext {
     metricool: typeof defaultMetricoolData,
     httpClient: GlobalState["httpClient"],
     dispatch: Dispatch<ReducerAction>,
+    dashboardSettings: GlobalState["dashboardSettings"],
 }
 
 const defaultMetricoolData = {
@@ -29,6 +30,7 @@ const defaultMetricoolData = {
 interface GlobalState {
     metricool: typeof defaultMetricoolData;
     httpClient: HttpClient | null;
+    dashboardSettings: Record<string, Record<string, string>>;
 }
 
 /**
@@ -52,6 +54,7 @@ export const useGlobalContext = () => {
 const initialGlobalState: GlobalState = {
     metricool: defaultMetricoolData,
     httpClient: null,
+    dashboardSettings: {},
 };
 
 /**
@@ -78,7 +81,13 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 
     return (
         <GlobalContext.Provider
-            value={{ globalState, metricool: globalState.metricool, httpClient: globalState.httpClient, dispatch }}
+            value={{
+                globalState,
+                metricool: globalState.metricool,
+                httpClient: globalState.httpClient,
+                dispatch,
+                dashboardSettings: globalState.dashboardSettings,
+            }}
         >
             {children}
         </GlobalContext.Provider>
@@ -130,6 +139,12 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
                 return { ...state, httpClient: httpClient };
             }
             return { ...state };
+        }
+        case "setDashboardSetting": {
+            if (!action.change) {
+                throw new Error("No new values provided");
+            }
+            return { ...state, dashboardSettings: { ...state.dashboardSettings, ...action?.change?.dashboardSettings } };
         }
         default: {
             throw new Error("Unknown action: " + action.dispatchType);
