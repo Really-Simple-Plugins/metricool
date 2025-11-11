@@ -13,7 +13,7 @@ use Metricool\Traits\HasViews;
 /**
  * This controller manages all the buttons and interactions with the Metricool dashboard
  */
-class MetricoolActionController implements ControllerInterface
+class MetricoolActionsController implements ControllerInterface
 {
     use HasAllowlistControl;
     use hasViews;
@@ -36,19 +36,19 @@ class MetricoolActionController implements ControllerInterface
     {
         $request = App::provide('request')->fromGlobal();
 
-        // don't do anything when no action or nonce
+        // Don't do anything when no action or nonce
         if ($request->isEmpty('metricool_action') && $request->isEmpty('_metricool_action_nonce')) {
             return;
         }
 
-        // validate nonce
+        // Validate nonce
         if ($request->has('_metricool_action_nonce')) {
             if (!wp_verify_nonce($request->get('_metricool_action_nonce'), 'metricool_action')) {
                 wp_die(__('Invalid nonce.'));
             }
         }
 
-        // execute the action
+        // Execute the action
         switch ($request->get('metricool_action')) {
             case 'share_post':
                 $this->handleSharePostAction();
@@ -119,7 +119,7 @@ class MetricoolActionController implements ControllerInterface
         if ($request->isEmpty('metricool_post_id')) {
             return;
         }
-        
+
         $postId = $request->get('metricool_post_id');
 
         // Check if post exists
@@ -127,9 +127,9 @@ class MetricoolActionController implements ControllerInterface
             return;
         }
 
-        // todo: check post content with product owner
+        // todo: Check post content with product owner
         $content = get_the_title($postId) . ' - ' . get_permalink($postId);
-        // todo: test media (impossible to do locally)
+        // todo: Test media (impossible to do locally)
         $media = get_the_post_thumbnail($postId, 'large');
 
         // Generate the deeplink
@@ -137,6 +137,7 @@ class MetricoolActionController implements ControllerInterface
 
         Event::dispatch(Event::POST_SCHEDULED);
 
+        // Redirect to the deeplink
         header('Location: ' . $url);
         exit();
     }
