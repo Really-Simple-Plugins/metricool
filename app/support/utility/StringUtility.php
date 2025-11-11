@@ -32,4 +32,22 @@ class StringUtility
         return str_replace('_', '', ucwords($string, '_'));
     }
 
+    /**
+     * Convert a string from snake_case to CamelCase.
+     */
+    public static function snakeToCamelCase(string $string): string
+    {
+        return lcfirst(self::snakeToPascalCase($string));
+    }
+
+    /**
+     * Convert a string from CamelCase to snake_case.
+     */
+    public static function camelToSnakeCase(string $string)
+    {
+        $newString = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $string));
+
+        return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $string));
+    }
+
 }

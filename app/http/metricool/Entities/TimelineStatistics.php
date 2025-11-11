@@ -108,6 +108,7 @@ class TimelineStatistics
                 $endDate->subDays(7)->endOfWeek();
                 break;
             case 'lastmonth':
+            case 'previousmonth':
                 $startDate->subMonths(1)->startOfMonth();
                 $endDate->subMonths(1)->endOfMonth();
                 break;

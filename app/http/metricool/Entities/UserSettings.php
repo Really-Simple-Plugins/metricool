@@ -2,39 +2,13 @@
 
 namespace Metricool\Http\Metricool\Entities;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolClient;
-use Metricool\Http\Metricool\Traits\IsUpdatable;
 
 class UserSettings
 {
-    use IsUpdatable;
-
     protected MetricoolClient $client;
     private string $endpoint = 'v2/settings/users/';
-
-    private array $fillable = [
-        'name',
-        'lastName',
-        'language',
-        'timezone',
-        'accountLogo',
-        'headerLogo',
-        'company',
-        'country',
-        'state',
-        'address',
-        'vatNumber',
-        'sendToAlternativeEmail',
-        'alternativeEmail',
-        'marketingNotifications',
-        'billEmails',
-        'beta',
-        'locked',
-        'enabled',
-        'onboarding',
-        'firstDayOfTheWeek',
-        'whiteLabelIntegrator',
-    ];
 
     public function __construct(MetricoolClient $client)
     {
@@ -43,16 +17,26 @@ class UserSettings
     }
 
     /**
-     * @inheritDoc
+     * @throws GuzzleException
      */
-    public function getFillable(): array
-    {
-        return $this->fillable;
-    }
-
     public function get(): array
     {
         $response = $this->client->get($this->endpoint);
+        return ($response['data'] ?? []);
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function patch(array $data): array
+    {
+        // Don't build the query parameters with http_build_query because we need
+        // the fields query_var multiple times.
+        $endpoint = $this->endpoint . '?fields=' . implode('&fields=', array_keys($data));
+        $data = json_encode($data);
+
+        $response = $this->client->patch($endpoint, $data);
+
         return ($response['data'] ?? []);
     }
 }

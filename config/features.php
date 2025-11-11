@@ -7,6 +7,14 @@ if (!defined('ABSPATH')) {
 }
 
 return [
+    'UserSettings' => [
+        'enabled' => true,
+        'inScope' => true,
+        'pro' => false,
+        'priorityFiles' => [
+            'Storage/AbstractStorage',
+        ],
+    ],
     'Onboarding' => [
         'enabled' => FeatureHelper::isEnabled('onboarding'),
         'inScope' => is_admin() || metricool_is_wp_json_request(),

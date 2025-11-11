@@ -35,7 +35,7 @@ class Collection implements IteratorAggregate
      */
     public function first()
     {
-        return reset($this->items);
+        return reset($this->items) ?: null;
     }
 
     /**
@@ -112,6 +112,14 @@ class Collection implements IteratorAggregate
         }
 
         return new static(array_filter($this->items));
+    }
+
+    /**
+     * Return all keys of the collection items.
+     */
+    public function keys(): array
+    {
+        return array_keys($this->items);
     }
 
     /**
