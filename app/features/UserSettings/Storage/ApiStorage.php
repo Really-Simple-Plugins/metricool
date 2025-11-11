@@ -2,7 +2,7 @@
 
 namespace Metricool\Features\UserSettings\Storage;
 
-use Metricool\Features\UserSettings\Storage\Exceptions\StorageClientRequiredException;
+use Metricool\Features\UserSettings\Storage\Exceptions\ClientRequiredException;
 
 class ApiStorage extends AbstractStorage
 {
@@ -12,7 +12,7 @@ class ApiStorage extends AbstractStorage
     public function __construct($name, $config)
     {
         if (!isset($config['client'])) {
-            throw new StorageClientRequiredException('Client is required for API storage: ' . $name . '. Please add it to the config.');
+            throw new ClientRequiredException('Client is required for API storage: ' . $name . '. Please add it to the config.');
         }
 
         $this->client = $config['client'];

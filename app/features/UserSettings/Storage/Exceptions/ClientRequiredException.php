@@ -1,7 +1,7 @@
 <?php
 
 namespace Metricool\Features\UserSettings\Storage\Exceptions;
-class StorageClientRequiredException extends \RuntimeException
+class ClientRequiredException extends \RuntimeException
 {
     public function __construct($message)
     {
