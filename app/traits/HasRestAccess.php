@@ -45,7 +45,7 @@ trait HasRestAccess
      * @param int $code - HTTP status code
      * @return \WP_REST_Response
      */
-    public function sendHttpResponse(array $data = [], bool $status = true, string $message = '', int $code = 200): \WP_REST_Response
+    public function sendHttpResponse($data = null, bool $status = true, string $message = '', int $code = 200): \WP_REST_Response
     {
         if (ob_get_length()) {
             ob_clean();
