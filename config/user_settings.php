@@ -1,41 +1,48 @@
 <?php
 
 use Metricool\App;
+use Metricool\Features\UserSettings\Fields\Exceptions\ValidationFailedException;
 
 return [
     'fields' => [
         'sendToAlternativeEmail' => [
             'type' => 'boolean',
             'section' => 'account',
-            'storage' => 'metricool',
+            'storage' => 'metricoolUserSettings',
         ],
         'alternativeEmail' => [
             'type' => 'email',
             'section' => 'account',
-            'storage' => 'metricool',
+            'storage' => 'metricoolUserSettings',
         ],
         'trackingScriptActive' => [
             'type' => 'boolean',
-            'default_value' => true,
+            'defaultValue' => false,
             'section' => 'tracking',
         ],
         'trackingScriptHash' => [
-            'required' => true,
-            'type' => 'string',
             'section' => 'tracking',
-            'storage' => 'database',
         ],
+        'validateExample' => [
+            'defaultValue' => 2,
+            'type' => 'integer',
+            'validate' => function ($value) {
+                if ($value !== 1) {
+                    throw new ValidationFailedException(__('Value must be a 1'));
+                }
+            }
+        ]
     ],
     'storages' => [
-        'database' => [
-            'type' => 'database',
+        'default' => [
+            'type' => 'options',
             'prefix' => 'metricool_',
         ],
-        'metricool' => [
-            'type' => 'api',
+        'metricoolUserSettings' => [
+            'type' => 'custom',
             'client' => App::provide('client')->userSettings(),
             'method' => 'patch',
-            'casing' => 'camel_case',
+            'casing' => 'camelCase',
         ],
     ],
 ];
