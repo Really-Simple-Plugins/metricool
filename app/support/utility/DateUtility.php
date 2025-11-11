@@ -6,7 +6,7 @@ use IntlDateFormatter;
 
 class DateUtility
 {
-    public static function getLocalIsoDateFormat(): string
+    public static function localIsoDateMonthFormat(): string
     {
         $formatter = new IntlDateFormatter(
             get_locale(),

@@ -135,13 +135,14 @@ class AnalyticsService
             case 'lastweek':
                 $builder->setDateFormat('D j M');
                 break;
+            case 'currentmonth':
             case 'lastmonth':
             case 'previousmonth':
             case 'last30days':
                 $builder->setDateFormat('M MMM');
                 break;
             default:
-                $builder->setDateFormat(DateUtility::getLocalIsoDateFormat());
+                $builder->setDateFormat(DateUtility::localIsoDateMonthFormat());
         }
 
         return $builder->setMetrics($this->metrics)
