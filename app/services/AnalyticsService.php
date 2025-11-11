@@ -67,7 +67,6 @@ class AnalyticsService
         return $totals;
     }
 
-
     /**
      * Gets the results of a metric
      * @return Collection<int, TimelineDTO>
@@ -122,7 +121,28 @@ class AnalyticsService
      */
     public function getTimelineData(): array
     {
-        return (new StatsTimelineBuilder())->setMetrics($this->metrics)
+        $builder = new StatsTimelineBuilder();
+
+        if (isset($this->requestFilters['period'])) {
+            // switch date format when period filter is applied
+            switch ($this->requestFilters['period']) {
+                case 'yesterday':
+                    $builder->setDateFormat('H:i');
+                    break;
+                case 'lastweek':
+                    $builder->setDateFormat('D j M');
+                    break;
+                case 'lastmonth':
+                case 'previousmonth':
+                case 'last30days':
+                    $builder->setDateFormat('j M');
+                    break;
+                default:
+                    $builder->setDateFormat('d-m');
+            }
+        }
+
+        return $builder->setMetrics($this->metrics)
             ->build();
     }
 }
