@@ -2,14 +2,14 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Metricool 2.0.0\n"
+"Project-Id-Version: Metricool 2.0.0-alpha.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/metricool\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-04T10:22:35+00:00\n"
+"POT-Creation-Date: 2025-11-11T15:42:34+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: metricool\n"
@@ -41,20 +41,28 @@ msgstr ""
 msgid "https://really-simple-plugins.com"
 msgstr ""
 
-#: app/controllers/AdminController.php:31
-#: react/build/assets/ListItem-BZ_KXZP7.js:1
-#: react/build/assets/route.lazy-C4csjgVe.js:1
+#: app/controllers/AdminController.php:33
+#: react/build/assets/ListItem-BUMdK1OI.js:1
+#: react/build/assets/route.lazy-BDarpNSK.js:1
 msgid "Settings"
 msgstr ""
 
-#: app/controllers/AdminController.php:35
+#: app/controllers/AdminController.php:37
 msgid "Support"
 msgstr ""
 
-#. translators: %1$d is replaced by the amount of bookings, %2$ and %23$ are replaced with opening and closing a tag containing hyperlink
-#: app/controllers/ReviewController.php:39
+#: app/controllers/ReviewController.php:152
+msgid "statistics"
+msgstr ""
+
+#: app/controllers/ReviewController.php:156
+msgid "sessions"
+msgstr ""
+
+#. translators: %s is replaced by eiter "x sessions" or "statistics", %2$ and %23$ are replaced with opening and closing a tag containing hyperlink
+#: app/controllers/ReviewController.php:161
 #, php-format
-msgid "Hi, Metricool has helped you reach %1$d bookings in the last 30 days. If you have a moment, please consider leaving a review on WordPress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %2$smessage%3$s."
+msgid "Hi, Metricool has tracked %s on your site for the last 30 days. If you have a moment, please consider leaving a review on wordpress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %2$smessage%3$s."
 msgstr ""
 
 #: app/features/Notifications/Notices/ExampleConnectionsWarning.php:18
@@ -125,23 +133,62 @@ msgstr ""
 msgid "An error occurred while trying to remove previous data."
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/AbstractTask.php:207
+#: app/features/TaskManagement/TaskManagementEndpoints.php:73
+msgid "Task not found"
+msgstr ""
+
+#: app/features/TaskManagement/TaskManagementEndpoints.php:80
+msgid "This task cannot be dismissed because it is required"
+msgstr ""
+
+#: app/features/TaskManagement/TaskManagementEndpoints.php:83
+msgid "Task dismissed successfully"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/AbstractTask.php:150
 msgid "Premium"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/AbstractTask.php:211
+#: app/features/TaskManagement/Tasks/AbstractTask.php:154
 msgid "Special feature"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/AbstractTask.php:157
+msgid "Open"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/AbstractTask.php:165
+msgid "Urgent"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/AbstractTask.php:173
+msgid "Completed"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/AbstractTask.php:181
+msgid "Dismissed"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/ExampleCompletedTask.php:18
+msgid "This is a completed task"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/ExampleCompletedTask.php:27
+#: app/features/TaskManagement/Tasks/ExampleDismissableTask.php:25
+#: app/features/TaskManagement/Tasks/ExampleDismissedTask.php:27
+#: app/features/TaskManagement/Tasks/ExamplePremiumTask.php:27
+#: app/features/TaskManagement/Tasks/ExampleRequiredTask.php:26
+#: app/features/TaskManagement/Tasks/ExampleSpecialFeatureTask.php:26
+#: app/features/TaskManagement/Tasks/ExampleUrgentTask.php:27
+msgid "Example button"
 msgstr ""
 
 #: app/features/TaskManagement/Tasks/ExampleDismissableTask.php:16
 msgid "This is a dismissable task"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/ExampleDismissableTask.php:25
-#: app/features/TaskManagement/Tasks/ExamplePremiumTask.php:27
-#: app/features/TaskManagement/Tasks/ExampleRequiredTask.php:26
-#: app/features/TaskManagement/Tasks/ExampleSpecialFeatureTask.php:26
-msgid "Example button"
+#: app/features/TaskManagement/Tasks/ExampleDismissedTask.php:18
+msgid "This is a dismissed task"
 msgstr ""
 
 #: app/features/TaskManagement/Tasks/ExamplePremiumTask.php:18
@@ -156,16 +203,20 @@ msgstr ""
 msgid "This is a Special Feature task"
 msgstr ""
 
+#: app/features/TaskManagement/Tasks/ExampleUrgentTask.php:18
+msgid "This is an urgent task"
+msgstr ""
+
 #: app/features/TaskManagement/Tasks/FirstConnectionTask.php:20
 msgid "Connect your first social account to Metricool"
 msgstr ""
 
 #: app/features/TaskManagement/Tasks/HistoricalDataTask.php:27
-msgid "Store historical analytics for 90 days with Premium"
+msgid "Gain access to analytics with unlimited historical data."
 msgstr ""
 
 #: app/features/TaskManagement/Tasks/HistoricalDataTask.php:36
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Upgrade"
 msgstr ""
 
@@ -173,11 +224,11 @@ msgstr ""
 msgid "Connect your LinkedIn account"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/SchedulePostTask.php:21
+#: app/features/TaskManagement/Tasks/SchedulePostTask.php:14
 msgid "Schedule a post to promote your site!"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/SchedulePostTask.php:30
+#: app/features/TaskManagement/Tasks/SchedulePostTask.php:23
 msgid "Schedule a post"
 msgstr ""
 
@@ -193,6 +244,43 @@ msgstr ""
 msgid "Validate connection"
 msgstr ""
 
+#: app/features/UserSettings/Fields/Field.php:69
+msgid "Please enter a valid boolean"
+msgstr ""
+
+#: app/features/UserSettings/Fields/Field.php:74
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
+msgid "Please enter a valid email address"
+msgstr ""
+
+#: app/features/UserSettings/Fields/Field.php:79
+msgid "Please enter a valid string"
+msgstr ""
+
+#: app/features/UserSettings/Fields/Field.php:85
+msgid "Please enter a valid number"
+msgstr ""
+
+#: app/features/UserSettings/Fields/Field.php:90
+msgid "Please enter a valid array"
+msgstr ""
+
+#: app/features/UserSettings/Fields/Field.php:96
+msgid "Please enter a value"
+msgstr ""
+
+#: app/features/UserSettings/UserSettingsEndpoint.php:68
+msgid "Failed to retrieve settings"
+msgstr ""
+
+#: app/features/UserSettings/UserSettingsEndpoint.php:81
+msgid "Failed to update settings"
+msgstr ""
+
+#: app/features/UserSettings/UserSettingsEndpoint.php:97
+msgid "Validation failed"
+msgstr ""
+
 #: app/http/endpoints/AnalyticsEndpoint.php:64
 #: app/http/endpoints/DistributionEndpoint.php:66
 msgid "Failed to load Analytics data"
@@ -204,24 +292,24 @@ msgid "Page views"
 msgstr ""
 
 #: app/http/endpoints/AnalyticsEndpoint.php:88
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Visits"
 msgstr ""
 
 #: app/http/endpoints/AnalyticsEndpoint.php:92
 #: app/http/endpoints/RealtimeEndpoint.php:92
 #: app/http/endpoints/Responses/Statistics/CountriesResponse.php:21
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Visitors"
 msgstr ""
 
 #: app/http/endpoints/AnalyticsEndpoint.php:96
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Posts"
 msgstr ""
 
 #: app/http/endpoints/AnalyticsEndpoint.php:100
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Comments"
 msgstr ""
 
@@ -234,20 +322,32 @@ msgid "Failed to load Realtime data"
 msgstr ""
 
 #: app/http/endpoints/Responses/Statistics/CountriesResponse.php:20
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Country"
 msgstr ""
 
-#: app/managers/EndpointManager.php:168
+#: app/managers/EndpointManager.php:170
 msgid "Forbidden."
+msgstr ""
+
+#: app/views/admin/buttons/share-post.php:2
+msgid "Share this post"
 msgstr ""
 
 #: app/views/admin/review-notice.php:75
 msgid "Leave a review"
 msgstr ""
 
+#: app/views/admin/review-notice.php:78
+msgid "Dismiss this notice for 30 days."
+msgstr ""
+
 #: app/views/admin/review-notice.php:79
 msgid "Maybe later"
+msgstr ""
+
+#: app/views/admin/review-notice.php:82
+msgid "Dismiss this notice forever."
 msgstr ""
 
 #: app/views/admin/review-notice.php:83
@@ -270,225 +370,253 @@ msgstr ""
 msgid "Online Booking System"
 msgstr ""
 
-#: react/build/assets/account.lazy-rfUbMquM.js:1
-msgid "Please enter a valid email address."
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
+msgid "Saving..."
 msgstr ""
 
-#: react/build/assets/account.lazy-rfUbMquM.js:1
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
+msgid "Form contains errors"
+msgstr ""
+
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
+msgid "You have unsaved changes"
+msgstr ""
+
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
+msgid "There was an error updating your settings"
+msgstr ""
+
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
+msgid "Settings have been saved"
+msgstr ""
+
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
+msgid "This page is asking you to confirm that you want to leave — information you’ve entered may not be saved."
+msgstr ""
+
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
 msgid "Monthly summary"
 msgstr ""
 
-#: react/build/assets/account.lazy-rfUbMquM.js:1
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
+msgid "There was an error fetching your monthly summary settings"
+msgstr ""
+
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
 msgid "Receive monthly summary"
 msgstr ""
 
-#: react/build/assets/account.lazy-rfUbMquM.js:1
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
 msgid "Custom e-mail for the monthly summary"
 msgstr ""
 
-#: react/build/assets/account.lazy-rfUbMquM.js:1
+#: react/build/assets/account.lazy-hTzIyeWV.js:1
 msgid "Placeholder"
 msgstr ""
 
-#: react/build/assets/account.lazy-rfUbMquM.js:1
-msgid "Leave"
-msgstr ""
-
-#: react/build/assets/account.lazy-rfUbMquM.js:1
-msgid "Stay"
-msgstr ""
-
-#: react/build/assets/connections.lazy-Ctg0pFUF.js:1
-#: react/build/assets/route.lazy-C4csjgVe.js:1
+#: react/build/assets/connections.lazy-C3JctuaA.js:1
+#: react/build/assets/route.lazy-BDarpNSK.js:1
 msgid "Connections"
 msgstr ""
 
-#: react/build/assets/connections.lazy-Ctg0pFUF.js:1
+#: react/build/assets/connections.lazy-C3JctuaA.js:1
 msgid "The accounts that are connected to Metricool"
 msgstr ""
 
-#: react/build/assets/connections.lazy-Ctg0pFUF.js:1
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/connections.lazy-C3JctuaA.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "There was an error fetching your connected accounts."
 msgstr ""
 
-#: react/build/assets/connections.lazy-Ctg0pFUF.js:1
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/connections.lazy-C3JctuaA.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Connected Accounts"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "All Tasks"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Remaining Tasks"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Progress"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
+msgid "There was an error fetching your Tasks"
+msgstr ""
+
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Percent"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
-msgid "There was an error fetching the data."
+#: react/build/assets/index.lazy-EScpTR0_.js:22
+msgid "There was an error fetching the data"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "View Analytics"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Page Views"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Last 30 Minutes"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Yesterday"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Last week"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Current month"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Last 30 days"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Previous month"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Last 3 months"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Last 6 months"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Last 12 months"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Report"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "URL"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Real-time"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Analytics"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Traffic"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Countries"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Website Analytics"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Installed"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Install"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Activate"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Activating..."
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Downloading..."
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Related Plugins"
 msgstr ""
 
-#: react/build/assets/index.lazy-D9-9nVk3.js:1
+#: react/build/assets/index.lazy-EScpTR0_.js:22
+msgid "There was an error fetching the related plugins."
+msgstr ""
+
+#: react/build/assets/index.lazy-EScpTR0_.js:22
 msgid "Onboarding"
 msgstr ""
 
-#: react/build/assets/ListItem-BZ_KXZP7.js:1
+#: react/build/assets/ListItem-BUMdK1OI.js:1
 msgid "Dashboard"
 msgstr ""
 
-#: react/build/assets/ListItem-BZ_KXZP7.js:1
+#: react/build/assets/ListItem-BUMdK1OI.js:1
 msgid "Planner"
 msgstr ""
 
-#: react/build/assets/ListItem-BZ_KXZP7.js:1
+#: react/build/assets/ListItem-BUMdK1OI.js:1
 msgid "Help Center"
 msgstr ""
 
-#: react/build/assets/ListItem-BZ_KXZP7.js:1
+#: react/build/assets/ListItem-BUMdK1OI.js:1
 msgid "Upgrade to Premium"
 msgstr ""
 
-#: react/build/assets/main-B6h0-oMA.js:2
+#: react/build/assets/main-DK3hglfG.js:11
 msgid "Route is not set"
 msgstr ""
 
-#: react/build/assets/main-B6h0-oMA.js:2
+#: react/build/assets/main-DK3hglfG.js:11
 msgid "Payload is not set"
 msgstr ""
 
-#: react/build/assets/main-B6h0-oMA.js:2
+#: react/build/assets/main-DK3hglfG.js:11
 msgid "Route not set. Please use setRoute before using setFilters."
 msgstr ""
 
-#: react/build/assets/main-B6h0-oMA.js:2
+#: react/build/assets/main-DK3hglfG.js:11
 msgid "An error occurred"
 msgstr ""
 
-#: react/build/assets/route.lazy-C4csjgVe.js:1
+#: react/build/assets/route.lazy-BDarpNSK.js:1
 msgid "Account Settings"
 msgstr ""
 
-#: react/build/assets/route.lazy-C4csjgVe.js:1
+#: react/build/assets/route.lazy-BDarpNSK.js:1
 msgid "Affiliation Program"
 msgstr ""
 
-#: react/build/assets/route.lazy-C4csjgVe.js:1
+#: react/build/assets/route.lazy-BDarpNSK.js:1
 msgid "User Management"
 msgstr ""
 
-#: react/build/assets/route.lazy-C4csjgVe.js:1
+#: react/build/assets/route.lazy-BDarpNSK.js:1
 msgid "My Tasks"
 msgstr ""
 
-#: react/build/assets/route.lazy-C4csjgVe.js:1
+#: react/build/assets/route.lazy-BDarpNSK.js:1
 msgid "Notifications"
 msgstr ""
 
-#: react/build/assets/route.lazy-C4csjgVe.js:1
+#: react/build/assets/route.lazy-BDarpNSK.js:1
+msgid "There was an error fetching your Notifications"
+msgstr ""
+
+#: react/build/assets/route.lazy-BDarpNSK.js:1
 msgid "You currently have no notifications."
 msgstr ""
