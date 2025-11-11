@@ -84,7 +84,7 @@ class RealtimeService
      */
     public function getTimelineData(): array
     {
-        return (new StatsTimelineBuilder())->setDateFormat('H:i')
+        return (new StatsTimelineBuilder())->setDateFormat('LT')
             ->setMetrics($this->metrics)
             ->build();
     }

@@ -1,10 +1,11 @@
 <?php namespace Metricool\Managers;
 
+use Carbon\Carbon;
 use Metricool\App;
-use Metricool\Traits\HasNonces;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasNonces;
 
 final class EndpointManager
 {
@@ -151,6 +152,7 @@ final class EndpointManager
     private function defaultMiddlewareCallback(): void
     {
         switch_to_user_locale(get_current_user_id());
+        Carbon::setLocale(get_user_locale());
     }
 
     /**

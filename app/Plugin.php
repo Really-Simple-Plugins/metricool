@@ -167,6 +167,7 @@ class Plugin
             new Controllers\TrackingScriptController(
                 new TrackingScriptService(),
             ),
+            new Controllers\MetricoolActionsController(),
         ]);
     }
 
@@ -181,7 +182,6 @@ class Plugin
             new Http\Endpoints\ConnectedBrandsEndpoint(),
             new Http\Endpoints\ConnectedNetworksEndpoint(),
             new Http\Endpoints\SubscriptionEndpoint(),
-            new Http\Endpoints\UserSettingsEndpoint(),
             new Http\Endpoints\DistributionEndpoint(),
             new Http\Endpoints\AnalyticsEndpoint(
                 new Services\AnalyticsService(

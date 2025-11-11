@@ -1,3 +1,6 @@
+import { queryClient } from "../main.tsx";
+import type { Notice } from "../custom/NotificationsSidebar.tsx";
+
 export const capitalizeFirstCharacter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
@@ -9,3 +12,14 @@ export const getScrollProgressPercent = () => {
         Math.round((window.scrollY / totalScrollableHeightInPixels) * 100);
     return roundedScrollPercentage;
 };
+
+export const setNoticeToVisible = (noticeId: string) => {
+    const noticeData: { data: Notice[] } = queryClient.getQueryData(["notices"]) ?? { data: [] };
+    const updatedNoticeArray = noticeData.data.map((notice) => {
+        if (notice.id === noticeId) {
+            return {...notice, visible: true}
+        }
+        return notice;
+    });
+    queryClient.setQueryData(["notices"], { ...noticeData, data: [...updatedNoticeArray] });
+}

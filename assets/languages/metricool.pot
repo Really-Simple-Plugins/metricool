@@ -1,0 +1,494 @@
+# Copyright (C) 2025 Really Simple Plugins
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Metricool 2.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/metricool\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-11-04T10:22:35+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: metricool\n"
+
+#. Plugin Name of the plugin
+#: metricool.php
+#: app/controllers/DashboardController.php:63
+#: app/controllers/DashboardController.php:64
+msgid "Metricool"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: metricool.php
+msgid "https://metricool.com/"
+msgstr ""
+
+#. Description of the plugin
+#: metricool.php
+msgid "Allows you to track your users and readers using metricool.com"
+msgstr ""
+
+#. Author of the plugin
+#: metricool.php
+msgid "Really Simple Plugins"
+msgstr ""
+
+#. Author URI of the plugin
+#: metricool.php
+msgid "https://really-simple-plugins.com"
+msgstr ""
+
+#: app/controllers/AdminController.php:31
+#: react/build/assets/ListItem-BZ_KXZP7.js:1
+#: react/build/assets/route.lazy-C4csjgVe.js:1
+msgid "Settings"
+msgstr ""
+
+#: app/controllers/AdminController.php:35
+msgid "Support"
+msgstr ""
+
+#. translators: %1$d is replaced by the amount of bookings, %2$ and %23$ are replaced with opening and closing a tag containing hyperlink
+#: app/controllers/ReviewController.php:39
+#, php-format
+msgid "Hi, Metricool has helped you reach %1$d bookings in the last 30 days. If you have a moment, please consider leaving a review on WordPress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %2$smessage%3$s."
+msgstr ""
+
+#: app/features/Notifications/Notices/ExampleConnectionsWarning.php:18
+#: app/features/Notifications/Notices/ExampleConnectionsWarning.php:26
+msgid "This notice is a warning."
+msgstr ""
+
+#: app/features/Notifications/Notices/ExampleConnectionsWarning.php:51
+#: app/features/Notifications/Notices/FirstConnectionNotice.php:51
+#: app/features/TaskManagement/Tasks/FirstConnectionTask.php:29
+#: app/features/TaskManagement/Tasks/LinkedInTask.php:36
+#: app/features/TaskManagement/Tasks/TwitterTask.php:36
+msgid "Connect"
+msgstr ""
+
+#: app/features/Notifications/Notices/ExampleInactiveNotice.php:15
+#: app/features/Notifications/Notices/ExampleInactiveNotice.php:23
+msgid "This is an inactive notice."
+msgstr ""
+
+#: app/features/Notifications/Notices/ExampleNotice.php:15
+#: app/features/Notifications/Notices/ExampleNotice.php:23
+msgid "This is a notice without a route."
+msgstr ""
+
+#: app/features/Notifications/Notices/ExampleNotice.php:49
+#: app/features/Notifications/Notices/ExamplePremiumNotice.php:50
+#: app/features/Notifications/Notices/ExamplePremiumWarning.php:50
+msgid "Example text"
+msgstr ""
+
+#: app/features/Notifications/Notices/ExamplePremiumNotice.php:16
+#: app/features/Notifications/Notices/ExamplePremiumNotice.php:24
+msgid "This is an premium notice."
+msgstr ""
+
+#: app/features/Notifications/Notices/ExamplePremiumWarning.php:16
+#: app/features/Notifications/Notices/ExamplePremiumWarning.php:24
+msgid "This is an premium warning."
+msgstr ""
+
+#: app/features/Notifications/Notices/ExampleWarning.php:15
+#: app/features/Notifications/Notices/ExampleWarning.php:23
+msgid "This is a warning without a route."
+msgstr ""
+
+#: app/features/Notifications/Notices/FirstConnectionNotice.php:18
+msgid "No connections detected"
+msgstr ""
+
+#: app/features/Notifications/Notices/FirstConnectionNotice.php:26
+msgid "Connect your first social account to Metricool to start scheduling and tracking your content."
+msgstr ""
+
+#: app/features/Onboarding/OnboardingController.php:51
+msgid "Successfully finished onboarding!"
+msgstr ""
+
+#: app/features/Onboarding/OnboardingController.php:55
+msgid "An error occurred while finishing the onboarding process"
+msgstr ""
+
+#: app/features/Onboarding/OnboardingController.php:69
+msgid "Successfully removed all previous data."
+msgstr ""
+
+#: app/features/Onboarding/OnboardingController.php:72
+msgid "An error occurred while trying to remove previous data."
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/AbstractTask.php:207
+msgid "Premium"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/AbstractTask.php:211
+msgid "Special feature"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/ExampleDismissableTask.php:16
+msgid "This is a dismissable task"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/ExampleDismissableTask.php:25
+#: app/features/TaskManagement/Tasks/ExamplePremiumTask.php:27
+#: app/features/TaskManagement/Tasks/ExampleRequiredTask.php:26
+#: app/features/TaskManagement/Tasks/ExampleSpecialFeatureTask.php:26
+msgid "Example button"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/ExamplePremiumTask.php:18
+msgid "This is a premium task"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/ExampleRequiredTask.php:17
+msgid "This is a required task"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/ExampleSpecialFeatureTask.php:17
+msgid "This is a Special Feature task"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/FirstConnectionTask.php:20
+msgid "Connect your first social account to Metricool"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/HistoricalDataTask.php:27
+msgid "Store historical analytics for 90 days with Premium"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/HistoricalDataTask.php:36
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Upgrade"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/LinkedInTask.php:27
+msgid "Connect your LinkedIn account"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/SchedulePostTask.php:21
+msgid "Schedule a post to promote your site!"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/SchedulePostTask.php:30
+msgid "Schedule a post"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/TwitterTask.php:27
+msgid "Connect your Twitter account"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/UnableToTrackTrafficTask.php:25
+msgid "Unable to track traffic on your site"
+msgstr ""
+
+#: app/features/TaskManagement/Tasks/UnableToTrackTrafficTask.php:42
+msgid "Validate connection"
+msgstr ""
+
+#: app/http/endpoints/AnalyticsEndpoint.php:64
+#: app/http/endpoints/DistributionEndpoint.php:66
+msgid "Failed to load Analytics data"
+msgstr ""
+
+#: app/http/endpoints/AnalyticsEndpoint.php:84
+#: app/http/endpoints/RealtimeEndpoint.php:90
+msgid "Page views"
+msgstr ""
+
+#: app/http/endpoints/AnalyticsEndpoint.php:88
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Visits"
+msgstr ""
+
+#: app/http/endpoints/AnalyticsEndpoint.php:92
+#: app/http/endpoints/RealtimeEndpoint.php:92
+#: app/http/endpoints/Responses/Statistics/CountriesResponse.php:21
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Visitors"
+msgstr ""
+
+#: app/http/endpoints/AnalyticsEndpoint.php:96
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Posts"
+msgstr ""
+
+#: app/http/endpoints/AnalyticsEndpoint.php:100
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Comments"
+msgstr ""
+
+#: app/http/endpoints/ConnectedNetworksEndpoint.php:54
+msgid "Failed to load brands data"
+msgstr ""
+
+#: app/http/endpoints/RealtimeEndpoint.php:62
+msgid "Failed to load Realtime data"
+msgstr ""
+
+#: app/http/endpoints/Responses/Statistics/CountriesResponse.php:20
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Country"
+msgstr ""
+
+#: app/managers/EndpointManager.php:168
+msgid "Forbidden."
+msgstr ""
+
+#: app/views/admin/review-notice.php:75
+msgid "Leave a review"
+msgstr ""
+
+#: app/views/admin/review-notice.php:79
+msgid "Maybe later"
+msgstr ""
+
+#: app/views/admin/review-notice.php:83
+msgid "Don't show again"
+msgstr ""
+
+#: config/related.php:16
+msgid "Lightweight plugin. Heavyweight security features."
+msgstr ""
+
+#: config/related.php:28
+msgid "Consent Management as it should be"
+msgstr ""
+
+#: config/related.php:39
+msgid "Terms & Conditions"
+msgstr ""
+
+#: config/related.php:48
+msgid "Online Booking System"
+msgstr ""
+
+#: react/build/assets/account.lazy-rfUbMquM.js:1
+msgid "Please enter a valid email address."
+msgstr ""
+
+#: react/build/assets/account.lazy-rfUbMquM.js:1
+msgid "Monthly summary"
+msgstr ""
+
+#: react/build/assets/account.lazy-rfUbMquM.js:1
+msgid "Receive monthly summary"
+msgstr ""
+
+#: react/build/assets/account.lazy-rfUbMquM.js:1
+msgid "Custom e-mail for the monthly summary"
+msgstr ""
+
+#: react/build/assets/account.lazy-rfUbMquM.js:1
+msgid "Placeholder"
+msgstr ""
+
+#: react/build/assets/account.lazy-rfUbMquM.js:1
+msgid "Leave"
+msgstr ""
+
+#: react/build/assets/account.lazy-rfUbMquM.js:1
+msgid "Stay"
+msgstr ""
+
+#: react/build/assets/connections.lazy-Ctg0pFUF.js:1
+#: react/build/assets/route.lazy-C4csjgVe.js:1
+msgid "Connections"
+msgstr ""
+
+#: react/build/assets/connections.lazy-Ctg0pFUF.js:1
+msgid "The accounts that are connected to Metricool"
+msgstr ""
+
+#: react/build/assets/connections.lazy-Ctg0pFUF.js:1
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "There was an error fetching your connected accounts."
+msgstr ""
+
+#: react/build/assets/connections.lazy-Ctg0pFUF.js:1
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Connected Accounts"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "All Tasks"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Remaining Tasks"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Progress"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Percent"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "There was an error fetching the data."
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "View Analytics"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Page Views"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Last 30 Minutes"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Yesterday"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Last week"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Current month"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Last 30 days"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Previous month"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Last 3 months"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Last 6 months"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Last 12 months"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Report"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "URL"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Real-time"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Analytics"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Traffic"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Countries"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Website Analytics"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Installed"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Install"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Activate"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Activating..."
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Downloading..."
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Related Plugins"
+msgstr ""
+
+#: react/build/assets/index.lazy-D9-9nVk3.js:1
+msgid "Onboarding"
+msgstr ""
+
+#: react/build/assets/ListItem-BZ_KXZP7.js:1
+msgid "Dashboard"
+msgstr ""
+
+#: react/build/assets/ListItem-BZ_KXZP7.js:1
+msgid "Planner"
+msgstr ""
+
+#: react/build/assets/ListItem-BZ_KXZP7.js:1
+msgid "Help Center"
+msgstr ""
+
+#: react/build/assets/ListItem-BZ_KXZP7.js:1
+msgid "Upgrade to Premium"
+msgstr ""
+
+#: react/build/assets/main-B6h0-oMA.js:2
+msgid "Route is not set"
+msgstr ""
+
+#: react/build/assets/main-B6h0-oMA.js:2
+msgid "Payload is not set"
+msgstr ""
+
+#: react/build/assets/main-B6h0-oMA.js:2
+msgid "Route not set. Please use setRoute before using setFilters."
+msgstr ""
+
+#: react/build/assets/main-B6h0-oMA.js:2
+msgid "An error occurred"
+msgstr ""
+
+#: react/build/assets/route.lazy-C4csjgVe.js:1
+msgid "Account Settings"
+msgstr ""
+
+#: react/build/assets/route.lazy-C4csjgVe.js:1
+msgid "Affiliation Program"
+msgstr ""
+
+#: react/build/assets/route.lazy-C4csjgVe.js:1
+msgid "User Management"
+msgstr ""
+
+#: react/build/assets/route.lazy-C4csjgVe.js:1
+msgid "My Tasks"
+msgstr ""
+
+#: react/build/assets/route.lazy-C4csjgVe.js:1
+msgid "Notifications"
+msgstr ""
+
+#: react/build/assets/route.lazy-C4csjgVe.js:1
+msgid "You currently have no notifications."
+msgstr ""

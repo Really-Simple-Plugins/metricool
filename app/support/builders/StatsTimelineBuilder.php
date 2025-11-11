@@ -30,9 +30,9 @@ class StatsTimelineBuilder
     protected array $metrics = [];
 
     /**
-     * @var string $dateFormat The date to be used in the results of the timeline
+     * @var string $isoDateFormat The date to be used in the results of the timeline
      */
-    protected string $dateFormat = 'j M';
+    protected string $isoDateFormat = 'L';
 
     /**
      * Combines statistics within the same timestamp data into a timeline.
@@ -59,7 +59,7 @@ class StatsTimelineBuilder
      */
     public function setDateFormat(string $format): self
     {
-        $this->dateFormat = $format;
+        $this->isoDateFormat = $format;
 
         return $this;
     }
@@ -111,7 +111,7 @@ class StatsTimelineBuilder
     {
         $row = [
             'timestamp' => $timestamp,
-            'label' => Carbon::createFromTimestampMs($timestamp)->translatedFormat($this->dateFormat),
+            'label' => Carbon::createFromTimestampMs($timestamp)->isoFormat($this->isoDateFormat),
         ];
 
         // initialize the properties for each metric, these are the keys of the metrics

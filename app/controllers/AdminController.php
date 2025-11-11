@@ -3,12 +3,14 @@
 namespace Metricool\Controllers;
 
 use Metricool\App;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\ControllerInterface;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasViews;
 
 class AdminController implements ControllerInterface
 {
     use HasAllowlistControl;
+    use hasViews;
 
     public function register(): void
     {
@@ -20,7 +22,7 @@ class AdminController implements ControllerInterface
     }
 
     /**
-     * Add settings and support link to the plugin page
+     * Adds settings and support link to the plugin page
      */
     public function addPluginSettingsAction(array $links): array
     {
@@ -37,4 +39,6 @@ class AdminController implements ControllerInterface
 
         return $links;
     }
+
+
 }

@@ -33,7 +33,7 @@ class RelatedPluginsEndpoints implements MultiEndpointInterface
     public function registerRoutes(): array
     {
         return [
-            'other_plugins_data' => [
+            'related_plugins_data' => [
                 'methods' => \WP_REST_Server::READABLE,
                 'callback' => [$this, 'getRelatedPluginsData'],
             ],

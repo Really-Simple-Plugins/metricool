@@ -122,31 +122,32 @@ class DashboardController implements ControllerInterface
     public function enqueueReactScripts(): void
     {
         $manifest = App::env('plugin.react_path') . '/build/.vite/manifest.json';
-
+        $json_translations = [];
         if (file_exists($manifest)) {
             $manifest_contents = file_get_contents($manifest);
             $decoded_manifest = json_decode($manifest_contents, true);
             foreach ($decoded_manifest as $key => $value) {
                 if (substr($value['file'], - 3) === '.js') {
+                    wp_register_script(
+                        $key,
+                        App::env('plugin.react_url') . '/build/' . $value['file'],
+                        [],
+                        null,
+                        false,
+                    );
+                    $translation_data = load_script_textdomain($key, 'metricool');
+                    if (!empty($translation_data)) {
+                        $json_translations[] = $translation_data;
+                    }
+
                     if(!empty($value['isEntry']) && $value['isEntry'] === true) {
                         wp_enqueue_script(
                             'metricool-main-script',
                             App::env('plugin.react_url') . '/build/' . $value['file'],
-                            ['wp-i18n'],
+                            [],
                             null,
                             false,
                         );
-                    } else {
-                        wp_enqueue_script(
-                            $key,
-                            App::env('plugin.react_url') . '/build/' . $value['file'],
-                            ['wp-i18n'],
-                            null,
-                            false,
-                        );
-                        wp_set_script_translations($key, App::env('plugin.react_url') . '/build/' . $value['file']);
-                        load_script_textdomain($key, 'metricool');
-                        wp_deregister_script($key);
                     }
                 }
                 if (!empty($value['css'])) {
@@ -162,12 +163,10 @@ class DashboardController implements ControllerInterface
 
         add_filter('script_loader_tag', [$this, 'load_as_module'], 10, 2 );
 
-        wp_set_script_translations('metricool-main-script', 'metricool');
-
         wp_localize_script(
             'metricool-main-script',
             'metricool',
-            ['values' => $this->localizedReactSettings([])]
+            ['values' => $this->localizedReactSettings(['json_translations' => $json_translations])],
         );
     }
 
@@ -258,7 +257,9 @@ class DashboardController implements ControllerInterface
                 'json_translations' => ($chunkTranslation['json_translations'] ?? []),
                 'is_onboarding_completed' => $this->onboarding_completed(),
                 'support' => App::env('metricool.support'),
-                'locale'=> str_replace("_", "-", get_user_locale()),
+                'locale' => str_replace("_", "-", get_user_locale()),
+                'blogId' => (defined('METRICOOL_BLOG_ID') && !empty(METRICOOL_BLOG_ID) ? METRICOOL_BLOG_ID : ""),
+                'userId' => (defined('METRICOOL_USER_ID') && !empty(METRICOOL_USER_ID) ? METRICOOL_USER_ID : ""),
             ]
         );
     }

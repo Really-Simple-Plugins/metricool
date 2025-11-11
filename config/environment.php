@@ -32,6 +32,7 @@ return [
         'connect_linkedin_url' => 'https://app.metricool.com/evolution/linkedin',
         'connect_twitter_url' => 'https://app.metricool.com/evolution/twitter',
         'tracking_script_url' => 'https://tracker.metricool.com/resources/be.js',
+        'create_post_url' => 'https://app.metricool.com/planner/post',
     ],
     'http' => [
         'version' => 'v1',

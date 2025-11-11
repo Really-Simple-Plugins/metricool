@@ -1,4 +1,5 @@
 <?php
+
 namespace Metricool;
 
 use Adbar\Dot;
@@ -8,9 +9,11 @@ use Metricool\Http\Metricool\MetricoolEntities;
 final class App
 {
     private static Dot $env;
+    private static Dot $userSettings;
     private static Dot $related;
     private static Dot $features;
     private static Dot $providers;
+
 
     /**
      * Static method to get data from the environment. Method ensures loading
@@ -20,7 +23,7 @@ final class App
     public static function env(string $key)
     {
         if (empty(self::$env)) {
-            self::$env = self::dotFromPath(dirname(__FILE__, 2).'/config/environment.php');
+            self::$env = self::dotFromPath(dirname(__FILE__, 2) . '/config/environment.php');
         }
         return self::$env->get($key);
     }
@@ -33,7 +36,7 @@ final class App
     public static function features(?string $key = null)
     {
         if (empty(self::$features)) {
-            self::$features = self::dotFromPath(dirname(__FILE__, 2).'/config/features.php');
+            self::$features = self::dotFromPath(dirname(__FILE__, 2) . '/config/features.php');
         }
         return self::$features->get($key);
     }
@@ -53,21 +56,31 @@ final class App
         }
 
         if (empty(self::$related)) {
-            self::$related = self::dotFromPath(dirname(__FILE__, 2).'/config/related.php');
+            self::$related = self::dotFromPath(dirname(__FILE__, 2) . '/config/related.php');
         }
 
         return (empty($key) ? self::$related : self::$related->get($key));
     }
 
+
+    public static function userSettings()
+    {
+        if (empty(self::$userSettings)) {
+            self::$userSettings = self::dotFromPath(dirname(__FILE__, 2) . '/config/user_settings.php');
+        }
+
+        return self::$userSettings;
+    }
+
     /**
      * Static method to get data from the providers.
      *
+     * @return mixed|MetricoolEntities|Request
+     * @throws \InvalidArgumentException If the key is not available in the providers
      * @internal Adding the return type of the provided functionality helps
      * your IDE with code completion. For example; these return types are
      * provided by the {@see AppServiceProvider}
      *
-     * @return mixed|MetricoolEntities|Request
-     * @throws \InvalidArgumentException If the key is not available in the providers
      */
     public static function provide($key)
     {
