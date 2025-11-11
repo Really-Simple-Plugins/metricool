@@ -5,7 +5,8 @@ namespace Metricool\Helpers;
 class PostHelper
 {
     /**
-     * Returns all public post types.
+     * Returns all accessible post types. An accessible post type is a post type
+     * that is public and isn't set as no-index.
      */
     public static function getPublicPostTypes(): array
     {
