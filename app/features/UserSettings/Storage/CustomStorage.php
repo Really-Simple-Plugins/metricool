@@ -17,6 +17,7 @@ class CustomStorage extends AbstractStorage
 
         $this->client = $config['client'];
         $this->method = $config['method'] ?? 'post';
+        $this->casing = $config['casing'] ?? '';
 
         parent::__construct($name, $config);
     }
@@ -36,31 +37,32 @@ class CustomStorage extends AbstractStorage
      */
     public function getMultiple(array $keys): array
     {
-        // Retrieve all values from the API client
-        $data = $this->client->get();
+        $data = [];
 
-        // Get the requested values from the API response
-        $results = [];
+        // Retrieve all values from the client
+        $results = $this->client->get();
+
+        // Retrieve the requested values from the response
         foreach ($keys as $key) {
-            $results[$key] = $data[$this->convertCase($key)] ?? null;
+            $data[$key] = $results[$this->convertCase($key)] ?? null;
         }
 
         // Return the requested values
-        return $results;
+        return $data;
     }
 
     /**
      * @throws \Exception
      */
-    public function set(string $key, $value): bool
+    public function set(string $key, $value): void
     {
-        return $this->setMultiple([$key => $value]);
+        $this->setMultiple([$key => $value]);
     }
 
     /**
      * @throws \Exception
      */
-    public function setMultiple(array $data)
+    public function setMultiple(array $data): void
     {
         // Create the request data
         $requestData = [];
@@ -68,7 +70,7 @@ class CustomStorage extends AbstractStorage
             $requestData[$this->convertCase($key)] = $value;
         }
 
-        // Send the request to the API client
-        return $this->client->{$this->method}($requestData);
+        // Send the request to the client
+        $this->client->{$this->method}($requestData);
     }
 }
