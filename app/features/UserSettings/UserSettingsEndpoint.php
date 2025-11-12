@@ -2,6 +2,7 @@
 
 namespace Metricool\Features\UserSettings;
 
+use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -68,6 +69,7 @@ class UserSettingsEndpoint
             return $this->sendHttpErrorResponse(__('Failed to retrieve settings', 'metricool'), $e->getMessage(), 500);
         }
 
+
         return $this->sendHttpResponse($settings);
     }
 
@@ -77,24 +79,12 @@ class UserSettingsEndpoint
 
         try {
             $updatedSettings = $this->service->storeSettings($params, $request);
+        } catch (ValidationFailedExceptions $e) {
+            // validation failed, return errors
+            return $this->sendHttpErrorResponse(__('Validation failed', 'metricool'), $e->getErrors(), 422);
         } catch (\Exception $e) {
+            // something else went wrong, abort
             return $this->sendHttpErrorResponse(__('Failed to update settings', 'metricool'), $e->getMessage(), 500);
-        }
-
-        if (is_wp_error($updatedSettings)) {
-            // Validation failed, return errors
-            $errors = [];
-            foreach ($updatedSettings->get_error_codes() as $code) {
-                $messages = $updatedSettings->get_error_messages($code);
-                $errorData = $updatedSettings->get_error_data($code);
-
-                foreach ($messages as $message) {
-                    $errors[$errorData['field']] = [
-                        'message' => $message
-                    ];
-                }
-            }
-            return $this->sendHttpErrorResponse(__('Validation failed', 'metricool'), ['errors' => $errors], 422);
         }
 
         return $this->sendHttpResponse($updatedSettings);

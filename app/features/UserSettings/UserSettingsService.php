@@ -5,11 +5,12 @@ namespace Metricool\Features\UserSettings;
 use Metricool\App;
 use Metricool\Features\UserSettings\Exceptions\StorageFailedException;
 use Metricool\Features\UserSettings\Exceptions\StorageNotFoundException;
+use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
 use Metricool\Features\UserSettings\Factories\FieldFactory;
 use Metricool\Features\UserSettings\Factories\StorageFactory;
-use Metricool\Features\UserSettings\Fields\Exceptions\ValidationErrors;
 use Metricool\Features\UserSettings\Fields\Field;
 use Metricool\Features\UserSettings\Storage\AbstractStorage;
+use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
 use Metricool\Helpers\Collection;
 
 /**
@@ -18,7 +19,7 @@ use Metricool\Helpers\Collection;
 class UserSettingsService
 {
     /** @var Collection|Field[] */
-    private Collection $fields;
+    public Collection $fields;
     /** @var Collection|AbstractStorage[] */
     private $storages = [];
 
@@ -70,8 +71,10 @@ class UserSettingsService
     }
 
     /**
-     * Return an array with setting names and values of the fieldNames
-     * @throws \Exception
+     * Return an array of fields and their values
+     * @return Field[]
+     * @throws \Exception when data retrieval fails
+     * @throws StorageFailedException when data was not present in storage
      */
     public function getSettings(array $fieldNames): array
     {
@@ -81,22 +84,22 @@ class UserSettingsService
         $fields = $this->fields->whereIn('name', $fieldNames);
 
         // Group fields by storage to make it easier to retrieve all values with a single request
-        $fieldsByStorage = $this->groupFieldsByStorage($fields);
+        $fieldsByStorage = $this->groupFieldsByStorage($fields->toArray());
 
         foreach ($fieldsByStorage as $storage => $fieldsToRetrieve) {
-            // Retrieve all values from storage
-            $values = $this->getStorage($storage)
+            // Retrieve the settings from storage
+            $retrievedData = $this->getStorage($storage)
                 ->getMultiple(array_keys($fieldsToRetrieve));
 
             foreach ($fieldsToRetrieve as $field) {
-                // Apply the retrieved values to the fields and add it to the results
-                if (isset($values[$field->name])) {
-                    $field->setValue($values[$field->name]);
+                // Check if the value is present in storage
+                if (array_key_exists($field->getName(), $retrievedData)) {
+                    $field->setValue($retrievedData[$field->getName()]);
                 } else {
                     throw new StorageFailedException(
                         sprintf(
                             'Value could not be found for field: %s because it was not retrieved from storage: %s',
-                            $field->name,
+                            $field->getName(),
                             $storage
                         )
                     );
@@ -107,40 +110,35 @@ class UserSettingsService
             }
         }
 
-        return $settings;
+        return $this->getFieldValues($settings);
     }
 
     /**
      * Validate and update settings and return their updated values
-     * @return \WP_Error|array Returns WP_Error when validation failed, the validated data otherwise
+     * @throws ValidationFailedExceptions with all the validation errors when validation fails
      * @throws StorageFailedException when it fails to store data to it's storage
      */
-    public function storeSettings(array $settings, \WP_REST_Request $request = null)
+    public function storeSettings(array $settings, \WP_REST_Request $request): array
     {
-        $validatedFields = $this->validateSettings($settings, $request);
-
-        // If validation failed, return the errors
-        if (is_wp_error($validatedFields)) {
-            return $validatedFields;
-        }
+        $validatedFields = $this->validateFields($settings, $request);
+        $storedSettings = [];
 
         // Group the validated fields by storage to store all values in a single request
         $fieldsByStorage = $this->groupFieldsByStorage($validatedFields);
 
-        // Keep track of the stored settings
-        $storedSettings = [];
+        // Store the validated settings in their storages
+        foreach ($fieldsByStorage as $storageName => $fields) {
+            $settingsToStore = $this->getFieldValues($fields);
 
-        // Attempt to save fields to storages
-        try {
-            foreach ($fieldsByStorage as $storageName => $fieldsToStore) {
-                $settingsToStore = $this->getFieldValues($fieldsToStore);
+            // Attempt to save settings to storages
+            try {
                 $this->getStorage($storageName)->setMultiple($settingsToStore);
-
-                // Push updated settings to the stored Settings
-                $storedSettings[] = $settingsToStore;
+            } catch (\Exception $e) {
+                throw new StorageFailedException($e->getMessage());
             }
-        } catch (\Exception $e) {
-            throw new StorageFailedException($e->getMessage());
+
+            // Push updated settings to the stored Settings
+            $storedSettings[] = $settingsToStore;
         }
 
         // Return the stored settings
@@ -149,13 +147,13 @@ class UserSettingsService
 
     /**
      * Validate the fields and return their validated values.
-     * @return \WP_Error|Field[] Returns WP_Error when validation failed,
-     * otherwise and array of validated Fields
+     * @return Field[]
+     * @throws ValidationFailedExceptions when validation fails
      */
-    private function validateSettings(array $settings, \WP_REST_Request $request = null)
+    private function validateFields(array $settings, \WP_REST_Request $request): array
     {
         $validatedFields = [];
-        $errorContainer = new \WP_Error();
+        $validationErrors = [];
 
         foreach ($settings as $fieldName => $value) {
             $field = $this->getField($fieldName);
@@ -165,26 +163,24 @@ class UserSettingsService
                 continue;
             }
 
-            // Validate the field value
+            // Validate the field and add stop validation on the first failure
             try {
                 $field->validate($value, $request);
-            } catch (ValidationErrors $e) {
-                foreach ($e->validationErrors as $error) {
-                    $errorContainer->add($fieldName, $error->getMessage(), ['field' => $fieldName]);
-                }
-
-                // Continue to the next field when validation failed
+            } catch (ValidatorFailedException $e) {
+                $validationErrors[$fieldName] = $e;
                 continue;
             }
 
-            // Set the validated field value
+            // Set the validated field value and add it to the validated data
             $field->setValue($value);
-
-            // Add the field to the validated data
             $validatedFields[$fieldName] = $field;
         }
 
-        return $errorContainer->has_errors() ? $errorContainer : $validatedFields;
+        if (count($validationErrors) > 0) {
+            throw new ValidationFailedExceptions($validationErrors);
+        }
+
+        return $validatedFields;
     }
 
 
@@ -195,7 +191,7 @@ class UserSettingsService
     {
         $storages = [];
         foreach ($storagesConfig as $name => $config) {
-            $storages[$name] = StorageFactory::create($name, $config);
+            $storages[$name] = StorageFactory::createFromConfig($name, $config);
         }
 
         $this->storages = new Collection($storages);
@@ -209,14 +205,15 @@ class UserSettingsService
     {
         $fields = [];
         foreach ($fieldsConfig as $name => $config) {
-            $field = FieldFactory::create($name, $config);
+            $field = FieldFactory::createFromConfig($name, $config);
 
-            $storage = $this->getStorage($field->getStorageName());
+            $storage = $this->getStorage($field->getStorage());
 
             // Abort when storage not present in config
             if ($storage == null) {
-                throw new StorageNotFoundException('Storage "' . $field->getStorageName() . '" not found for field: ' . $field->getName());
+                throw new StorageNotFoundException('Storage "' . $field->getStorage() . '" not found for field: ' . $field->getName());
             }
+
 
             $fields[$name] = $field;
         }
@@ -231,7 +228,7 @@ class UserSettingsService
     {
         $fieldsByStorage = [];
         foreach ($fields as $field) {
-            $storageName = $field->getStorageName();
+            $storageName = $field->getStorage();
             if (!isset($fieldsByStorage[$storageName])) {
                 $fieldsByStorage[$storageName] = [];
             }
@@ -241,7 +238,8 @@ class UserSettingsService
     }
 
     /**
-     * Create an array with the values of the fields
+     * Create an array with the key/values of the fields
+     * @param Field[] $fields
      */
     protected function getFieldValues(array $fields): array
     {

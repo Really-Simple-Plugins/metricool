@@ -10,8 +10,7 @@ return [
             'section' => 'account',
         ],
         'alternativeEmail' => [
-            'type' => 'string',
-            'validator' => 'email',
+            'validators' => ['requiredIf:sendToAlternativeEmail,true', 'email'],
             'storage' => 'metricoolUserSettings',
             'section' => 'account',
         ],
@@ -23,10 +22,13 @@ return [
         'trackingScriptHash' => [
             'section' => 'tracking',
         ],
-        'exampleField' => [
+        'exampleRequiredInteger' => [
             'type' => 'integer',
-            'field' => 'example',
-            'validators' => ['required', 'example'],
+            'validators' => ['required'],
+            'section' => 'example',
+        ],
+        'exampleField' => [
+            'field' => 'ExampleField',
             'section' => 'example',
         ],
     ],

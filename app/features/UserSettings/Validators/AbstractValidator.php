@@ -17,5 +17,5 @@ abstract class AbstractValidator
     /**
      * @throws ValidatorFailedException
      */
-    abstract function validate($value, \WP_REST_Request $request = null);
+    abstract function validate($value, \WP_REST_Request $request);
 }

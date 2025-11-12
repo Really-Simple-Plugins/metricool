@@ -13,7 +13,7 @@ class RequiredValidator extends AbstractValidator
     public function validate($value, \WP_REST_Request $request = null): void
     {
         if (($value === '' || is_null($value))) {
-            throw new ValidatorFailedException(__('Please enter a value', 'metricool'));
+            throw new ValidatorFailedException(__('Please enter a value', 'metricool'), $this);
         }
     }
 }

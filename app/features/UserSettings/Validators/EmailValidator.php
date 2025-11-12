@@ -7,13 +7,13 @@ use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedExcepti
 class EmailValidator extends AbstractValidator
 {
     /**
-     * Checks if the field is required and is not empty
+     * Checks if the field contains a valid email
      * @inheritDoc
      */
     public function validate($value, \WP_REST_Request $request = null): void
     {
-        if (($value === '' || is_null($value))) {
-            throw new ValidatorFailedException(__('Please enter a value', 'metricool'));
+        if (!empty($value) && is_email($value) === false) {
+            throw new ValidatorFailedException(__('Please enter a valid email', 'metricool'), $this);
         }
     }
 }

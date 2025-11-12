@@ -8,7 +8,11 @@ class StorageFactory
 {
     private const STORAGE_NAMESPACE = '\\Metricool\\Features\\UserSettings\\Storage\\';
 
-    public static function create(string $name, array $options): AbstractStorage
+    /**
+     * Creates a storage from the user_settings configuration
+     * @see config/user_settings.php
+     */
+    public static function createFromConfig(string $name, array $options): AbstractStorage
     {
         $storageClass = self::STORAGE_NAMESPACE . ucfirst($options['type']) . 'Storage';
 

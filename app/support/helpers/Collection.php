@@ -167,6 +167,9 @@ class Collection implements IteratorAggregate
         return $this->filter($this->operatorForWhere(...func_get_args()));
     }
 
+    /**
+     * Filter items by the given key/value pairs.
+     */
     public function whereIn(string $key, array $values): self
     {
         return $this->filter(function ($item) use ($key, $values) {
