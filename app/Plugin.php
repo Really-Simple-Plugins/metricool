@@ -55,7 +55,7 @@ class Plugin
     public function registerEnvironment()
     {
         if (!defined('METRICOOL_ENV')) {
-            define('METRICOOL_ENV', 'development');
+            define('METRICOOL_ENV', 'production');
         }
     }
 
