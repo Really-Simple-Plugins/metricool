@@ -22,23 +22,23 @@ return [
         'trackingScriptHash' => [
             'section' => 'tracking',
         ],
+        // Example fields
+        'exampleCustomField' => [
+            'field' => 'ExampleField',
+            'section' => 'example',
+        ],
         'exampleRequiredInteger' => [
             'type' => 'integer',
             'validators' => ['required'],
             'section' => 'example',
         ],
-        'exampleCustomField' => [
-            'field' => 'ExampleField',
-            'section' => 'example',
-        ],
         'exampleFloat' => [
             'type' => 'float',
-        ],
-        'exampleNumeric' => [
-            'type' => 'numeric',
+            'section' => 'example',
         ],
         'exampleString' => [
             'type' => 'string',
+            'section' => 'example',
         ],
     ],
     'storages' => [
