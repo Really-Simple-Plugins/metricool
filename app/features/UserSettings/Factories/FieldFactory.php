@@ -3,7 +3,6 @@
 namespace Metricool\Features\UserSettings\Factories;
 
 use Metricool\Features\UserSettings\Fields\Field;
-use Metricool\Features\UserSettings\Validators\FieldTypeValidator;
 
 class FieldFactory
 {
@@ -29,22 +28,5 @@ class FieldFactory
         $field->applyConfig($config);
 
         return $field;
-    }
-
-    /**
-     * Create validators for a field from the configuration and add the TypeValidator if needed
-     */
-    public static function createValidatorsForField($field, array $validatorNames, bool $typeValidator): array
-    {
-        $validators = [];
-
-        if ($typeValidator) {
-            $validators[] = new FieldTypeValidator($field);
-        }
-
-        foreach ($validatorNames as $validator) {
-            $validators[] = ValidatorFactory::create($validator, $field);
-        }
-        return $validators;
     }
 }
