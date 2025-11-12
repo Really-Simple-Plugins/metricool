@@ -2,7 +2,7 @@
 
 namespace Metricool\Features\UserSettings\Exceptions;
 
-class StorageErrorException extends \RuntimeException
+class StorageFailedException extends \RuntimeException
 {
     public function __construct(string $message)
     {

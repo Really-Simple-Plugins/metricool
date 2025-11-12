@@ -3,16 +3,14 @@
 namespace Metricool\Features\UserSettings;
 
 use Metricool\App;
-use Metricool\Features\UserSettings\Exceptions\StorageErrorException;
+use Metricool\Features\UserSettings\Exceptions\StorageFailedException;
 use Metricool\Features\UserSettings\Exceptions\StorageNotFoundException;
-use Metricool\Features\UserSettings\Fields\Exceptions\ValidationFailedException;
+use Metricool\Features\UserSettings\Factories\FieldFactory;
+use Metricool\Features\UserSettings\Factories\StorageFactory;
+use Metricool\Features\UserSettings\Fields\Exceptions\FieldValidateExceptions;
 use Metricool\Features\UserSettings\Fields\Field;
 use Metricool\Features\UserSettings\Storage\AbstractStorage;
-use Metricool\Features\UserSettings\Storage\CustomStorage;
-use Metricool\Features\UserSettings\Storage\OptionsStorage;
 use Metricool\Helpers\Collection;
-
-// todo: add support for custom fields?
 
 /**
  * This service is responsible for storing and retrieving user settings.
@@ -28,6 +26,7 @@ class UserSettingsService
     {
         $config = App::userSettings();
 
+        //todo: This should probably be moved to someplace else
         $this->initializeStorages($config['storages'] ?? []);
         $this->initializeFields($config['fields'] ?? []);
     }
@@ -132,7 +131,7 @@ class UserSettingsService
                 $this->getStorage($storageName)->setMultiple($storageData);
             }
         } catch (\Exception $e) {
-            throw new StorageErrorException($e->getMessage());
+            throw new StorageFailedException($e->getMessage());
         }
 
         // Return the validated field keys and their values
@@ -162,8 +161,11 @@ class UserSettingsService
             // Validate the field value
             try {
                 $field->validate($value, $request);
-            } catch (ValidationFailedException $e) {
-                $errors->add($fieldName, $e->getMessage(), ['field' => $fieldName]);
+            } catch (FieldValidateExceptions $e) {
+                foreach ($e->validationErrors as $error) {
+                    $errors->add($fieldName, $error->getMessage(), ['field' => $fieldName]);
+                }
+
                 continue;
             }
 
@@ -181,6 +183,7 @@ class UserSettingsService
         return $validatedData;
     }
 
+
     /**
      * Initialize storages from user_settings configuration
      */
@@ -188,7 +191,7 @@ class UserSettingsService
     {
         $storages = [];
         foreach ($storagesConfig as $name => $config) {
-            $storages[$name] = $this->createStorage($name, $config);
+            $storages[$name] = StorageFactory::create($name, $config);
         }
 
         $this->storages = new Collection($storages);
@@ -201,7 +204,8 @@ class UserSettingsService
     {
         $fields = [];
         foreach ($fieldsConfig as $name => $config) {
-            $field = new Field($name, $config);
+            $field = FieldFactory::create($name, $config);
+
             $storage = $this->getStorage($field->getStorageName());
 
             // Abort when storage not present in config
@@ -213,23 +217,6 @@ class UserSettingsService
         }
 
         $this->fields = new Collection($fields);
-    }
-
-    /**
-     * Creates a storage instance from config
-     */
-    private function createStorage(string $name, array $config): AbstractStorage
-    {
-        switch ($config['type'] ?? null) {
-            case 'options':
-                return new OptionsStorage($name, $config);
-            case 'custom':
-                return new CustomStorage($name, $config);
-            default:
-                throw new Exceptions\UnknownStorageTypeException(
-                    'Storage "' . $name . '" storage type: "' . $config['type'] . '" is not supported'
-                );
-        }
     }
 
     /**

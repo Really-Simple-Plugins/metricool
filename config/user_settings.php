@@ -1,11 +1,11 @@
 <?php
 
 use Metricool\App;
-use Metricool\Features\UserSettings\Fields\Exceptions\ValidationFailedException;
 
 return [
     'fields' => [
         'sendToAlternativeEmail' => [
+            'required' => true,
             'type' => 'boolean',
             'section' => 'account',
             'storage' => 'metricoolUserSettings',
@@ -23,15 +23,11 @@ return [
         'trackingScriptHash' => [
             'section' => 'tracking',
         ],
-        'validateExample' => [
-            'defaultValue' => 2,
+        'exampleField' => [
             'type' => 'integer',
-            'validate' => function ($value) {
-                if ($value !== 1) {
-                    throw new ValidationFailedException(__('Value must be a 1'));
-                }
-            }
-        ]
+            'field' => 'example',
+            'validators' => ['required', 'example'],
+        ],
     ],
     'storages' => [
         'default' => [

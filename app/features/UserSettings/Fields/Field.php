@@ -2,10 +2,15 @@
 
 namespace Metricool\Features\UserSettings\Fields;
 
-use Metricool\Features\UserSettings\Fields\Exceptions\ValidationFailedException;
+use Metricool\Features\UserSettings\Factories\ValidatorFactory;
+use Metricool\Features\UserSettings\Fields\Exceptions\FieldValidateExceptions;
+use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
+use Metricool\Features\UserSettings\Validators\Validator;
 
 class Field
 {
+    protected const DEFAULT_VALIDATORS = ['required', 'builtin'];
+
     public string $name;
     public string $type;
     public ?string $section;
@@ -14,6 +19,8 @@ class Field
     public bool $required = false;
     public $value = null;
     public $validateCallback = null;
+    /** @var Validator[] */
+    public array $validators = [];
 
     public function __construct(string $name, array $config)
     {
@@ -24,6 +31,8 @@ class Field
         $this->defaultValue = $config['default_value'] ?? null;
         $this->required = $config['required'] ?? false;
         $this->validateCallback = $config['validate'] ?? null;
+
+        $this->initializeValidators($config['validators'] ?? self::DEFAULT_VALIDATORS);
     }
 
     public function getName(): string
@@ -63,53 +72,34 @@ class Field
         return $this->castValue($value);
     }
 
-    /**
-     * @throws ValidationFailedException
-     */
-    public function validate($value, \WP_REST_Request $request = null): void
+    public function isRequired(): bool
     {
-        // Call the validateCallback when not null
-        if (!is_null($this->validateCallback)) {
-            ($this->validateCallback)($value, $request);
+        return $this->required;
+    }
+
+    /**
+     * @throws ValidatorFailedException
+     */
+    public function validate($value, \WP_REST_Request $request = null)
+    {
+        $validationErrors = [];
+
+        foreach ($this->validators as $validator) {
+            try {
+                $validator->validate($value, $request);
+            } catch (ValidatorFailedException $e) {
+                $validationErrors[] = $e;
+            }
         }
 
-        // Do the built-in validation
-        switch ($this->type) {
-            case 'boolean':
-            case 'bool':
-                // accept true, false, 0, and 1 and "1", "0", "true" or "false" as boolean values
-                if (!is_bool($value) && !in_array($value, ['0', '1', 'true', 'false'])) {
-                    throw new ValidationFailedException(__('Please enter a valid boolean', 'metricool'));
-                }
-                break;
-            case 'email':
-                if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    throw new ValidationFailedException(__('Please enter a valid email address', 'metricool'));
-                }
-                break;
-            case 'string':
-                if (!is_string($value) && !is_numeric($value)) {
-                    throw new ValidationFailedException(__('Please enter a valid string', 'metricool'));
-                }
-                break;
-            case 'integer':
-            case 'int':
-                if (!is_int($value)) {
-                    throw new ValidationFailedException(__('Please enter a valid number', 'metricool'));
-                }
-                break;
-            case 'array':
-                if (!is_array($value)) {
-                    throw new ValidationFailedException(__('Please enter a valid array', 'metricool'));
-                }
-                break;
-        }
-
-        if ($this->required && ($value === '' || is_null($value))) {
-            throw new ValidationFailedException(__('Please enter a value', 'metricool'));
+        if (!empty($validationErrors)) {
+            throw new FieldValidateExceptions($validationErrors);
         }
     }
 
+    /**
+     * Casts the value to the type of the field
+     */
     protected function castValue($value)
     {
         switch ($this->type) {
@@ -130,6 +120,13 @@ class Field
                 return (object) $value;
             default:
                 return $value;
+        }
+    }
+
+    private function initializeValidators(array $validators)
+    {
+        foreach ($validators as $validator) {
+            $this->validators[] = ValidatorFactory::create($validator, $this);
         }
     }
 }
