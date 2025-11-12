@@ -141,13 +141,10 @@ class Field
     {
         switch ($this->type) {
             case 'boolean':
-            case 'bool':
                 return (bool) $value;
             case 'integer':
-            case 'int':
                 return (int) $value;
             case 'float':
-            case 'double':
                 return (float) $value;
             case 'string':
                 return (string) $value;

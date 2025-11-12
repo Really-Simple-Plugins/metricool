@@ -27,9 +27,18 @@ return [
             'validators' => ['required'],
             'section' => 'example',
         ],
-        'exampleField' => [
+        'exampleCustomField' => [
             'field' => 'ExampleField',
             'section' => 'example',
+        ],
+        'exampleFloat' => [
+            'type' => 'float',
+        ],
+        'exampleNumeric' => [
+            'type' => 'numeric',
+        ],
+        'exampleString' => [
+            'type' => 'string',
         ],
     ],
     'storages' => [

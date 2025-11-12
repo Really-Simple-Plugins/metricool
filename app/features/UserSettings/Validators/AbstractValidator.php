@@ -18,4 +18,13 @@ abstract class AbstractValidator
      * @throws ValidatorFailedException
      */
     abstract function validate($value, \WP_REST_Request $request);
+
+    protected function isEmptyValue($value): bool
+    {
+        if (!empty($value) && $value !== '0') {
+            return true;
+        }
+        
+        return false;
+    }
 }
