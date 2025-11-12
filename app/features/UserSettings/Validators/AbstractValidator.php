@@ -5,7 +5,7 @@ namespace Metricool\Features\UserSettings\Validators;
 use Metricool\Features\UserSettings\Fields\Field;
 use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
 
-abstract class Validator
+abstract class AbstractValidator
 {
     protected Field $field;
 

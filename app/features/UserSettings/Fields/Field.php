@@ -3,9 +3,9 @@
 namespace Metricool\Features\UserSettings\Fields;
 
 use Metricool\Features\UserSettings\Factories\ValidatorFactory;
-use Metricool\Features\UserSettings\Fields\Exceptions\FieldValidateExceptions;
+use Metricool\Features\UserSettings\Fields\Exceptions\ValidationErrors;
+use Metricool\Features\UserSettings\Validators\AbstractValidator;
 use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
-use Metricool\Features\UserSettings\Validators\Validator;
 
 class Field
 {
@@ -19,7 +19,7 @@ class Field
     public bool $required = false;
     public $value = null;
     public $validateCallback = null;
-    /** @var Validator[] */
+    /** @var AbstractValidator[] */
     public array $validators = [];
 
     public function __construct(string $name, array $config)
@@ -93,7 +93,7 @@ class Field
         }
 
         if (!empty($validationErrors)) {
-            throw new FieldValidateExceptions($validationErrors);
+            throw new ValidationErrors($validationErrors);
         }
     }
 

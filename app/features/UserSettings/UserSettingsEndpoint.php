@@ -50,7 +50,7 @@ class UserSettingsEndpoint
             case 'POST':
             case 'PUT':
             case 'PATCH':
-                return $this->updateUserSettings($request);
+                return $this->storeUserSettings($request);
             default:
                 return $this->sendHttpResponse([], false, 'Method not allowed', 405);
         }
@@ -71,12 +71,12 @@ class UserSettingsEndpoint
         return $this->sendHttpResponse($settings);
     }
 
-    protected function updateUserSettings(\WP_REST_Request $request): \WP_REST_Response
+    protected function storeUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {
         $params = $request->get_params();
 
         try {
-            $updatedSettings = $this->service->updateSettings($params, $request);
+            $updatedSettings = $this->service->storeSettings($params, $request);
         } catch (\Exception $e) {
             return $this->sendHttpErrorResponse(__('Failed to update settings', 'metricool'), $e->getMessage(), 500);
         }

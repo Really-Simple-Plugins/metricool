@@ -4,7 +4,7 @@ namespace Metricool\Features\UserSettings\Validators;
 
 use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
 
-class ExampleValidator extends Validator
+class ExampleValidator extends AbstractValidator
 {
     /**
      * @inheritDoc

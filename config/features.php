@@ -13,6 +13,7 @@ return [
         'pro' => false,
         'priorityFiles' => [
             'Storage/AbstractStorage',
+            'Validators/AbstractValidator',
         ],
     ],
     'Onboarding' => [

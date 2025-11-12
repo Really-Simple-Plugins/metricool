@@ -4,7 +4,7 @@ namespace Metricool\Features\UserSettings\Validators;
 
 use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
 
-class BuiltInValidator extends Validator
+class BuiltInValidator extends AbstractValidator
 {
     /**
      * @inheritDoc
@@ -23,11 +23,6 @@ class BuiltInValidator extends Validator
                 // accept true, false, 0, and 1 and "1", "0", "true" or "false" as boolean values
                 if (!is_bool($value) && !in_array($value, ['0', '1', 'true', 'false'])) {
                     throw new ValidatorFailedException(__('Please enter a valid boolean', 'metricool'));
-                }
-                break;
-            case 'email':
-                if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
-                    throw new ValidatorFailedException(__('Please enter a valid email address', 'metricool'));
                 }
                 break;
             case 'string':

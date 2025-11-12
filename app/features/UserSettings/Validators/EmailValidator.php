@@ -4,7 +4,7 @@ namespace Metricool\Features\UserSettings\Validators;
 
 use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
 
-class RequiredValidator extends AbstractValidator
+class EmailValidator extends AbstractValidator
 {
     /**
      * Checks if the field is required and is not empty

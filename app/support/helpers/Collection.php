@@ -167,6 +167,13 @@ class Collection implements IteratorAggregate
         return $this->filter($this->operatorForWhere(...func_get_args()));
     }
 
+    public function whereIn(string $key, array $values): self
+    {
+        return $this->filter(function ($item) use ($key, $values) {
+            return in_array($this->get($item, $key), $values);
+        });
+    }
+
     /**
      * Run a map over each of the items.
      */

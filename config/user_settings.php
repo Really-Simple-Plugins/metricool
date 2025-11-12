@@ -5,15 +5,15 @@ use Metricool\App;
 return [
     'fields' => [
         'sendToAlternativeEmail' => [
-            'required' => true,
             'type' => 'boolean',
-            'section' => 'account',
             'storage' => 'metricoolUserSettings',
+            'section' => 'account',
         ],
         'alternativeEmail' => [
-            'type' => 'email',
-            'section' => 'account',
+            'type' => 'string',
+            'validator' => 'email',
             'storage' => 'metricoolUserSettings',
+            'section' => 'account',
         ],
         'trackingScriptActive' => [
             'type' => 'boolean',
@@ -27,6 +27,7 @@ return [
             'type' => 'integer',
             'field' => 'example',
             'validators' => ['required', 'example'],
+            'section' => 'example',
         ],
     ],
     'storages' => [
