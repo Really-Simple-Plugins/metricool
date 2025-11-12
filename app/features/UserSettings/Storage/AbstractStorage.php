@@ -14,14 +14,34 @@ abstract class AbstractStorage
         $this->name = $name;
     }
 
+    /**
+     * Retrieve a value from storage
+     * @throws \Exception when the value could not be retrieved
+     */
     abstract public function get(string $key);
 
+    /**
+     * Retrieve multiple values from storage
+     * @throws \Exception when a value could not be retrieved
+     */
     abstract public function getMultiple(array $keys);
 
+    /**
+     * Store a setting
+     * @throws \Exception
+     */
     abstract public function set(string $key, $value);
 
-    abstract public function setMultiple(array $data);
+    /**
+     * Store multiple settings
+     * @throws \Exception
+     */
+    abstract public function setMultiple(array $settings);
 
+    /**
+     * Converts the casing to storage casing
+     * @throws \Exception
+     */
     protected function convertCase(string $key): string
     {
         switch ($this->casing) {

@@ -20,11 +20,17 @@ class OptionsStorage extends AbstractStorage
         parent::__construct($name, $config);
     }
 
+    /**
+     * @inheritDoc
+     */
     public function get(string $key)
     {
         return get_option($this->prefix . $key) ?? null;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function getMultiple(array $keys): array
     {
         $result = [];
@@ -34,14 +40,20 @@ class OptionsStorage extends AbstractStorage
         return $result;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function set(string $key, $value): void
     {
         update_option($this->prefix . $this->convertCase($key), $value);
     }
 
-    public function setMultiple(array $data): void
+    /**
+     * @inheritDoc
+     */
+    public function setMultiple(array $settings): void
     {
-        foreach ($data as $key => $value) {
+        foreach ($settings as $key => $value) {
             $this->set($key, $value);
         }
     }

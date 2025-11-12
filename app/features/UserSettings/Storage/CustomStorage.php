@@ -23,7 +23,7 @@ class CustomStorage extends AbstractStorage
     }
 
     /**
-     * @throws \Exception
+     * @inheritDoc
      */
     public function get(string $key)
     {
@@ -33,7 +33,7 @@ class CustomStorage extends AbstractStorage
     }
 
     /**
-     * @throws \Exception
+     * @inheritDoc
      */
     public function getMultiple(array $keys): array
     {
@@ -52,7 +52,7 @@ class CustomStorage extends AbstractStorage
     }
 
     /**
-     * @throws \Exception
+     * @inheritDoc
      */
     public function set(string $key, $value): void
     {
@@ -60,13 +60,13 @@ class CustomStorage extends AbstractStorage
     }
 
     /**
-     * @throws \Exception
+     * @inheritDoc
      */
-    public function setMultiple(array $data): void
+    public function setMultiple(array $settings): void
     {
         // Create the request data
         $requestData = [];
-        foreach ($data as $key => $value) {
+        foreach ($settings as $key => $value) {
             $requestData[$this->convertCase($key)] = $value;
         }
 
