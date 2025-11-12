@@ -50,4 +50,12 @@ class StringUtility
         return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $string));
     }
 
+    /**
+     * Checks if the value is truly empty
+     */
+    public static function isEmptyValue($value): bool
+    {
+        return empty($value) && $value !== '0';
+    }
+
 }

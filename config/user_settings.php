@@ -5,6 +5,7 @@ use Metricool\App;
 return [
     'fields' => [
         'sendToAlternativeEmail' => [
+            'validators' => ['required'],
             'type' => 'boolean',
             'storage' => 'metricoolUserSettings',
             'section' => 'account',
@@ -45,6 +46,11 @@ return [
         'exampleObject' => [
             'type' => 'object',
             'defaultValue' => (object) ['foo' => 'bar'],
+            'section' => 'example',
+        ],
+        'exampleCustomStorageName' => [
+            'validators' => ['email'],
+            //'storageName' => 'CustomStorageName',
             'section' => 'example',
         ],
     ],

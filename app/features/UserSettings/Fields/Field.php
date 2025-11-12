@@ -14,6 +14,7 @@ class Field
     public ?string $section;
     public $defaultValue;
     public string $storage;
+    public ?string $storageName;
 
     /** @var mixed */
     protected $value = null;
@@ -55,6 +56,11 @@ class Field
     public function getStorage(): string
     {
         return $this->storage;
+    }
+
+    public function getNameForStorage(): string
+    {
+        return $this->storageName ?? $this->name;
     }
 
     /** @return mixed */
@@ -112,6 +118,7 @@ class Field
         $this->type = $config['type'] ?? 'string';
         $this->section = $config['section'] ?? '';
         $this->storage = $config['storage'] ?? 'default';
+        $this->storageName = $config['storageName'] ?? null;
         $this->defaultValue = $config['defaultValue'] ?? null;
         $this->validators = $this->createValidatorsFromConfig($config['validators'] ?? [], $config['validateType'] ?? true);
 

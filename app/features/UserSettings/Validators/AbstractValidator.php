@@ -4,6 +4,7 @@ namespace Metricool\Features\UserSettings\Validators;
 
 use Metricool\Features\UserSettings\Fields\Field;
 use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
+use Metricool\Utility\StringUtility;
 
 abstract class AbstractValidator
 {
@@ -21,10 +22,6 @@ abstract class AbstractValidator
 
     protected function isEmptyValue($value): bool
     {
-        if (!empty($value) && $value !== '0') {
-            return true;
-        }
-        
-        return false;
+        return StringUtility::isEmptyValue($value);
     }
 }

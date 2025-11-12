@@ -37,6 +37,7 @@ class OptionsStorage extends AbstractStorage
         foreach ($keys as $key) {
             $result[$key] = $this->get($this->convertCase($key));
         }
+        
         return $result;
     }
 
