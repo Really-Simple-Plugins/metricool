@@ -120,7 +120,11 @@ class Field
         $this->storage = $config['storage'] ?? 'default';
         $this->storageName = $config['storageName'] ?? null;
         $this->defaultValue = $config['defaultValue'] ?? null;
-        $this->validators = $this->createValidatorsFromConfig($config['validators'] ?? [], $config['validateType'] ?? true);
+
+        // Check if we should add the type validator
+        $addTypeValidator = $config['validateType'] ?? true;
+        // Create validators based on the configuration
+        $this->validators = $this->createValidatorsFromConfig($config['validators'] ?? [], $addTypeValidator);
 
         return $this;
     }
