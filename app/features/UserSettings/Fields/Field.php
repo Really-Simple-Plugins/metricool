@@ -68,9 +68,14 @@ class Field
         $this->value = $value;
     }
 
+    /** @return mixed|null */
     public function getValue()
     {
         $value = $this->value ?: $this->getDefaultValue();
+
+        if (is_null($value)) {
+            return null;
+        }
 
         return $this->castValue($value);
     }
