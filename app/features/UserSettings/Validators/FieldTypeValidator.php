@@ -39,13 +39,9 @@ class FieldTypeValidator extends AbstractValidator
                 }
                 break;
             case 'array':
+            case 'object':
                 if (!is_array($value)) {
                     throw new ValidatorFailedException(__('Please enter a valid array', 'metricool'), $this);
-                }
-                break;
-            case 'object':
-                if (!is_object($value)) {
-                    throw new ValidatorFailedException(__('Please enter a valid object', 'metricool'), $this);
                 }
                 break;
         }

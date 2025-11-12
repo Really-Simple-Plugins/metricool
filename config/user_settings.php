@@ -25,6 +25,7 @@ return [
         // Example fields
         'exampleCustomField' => [
             'field' => 'ExampleField',
+            // or: 'field' => ExampleField::class, which one do we prefer?
             'section' => 'example',
         ],
         'exampleRequiredInteger' => [
@@ -36,8 +37,14 @@ return [
             'type' => 'float',
             'section' => 'example',
         ],
-        'exampleString' => [
-            'type' => 'string',
+        'exampleArray' => [
+            'type' => 'array',
+            'defaultValue' => ['foo', 'bar'],
+            'section' => 'example',
+        ],
+        'exampleObject' => [
+            'type' => 'object',
+            'defaultValue' => (object) ['foo' => 'bar'],
             'section' => 'example',
         ],
     ],
