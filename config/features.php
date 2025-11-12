@@ -16,7 +16,7 @@ return [
         ],
     ],
     'Onboarding' => [
-        'enabled' => FeatureHelper::isEnabled('onboarding'),
+        'enabled' => false,
         'inScope' => is_admin() || metricool_is_wp_json_request(),
         'pro' => false,
         'dependencies' => [
@@ -24,7 +24,7 @@ return [
         ],
     ],
     'TaskManagement' => [
-        'enabled' => FeatureHelper::isEnabled('task_management'),
+        'enabled' => true,
         'inScope' => true, // Should be able to listen everywhere
         'pro' => false,
         'priorityFiles' => [
@@ -32,7 +32,7 @@ return [
         ],
     ],
     'Notifications' => [
-        'enabled' => FeatureHelper::isEnabled('notifications'),
+        'enabled' => true,
         'inScope' => true, // Should be able to listen everywhere
         'pro' => false,
         'priorityFiles' => [
