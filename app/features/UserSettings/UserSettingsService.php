@@ -82,7 +82,7 @@ class UserSettingsService
         $fields = $this->fields->whereIn('name', $fieldNames);
 
         // Group fields by storage to make it easier to retrieve all values with a single request
-        $fieldsByStorage = $this->groupFieldsByStorage($fields->toArray());
+        $fieldsByStorage = $this->groupFieldsByStorage($fields);
 
         foreach ($fieldsByStorage as $storage => $fieldsToRetrieve) {
             // Get the names of the fields to retrieve from storage
