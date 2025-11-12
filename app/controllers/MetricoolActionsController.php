@@ -129,11 +129,11 @@ class MetricoolActionsController implements ControllerInterface
 
         // todo: Check post content with product owner
         $content = get_the_title($postId) . ' - ' . get_permalink($postId);
+
         // todo: Test media (impossible to do locally)
-        $media = get_the_post_thumbnail($postId, 'large');
 
         // Generate the deeplink
-        $url = MetricoolUrl::shareUrl($content, $media);
+        $url = MetricoolUrl::shareUrl($content);
 
         Event::dispatch(Event::POST_SCHEDULED);
 
