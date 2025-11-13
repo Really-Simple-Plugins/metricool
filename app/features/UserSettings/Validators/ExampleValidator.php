@@ -7,7 +7,7 @@ use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedExcepti
 class ExampleValidator extends AbstractValidator
 {
     /**
-     * @inheritDoc
+     * This validator checks if the value is 1
      */
     public function validate($value, \WP_REST_Request $request = null): void
     {
