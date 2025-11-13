@@ -18,7 +18,7 @@ class StorageFactory
             throw new \InvalidArgumentException('Storage for "' . $name . '" is not set, please add it to the config');
         }
 
-        $storageClass = self::STORAGE_NAMESPACE . ucfirst($options['storage']) . 'Storage';
+        $storageClass = self::STORAGE_NAMESPACE . ucfirst($options['storage']);
 
         if (!class_exists($storageClass)) {
             throw new \InvalidArgumentException('Storage "' . $storageClass . '" not found');

@@ -56,11 +56,11 @@ return [
     ],
     'storages' => [
         'default' => [
-            'storage' => 'options',
+            'storage' => 'OptionsStorage',
             'prefix' => 'metricool_',
         ],
         'metricoolUserSettings' => [
-            'storage' => 'custom',
+            'storage' => 'CustomStorage',
             'client' => App::provide('client')->userSettings(),
             'method' => 'patch',
             'casing' => 'camelCase',
