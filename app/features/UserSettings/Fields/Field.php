@@ -15,9 +15,9 @@ class Field
     public $defaultValue;
     public string $storage;
     public ?string $storageName;
-
     /** @var mixed */
-    protected $value = null;
+    public $value = null;
+
     /** @var AbstractValidator[] */
     protected array $validators = [];
 
@@ -86,16 +86,44 @@ class Field
         return $this->castValue($value);
     }
 
+    /**
+     * Casts the value to the type of the field
+     * @return mixed
+     */
+    protected function castValue($value)
+    {
+        switch ($this->type) {
+            case 'boolean':
+                return (bool) $value;
+            case 'integer':
+                return (int) $value;
+            case 'float':
+                return (float) $value;
+            case 'string':
+                return (string) $value;
+            case 'array':
+                return (array) $value;
+            case 'object':
+                return (object) $value;
+            default:
+                return $value;
+        }
+    }
+
     public function getValidators(): array
     {
         return $this->validators;
     }
 
     /** @param AbstractValidator[] $validators */
-    public function setValidators(array $validators): self
+    public function setValidators(array $validators)
     {
         $this->validators = $validators;
-        return $this;
+    }
+
+    public function addValidator(AbstractValidator $validator)
+    {
+        $this->validators[] = $validator;
     }
 
     /**
@@ -122,54 +150,19 @@ class Field
         $this->defaultValue = $config['defaultValue'] ?? null;
 
         // Check if we should add the type validator
-        $addTypeValidator = $config['validateType'] ?? true;
-        // Create validators based on the configuration
-        $this->validators = $this->createValidatorsFromConfig($config['validators'] ?? [], $addTypeValidator);
+        $validateType = $config['validateType'] ?? true;
+        if ($validateType) {
+            $this->addValidator(new FieldTypeValidator($this));
+        }
+
+        // Add configured validators
+        if (isset($config['validators'])) {
+            foreach ($config['validators'] as $validatorConfig) {
+                $validator = ValidatorFactory::createFromConfig($validatorConfig, $this);
+                $this->addValidator($validator);
+            }
+        }
 
         return $this;
-    }
-
-    /**
-     * Create validators for a field from the configuration and add the TypeValidator if needed
-     * @return AbstractValidator[]
-     */
-    public function createValidatorsFromConfig(array $validatorNames, bool $typeValidator): array
-    {
-        $validators = [];
-
-        // Add the type validator before any other validators
-        if ($typeValidator) {
-            $validators[] = new FieldTypeValidator($this);
-        }
-
-        foreach ($validatorNames as $validator) {
-            $validators[] = ValidatorFactory::create($validator, $this);
-        }
-
-        return $validators;
-    }
-
-    /**
-     * Casts the value to the type of the field
-     * @return mixed
-     */
-    protected function castValue($value)
-    {
-        switch ($this->type) {
-            case 'boolean':
-                return (bool) $value;
-            case 'integer':
-                return (int) $value;
-            case 'float':
-                return (float) $value;
-            case 'string':
-                return (string) $value;
-            case 'array':
-                return (array) $value;
-            case 'object':
-                return (object) $value;
-            default:
-                return $value;
-        }
     }
 }
