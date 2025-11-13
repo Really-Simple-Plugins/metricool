@@ -68,8 +68,7 @@ class UserSettingsEndpoint
         } catch (\Exception $e) {
             return $this->sendHttpErrorResponse(__('Failed to retrieve settings', 'metricool'), $e->getMessage(), 500);
         }
-
-
+        
         return $this->sendHttpResponse($settings);
     }
 
@@ -80,10 +79,10 @@ class UserSettingsEndpoint
         try {
             $updatedSettings = $this->service->storeSettings($params, $request);
         } catch (ValidationFailedExceptions $e) {
-            // validation failed, return errors
-            return $this->sendHttpErrorResponse(__('Validation failed', 'metricool'), $e->getErrors(), 422);
+            // Validation failed, return errors
+            return $this->sendHttpResponse($e->getErrors(), false, __('Validation failed', 'metricool'), 422);
         } catch (\Exception $e) {
-            // something else went wrong, abort
+            // Something seriously went wrong, abort
             return $this->sendHttpErrorResponse(__('Failed to update settings', 'metricool'), $e->getMessage(), 500);
         }
 
