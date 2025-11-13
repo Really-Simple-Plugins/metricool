@@ -154,6 +154,34 @@ class Collection implements IteratorAggregate
         return $result;
     }
 
+
+    public function pluck($value, $key = null): array
+    {
+        $results = [];
+
+        foreach ($this->items as $item) {
+            $itemValue = $this->get($item, $value);
+
+            // If the key is "null", we will just append the value to the array and keep
+            // looping. Otherwise we will key the array using the value of the key we
+            // received from the developer. Then we'll return the final array form.
+            if (is_null($key)) {
+                $results[] = $itemValue;
+            } else {
+                $itemKey = $this->get($item, $key);
+
+                if (is_object($itemKey) && method_exists($itemKey, '__toString')) {
+                    $itemKey = (string) $itemKey;
+                }
+
+                $results[$itemKey] = $itemValue;
+            }
+        }
+
+        return $results;
+    }
+
+
     /**
      * Filter items by the given key value pair. Allows shorthands for:
      * $collection->where('property', 'value'); for a loose comparison check
