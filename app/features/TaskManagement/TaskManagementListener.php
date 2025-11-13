@@ -16,7 +16,7 @@ class TaskManagementListener
 
     public function listen(): void
     {
-        add_action('metricool_event_' . Event::POST_SCHEDULED, [$this, 'handlePostScheduled']);
+        add_action('metricool_event_' . Event::POST_SHARED, [$this, 'handlePostShared']);
         add_action('metricool_event_' . Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, [$this, 'handleSocialConnectedNetworks']);
         add_action('metricool_event_' . Event::SUBSCRIPTION_DATA_LOADED, [$this, 'handleSubscriptionLoaded']);
     }
@@ -24,9 +24,9 @@ class TaskManagementListener
     /**
      * Handle the edit.php page load to check for tasks.
      */
-    public function handlePostScheduled(): void
+    public function handlePostShared(): void
     {
-        $this->service->completeTask(Tasks\SchedulePostTask::IDENTIFIER);
+        $this->service->completeTask(Tasks\SharePostTask::IDENTIFIER);
     }
 
     /**
