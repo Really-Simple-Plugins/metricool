@@ -2,8 +2,9 @@
 
 namespace Metricool\Features\UserSettings\Storage;
 
-use http\Exception\InvalidArgumentException;
-
+/**
+ * This storage uses the wp_options to store and retrieve the UserSettings
+ */
 class OptionsStorage extends AbstractStorage
 {
     private string $prefix;
@@ -11,7 +12,7 @@ class OptionsStorage extends AbstractStorage
     public function __construct($name, array $config)
     {
         if (!isset($config['prefix'])) {
-            throw new InvalidArgumentException('Prefix is required for OptionsStorage: ' . $name);
+            throw new \InvalidArgumentException('Prefix is required for OptionsStorage: ' . $name);
         }
 
         $this->prefix = $config['prefix'];
@@ -37,14 +38,14 @@ class OptionsStorage extends AbstractStorage
         foreach ($keys as $key) {
             $result[$key] = $this->get($this->convertCase($key));
         }
-        
+
         return $result;
     }
 
     /**
      * @inheritDoc
      */
-    public function set(string $key, $value): void
+    public function store(string $key, $value): void
     {
         update_option($this->prefix . $this->convertCase($key), $value);
     }
@@ -52,10 +53,10 @@ class OptionsStorage extends AbstractStorage
     /**
      * @inheritDoc
      */
-    public function setMultiple(array $settings): void
+    public function storeMultiple(array $settings): void
     {
         foreach ($settings as $key => $value) {
-            $this->set($key, $value);
+            $this->store($key, $value);
         }
     }
 }

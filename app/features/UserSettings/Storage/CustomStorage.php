@@ -4,6 +4,9 @@ namespace Metricool\Features\UserSettings\Storage;
 
 use Metricool\Features\UserSettings\Storage\Exceptions\ClientRequiredException;
 
+/**
+ * This storage uses a client to store and retrieve the UserSettings
+ */
 class CustomStorage extends AbstractStorage
 {
     protected object $client;
@@ -54,15 +57,15 @@ class CustomStorage extends AbstractStorage
     /**
      * @inheritDoc
      */
-    public function set(string $key, $value): void
+    public function store(string $key, $value): void
     {
-        $this->setMultiple([$key => $value]);
+        $this->storeMultiple([$key => $value]);
     }
 
     /**
      * @inheritDoc
      */
-    public function setMultiple(array $settings): void
+    public function storeMultiple(array $settings): void
     {
         // Create the request data
         $requestData = [];

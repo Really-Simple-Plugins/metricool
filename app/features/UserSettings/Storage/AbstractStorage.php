@@ -4,6 +4,9 @@ namespace Metricool\Features\UserSettings\Storage;
 
 use Metricool\Utility\StringUtility;
 
+/**
+ * Storage is responsible for storing and retrieving settings
+ */
 abstract class AbstractStorage
 {
     public string $name;
@@ -28,19 +31,19 @@ abstract class AbstractStorage
 
     /**
      * Store a setting
-     * @throws \Exception
+     * @throws \Exception when the value could not be stored
      */
-    abstract public function set(string $key, $value);
+    abstract public function store(string $key, $value);
 
     /**
      * Store multiple settings
-     * @throws \Exception
+     * @throws \Exception when one of the values could not be stored
      */
-    abstract public function setMultiple(array $settings);
+    abstract public function storeMultiple(array $settings);
 
     /**
      * Converts the casing to storage casing
-     * @throws \Exception
+     * @throws \InvalidArgumentException when the casing is unknown
      */
     protected function convertCase(string $key): string
     {
