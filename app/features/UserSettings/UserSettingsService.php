@@ -33,22 +33,6 @@ class UserSettingsService
     }
 
     /**
-     * Returns the field instance
-     */
-    public function getField(string $fieldName): ?Field
-    {
-        return $this->fields->where('name', $fieldName)->first();
-    }
-
-    /**
-     * Returns the storage instance
-     */
-    public function getStorage(string $storageName): ?AbstractStorage
-    {
-        return $this->storages->where('name', $storageName)->first();
-    }
-
-    /**
      * Return an array with keys and values of all the settings
      * @throws \Exception
      */
@@ -80,27 +64,24 @@ class UserSettingsService
     {
         // Find the necessary fields from the configuration
         $fields = $this->fields->whereIn('name', $fieldNames);
-
         // Group fields by storage to make it easier to retrieve all values with a single request
         $fieldsByStorage = $this->groupFieldsByStorage($fields);
 
         foreach ($fieldsByStorage as $storage => $fieldsToRetrieve) {
-            // Get the names of the fields to retrieve from storage
-            $storageNames = $fieldsToRetrieve->map(function (Field $field) {
+            // Get an array of storage names of the field
+            $fieldStorageNames = $fieldsToRetrieve->map(function (Field $field) {
                 return $field->getNameForStorage();
             })->toArray();
 
-            // Retrieve the settings from storage
-            $retrievedData = $this->getStorage($storage)
-                ->getMultiple($storageNames);
+            // Retrieve the data from storage
+            $storageData = $this->getStorage($storage)
+                ->getMultiple($fieldStorageNames);
 
             foreach ($fieldsToRetrieve as $field) {
                 $fieldStorageName = $field->getNameForStorage();
 
-                // Check if the value is present in storage
-                if (array_key_exists($fieldStorageName, $retrievedData)) {
-                    $field->setValue($retrievedData[$fieldStorageName]);
-                } else {
+                // Throw Exception when field was not found in storage
+                if (!array_key_exists($fieldStorageName, $storageData)) {
                     throw new StorageFailedException(
                         sprintf(
                             'Value could not be found for field: %s because "%s" was not retrieved from storage: %s',
@@ -110,6 +91,9 @@ class UserSettingsService
                         )
                     );
                 }
+
+                // Apply the retrieved value to the field
+                $field->setValue($storageData[$fieldStorageName]);
             }
         }
 
@@ -123,7 +107,6 @@ class UserSettingsService
      */
     public function storeSettings(array $settings, \WP_REST_Request $request): array
     {
-        // Validate the settings
         $validatedFields = $this->validateSettings($settings, $request);
         // Group the validated fields by storage to store all values in a single request
         $fieldsByStorage = $this->groupFieldsByStorage($validatedFields);
@@ -134,7 +117,7 @@ class UserSettingsService
 
             // Attempt to save settings to storages
             try {
-                $this->getStorage($storageName)->setMultiple($settingsToStore);
+                $this->getStorage($storageName)->storeMultiple($settingsToStore);
             } catch (\Exception $e) {
                 throw new StorageFailedException($e->getMessage());
             }
@@ -145,7 +128,7 @@ class UserSettingsService
     }
 
     /**
-     * Validate the fields and return their validated values.
+     * Validate the settings and return their fields
      * @return Collection|Field[]
      * @throws ValidationFailedExceptions when validation fails
      */
@@ -155,6 +138,7 @@ class UserSettingsService
 
         // Find the necessary fields to validate
         $fields = $this->fields->whereIn('name', array_keys($settings));
+
         foreach ($fields as $field) {
             $value = $settings[$field->getName()];
 
@@ -163,7 +147,7 @@ class UserSettingsService
                 $field->validate($value, $request);
             } catch (ValidatorFailedException $e) {
                 $validationErrors[$field->getName()] = $e;
-                // Go to the next field on the first error
+                // Go to the next field when validation failed
                 continue;
             }
 
@@ -178,6 +162,21 @@ class UserSettingsService
         return $fields;
     }
 
+    /**
+     * Returns the field instance
+     */
+    public function getField(string $fieldName): ?Field
+    {
+        return $this->fields->where('name', $fieldName)->first();
+    }
+
+    /**
+     * Returns the storage instance
+     */
+    public function getStorage(string $storageName): ?AbstractStorage
+    {
+        return $this->storages->where('name', $storageName)->first();
+    }
 
     /**
      * Initialize storages from user_settings configuration
@@ -232,7 +231,7 @@ class UserSettingsService
     }
 
     /**
-     * Convert fields to an associative array for storage
+     * Create a key/value array with the field names for storage as the key
      * @param Collection|Field[] $fields
      * @return array
      */
@@ -246,7 +245,7 @@ class UserSettingsService
     }
 
     /**
-     * Create an array with the key/values of the fields
+     * Create a key/value array with the field name as the key
      * @param Collection|Field[] $fields
      */
     protected function convertFieldsToSettings(Collection $fields): array
