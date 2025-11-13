@@ -11,9 +11,9 @@ use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasViews;
 
 /**
- * This controller manages all the buttons and interactions with the Metricool dashboard
+ * This controller processes the plugins GET actions.
  */
-class MetricoolActionsController implements ControllerInterface
+class GetActionsController implements ControllerInterface
 {
     use HasAllowlistControl;
     use hasViews;
