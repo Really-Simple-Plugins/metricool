@@ -5,7 +5,8 @@ namespace Metricool\Features\UserSettings\Exceptions;
 use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
 
 /**
- * Is thrown when a field fails validation. It contains a list of validation errors
+ * Is thrown when a storing setting fails validation. It contains a list of all the
+ * validation errors
  */
 class ValidationFailedExceptions extends \RuntimeException
 {
