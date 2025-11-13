@@ -9,10 +9,15 @@ class ValidatorFactory
     private const VALIDATORS_NAMESPACE = '\\Metricool\\Features\\UserSettings\\Validators\\';
 
     /**
-     * Creates a validator instance from the configuration string
-     * It will look in the Validators namespace
+     * Creates a validator instance from the configuration string.
+     *
+     * Example validator strings:
+     * 'required', 'email', 'requiredIf:sendToAlternativeEmail,true'
+     *
+     * The name of the validator class will be converted to PascalCase,
+     * and the Factory will try to find the class in the Validators namespace.
      */
-    public static function create(string $validatorConfig, Field $field)
+    public static function createFromConfig(string $validatorConfig, Field $field)
     {
         // Extract the name and parameters from the validator string
         $validatorInfo = self::parseValidatorConfig($validatorConfig);
