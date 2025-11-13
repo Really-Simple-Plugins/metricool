@@ -14,7 +14,11 @@ class StorageFactory
      */
     public static function createFromConfig(string $name, array $options): AbstractStorage
     {
-        $storageClass = self::STORAGE_NAMESPACE . ucfirst($options['type']) . 'Storage';
+        if (!isset($options['storage'])) {
+            throw new \InvalidArgumentException('Storage for "' . $name . '" is not set, please add it to the config');
+        }
+
+        $storageClass = self::STORAGE_NAMESPACE . ucfirst($options['storage']) . 'Storage';
 
         if (!class_exists($storageClass)) {
             throw new \InvalidArgumentException('Storage "' . $storageClass . '" not found');
