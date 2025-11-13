@@ -4,8 +4,9 @@ namespace Metricool\Controllers;
 
 use Metricool\App;
 use Metricool\Helpers\Event;
+use Metricool\Helpers\Request;
+use Metricool\Traits\HasNonces;
 use Metricool\Helpers\MetricoolUrl;
-use Metricool\Helpers\PostHelper;
 use Metricool\Interfaces\ControllerInterface;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasViews;
@@ -17,56 +18,48 @@ class GetActionsController implements ControllerInterface
 {
     use HasAllowlistControl;
     use hasViews;
+    use HasNonces;
+
+    private const COMPATIBLE_POST_TYPES = ['post', 'page'];
+    private const POST_COLUMN_KEY = 'metricool';
+    private const SHARE_POST_ACTION = 'share_post';
 
     public function register(): void
     {
-        if ($this->userCanManage()) {
-            // Handle actions from the Metricool plugin through the admin init hook.
-            add_action('admin_init', [$this, 'handleActions']);
-
-            // Add plugin buttons to the post tables
-            $this->addColumnToPostTables();
-        }
-    }
-
-    /**
-     * Handles actions from the Metricool dashboard.
-     */
-    public function handleActions(): void
-    {
-        $request = App::provide('request')->fromGlobal();
-
-        // Don't do anything when no action or nonce
-        if ($request->isEmpty('metricool_action') && $request->isEmpty('_metricool_action_nonce')) {
+        if ($this->userCanManage() === false) {
             return;
         }
 
-        // Validate nonce
-        if ($request->has('_metricool_action_nonce')) {
-            if (!wp_verify_nonce($request->get('_metricool_action_nonce'), 'metricool_action')) {
-                wp_die(__('Invalid nonce.'));
-            }
-        }
+        add_action('admin_init', [$this, 'processGetActions']);
 
-        // Execute the action
-        switch ($request->get('metricool_action')) {
-            case 'share_post':
-                $this->handleSharePostAction();
-                break;
+        // Add the action column to the view-table.
+        foreach (self::COMPATIBLE_POST_TYPES as $postType) {
+            add_filter("manage_{$postType}_posts_columns", [$this, 'insertPostsColumnHeader']);
+            add_action("manage_{$postType}_posts_custom_column", [$this, 'insertPostsColumnContent'], 10, 2);
         }
     }
 
     /**
-     * Adds a Metricool column to the post tables and set the column's content
+     * Handles known actions from the {@see Request} based on the
+     * metricool_action key.
      */
-    public function addColumnToPostTables()
+    public function processGetActions(): void
     {
-        $post_types = PostHelper::getPublicPostTypes();
-        foreach ($post_types as $post_type) {
-            // Add the column to the post table
-            add_filter("manage_{$post_type}_posts_columns", [$this, 'insertPostsColumnHeader']);
-            // Add the content to the column
-            add_action("manage_{$post_type}_posts_custom_column", [$this, 'insertPostsColumnContent'], 10, 2);
+        $request = App::provide('request')->fromGlobal();
+        if ($request->isEmpty('metricool_action')) {
+            return;
+        }
+
+        // Validate nonce or wp_die on empty
+        $nonce = $request->getString('_metricool_action_nonce');
+        if (empty($nonce) || !$this->verifyNonce($nonce, 'metricool_action')) {
+            wp_die(__('Invalid nonce.', 'metricool'));
+        }
+
+        switch ($request->getString('metricool_action')) {
+            case self::SHARE_POST_ACTION:
+                $this->handleSharePostAction($request);
+                break;
         }
     }
 
@@ -75,67 +68,47 @@ class GetActionsController implements ControllerInterface
      */
     public function insertPostsColumnHeader(array $columns): array
     {
-        $columns['metricool'] = 'Metricool';
-
+        $columns[self::POST_COLUMN_KEY] = 'Metricool';
         return $columns;
     }
 
     /**
-     * Sets the content of the metricool column
+     * Sets the content of the metricool share post column
      */
-    public function insertPostsColumnContent(string $column_name, int $post_id)
+    public function insertPostsColumnContent(string $columnName, int $postId)
     {
-        if ($column_name === 'metricool') {
-            $this->renderSharePostButton($post_id);
+        if (($columnName !== self::POST_COLUMN_KEY) || (get_post_status($postId) !== 'publish')) {
+            return;
         }
-    }
 
-    /**
-     * Renders the share button for a specific post
-     */
-    public function renderSharePostButton(int $post_id)
-    {
-        if (get_post_status($post_id) === 'publish') {
-            $url = App::env('plugin.dashboard_url') . '&' . http_build_query([
-                    'metricool_action' => 'share_post',
-                    'metricool_post_id' => $post_id,
-                    // todo: check if nonce can be set when button is rendered with javascript
-                    '_metricool_action_nonce' => wp_create_nonce('metricool_action'),
-                ]);
+        $actionableUrl = add_query_arg([
+            'metricool_action' => self::SHARE_POST_ACTION,
+            'metricool_post_id' => $postId,
+            '_metricool_action_nonce' => wp_create_nonce('metricool_action'),
+        ], App::env('plugin.dashboard_url'));
 
-            $this->render('admin/buttons/share-post', [
-                'url' => $url
-            ]);
-        }
+        $this->render('admin/buttons/share-post', [
+            'actionableUrl' => $actionableUrl
+        ]);
     }
 
     /**
      * Redirects to the Metricool create post screen with the content and media
      */
-    protected function handleSharePostAction(): void
+    protected function handleSharePostAction(Request $request): void
     {
-        $request = App::provide('request')->fromGlobal();
+        $postId = $request->getInt('metricool_post_id');
+        $postExists = (get_post_status($postId) !== false);
 
-        if ($request->isEmpty('metricool_post_id')) {
-            return;
+        if ($postExists === false) {
+            return; // abort
         }
 
-        $postId = $request->get('metricool_post_id');
-
-        // Check if post exists
-        if (!get_post_status($postId)) {
-            return;
-        }
-
-        // todo: Check post content with product owner
         $content = get_the_title($postId) . ' - ' . get_permalink($postId);
         $mediaUrl = get_the_post_thumbnail_url($postId, 'large');
         $metricoolCreatePostUrl = MetricoolUrl::createPostUrl($content, $mediaUrl);
 
-        // Generate the deeplink
-        $url = MetricoolUrl::shareUrl($content, $media);
-
-        Event::dispatch(Event::POST_SCHEDULED);
+        Event::dispatch(Event::POST_SHARED);
 
         // Redirect to the deeplink
         header('Location: ' . $metricoolCreatePostUrl);
