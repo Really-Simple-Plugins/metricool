@@ -129,8 +129,8 @@ class GetActionsController implements ControllerInterface
 
         // todo: Check post content with product owner
         $content = get_the_title($postId) . ' - ' . get_permalink($postId);
-        // todo: Test media (impossible to do locally)
-        $media = get_the_post_thumbnail($postId, 'large');
+        $mediaUrl = get_the_post_thumbnail_url($postId, 'large');
+        $metricoolCreatePostUrl = MetricoolUrl::createPostUrl($content, $mediaUrl);
 
         // Generate the deeplink
         $url = MetricoolUrl::shareUrl($content, $media);
@@ -138,7 +138,7 @@ class GetActionsController implements ControllerInterface
         Event::dispatch(Event::POST_SCHEDULED);
 
         // Redirect to the deeplink
-        header('Location: ' . $url);
+        header('Location: ' . $metricoolCreatePostUrl);
         exit();
     }
 }
