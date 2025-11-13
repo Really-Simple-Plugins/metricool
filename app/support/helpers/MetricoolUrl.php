@@ -24,10 +24,10 @@ class MetricoolUrl
 
 
     /**
-     * Returns the Metricool share URL for the given content and media
+     * Returns the Metricool create post URL for the given content and media
      * This is a deeplink to the create-post screen of the Metricool web app
      */
-    public static function shareUrl(string $content, string $media = null): string
+    public static function createPostUrl(string $content, ?string $mediaUrl = null): string
     {
         // todo - fetch from settings
         $queryArgs = [
@@ -36,8 +36,8 @@ class MetricoolUrl
             'post.content' => $content,
         ];
 
-        if ($media) {
-            $queryArgs['post.media'] = $media;
+        if ($mediaUrl) {
+            $queryArgs['post.media'] = $mediaUrl;
         }
 
         return add_query_arg(array_filter($queryArgs), App::env('metricool.create_post_url'));
