@@ -39,6 +39,4 @@ class AdminController implements ControllerInterface
 
         return $links;
     }
-
-
 }
