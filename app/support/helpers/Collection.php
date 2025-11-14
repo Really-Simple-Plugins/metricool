@@ -16,7 +16,7 @@ class Collection implements IteratorAggregate
     /**
      * Create a new collection.
      */
-    public function __construct($items = [])
+    public function __construct(array $items = [])
     {
         $this->items = $items;
     }
@@ -31,7 +31,7 @@ class Collection implements IteratorAggregate
 
     /**
      * Get first item from the collection
-     * @return mixed
+     * @return mixed|null
      */
     public function first()
     {
@@ -40,6 +40,7 @@ class Collection implements IteratorAggregate
 
     /**
      * Push one or more items to the end of the collection
+     * @param mixed ...$values
      */
     public function push(...$values): self
     {
@@ -52,8 +53,9 @@ class Collection implements IteratorAggregate
 
     /**
      * Sort the collection using the given callback.
+     * @param callable|string|null $callback
      */
-    public function sortBy($callback, $descending = false, $preserveKeys = false, $options = SORT_REGULAR): self
+    public function sortBy($callback = null, bool $descending = false, bool $preserveKeys = false, int $options = SORT_REGULAR): self
     {
         $results = [];
 
@@ -85,27 +87,28 @@ class Collection implements IteratorAggregate
 
     /**
      * Sort the collection in ascending order.
-     * @see Collection::sortBy()
+     * @uses sortBy
+     * @param callable|string|null $callback
      */
-    public function sortByAsc($callback, $preserveKeys = false, $options = SORT_REGULAR): self
+    public function sortByAsc($callback = null, bool $preserveKeys = false, int $options = SORT_REGULAR): self
     {
-        return $this->sortBy($callback, $preserveKeys, $options);
+        return $this->sortBy($callback, false, $preserveKeys, $options);
     }
 
     /**
      * Sort the collection in descending order.
-     * @see Collection::sortBy()
+     * @uses sortBy
+     * @param callable|string|null $callback
      */
-    public function sortByDesc($callback, $preserveKeys = false, $options = SORT_REGULAR): self
+    public function sortByDesc($callback = null, bool $preserveKeys = false, int $options = SORT_REGULAR): self
     {
-        return $this->sortBy($callback, $preserveKeys, true, $options);
+        return $this->sortBy($callback, true, $preserveKeys, $options);
     }
 
     /**
      * Run a filter over each of the items.
-     * @param callable|null $callback
      */
-    public function filter(callable $callback = null): self
+    public function filter(?callable $callback = null): self
     {
         if ($callback) {
             return new static(array_filter($this->items, $callback, ARRAY_FILTER_USE_BOTH));
@@ -156,6 +159,8 @@ class Collection implements IteratorAggregate
 
     /**
      * Pluck an array of values from an array.
+     * @param mixed $value
+     * @param mixed|null $key
      */
     public function pluck($value, $key = null): array
     {
@@ -175,16 +180,14 @@ class Collection implements IteratorAggregate
         return $results;
     }
 
-
     /**
      * Filter items by the given key value pair. Allows shorthands for:
      * $collection->where('property', 'value'); for a loose comparison check
      * and
      * $collection->where('property'); for a loose boolean check
-     * @param mixed $operator
      * @param mixed $value
      */
-    public function where(string $key, $operator = null, $value = null): self
+    public function where(string $key, ?string $operator = null, $value = null): self
     {
         return $this->filter($this->operatorForWhere(...func_get_args()));
     }
@@ -232,7 +235,6 @@ class Collection implements IteratorAggregate
     /**
      * Get a value retrieving callback.
      * @param callable|string|null $value
-     * @return callable
      */
     protected function valueRetriever($value): callable
     {
@@ -243,15 +245,14 @@ class Collection implements IteratorAggregate
 
     /**
      * Return the default value of the given value.
-     *
      * @param mixed $value
+     * @param mixed ...$args
      * @return mixed
      */
     protected function value($value, ...$args)
     {
         return $value instanceof Closure ? $value(...$args) : $value;
     }
-
 
     /**
      * Get an item from an array or object using "dot" notation.
@@ -306,10 +307,9 @@ class Collection implements IteratorAggregate
 
     /**
      * Get an operator checker callback.
-     * @param string|null $operator
      * @param mixed $value
      */
-    protected function operatorForWhere(string $key, string $operator = null, $value = null): Closure
+    protected function operatorForWhere(string $key, ?string $operator = null, $value = null): Closure
     {
         // Allow shorthands
         if (func_num_args() === 1) {
