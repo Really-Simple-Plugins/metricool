@@ -2,16 +2,16 @@
 
 namespace Metricool\Features\TaskManagement\Tasks;
 
-class SharePostTask extends AbstractTask
+class SchedulePostTask extends AbstractTask
 {
-    const IDENTIFIER = 'share_post';
+    const IDENTIFIER = 'schedule_post';
 
     /**
      * @inheritDoc
      */
     public function getText(): string
     {
-        return __('Share a post to promote your site!', 'metricool');
+        return __('Schedule a post to promote your site!', 'metricool');
     }
 
     /**
@@ -20,7 +20,7 @@ class SharePostTask extends AbstractTask
     public function getAction(): array
     {
         return [
-            'text' => __('Share a post', 'metricool'),
+            'text' => __('Schedule a post', 'metricool'),
             'link' => admin_url( 'edit.php'),
         ];
     }

@@ -108,7 +108,9 @@ class GetActionsController implements ControllerInterface
         $mediaUrl = get_the_post_thumbnail_url($postId, 'large');
         $metricoolCreatePostUrl = MetricoolUrl::createPostUrl($content, $mediaUrl);
 
-        Event::dispatch(Event::POST_SHARED);
+        // In Metricool the user can "schedule" the post they share from WP.
+        // That's where the naming mismatch comes from. Share <-> Schedule
+        Event::dispatch(Event::POST_SCHEDULED);
 
         // Redirect to the deeplink
         header('Location: ' . $metricoolCreatePostUrl);
