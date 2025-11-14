@@ -11,10 +11,7 @@ use Metricool\Interfaces\ControllerInterface;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasViews;
 
-/**
- * This controller processes the plugins GET actions.
- */
-class GetActionsController implements ControllerInterface
+class SharePostController implements ControllerInterface
 {
     use HasAllowlistControl;
     use hasViews;
@@ -30,7 +27,7 @@ class GetActionsController implements ControllerInterface
             return;
         }
 
-        add_action('admin_init', [$this, 'processGetActions']);
+        add_action('admin_init', [$this, 'processShareAction']);
 
         // Add the action column to the view-table.
         foreach (self::COMPATIBLE_POST_TYPES as $postType) {
@@ -43,11 +40,14 @@ class GetActionsController implements ControllerInterface
      * Handles known actions from the {@see Request} based on the
      * metricool_action key.
      */
-    public function processGetActions(): void
+    public function processShareAction(): void
     {
         $request = App::provide('request')->fromGlobal();
-        if ($request->isEmpty('metricool_action')) {
-            return;
+        $pageIsDashboardPage = ($request->getString('page') === 'metricool');
+        $actionIsShareAction = ($request->getString('metricool_action') === self::SHARE_POST_ACTION);
+
+        if (!$pageIsDashboardPage || !$actionIsShareAction) {
+            return; // abort
         }
 
         // Validate nonce or wp_die on empty
@@ -56,11 +56,7 @@ class GetActionsController implements ControllerInterface
             wp_die(__('Invalid nonce.', 'metricool'));
         }
 
-        switch ($request->getString('metricool_action')) {
-            case self::SHARE_POST_ACTION:
-                $this->handleSharePostAction($request);
-                break;
-        }
+        $this->handleSharePostAction($request);
     }
 
     /**
