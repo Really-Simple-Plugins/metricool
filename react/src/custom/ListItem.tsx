@@ -1,51 +1,67 @@
 import { clsx } from "clsx";
-import { FlexContainer } from "../components";
-import { Icon } from "../components";
-import { type IconProps } from "../components/src/components/Icon.tsx";
-
-const iconColorMap = {
-    "warning": "bg-rsp-warning",
-    "success": "bg-rsp-success",
-    "error": "bg-sp-error",
-    "rss": "bg-rss",
-    "simplybook": "bg-simplybook",
-    "complianz": "bg-complianz",
-};
+import { FlexContainer, Icon, type IconProps } from "../components";
 
 type ListItemProps = {
-    link?: string
+    link?: string,
+    action?: () => void,
+    actionText?: string,
 } & ({
     icon?: never,
     iconColor?: never,
     iconClass?: never,
     iconPosition?: never,
 } | {
-    icon: IconProps['icon'],
+    icon: IconProps["icon"],
     iconColor?: never,
     iconClass?: string,
     iconPosition: "left" | "right",
 } | {
     icon: "circle",
-    iconColor: keyof typeof iconColorMap,
+    iconColor: string,
     iconClass?: string,
     iconPosition: "left" | "right",
 });
 
-const ListItem = ({ icon, iconColor, iconPosition, iconClass, link, children, className }: React.ComponentProps<'div'> & ListItemProps) => {
-
+const ListItem = ({
+    icon,
+    iconColor,
+    iconPosition,
+    iconClass,
+    link,
+    action,
+    actionText,
+    children,
+    className
+}: React.ComponentProps<"div"> & ListItemProps) => {
     return (
         <FlexContainer direction={"row"} className={"items-center justify-between"}>
             <FlexContainer direction={"row"} className={clsx("items-center !gap-2", iconPosition === "right" && "flex-row-reverse")}>
-                {icon && ( icon === "circle" ? (
-                    <div className={clsx("h-3 w-3 rounded-full", iconColor && iconColorMap[iconColor])}></div>
+                {icon && (
+                    <Icon icon={icon} iconClass={clsx(iconClass,
+                        icon === "circle" && "h-3 w-3",
+                        iconColor === "warning" && "text-rsp-warning",
+                        iconColor === "success" && "text-rsp-success",
+                        iconColor === "error" && "text-rsp-error",
+                        iconColor === "simplybook" && "text-simplybook",
+                        iconColor === "rsssl" && "text-rss",
+                        iconColor === "cmplz" && "text-complianz",
+                    )}/>
+                )}
+                {link ? (
+                    <a href={link} target={"_blank"} className={clsx(className, "text-md")}>
+                        {children}
+                    </a>
                 ) : (
-                    <Icon icon={icon} iconClass={iconClass} />
-                ))}
-                <div className={clsx(className, "text-sm")}>
-                    {children}
-                </div>
+                    <div className={clsx(className, "text-md")}>
+                        {children}
+                    </div>
+                )}
             </FlexContainer>
-            {link && (<span className={"text-sm underline cursor-pointer"}>{link}</span>)}
+            {actionText && (
+                <span onClick={action} className={clsx("text-sm", action && "underline cursor-pointer")}>
+                    {actionText}
+                </span>
+            )}
         </FlexContainer>
     );
 };

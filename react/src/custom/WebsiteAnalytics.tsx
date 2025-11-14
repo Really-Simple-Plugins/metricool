@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Block, BlockHeader, BlockHeaderTitle } from "../components";
+import { Block, BlockHeader } from "../components";
 import { __ } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import CountriesTab from "./CountriesTab.tsx";
@@ -24,11 +24,13 @@ const WebsiteAnalytics = () => {
     }];
 
     return (
-        <Block>
-            <BlockHeader className={"flex justify-between"}>
-                <BlockHeaderTitle>{__("Website Analytics", "metricool")}</BlockHeaderTitle>
-                <TabNavigation activeTab={activeTab} onTabClick={setActiveTab} tabs={tabs}></TabNavigation>
-            </BlockHeader>
+        <Block className={"min-h-[500px] max-h-[500px] xl:max-w-[calc(50%-(--spacing(2)))]"}>
+            <BlockHeader
+                title={__("Website Analytics", "metricool")}
+                action={(
+                    <TabNavigation activeTab={activeTab} onTabClick={setActiveTab} tabs={tabs}/>
+                )}
+            />
             {tabs[activeTab].component}
         </Block>
     );

@@ -2,7 +2,6 @@
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\App;
 use Metricool\Features\TaskManagement\Tasks\HistoricalDataTask;
 use Metricool\Helpers\Event;
 
@@ -17,8 +16,7 @@ class TaskManagementListener
 
     public function listen(): void
     {
-        add_action('load-edit.php', [$this, 'handleEditPageLoad']);
-
+        add_action('metricool_event_' . Event::POST_SCHEDULED, [$this, 'handlePostScheduled']);
         add_action('metricool_event_' . Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, [$this, 'handleSocialConnectedNetworks']);
         add_action('metricool_event_' . Event::SUBSCRIPTION_DATA_LOADED, [$this, 'handleSubscriptionLoaded']);
     }
@@ -26,12 +24,9 @@ class TaskManagementListener
     /**
      * Handle the edit.php page load to check for tasks.
      */
-    public function handleEditPageLoad(): void
+    public function handlePostScheduled(): void
     {
-        // Complete the SchedulePostTask if the action is present in the URL
-        if (App::provide('request')->getString('metricool_action') === Tasks\SchedulePostTask::IDENTIFIER) {
-            $this->service->completeTask(Tasks\SchedulePostTask::IDENTIFIER);
-        }
+        $this->service->completeTask(Tasks\SchedulePostTask::IDENTIFIER);
     }
 
     /**

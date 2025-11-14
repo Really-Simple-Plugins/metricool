@@ -6,7 +6,7 @@
 return [
     'plugin' => [
         'name' => 'Metricool',
-        'version' => '2.0.0',
+        'version' => '2.0.0-alpha.1',
         'pro' => true,
         'path' => dirname(__DIR__),
         'base_path' => dirname(__DIR__) . '/' . plugin_basename(dirname(__DIR__)) . '.php',
@@ -32,6 +32,7 @@ return [
         'connect_linkedin_url' => 'https://app.metricool.com/evolution/linkedin',
         'connect_twitter_url' => 'https://app.metricool.com/evolution/twitter',
         'tracking_script_url' => 'https://tracker.metricool.com/resources/be.js',
+        'create_post_url' => 'https://app.metricool.com/planner/post',
     ],
     'http' => [
         'version' => 'v1',

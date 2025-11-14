@@ -11,7 +11,7 @@ type MetricTileProps = {
 
 const MetricTile = ({ children, className, variant, trend, metric, inactive, disabled, ...props }: React.ComponentProps<"div"> & MetricTileProps) => {
     return (
-        <div {...props} className={clsx(className, "flex flex-col px-4 py-2 rounded-sm min-w-[80px]",
+        <div {...props} className={clsx(className, "flex flex-col px-3 py-2 rounded-sm",
             variant === "primary" && "bg-primary",
             variant === "primary-dark" && "bg-primary-dark",
             variant === "secondary" && "bg-secondary",
@@ -20,11 +20,11 @@ const MetricTile = ({ children, className, variant, trend, metric, inactive, dis
             (props.onClick && !disabled) && "hover:cursor-pointer",
             (inactive || disabled) && "opacity-35 transition-all ease-in-out duration-300",
         )}>
-            <div className={clsx("flex flex-row text-white text-xl items-center gap-2", trend ? "justify-between" : "justify-center")}>
+            <div className={clsx("flex flex-row text-white text-[16px] items-center gap-1.5 justify-center")}>
                 {metric}
-                {trend && <Icon icon={trend} iconClass={"text-white"}/>}
+                {trend && <Icon size={"xs"} icon={trend} iconClass={"text-white"}/>}
             </div>
-            <div className={"flex w-full items-center justify-center text-white text-sm"}>{children}</div>
+            <div className={"flex w-full items-center justify-center text-white text-xs"}>{children}</div>
         </div>
     );
 };

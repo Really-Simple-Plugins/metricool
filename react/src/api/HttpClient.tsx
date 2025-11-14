@@ -1,4 +1,5 @@
 import { __ } from "@wordpress/i18n";
+import { DataError } from "./DataError.tsx";
 
 type HttpClientSettings = {
     NONCE: string;
@@ -18,7 +19,7 @@ class HttpClient {
 
     private postMethodHeaders: Record<string, string>;
 
-    private payload: Record<string, string>;
+    private payload: Record<string, unknown>;
 
     /**
      * Constructor to initialize the HttpClient with the right settings and optionally a route.
@@ -26,7 +27,6 @@ class HttpClient {
      * @param route - The API route to be used.
      */
     constructor(settings: HttpClientSettings, route?: string,) {
-        console.log(settings.MC_API_URL);
         this.httpClientSettings = {
             NONCE: settings.NONCE,
             MC_API_URL: settings.MC_API_URL,
@@ -156,7 +156,7 @@ class HttpClient {
      * @param payload - The payload data to be set.
      * @returns The HttpClient instance.
      */
-    public setPayload(payload: Record<string, any>) {
+    public setPayload(payload: Record<string, unknown>) {
         this.payload = {
             ...this.payload,
             ...payload,
@@ -206,22 +206,29 @@ class HttpClient {
      * @param errorData - The error data from the server.
      * @throws An error with a message.
      */
-    private handleError(errorData: any) {
+    private handleError(errorData: string | Record<string, string | Record<string, unknown>>) {
         let error: string = __("An error occurred", "metricool");
+        let fields = {};
 
         if (typeof errorData === "string") {
             error = errorData;
         }
 
-        if (errorData?.message) {
-            error = errorData.message;
+        if (typeof errorData === 'object') {
+            if (errorData.message && typeof errorData.message === "string") {
+                error = errorData.message;
+            }
+
+            if (errorData.error && typeof errorData.error === "string") {
+                error = errorData.error;
+            }
+
+            if (typeof errorData.data === "object" && errorData.data.errors) {
+                fields = errorData.data.errors;
+            }
         }
 
-        if (errorData?.error) {
-            error = errorData.error;
-        }
-
-        throw new Error(error);
+        throw new DataError(error, fields);
     }
 }
 

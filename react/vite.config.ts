@@ -23,6 +23,15 @@ export default defineConfig({
         modulePreload: {
             polyfill: false,
         },
+        minify: "terser",
+        terserOptions: {
+            compress: {
+                passes: 2,
+            },
+            mangle: {
+                reserved: ["__", "_n", "_nx", "_x"],
+            },
+        }
     },
     base: "./",
     resolve: {

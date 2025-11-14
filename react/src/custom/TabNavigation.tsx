@@ -11,9 +11,9 @@ type TabNavigationProps = {
 
 const TabNavigation = ({ tabs, activeTab, onTabClick, separator = false }: TabNavigationProps) => {
     return (
-        <FlexContainer direction={"row"} className={"w-auto leading-none text-sm !gap-2"}>
+        <FlexContainer direction={"row"} className={"w-auto leading-none text-md !gap-2"}>
             {tabs.map((tab, index) => (<>
-                <span onClick={() => onTabClick(index)} className={clsx("cursor-pointer", activeTab === index ? "font-semibold" : "text-gray-600")}>{tab.title}</span>
+                <span onClick={() => onTabClick(index)} className={clsx("cursor-pointer", activeTab === index ? "font-semibold" : "opacity-45")}>{tab.title}</span>
                 {separator && index != tabs.length - 1 && <span>|</span>}
             </>))}
         </FlexContainer>

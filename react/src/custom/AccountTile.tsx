@@ -1,50 +1,41 @@
-import { Button, Icon } from "../components";
+import { Icon, type IconProps } from "../components";
 import { clsx } from "clsx";
-import { capitalizeFirstCharacter } from "../functions/utils.tsx";
+import { __, sprintf } from "@wordpress/i18n";
 
 type AccountTileProps = {
-    connected: boolean,
-    accountType: "twitter" | "youtube" | "linkedIn" | "instagram" | "domain" | "facebook",
-    accountName?: string,
+    label: string,
+    icon: IconProps["icon"],
+    connectedClasses: string,
+    unconnectedClasses: string,
+    upsell: boolean,
+    userName?: string,
+    link?: string,
 }
 
-const AccountTile = ({ connected, accountType, accountName }: AccountTileProps) => {
+const AccountTile = ({ label, icon, connectedClasses, unconnectedClasses, upsell, userName, link }: AccountTileProps) => {
     return (
-        <div className={clsx("flex rounded-sm border-1 w-full min-h-[40px] px-1 items-center gap-2",
-            connected && "border-neutral-200",
-            accountType === "twitter" && !connected && "border-twitter bg-twitter",
-            accountType === "youtube" && !connected && "border-youtube bg-youtube",
-            accountType === "linkedIn" && !connected && "border-linkedin bg-linkedin",
-            accountType === "facebook" && !connected && "border-facebook bg-facebook",
+        <div onClick={() => {window.open(link, "_blank"); window.focus();}}
+             className={clsx("flex rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2 cursor-pointer",
+                 userName ? "border-neutral-200" : unconnectedClasses,
         )}>
-            <Icon icon={accountType} iconClass={clsx("text-xl",
-                accountType === "twitter" && (connected ? "text-twitter" : "text-white"),
-                accountType === "youtube" && (connected ? "text-youtube" : "text-white"),
-                accountType === "linkedIn" && (connected ? "text-linkedin" : "text-white"),
-                accountType === "facebook" && (connected ? "text-facebook" : "text-white"),
-            )}/>
-            {connected ? (
-                <div className={"flex justify-between grow"}>
-                    <div className={"text-xs flex flex-col justify-center"}>
-                        <span className={"text-gray-500"}>{capitalizeFirstCharacter(accountType)}</span>
-                        <div className={"font-semibold"}>{accountName}</div>
-                    </div>
-                    <div className={"flex items-center gap-1"}>
-                        <Button variant={"icon"} size={"icon"} icon={"edit"} iconPosition={"right"} iconClass={"size-3"}></Button>
-                        <Button variant={"icon"} size={"icon"} icon={"settings"} iconPosition={"right"} iconClass={"size-3"}></Button>
-                    </div>
+            <div className={"min-w-[25px] flex items-center justify-center"}>
+                <Icon icon={icon} size={"xl"} iconClass={clsx(userName ? connectedClasses : "text-white")}/>
+            </div>
+            <div className={"flex justify-between items-center grow"}>
+                <div className={clsx("text-sm flex flex-col justify-center")}>
+                    {userName ? (
+                        <>
+                            <span className={"text-gray-500"}>{label}</span>
+                            <div className={"font-semibold"}>{userName}</div>
+                        </>
+                    ) : (
+                        <span className={"text-white"}>{sprintf(__("Connect a %s Account"), label)}</span>
+                    )}
                 </div>
-                ) : (
-                <div className={"flex justify-between grow"}>
-                    <div className={"flex items-center justify-center cursor-pointer"}>
-                        <span className={"text-white text-xs"}>{`Connect a ${capitalizeFirstCharacter(accountType)} Account`}</span>
-                    </div>
-                    <div className={"flex items-center gap-1"}>
-                        <Button variant={"icon"} size={"icon"} icon={"external-link"} iconPosition={"right"} iconClass={"size-3 text-white"}></Button>
-                        <Button variant={"icon"} size={"icon"} icon={"upsell"} iconPosition={"right"} iconClass={"size-2.5 p-0.5 bg-upsell rounded-full text-black"}></Button>
-                    </div>
-                </div>
-            )}
+                {upsell && (
+                    <Icon icon={"upsell"} iconClass={"size-2.5 p-0.5 bg-upsell rounded-full text-black"}/>
+                )}
+            </div>
         </div>
     );
 };
