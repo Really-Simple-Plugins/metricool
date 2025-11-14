@@ -45,8 +45,6 @@ class StringUtility
      */
     public static function camelToSnakeCase(string $string): string
     {
-        $newString = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $string));
-
         return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $string));
     }
 
