@@ -167,7 +167,7 @@ class Plugin
             new Controllers\TrackingScriptController(
                 new TrackingScriptService(),
             ),
-            new Controllers\MetricoolActionsController(),
+            new Controllers\SharePostController(),
         ]);
     }
 

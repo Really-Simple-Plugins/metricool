@@ -1,6 +1,6 @@
-<?php namespace Metricool\Traits;
+<?php
 
-use Metricool\App;
+namespace Metricool\Traits;
 
 trait HasNonces
 {
@@ -14,6 +14,6 @@ trait HasNonces
             return false;
         }
 
-        return wp_verify_nonce(sanitize_text_field(wp_unslash($nonce)), 'metricool_nonce');
+        return wp_verify_nonce(sanitize_text_field(wp_unslash($nonce)), $action);
     }
 }

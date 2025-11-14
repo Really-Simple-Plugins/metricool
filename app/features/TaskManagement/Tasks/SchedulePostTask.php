@@ -21,7 +21,7 @@ class SchedulePostTask extends AbstractTask
     {
         return [
             'text' => __('Schedule a post', 'metricool'),
-            'link' => admin_url('edit.php?metricool_action=' . self::IDENTIFIER),
+            'link' => admin_url('edit.php'),
         ];
     }
 }
