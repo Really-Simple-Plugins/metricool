@@ -49,11 +49,12 @@ class StringUtility
     }
 
     /**
-     * Checks if the value is truly empty
+     * Checks if the string is truly empty and not just a falsy value like '0'
+     * or 'false'.
      */
-    public static function isEmptyValue($value): bool
+    public static function isEmptyValue(string $string): bool
     {
-        return empty($value) && $value !== '0';
+        return empty($string) && $string !== '0';
     }
 
 }
