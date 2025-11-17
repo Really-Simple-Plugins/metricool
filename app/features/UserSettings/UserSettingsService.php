@@ -44,7 +44,7 @@ class UserSettingsService
      * filtered by section.
      * @throws \Exception
      */
-    public function getSettings(?string $section): array
+    public function getSettings(?string $section = null): array
     {
         $fields = $this->fields;
 
