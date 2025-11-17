@@ -64,14 +64,16 @@ final class App
 
     /**
      * Static method to get the user settings' config.
+     * @param mixed $default
+     * @return mixed
      */
-    public static function userSettings(): Dot
+    public static function userSettings(?string $key = null, $default = null)
     {
         if (empty(self::$userSettings)) {
             self::$userSettings = self::dotFromPath(dirname(__FILE__, 2) . '/config/user_settings.php');
         }
 
-        return self::$userSettings;
+        return (empty($key) ? self::$userSettings : self::$userSettings->get($key, $default));
     }
 
     /**
