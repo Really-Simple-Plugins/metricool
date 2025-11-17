@@ -28,8 +28,17 @@ class SharePostController implements ControllerInterface
         }
 
         add_action('admin_init', [$this, 'processShareAction']);
+        add_action('plugins_loaded', [$this, 'registerSharePostColumn']);
         add_filter('default_hidden_columns', [$this, 'filterDefaultHiddenColumns'], 10, 2);
+    }
 
+    /**
+     * Registers the Metricool share post column on all public post types. Due
+     * to {@see filterDefaultHiddenColumns} the column will be hidden by default
+     * on all post types except the ones defined in {@see DEFAULT_POST_TYPES}.
+     */
+    public function registerSharePostColumn(): void
+    {
         foreach ($this->getAllPublicPostTypes() as $postType) {
             add_filter("manage_{$postType}_posts_columns", [$this, 'insertCustomColumn']);
             add_action("manage_{$postType}_posts_custom_column", [$this, 'insertCustomColumnContent'], 10, 2);
