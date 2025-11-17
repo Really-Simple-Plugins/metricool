@@ -18,9 +18,16 @@ use Metricool\Helpers\Collection;
  */
 class UserSettingsService
 {
-    /** @var Collection|Field[] */
+    /**
+     * This property holds all the available fields
+     * @var Collection|Field[]
+     */
     public Collection $fields;
-    /** @var Collection|AbstractStorage[] */
+
+    /**
+     * This property holds all the available storages
+     * @var Collection|AbstractStorage[]
+     */
     private $storages = [];
 
     public function __construct()

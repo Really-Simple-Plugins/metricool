@@ -43,6 +43,10 @@ class UserSettingsEndpoint
         return $routes;
     }
 
+    /**
+     * Handle the REST API request, routing to the appropriate method to the
+     * correct method. Only allows GET, POST, PUT, and PATCH.
+     */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
         switch ($request->get_method()) {
@@ -79,16 +83,13 @@ class UserSettingsEndpoint
      */
     protected function storeUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {
-        $settings = $request->get_params();
-
         try {
+            $settings = $request->get_params();
             $updatedSettings = $this->service->storeSettings($settings, $request);
         } catch (ValidationFailedExceptions $e) {
-            // Validation failed, return errors
             return $this->sendHttpResponse($e->getErrors(), false, __('Validation failed', 'metricool'), 422);
         } catch (\Exception $e) {
-            // Something seriously went wrong, abort
-            return $this->sendHttpErrorResponse(__('Failed to update settings', 'metricool'), $e->getMessage());
+            return $this->sendHttpErrorResponse(__('An unknown error occurred. Failed to update the settings!', 'metricool'), $e->getMessage());
         }
 
         return $this->sendHttpResponse($updatedSettings);
