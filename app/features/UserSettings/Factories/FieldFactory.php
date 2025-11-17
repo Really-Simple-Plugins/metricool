@@ -14,10 +14,7 @@ class FieldFactory
      */
     public static function createFromConfig(string $name, array $config): Field
     {
-        $fieldClassName = (isset($config['field']))
-            ? $config['field']
-            : 'Field';
-
+        $fieldClassName = ($config['field'] ?? 'Field');
         $fieldClass = self::FIELDS_NAMESPACE . $fieldClassName;
 
         if (!class_exists($fieldClass)) {
