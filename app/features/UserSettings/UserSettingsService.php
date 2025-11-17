@@ -25,33 +25,27 @@ class UserSettingsService
 
     public function __construct()
     {
-        $config = App::userSettings();
+        $userSettings = App::userSettings();
 
         //todo: This should probably be moved to someplace else
-        $this->initializeStorages($config['storages'] ?? []);
-        $this->initializeFields($config['fields'] ?? []);
+        $this->initializeStorages($userSettings->get('storages', []));
+        $this->initializeFields($userSettings->get('fields', []));
     }
 
     /**
-     * Return an array with keys and values of all the settings
+     * Return an array with keys and values of all the settings, optionally
+     * filtered by section.
      * @throws \Exception
      */
-    public function getAllSettings(): array
+    public function getSettings(?string $section): array
     {
-        $fieldNames = $this->fields->keys();
+        $fields = $this->fields;
 
-        return $this->getSettings($fieldNames);
-    }
+        if (!empty($section)) {
+            $fields = $fields->where('section', $section);
+        }
 
-    /**
-     * Return an array with keys and values of all the settings for this section
-     * @throws \Exception
-     */
-    public function getSettingsForSection(string $section): array
-    {
-        $fieldNames = $this->fields->where('section', $section)->keys();
-
-        return $this->getSettings($fieldNames);
+        return $this->getFieldSettings($fields->keys());
     }
 
     /**
@@ -60,7 +54,7 @@ class UserSettingsService
      * @throws \Exception when data retrieval fails
      * @throws StorageFailedException when data was not present in storage
      */
-    public function getSettings(array $fieldNames): array
+    private function getFieldSettings(array $fieldNames): array
     {
         // Find the necessary fields from the configuration
         $fields = $this->fields->whereIn('name', $fieldNames);

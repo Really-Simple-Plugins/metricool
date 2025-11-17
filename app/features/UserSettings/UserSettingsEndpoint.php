@@ -57,33 +57,38 @@ class UserSettingsEndpoint
         }
     }
 
+    /**
+     * Retrieve user settings, optionally filtered by section. Sends an error
+     * response if something goes wrong.
+     */
     protected function getUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {
-        $section = $request->get_param('section');
-
         try {
-            $settings = !empty($section)
-                ? $this->service->getSettingsForSection($section)
-                : $this->service->getAllSettings();
+            $settings = $this->service->getSettings(
+                $request->get_param('section')
+            );
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(__('Failed to retrieve settings', 'metricool'), $e->getMessage(), 500);
+            return $this->sendHttpErrorResponse(__('Failed to retrieve settings', 'metricool'), $e->getMessage());
         }
-        
+
         return $this->sendHttpResponse($settings);
     }
 
+    /**
+     * Store user settings. Sends an error response if something goes wrong.
+     */
     protected function storeUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {
-        $params = $request->get_params();
+        $settings = $request->get_params();
 
         try {
-            $updatedSettings = $this->service->storeSettings($params, $request);
+            $updatedSettings = $this->service->storeSettings($settings, $request);
         } catch (ValidationFailedExceptions $e) {
             // Validation failed, return errors
             return $this->sendHttpResponse($e->getErrors(), false, __('Validation failed', 'metricool'), 422);
         } catch (\Exception $e) {
             // Something seriously went wrong, abort
-            return $this->sendHttpErrorResponse(__('Failed to update settings', 'metricool'), $e->getMessage(), 500);
+            return $this->sendHttpErrorResponse(__('Failed to update settings', 'metricool'), $e->getMessage());
         }
 
         return $this->sendHttpResponse($updatedSettings);
