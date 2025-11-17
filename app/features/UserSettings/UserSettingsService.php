@@ -28,15 +28,12 @@ class UserSettingsService
      * This property holds all the available storages
      * @var Collection|AbstractStorage[]
      */
-    private $storages = [];
+    private $storages;
 
-    public function __construct()
+    public function __construct(Collection $storages, Collection $fields)
     {
-        $userSettings = App::userSettings();
-
-        //todo: This should probably be moved to someplace else
-        $this->initializeStorages($userSettings->get('storages', []));
-        $this->initializeFields($userSettings->get('fields', []));
+        $this->storages = $storages;
+        $this->fields = $fields;
     }
 
     /**
@@ -75,6 +72,8 @@ class UserSettingsService
             })->toArray();
 
             // Retrieve the data from storage
+            // todo - getStorage can return null, but it is already validated prior to this point
+            // todo - we should add it to the Field object in \Metricool\Features\UserSettings\UserSettingsController::convertedUserSettingFields
             $storageData = $this->getStorage($storage)
                 ->getMultiple($fieldStorageNames);
 
@@ -177,42 +176,6 @@ class UserSettingsService
     public function getStorage(string $storageName): ?AbstractStorage
     {
         return $this->storages->where('name', $storageName)->first();
-    }
-
-    /**
-     * Initialize storages from user_settings configuration
-     */
-    private function initializeStorages(array $storagesConfig): void
-    {
-        $storages = [];
-        foreach ($storagesConfig as $name => $config) {
-            $storages[$name] = StorageFactory::createFromConfig($name, $config);
-        }
-
-        $this->storages = new Collection($storages);
-    }
-
-    /**
-     * Initialize fields from user_settings "fields" configuration
-     * @throws StorageNotFoundException when a field's storage is not present in the storages configuration
-     */
-    private function initializeFields(array $fieldsConfig): void
-    {
-        $fields = [];
-        foreach ($fieldsConfig as $name => $config) {
-            $field = FieldFactory::createFromConfig($name, $config);
-            $storage = $this->getStorage($field->getStorage());
-
-            // Abort when storage not present in config
-            if ($storage == null) {
-                throw new StorageNotFoundException('Storage "' . $field->getStorage() . '" not found for field: ' . $field->getName());
-            }
-
-            // Add the field to the list
-            $fields[$name] = $field;
-        }
-
-        $this->fields = new Collection($fields);
     }
 
     /**
