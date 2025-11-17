@@ -40,8 +40,8 @@ class SharePostController implements ControllerInterface
     public function registerSharePostColumn(): void
     {
         foreach ($this->getAllPublicPostTypes() as $postType) {
-            add_filter("manage_{$postType}_posts_columns", [$this, 'insertCustomColumn']);
-            add_action("manage_{$postType}_posts_custom_column", [$this, 'insertCustomColumnContent'], 10, 2);
+            add_filter("manage_{$postType}_posts_columns", [$this, 'insertPostTableColumn']);
+            add_action("manage_{$postType}_posts_custom_column", [$this, 'insertPostTableColumnContent'], 10, 2);
         }
     }
 
@@ -109,7 +109,7 @@ class SharePostController implements ControllerInterface
     /**
      * Sets the metricool column header to the post tables
      */
-    public function insertCustomColumn(array $columns): array
+    public function insertPostTableColumn(array $columns): array
     {
         $columns[self::POST_COLUMN_KEY] = 'Metricool';
         return $columns;
@@ -118,7 +118,7 @@ class SharePostController implements ControllerInterface
     /**
      * Sets the content of the metricool share post column
      */
-    public function insertCustomColumnContent(string $columnName, int $postId)
+    public function insertPostTableColumnContent(string $columnName, int $postId)
     {
         if (($columnName !== self::POST_COLUMN_KEY) || (get_post_status($postId) !== 'publish')) {
             return;
