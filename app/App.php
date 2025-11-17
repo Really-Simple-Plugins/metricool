@@ -62,8 +62,10 @@ final class App
         return (empty($key) ? self::$related : self::$related->get($key));
     }
 
-
-    public static function userSettings()
+    /**
+     * Static method to get the user settings' config.
+     */
+    public static function userSettings(): Dot
     {
         if (empty(self::$userSettings)) {
             self::$userSettings = self::dotFromPath(dirname(__FILE__, 2) . '/config/user_settings.php');
