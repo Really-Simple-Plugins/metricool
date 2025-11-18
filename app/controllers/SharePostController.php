@@ -27,8 +27,9 @@ class SharePostController implements ControllerInterface
             return;
         }
 
+        add_action('init', [$this, 'registerSharePostColumn']);
         add_action('admin_init', [$this, 'processShareAction']);
-        add_action('plugins_loaded', [$this, 'registerSharePostColumn']);
+        add_action('admin_head', [$this, 'stylePostTableColumnWidth']);
         add_filter('default_hidden_columns', [$this, 'filterDefaultHiddenColumns'], 10, 2);
     }
 
@@ -113,6 +114,20 @@ class SharePostController implements ControllerInterface
     {
         $columns[self::POST_COLUMN_KEY] = 'Metricool';
         return $columns;
+    }
+
+    /**
+     * Styles the post table column width to avoid layout issues. This width
+     * provides enough space for the button, even when the text is translated
+     * to Portuguese ("Compartilhar") for example.
+     */
+    public function stylePostTableColumnWidth(): void
+    {
+        echo '<style>
+            .column-' . self::POST_COLUMN_KEY . ' {
+                width: 130px;
+            }
+        </style>';
     }
 
     /**
