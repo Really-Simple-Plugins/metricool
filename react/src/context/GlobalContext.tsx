@@ -110,7 +110,7 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
             if (!action.change.metricool) {
                 return { ...state };
             }
-            return { ...state, metricool: { ...action.change.metricool, is_onboarding_completed: true } };
+            return { ...state, metricool: { ...action.change.metricool } };
         }
         case "setTranslations": {
             if (!state.metricool) {
