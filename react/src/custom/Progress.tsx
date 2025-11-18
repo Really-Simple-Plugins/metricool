@@ -95,8 +95,8 @@ const Progress = () => {
                             {taskData.completionPercentage}%
                         </span>
                         <span className="text-xl font-medium">
-                            {taskData.remainingTasks.length === 0 && __("You're all set! Great job!", "simplybook")}
-                            {taskData.remainingTasks.length > 0 && sprintf(_n("You're on your way. You still have %s task open.", "You're on your way. You still have %s tasks open.", taskData.remainingTasks.length, "simplybook"), String(taskData.remainingTasks.length))}
+                            {taskData.remainingTasks.length === 0 && __("You're all set! Great job!", "metricool")}
+                            {taskData.remainingTasks.length > 0 && sprintf(_n("You're on your way. You still have %s task open.", "You're on your way. You still have %s tasks open.", taskData.remainingTasks.length, "metricool"), String(taskData.remainingTasks.length))}
                         </span>
                     </div>
 
