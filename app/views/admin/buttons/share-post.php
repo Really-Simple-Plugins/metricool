@@ -6,6 +6,6 @@
 ?>
 
 <a href="<?php echo esc_url($actionableUrl) ?>" class="button button-primary" target="_blank">
-    <?php esc_html_e('Share this post', 'metricool') ?>
-    <span class="dashicons dashicons-megaphone" style="vertical-align: middle"></span>
+    <?php esc_html_e('Share', 'metricool'); ?>
+    <span class="dashicons dashicons-megaphone" style="vertical-align: middle;"></span>
 </a>
