@@ -50,7 +50,7 @@ return [
         ],
         'exampleCustomStorageName' => [
             'validators' => ['email'],
-            'storageName' => 'very_custom_storage_name',
+            'settingName' => 'very_custom_storage_name',
             'section' => 'example',
         ],
     ],
@@ -60,7 +60,7 @@ return [
             'prefix' => 'metricool_',
         ],
         'metricoolUserSettings' => [
-            'storage' => 'CustomStorage',
+            'storage' => 'RemoteStorage',
             'client' => App::provide('client')->userSettings(),
             'method' => 'patch',
             'casing' => 'camelCase',

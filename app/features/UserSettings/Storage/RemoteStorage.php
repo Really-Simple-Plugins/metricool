@@ -7,7 +7,7 @@ use Metricool\Features\UserSettings\Storage\Exceptions\ClientRequiredException;
 /**
  * This storage uses a client to store and retrieve the UserSettings
  */
-class CustomStorage extends AbstractStorage
+class RemoteStorage extends AbstractStorage
 {
     protected object $client;
     protected string $method;
