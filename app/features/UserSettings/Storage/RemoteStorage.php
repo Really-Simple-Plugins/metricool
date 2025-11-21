@@ -2,7 +2,7 @@
 
 namespace Metricool\Features\UserSettings\Storage;
 
-use Metricool\Features\UserSettings\Storage\Exceptions\ClientRequiredException;
+use Metricool\Features\UserSettings\Exceptions\ClientRequiredException;
 
 /**
  * This storage uses a client to store and retrieve the UserSettings
