@@ -29,7 +29,7 @@ class SharePostController implements ControllerInterface
 
         add_action('init', [$this, 'registerSharePostColumn']);
         add_action('admin_init', [$this, 'processShareAction']);
-        add_action('admin_head', [$this, 'stylePostTableColumnWidth']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueGeneralAdminStyles']);
         add_filter('default_hidden_columns', [$this, 'filterDefaultHiddenColumns'], 10, 2);
     }
 
@@ -117,17 +117,17 @@ class SharePostController implements ControllerInterface
     }
 
     /**
-     * Styles the post table column width to avoid layout issues. This width
-     * provides enough space for the button, even when the text is translated
-     * to Portuguese ("Compartilhar") for example.
+     * Method enqueues the css for general admin styles. With it, we style
+     * the metricool post table column width.
      */
-    public function stylePostTableColumnWidth(): void
+    public function enqueueGeneralAdminStyles(): void
     {
-        echo '<style>
-            .column-' . self::POST_COLUMN_KEY . ' {
-                width: 130px;
-            }
-        </style>';
+        wp_enqueue_style(
+            'metricool-admin-general-styles',
+            App::env('plugin.url') . 'assets/css/admin.css',
+            [],
+            App::env('plugin.version')
+        );
     }
 
     /**
