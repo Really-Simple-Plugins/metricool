@@ -1,6 +1,6 @@
 <?php
 
-namespace Metricool\features\UserSettings;
+namespace Metricool\Features\UserSettings;
 
 use Metricool\Helpers\Collection;
 use Metricool\Features\UserSettings\Fields\Field;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Metricool\features\UserSettings\Factories;
+namespace Metricool\Features\UserSettings\Factories;
 
 use Adbar\Dot;
 use Metricool\Helpers\Collection;

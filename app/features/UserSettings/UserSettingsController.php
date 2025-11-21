@@ -5,7 +5,7 @@ namespace Metricool\Features\UserSettings;
 use Metricool\App;
 use Metricool\Helpers\Collection;
 use Metricool\Interfaces\FeatureInterface;
-use Metricool\features\UserSettings\Factories\FieldsFactory;
+use Metricool\Features\UserSettings\Factories\FieldsFactory;
 use Metricool\Features\UserSettings\Exceptions\StorageNotFoundException;
 
 class UserSettingsController implements FeatureInterface
