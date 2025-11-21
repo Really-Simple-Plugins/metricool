@@ -1,12 +1,10 @@
 <?php
 
-namespace Metricool\Features\UserSettings;
+namespace Metricool\features\UserSettings\Factories;
 
 use Adbar\Dot;
 use Metricool\Helpers\Collection;
-use Metricool\Features\UserSettings\Factories\FieldFactory;
 use Metricool\Features\UserSettings\Storage\AbstractStorage;
-use Metricool\Features\UserSettings\Factories\StorageFactory;
 use Metricool\Features\UserSettings\Exceptions\StorageNotFoundException;
 
 class FieldsFactory
