@@ -6,8 +6,8 @@ use Symfony\Component\Translation\Exception\LogicException;
 use Metricool\Features\UserSettings\Storage\AbstractStorage;
 use Metricool\Features\UserSettings\Factories\ValidatorFactory;
 use Metricool\Features\UserSettings\Validators\AbstractValidator;
-use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
 use Metricool\Features\UserSettings\Validators\FieldTypeValidator;
+use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 
 class Field
 {

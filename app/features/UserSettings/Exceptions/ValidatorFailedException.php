@@ -1,6 +1,6 @@
 <?php
 
-namespace Metricool\Features\UserSettings\Validators\Exceptions;
+namespace Metricool\Features\UserSettings\Exceptions;
 
 use Metricool\Features\UserSettings\Validators\AbstractValidator;
 

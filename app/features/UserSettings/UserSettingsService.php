@@ -2,11 +2,11 @@
 
 namespace Metricool\Features\UserSettings;
 
-use Metricool\Features\UserSettings\Exceptions\StorageFailedException;
-use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
-use Metricool\Features\UserSettings\Fields\Field;
-use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
 use Metricool\Helpers\Collection;
+use Metricool\Features\UserSettings\Fields\Field;
+use Metricool\Features\UserSettings\Exceptions\StorageFailedException;
+use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
+use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
 
 /**
  * This service is responsible for storing and retrieving user settings.

@@ -2,9 +2,9 @@
 
 namespace Metricool\Features\UserSettings\Validators;
 
-use Metricool\Features\UserSettings\Fields\Field;
-use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
 use Metricool\Utility\StringUtility;
+use Metricool\Features\UserSettings\Fields\Field;
+use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 
 abstract class AbstractValidator
 {

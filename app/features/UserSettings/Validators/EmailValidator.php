@@ -2,7 +2,7 @@
 
 namespace Metricool\Features\UserSettings\Validators;
 
-use Metricool\Features\UserSettings\Validators\Exceptions\ValidatorFailedException;
+use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 
 class EmailValidator extends AbstractValidator
 {
