@@ -14,7 +14,7 @@ use Metricool\Traits\HasViews;
 class SharePostController implements ControllerInterface
 {
     use HasAllowlistControl;
-    use hasViews;
+    use HasViews;
     use HasNonces;
 
     private const DEFAULT_POST_TYPES = ['post', 'page'];
@@ -112,7 +112,9 @@ class SharePostController implements ControllerInterface
      */
     public function insertPostTableColumn(array $columns): array
     {
-        $columns[self::POST_COLUMN_KEY] = 'Metricool';
+        $columns[self::POST_COLUMN_KEY] = $this->view('admin/share-post/column-header', [
+            'label' => __('Metricool', 'metricool')
+        ]);
         return $columns;
     }
 
@@ -145,8 +147,9 @@ class SharePostController implements ControllerInterface
             '_metricool_action_nonce' => wp_create_nonce('metricool_action'),
         ], App::env('plugin.dashboard_url'));
 
-        $this->render('admin/buttons/share-post', [
-            'actionableUrl' => $actionableUrl
+        $this->render('admin/share-post/button', [
+            'actionableUrl' => $actionableUrl,
+            'label' => __('Share', 'metricool')
         ]);
     }
 
