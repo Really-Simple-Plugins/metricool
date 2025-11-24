@@ -73,7 +73,7 @@ class UserSettingsService
             }
 
             if ($field->storage instanceof SubmittableStorageInterface) {
-                $this->setSubmittableStorage($field, $field->getStorageName());
+                $this->setSubmittableStorage($field, $field->getStorage());
             }
         }
 
