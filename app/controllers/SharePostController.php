@@ -14,10 +14,10 @@ use Metricool\Traits\HasViews;
 class SharePostController implements ControllerInterface
 {
     use HasAllowlistControl;
-    use hasViews;
+    use HasViews;
     use HasNonces;
 
-    private const COMPATIBLE_POST_TYPES = ['post', 'page'];
+    private const DEFAULT_POST_TYPES = ['post', 'page'];
     private const POST_COLUMN_KEY = 'metricool';
     private const SHARE_POST_ACTION = 'share_post';
 
@@ -27,13 +27,61 @@ class SharePostController implements ControllerInterface
             return;
         }
 
+        add_action('init', [$this, 'registerSharePostColumn']);
         add_action('admin_init', [$this, 'processShareAction']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueGeneralAdminStyles']);
+        add_filter('default_hidden_columns', [$this, 'filterDefaultHiddenColumns'], 10, 2);
+    }
 
-        // Add the action column to the view-table.
-        foreach (self::COMPATIBLE_POST_TYPES as $postType) {
-            add_filter("manage_{$postType}_posts_columns", [$this, 'insertPostsColumnHeader']);
-            add_action("manage_{$postType}_posts_custom_column", [$this, 'insertPostsColumnContent'], 10, 2);
+    /**
+     * Registers the Metricool share post column on all public post types. Due
+     * to {@see filterDefaultHiddenColumns} the column will be hidden by default
+     * on all post types except the ones defined in {@see DEFAULT_POST_TYPES}.
+     */
+    public function registerSharePostColumn(): void
+    {
+        foreach ($this->getAllPublicPostTypes() as $postType) {
+            add_filter("manage_{$postType}_posts_columns", [$this, 'insertPostTableColumn']);
+            add_action("manage_{$postType}_posts_custom_column", [$this, 'insertPostTableColumnContent'], 10, 2);
         }
+    }
+
+    /**
+     * Retrieves all public and viewable post types.
+     */
+    private function getAllPublicPostTypes(): array
+    {
+        $postTypes = get_post_types(['public' => true]);
+        return array_filter($postTypes, 'is_post_type_viewable');
+    }
+
+    /**
+     * Method is used for hiding the custom column by default on all post type
+     * list table screens except the configured default post types. Users can
+     * still enable the column manually through Screen Options.
+     */
+    public function filterDefaultHiddenColumns(array $hiddenColumns, \WP_Screen $currentScreen): array
+    {
+        // Only act on post type list tables like edit-post, edit-page, etc.
+        if (strpos($currentScreen->id, 'edit-') !== 0) {
+            return $hiddenColumns;
+        }
+
+        if (empty($currentScreen->post_type)) {
+            return $hiddenColumns;
+        }
+
+        // Keep column visible if post type is in the default list.
+        if (in_array($currentScreen->post_type, self::DEFAULT_POST_TYPES, true)) {
+            return $hiddenColumns;
+        }
+
+        // Hide the POST_COLUMN_KEY column by default if not already hidden.
+        if (!in_array(self::POST_COLUMN_KEY, $hiddenColumns, true)) {
+            $hiddenColumns[] = self::POST_COLUMN_KEY;
+        }
+
+        return $hiddenColumns;
     }
 
     /**
@@ -62,16 +110,32 @@ class SharePostController implements ControllerInterface
     /**
      * Sets the metricool column header to the post tables
      */
-    public function insertPostsColumnHeader(array $columns): array
+    public function insertPostTableColumn(array $columns): array
     {
-        $columns[self::POST_COLUMN_KEY] = 'Metricool';
+        $columns[self::POST_COLUMN_KEY] = $this->view('admin/share-post/column-header', [
+            'label' => __('Metricool', 'metricool')
+        ]);
         return $columns;
+    }
+
+    /**
+     * Method enqueues the css for general admin styles. With it, we style
+     * the metricool post table column width.
+     */
+    public function enqueueGeneralAdminStyles(): void
+    {
+        wp_enqueue_style(
+            'metricool-admin-general-styles',
+            App::env('plugin.url') . 'assets/css/admin.css',
+            [],
+            App::env('plugin.version')
+        );
     }
 
     /**
      * Sets the content of the metricool share post column
      */
-    public function insertPostsColumnContent(string $columnName, int $postId)
+    public function insertPostTableColumnContent(string $columnName, int $postId)
     {
         if (($columnName !== self::POST_COLUMN_KEY) || (get_post_status($postId) !== 'publish')) {
             return;
@@ -83,8 +147,9 @@ class SharePostController implements ControllerInterface
             '_metricool_action_nonce' => wp_create_nonce('metricool_action'),
         ], App::env('plugin.dashboard_url'));
 
-        $this->render('admin/buttons/share-post', [
-            'actionableUrl' => $actionableUrl
+        $this->render('admin/share-post/button', [
+            'actionableUrl' => $actionableUrl,
+            'label' => __('Share', 'metricool')
         ]);
     }
 
