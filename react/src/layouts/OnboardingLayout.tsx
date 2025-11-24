@@ -5,8 +5,8 @@ import { useGlobalContext } from "../context/GlobalContext.tsx";
 export const OnboardingLayout = () => {
     const { metricool } = useGlobalContext();
     return (
-        <FlexContainer direction={"column"} className={"w-full h-full px-20 py-16"}>
-            <FlexContainer direction={"row"} className={"justify-between items-center"}>
+        <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 !gap-0"}>
+            <FlexContainer direction={"row"} className={"justify-between items-center pb-4"}>
                 <FlexContainer direction={"row"} className={"text-base font-bold font-nunito items-center"}>
                     <img src={`${metricool.assets_url}img/mc-logo.svg`} alt={"Metricool logo"}/>
                     <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={"Metricool logo"}/>
