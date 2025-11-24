@@ -162,6 +162,7 @@ class Field
         }
 
         try {
+            // todo- add cache to storage (especially REMOTE) to avoid multiple calls
             $value = $this->storage->get($this->getSettingName());
         } catch (\Exception $e) {
             $value = $this->getDefaultValue();

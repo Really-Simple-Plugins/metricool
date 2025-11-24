@@ -36,6 +36,9 @@ class RemoteStorage extends AbstractStorage
     }
 
     /**
+     * todo - add object caching to prevent multiple requests in the same
+     * request lifecycle
+     *
      * @inheritDoc
      */
     public function getMultiple(array $keys): array

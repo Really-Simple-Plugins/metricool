@@ -30,7 +30,7 @@ class UserSettingsService
      * filtered by section.
      * @throws \Exception
      */
-    public function getSettings(?string $section = null): array
+    public function getSettingsResponse(?string $section = null): array
     {
         $response = new UserSettingsResponse($this->fields);
 
@@ -66,6 +66,7 @@ class UserSettingsService
             throw new ValidationFailedExceptions($validationErrors);
         }
 
+        // todo - decouple the response here. ->store() ->get() ?
         $response = new UserSettingsResponse($fields);
         return $response->parse()->get();
     }

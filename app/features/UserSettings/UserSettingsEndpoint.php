@@ -68,7 +68,7 @@ class UserSettingsEndpoint
     protected function getUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
-            $settings = $this->service->getSettings(
+            $settings = $this->service->getSettingsResponse(
                 $request->get_param('section')
             );
         } catch (\Exception $e) {
