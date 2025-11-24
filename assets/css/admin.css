@@ -1,0 +1,9 @@
+/**
+ * Styles the post table column width to avoid layout issues. This width
+ * provides enough space for the button, even when the text is translated
+ * to Portuguese ("Compartilhar") for example.
+ */
+.column-metricool {
+    width: 130px;
+}
+/* -- */
