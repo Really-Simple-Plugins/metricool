@@ -64,8 +64,8 @@ class Field
     }
 
     /**
-     * Gets the name of the field. If no setting name is set, this value is used
-     * as the setting name.
+     * Gets the name of the field. If no {@see $settingName} is set, this value
+     * is used as the setting name.
      */
     public function getName(): string
     {
@@ -141,7 +141,10 @@ class Field
         }
 
         $this->validate($value, $request);
+
         $this->value = $value;
+
+        $this->storage->store($this->getSettingName(), $this->value);
     }
 
     /**
@@ -162,7 +165,6 @@ class Field
         }
 
         try {
-            // todo- add cache to storage (especially REMOTE) to avoid multiple calls
             $value = $this->storage->get($this->getSettingName());
         } catch (\Exception $e) {
             $value = $this->getDefaultValue();

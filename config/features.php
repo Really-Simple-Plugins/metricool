@@ -14,6 +14,7 @@ return [
         'priorityFiles' => [
             'Storage/AbstractStorage',
             'Validators/AbstractValidator',
+            'Interfaces/SubmittableStorageInterface',
         ],
     ],
     'Onboarding' => [

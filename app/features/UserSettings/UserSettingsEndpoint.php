@@ -2,6 +2,7 @@
 
 namespace Metricool\Features\UserSettings;
 
+use Metricool\features\UserSettings\Exceptions\StorageSubmitException;
 use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
@@ -88,6 +89,8 @@ class UserSettingsEndpoint
             $updatedSettings = $this->service->storeSettings($settings, $request);
         } catch (ValidationFailedExceptions $e) {
             return $this->sendHttpResponse($e->getErrors(), false, __('Validation failed', 'metricool'), 422);
+        } catch (StorageSubmitException $e) {
+            return $this->sendHttpErrorResponse($e->getMessage(), $e->getErrors(), 502);
         } catch (\Exception $e) {
             return $this->sendHttpErrorResponse(__('An unknown error occurred. Failed to update the settings!', 'metricool'), $e->getMessage());
         }

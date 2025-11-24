@@ -3,14 +3,22 @@
 namespace Metricool\Features\UserSettings\Storage;
 
 use Metricool\Features\UserSettings\Exceptions\ClientRequiredException;
+use Metricool\Features\UserSettings\Interfaces\SubmittableStorageInterface;
 
 /**
  * This storage uses a client to store and retrieve the UserSettings
  */
-class RemoteStorage extends AbstractStorage
+class RemoteStorage extends AbstractStorage implements SubmittableStorageInterface
 {
     protected object $client;
     protected string $method;
+
+    /**
+     * This property is used to avoid multiple requests to the remote client.
+     * It stores the settings retrieved from the client and any changes made
+     * to them before submitting.
+     */
+    protected array $settings = [];
 
     public function __construct($name, $config)
     {
@@ -30,27 +38,30 @@ class RemoteStorage extends AbstractStorage
      */
     public function get(string $key)
     {
-        $value = $this->getMultiple([$key]);
+        if (!empty($this->settings)) {
+            $settingsKey = $this->convertCase($key);
+            return $this->settings[$settingsKey] ?? null;
+        }
 
+        $value = $this->getMultiple([$key]);
         return $value[$key];
     }
 
     /**
-     * todo - add object caching to prevent multiple requests in the same
-     * request lifecycle
-     *
      * @inheritDoc
      */
     public function getMultiple(array $keys): array
     {
         $data = [];
 
-        // Retrieve all values from the client
-        $results = $this->client->get();
+        // Retrieve all values from the client for the first time
+        if (empty($this->settings)) {
+            $this->settings = $this->client->get();
+        }
 
         // Retrieve the requested values from the response
         foreach ($keys as $key) {
-            $data[$key] = $results[$this->convertCase($key)] ?? null;
+            $data[$key] = $this->settings[$this->convertCase($key)] ?? null;
         }
 
         // Return the requested values
@@ -58,25 +69,39 @@ class RemoteStorage extends AbstractStorage
     }
 
     /**
-     * @inheritDoc
+     * Store the given key and value in the local settings array. Call
+     * {@see submit()} to send the changes to the remote client.
+     * @throws \InvalidArgumentException when the key could not be converted
      */
     public function store(string $key, $value): void
     {
-        $this->storeMultiple([$key => $value]);
+        $this->settings[$this->convertCase($key)] = $value;
     }
 
     /**
-     * @inheritDoc
+     * Store the given key and value pairs in the local settings array. Call
+     * {@see submit()} to send the changes to the remote client.
+     * @throws \InvalidArgumentException when the key could not be converted
      */
     public function storeMultiple(array $settings): void
     {
-        // Create the request data
-        $requestData = [];
         foreach ($settings as $key => $value) {
-            $requestData[$this->convertCase($key)] = $value;
+            $this->store($key, $value);
+        }
+    }
+
+    /**
+     * Submit the stored settings to the remote client with the {@see method}
+     * defined in the config. Returns silently if there are no settings to
+     * submit.
+     * @throws \Exception when the submission fails
+     */
+    public function submit(): void
+    {
+        if (empty($this->settings)) {
+            return;
         }
 
-        // Send the request to the client
-        $this->client->{$this->method}($requestData);
+        $this->client->{$this->method}($this->settings);
     }
 }
