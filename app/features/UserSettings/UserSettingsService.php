@@ -7,7 +7,6 @@ use Metricool\Features\UserSettings\Fields\Field;
 use Metricool\Features\UserSettings\Exceptions\StorageSubmitException;
 use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
-use Metricool\Features\UserSettings\Interfaces\SubmittableStorageInterface;
 
 /**
  * This service is responsible for storing and retrieving user settings.
@@ -22,11 +21,10 @@ class UserSettingsService
     public Collection $fields;
 
     /**
-     * A map of submittable storages to prevent multiple submissions to the
-     * same storage.
-     * @var array<string, SubmittableStorageInterface>
+     * Property is used to keep track of unique field storages when storing
+     * settings, so we can submit each storage only once.
      */
-    private array $submittableStorages = [];
+    private array $uniqueFieldStorages = [];
 
     public function __construct(Collection $fields)
     {
@@ -60,9 +58,9 @@ class UserSettingsService
     public function storeSettings(array $settings, \WP_REST_Request $request): array
     {
         $validationErrors = [];
-        $fields = $this->fields->whereIn('name', array_keys($settings));
+        $this->fields = $this->fields->whereIn('name', array_keys($settings));
 
-        foreach ($fields as $field) {
+        foreach ($this->fields as $field) {
             $value = $settings[$field->getName()];
 
             try {
@@ -72,49 +70,54 @@ class UserSettingsService
                 continue;
             }
 
-            if ($field->storage instanceof SubmittableStorageInterface) {
-                $this->setSubmittableStorage($field, $field->getStorage());
-            }
+            // Store the validated setting for later submission
+            $this->storeValidatedSetting($field, $value);
         }
 
+        // After all fields are validated, save the settings through their
+        // storages
+        $this->saveValidatedSettings();
+
+        // Still throw validation errors if any, this should not block storage
+        // submission for valid fields
         if (count($validationErrors) > 0) {
             throw new ValidationFailedExceptions($validationErrors);
         }
 
-        // No validation errors - submit the submittable storages
-        $this->submitSubmittableStorages();
-
-        $response = new UserSettingsResponse($fields);
+        $response = new UserSettingsResponse($this->fields);
         return $response->parse()->get();
     }
 
     /**
-     * Map the given submittable storage to prevent multiple submissions to the
-     * same storage. For example, when {@see RemoteStorage} is used for multiple
-     * fields, we only want to call {@see RemoteStorage::submit()} once.
+     * Store the validated value into the field's storage and keep track of
+     * unique storages to submit later with {@see saveSettings()}
+     * @param mixed $value
      */
-    private function setSubmittableStorage(Field $field, SubmittableStorageInterface $storage)
+    private function storeValidatedSetting(Field $field, $value): void
     {
-        if (!empty($this->submittableStorages[$field->getStorageName()])) {
-            return;
-        }
+        $field->storage->set($field->getSettingName(), $value);
 
-        $this->submittableStorages[$field->getStorageName()] = $storage;
+        // Remember the unique storages to submit later with saveSettings()
+        if (empty($this->uniqueFieldStorages[$field->getStorageName()])) {
+            $this->uniqueFieldStorages[$field->getStorageName()] = $field->getStorage();
+        }
     }
 
     /**
-     * Submit all mapped submittable storages. Collects any errors and throws
-     * a single exception if any storage submission fails.
+     * Save all updated unique storages that were mapped in
+     * {@see storeValidatedSetting}. The method collects any errors and throws a
+     * single exception if any storage submission fails.
+     *
      * @throws StorageSubmitException when any storage submission fails - is
      * caught in {@see UserSettingsEndpoint} and the message we return here is
      * only shown to the user has WP_DEBUG set to true.
      */
-    private function submitSubmittableStorages(): void
+    private function saveValidatedSettings(): void
     {
         $requestErrors = [];
-        foreach ($this->submittableStorages as $storage) {
+        foreach ($this->uniqueFieldStorages as $storage) {
             try {
-                $storage->submit();
+                $storage->save();
             } catch (\Exception $e) {
                 $requestErrors[$storage->name] = $e->getMessage();
                 continue; // So we can try to submit other storages
@@ -126,7 +129,5 @@ class UserSettingsService
             $exception->setErrors($requestErrors);
             throw $exception;
         }
-
-        $this->submittableStorages = [];
     }
 }

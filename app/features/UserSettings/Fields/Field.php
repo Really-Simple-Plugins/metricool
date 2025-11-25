@@ -141,10 +141,7 @@ class Field
         }
 
         $this->validate($value, $request);
-
         $this->value = $value;
-
-        $this->storage->store($this->getSettingName(), $this->value);
     }
 
     /**

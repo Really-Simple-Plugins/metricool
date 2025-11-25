@@ -59,4 +59,16 @@ class OptionsStorage extends AbstractStorage
             $this->store($key, $value);
         }
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function save(): void
+    {
+        if (empty($this->settings)) {
+            return;
+        }
+
+        $this->storeMultiple($this->settings);
+    }
 }

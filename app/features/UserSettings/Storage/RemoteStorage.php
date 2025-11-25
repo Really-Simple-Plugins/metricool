@@ -3,12 +3,11 @@
 namespace Metricool\Features\UserSettings\Storage;
 
 use Metricool\Features\UserSettings\Exceptions\ClientRequiredException;
-use Metricool\Features\UserSettings\Interfaces\SubmittableStorageInterface;
 
 /**
  * This storage uses a client to store and retrieve the UserSettings
  */
-class RemoteStorage extends AbstractStorage implements SubmittableStorageInterface
+class RemoteStorage extends AbstractStorage
 {
     protected object $client;
     protected string $method;
@@ -69,34 +68,32 @@ class RemoteStorage extends AbstractStorage implements SubmittableStorageInterfa
     }
 
     /**
-     * Store the given key and value in the local settings array. Call
-     * {@see submit()} to send the changes to the remote client.
-     * @throws \InvalidArgumentException when the key could not be converted
+     * @inheritDoc
      */
     public function store(string $key, $value): void
     {
-        $this->settings[$this->convertCase($key)] = $value;
+        $this->storeMultiple([$key => $value]);
     }
 
     /**
-     * Store the given key and value pairs in the local settings array. Call
-     * {@see submit()} to send the changes to the remote client.
-     * @throws \InvalidArgumentException when the key could not be converted
+     * @inheritDoc
      */
     public function storeMultiple(array $settings): void
     {
+        // Create the request data
+        $requestData = [];
         foreach ($settings as $key => $value) {
-            $this->store($key, $value);
+            $requestData[$this->convertCase($key)] = $value;
         }
+
+        // Send the request to the client
+        $this->client->{$this->method}($requestData);
     }
 
     /**
-     * Submit the stored settings to the remote client with the {@see method}
-     * defined in the config. Returns silently if there are no settings to
-     * submit.
-     * @throws \Exception when the submission fails
+     * @inheritDoc
      */
-    public function submit(): void
+    public function save(): void
     {
         if (empty($this->settings)) {
             return;
