@@ -126,5 +126,7 @@ class UserSettingsService
             $exception->setErrors($requestErrors);
             throw $exception;
         }
+
+        $this->submittableStorages = [];
     }
 }
