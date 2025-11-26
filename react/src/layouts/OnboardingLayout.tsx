@@ -1,11 +1,12 @@
 import { __, sprintf } from "@wordpress/i18n";
-import { Button, FlexContainer, Input, Label, Switch } from "../components";
+import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer, Icon, Input, Label, Switch } from "../components";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { clsx } from "clsx";
 import DOMPurify from "dompurify";
+import { useState } from "react";
 
 const formSchema = z.object({
     email: z.email({
@@ -22,6 +23,7 @@ const formSchema = z.object({
 
 export const OnboardingLayout = () => {
     const { metricool } = useGlobalContext();
+    const [openModal, setOpenModal] = useState(false);
 
     const {
         handleSubmit,
@@ -38,6 +40,7 @@ export const OnboardingLayout = () => {
     });
 
     const onSubmit = (values: { email: string; password: string; terms: boolean; marketing: boolean; }) => {
+        setOpenModal(true);
         console.log(values);
     };
 
@@ -153,6 +156,52 @@ export const OnboardingLayout = () => {
                 </FlexContainer>
                 <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%]"} alt={"Metricool logo"}/>
             </FlexContainer>
+            <Dialog
+                open={openModal}
+                onOpenChange={() => setOpenModal(!openModal)}
+                showCloseButton={true}
+                className={"flex flex-col justify-center items-center"}
+            >
+                <DialogHeader className={"!gap-0 mt-8"}>
+                    <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[37px]"} alt={"Metricool logo"}/>
+                    <DialogTitle className={"font-bold font-nunito m-0"}>
+                        {__("Sign in with your credentials", "metricool")}
+                    </DialogTitle>
+                </DialogHeader>
+                <form onSubmit={() => console.log("hi")} className={"flex flex-col items-center justify-center"}>
+                    <FlexContainer direction={"column"} className={"!gap-2"}>
+                        <FlexContainer direction={"column"} className={"!gap-2"}>
+                            <Label htmlFor={"email"} className={"text-black"}>{__("Email", "metricool")}</Label>
+                            <Controller
+                                control={control}
+                                render={({ field }) =>
+                                    <Input {...field} id={"email"} placeholder={__("Enter your email", "metricool")} className={"bg-white font-semibold text-black min-w-76 max-w-80"}/>}
+                                name={"email"}
+                            />
+                            <span className={"text-red-500 text-sm"}>{formValidationErrors.email?.message}</span>
+                        </FlexContainer>
+                        <FlexContainer direction={"column"} className={"!gap-2"}>
+                            <Label htmlFor={"password"} className={"text-black"}>{__("Password", "metricool")}</Label>
+                            <Controller
+                                control={control}
+                                render={({ field }) =>
+                                    <Input type={"password"} {...field} id={"password"} placeholder={__("Write your password here", "metricool")} className={"bg-white font-semibold text-black min-w-76 max-w-80"}/>}
+                                name={"password"}
+                            />
+                            <span className={"text-red-500 text-sm"}>{formValidationErrors.password?.message}</span>
+                        </FlexContainer>
+                    </FlexContainer>
+                    <Button
+                        variant={"black"}
+                        icon={"arrow-right"}
+                        iconPosition={"right"}
+                        type={"submit"}
+                        disabled={!(dirtyFields.email && dirtyFields.password && dirtyFields.terms)}
+                    >
+                        {__("Sign in", "metricool")}
+                    </Button>
+                </form>
+            </Dialog>
         </FlexContainer>
     );
 };
