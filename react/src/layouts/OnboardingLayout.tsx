@@ -1,6 +1,7 @@
 import { __, sprintf } from "@wordpress/i18n";
 import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer, Icon, Input, Label, Switch } from "../components";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
+import OnboardingHeader from "../custom/OnboardingHeader.tsx";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -52,19 +53,20 @@ export const OnboardingLayout = () => {
 
     return (
         <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 !gap-0"}>
-            <FlexContainer direction={"row"} className={"justify-between items-center pb-4"}>
-                <FlexContainer direction={"row"} className={"text-base font-bold font-nunito items-center"}>
-                    <img src={`${metricool.assets_url}img/mc-logo.svg`} alt={"Metricool logo"}/>
-                    <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={"Metricool logo"}/>
-                    {__("The digital Swiss Army Knife for social media marketers", "metricool")}
-                </FlexContainer>
-                <FlexContainer direction={"row"} className={"text-md font-semibold font-nunito items-center"}>
-                    {__("Already a Metricooler?", "metricool")}
-                    <Button variant={"primary-gradient-ghost"} className={"p-0 after:!bg-white after:!border-none !border-none"} onClick={() => console.log("hi")}>
-                        {__("Sign in here", "metricool")}
-                    </Button>
-                </FlexContainer>
-            </FlexContainer>
+            <OnboardingHeader
+                logo={{ src: `${metricool.assets_url}img/mc-logo.svg`, alt: "Metricool Logo" }}
+                actions={[
+                    (__("Already a Metricooler?", "metricool")),
+                    (
+                        <Button variant={"primary-gradient-ghost"} className={"p-0 after:!bg-white after:!border-none !border-none"} onClick={() => setOpenModal(true)}>
+                            {__("Sign in here", "metricool")}
+                        </Button>
+                    )
+                ]}
+            >
+                <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={"Metricool logo"}/>
+                {__("The digital Swiss Army Knife for social media marketers", "metricool")}
+            </OnboardingHeader>
             <div className={"w-full h-[2px] bg-[image:var(--gradient-brand-secondary)]"}></div>
             <FlexContainer direction={"row"} className={"w-full !gap-0"}>
                 <FlexContainer direction={"column"} className={"min-w-[45%] max-w-[45%]"}>
