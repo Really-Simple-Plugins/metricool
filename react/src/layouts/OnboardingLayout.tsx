@@ -4,6 +4,7 @@ import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { clsx } from "clsx";
 import DOMPurify from "dompurify";
 
 const formSchema = z.object({
@@ -72,20 +73,28 @@ export const OnboardingLayout = () => {
                                 <Controller
                                     control={control}
                                     render={({ field }) =>
-                                        <Input {...field} id={"email"} placeholder={__("Enter your email", "metricool")} className={"bg-white font-semibold text-black max-w-80"}/>}
+                                        <Input {...field} id={"email"} placeholder={__("Enter your email", "metricool")} className={clsx("bg-white font-semibold text-black max-w-80)", formValidationErrors.email?.message && "data-[slot=input]:border-rsp-error-dark")}/>}
                                     name={"email"}
                                 />
-                                <span className={"text-red-500 text-sm leading-3"}>{formValidationErrors.email?.message}</span>
+                                <span className={clsx("text-rsp-error-dark text-sm h-0 opacity-0 transition-all ease-in-out duration-600", formValidationErrors.email?.message && "h-3 opacity-100")}>
+                                    <Icon icon={"error"} iconClass={"text-rsp-error-dark"} inverse={true}></Icon>
+                                    {" "}
+                                    {formValidationErrors.email?.message}
+                                </span>
                             </FlexContainer>
                             <FlexContainer direction={"column"} className={"!gap-2"}>
                                 <Label htmlFor={"password"} className={"text-black"}>{__("Password", "metricool")}</Label>
                                 <Controller
                                     control={control}
                                     render={({ field }) =>
-                                        <Input type={"password"} {...field} id={"password"} placeholder={__("Write your password here", "metricool")} className={"bg-white font-semibold text-black max-w-80"}/>}
+                                        <Input type={"password"} {...field} id={"password"} placeholder={__("Write your password here", "metricool")} className={clsx("bg-white font-semibold text-black max-w-80", formValidationErrors.password?.message && "data-[slot=input]:border-rsp-error-dark")}/>}
                                     name={"password"}
                                 />
-                                <span className={"text-red-500 text-sm leading-3"}>{formValidationErrors.password?.message}</span>
+                                <span className={clsx("text-rsp-error-dark text-sm h-0 opacity-0 transition-all ease-in-out duration-600", formValidationErrors.password?.message && "h-3 opacity-100")}>
+                                    <Icon icon={"error"} iconClass={"text-rsp-error-dark"} inverse={true}></Icon>
+                                    {" "}
+                                    {formValidationErrors.password?.message}
+                                </span>
                             </FlexContainer>
                         </FlexContainer>
                         <Button
@@ -121,7 +130,11 @@ export const OnboardingLayout = () => {
                                         </span>
                                     </Label>
                                 </FlexContainer>
-                                <span className={"text-red-500 text-sm"}>{formValidationErrors.terms?.message}</span>
+                                <span className={clsx("text-rsp-error-dark text-sm h-0 opacity-0 transition-all ease-in-out duration-600", formValidationErrors.terms?.message && "h-3 opacity-100")}>
+                                    <Icon icon={"error"} iconClass={"text-rsp-error-dark"} inverse={true}></Icon>
+                                    {" "}
+                                    {formValidationErrors.terms?.message}
+                                </span>
                             </FlexContainer>
                             <FlexContainer direction={"column"} className={"!gap-2"}>
                                 <FlexContainer direction={"row"} className={"w-full"}>
