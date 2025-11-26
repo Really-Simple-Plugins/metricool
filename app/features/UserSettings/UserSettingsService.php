@@ -31,6 +31,11 @@ class UserSettingsService
         $this->fields = $fields;
     }
 
+    public function getSettings(): Collection
+    {
+        return $this->fields;
+    }
+
     /**
      * Return an array with keys and values of all the settings, optionally
      * filtered by section.
@@ -55,13 +60,13 @@ class UserSettingsService
      * @throws ValidationFailedExceptions with all the validation errors when validation fails
      * @throws StorageSubmitException when it fails to store data to it's storage
      */
-    public function storeSettings(array $settings, \WP_REST_Request $request): array
+    public function storeSettings(array $requestData, \WP_REST_Request $request): Collection
     {
         $validationErrors = [];
-        $this->fields = $this->fields->whereIn('name', array_keys($settings));
+        $userSettings = $this->fields->whereIn('name', array_keys($requestData));
 
-        foreach ($this->fields as $field) {
-            $value = $settings[$field->getName()];
+        foreach ($userSettings as &$field) {
+            $value = $requestData[$field->getName()];
 
             try {
                 $field->setValue($value, $request);
@@ -84,8 +89,7 @@ class UserSettingsService
             throw new ValidationFailedExceptions($validationErrors);
         }
 
-        $response = new UserSettingsResponse($this->fields);
-        return $response->parse()->get();
+        return $userSettings;
     }
 
     /**

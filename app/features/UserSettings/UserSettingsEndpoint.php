@@ -95,6 +95,10 @@ class UserSettingsEndpoint
             return $this->sendHttpErrorResponse(__('An unknown error occurred. Failed to update the settings!', 'metricool'), $e->getMessage());
         }
 
-        return $this->sendHttpResponse($updatedSettings);
+        $response = new UserSettingsResponse($updatedSettings);
+
+        return $this->sendHttpResponse(
+            $response->parse()->get()
+        );
     }
 }
