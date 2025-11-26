@@ -3,9 +3,9 @@
 namespace Metricool\Features\UserSettings\Exceptions;
 
 /**
- * Is thrown when a storageName cannot be found in the initialized storages
+ * This Exception is thrown when a client is not set in a storage configuration
  */
-class StorageNotFoundException extends \RuntimeException
+class ClientRequiredException extends \RuntimeException
 {
     public function __construct(string $message)
     {

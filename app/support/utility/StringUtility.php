@@ -25,7 +25,7 @@ class StringUtility
     }
 
     /**
-     * Convert a string from snake_case to UpperCamelCase.
+     * Convert a string from snake_case to PascalCase.
      */
     public static function snakeToPascalCase(string $string): string
     {
@@ -33,7 +33,7 @@ class StringUtility
     }
 
     /**
-     * Convert a string from snake_case to CamelCase.
+     * Convert a string from snake_case to camelCase.
      */
     public static function snakeToCamelCase(string $string): string
     {
@@ -41,13 +41,20 @@ class StringUtility
     }
 
     /**
-     * Convert a string from CamelCase to snake_case.
+     * Convert a string from camelCase to snake_case.
      */
-    public static function camelToSnakeCase(string $string)
+    public static function camelToSnakeCase(string $string): string
     {
-        $newString = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $string));
-
         return strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $string));
+    }
+
+    /**
+     * Checks if the string is truly empty and not just a falsy value like '0'
+     * or 'false'.
+     */
+    public static function isEmptyValue(string $string): bool
+    {
+        return empty($string) && $string !== '0';
     }
 
 }

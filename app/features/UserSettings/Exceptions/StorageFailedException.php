@@ -3,9 +3,9 @@
 namespace Metricool\Features\UserSettings\Exceptions;
 
 /**
- * Is thrown when a storageName cannot be found in the initialized storages
+ * Is thrown when a Storage fails to store or retrieve a setting
  */
-class StorageNotFoundException extends \RuntimeException
+class StorageFailedException extends \RuntimeException
 {
     public function __construct(string $message)
     {

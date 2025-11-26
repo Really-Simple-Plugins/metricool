@@ -2,6 +2,8 @@
 
 namespace Metricool\Features\UserSettings;
 
+use Metricool\features\UserSettings\Exceptions\StorageSubmitException;
+use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -42,6 +44,10 @@ class UserSettingsEndpoint
         return $routes;
     }
 
+    /**
+     * Handle the REST API request, routing to the appropriate method to the
+     * correct method. Only allows GET, POST, PUT, and PATCH.
+     */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
         switch ($request->get_method()) {
@@ -50,53 +56,49 @@ class UserSettingsEndpoint
             case 'POST':
             case 'PUT':
             case 'PATCH':
-                return $this->updateUserSettings($request);
+                return $this->storeUserSettings($request);
             default:
                 return $this->sendHttpResponse([], false, 'Method not allowed', 405);
         }
     }
 
+    /**
+     * Retrieve user settings, optionally filtered by section. Sends an error
+     * response if something goes wrong.
+     */
     protected function getUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {
-        $section = $request->get_param('section');
-
         try {
-            $settings = !empty($section)
-                ? $this->service->getSettingsForSection($section)
-                : $this->service->getAllSettings();
+            $settings = $this->service->getSettingsResponse(
+                $request->get_param('section')
+            );
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(__('Failed to retrieve settings', 'metricool'), $e->getMessage(), 500);
+            return $this->sendHttpErrorResponse(__('Failed to retrieve settings', 'metricool'), $e->getMessage());
         }
 
         return $this->sendHttpResponse($settings);
     }
 
-    protected function updateUserSettings(\WP_REST_Request $request): \WP_REST_Response
+    /**
+     * Store user settings. Sends an error response if something goes wrong.
+     */
+    protected function storeUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {
-        $params = $request->get_params();
-
         try {
-            $updatedSettings = $this->service->updateSettings($params, $request);
+            $settings = $request->get_params();
+            $updatedSettings = $this->service->storeSettings($settings, $request);
+        } catch (ValidationFailedExceptions $e) {
+            return $this->sendHttpResponse($e->getErrors(), false, __('Validation failed', 'metricool'), 422);
+        } catch (StorageSubmitException $e) {
+            return $this->sendHttpErrorResponse($e->getMessage(), $e->getErrors(), 502);
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(__('Failed to update settings', 'metricool'), $e->getMessage(), 500);
+            return $this->sendHttpErrorResponse(__('An unknown error occurred. Failed to update the settings!', 'metricool'), $e->getMessage());
         }
 
-        if (is_wp_error($updatedSettings)) {
-            // Validation failed, return errors
-            $errors = [];
-            foreach ($updatedSettings->get_error_codes() as $code) {
-                $messages = $updatedSettings->get_error_messages($code);
-                $errorData = $updatedSettings->get_error_data($code);
+        $response = new UserSettingsResponse($updatedSettings);
 
-                foreach ($messages as $message) {
-                    $errors[$errorData['field']] = [
-                        'message' => $message
-                    ];
-                }
-            }
-            return $this->sendHttpErrorResponse(__('Validation failed', 'metricool'), ['errors' => $errors], 422);
-        }
-
-        return $this->sendHttpResponse($updatedSettings);
+        return $this->sendHttpResponse(
+            $response->parse()->get()
+        );
     }
 }

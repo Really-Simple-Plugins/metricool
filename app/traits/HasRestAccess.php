@@ -39,13 +39,13 @@ trait HasRestAccess
     /**
      * Standardized response format
      *
-     * @param array $data - Data to return
+     * @param mixed $data - Data to return
      * @param bool $status - If this action has completed successfully
      * @param string $message - Message to return
      * @param int $code - HTTP status code
      * @return \WP_REST_Response
      */
-    public function sendHttpResponse(array $data = [], bool $status = true, string $message = '', int $code = 200): \WP_REST_Response
+    public function sendHttpResponse($data = null, bool $status = true, string $message = '', int $code = 200): \WP_REST_Response
     {
         if (ob_get_length()) {
             ob_clean();
@@ -64,8 +64,8 @@ trait HasRestAccess
      *
      * @param string $message - A user friendly error message
      * @param mixed $data - The data of the error
-     * * @param int $code - HTTP status code
-     * * @return \WP_REST_Response
+     * @param int $code - HTTP status code
+     * @return \WP_REST_Response
      */
     public function sendHttpErrorResponse(string $message = 'An error occurred', $data = null, int $code = 500): \WP_REST_Response
     {

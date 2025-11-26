@@ -193,7 +193,7 @@ class MetricoolClient
             'blogId' => $this->blogId,
         ]));
 
-        // Dirty filthy hack to allow for non-standard query params
+        // Dirty hack to allow for non-standard query params
         // Metricool API supports urls with the same parameter multiple times
         // Example /v2/settings/users/:id?fields=alternativeEmail&fields=sendToAlternativeEmail
         $url = (strpos($url, '?') === false)
