@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Metricool
  * @author Really Simple Plugins
@@ -26,5 +27,5 @@
 require_once __DIR__ . '/vendor/autoload_packages.php';
 
 // Boot the plugin.
-$plugin = new \Metricool\Plugin();
+$plugin = new Metricool\Bootstrap\Plugin();
 $plugin->boot();

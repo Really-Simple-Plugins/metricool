@@ -1,0 +1,127 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Metricool\Http\Endpoints;
+
+use Metricool\Bootstrap\App;
+use Metricool\Support\Helpers\Collection;
+use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
+use Metricool\Http\Endpoints\Responses\DistributionResponse;
+use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
+use Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse;
+
+class DistributionEndpoint implements SingleEndpointInterface
+{
+    use HasRestAccess;
+    use HasAllowlistControl;
+
+    public const ROUTE = 'distribution';
+
+    private const METRICS_RESPONSE_MAPPER = [
+        'countries' => CountriesResponse::class,
+        'referers' => RefererResponse::class,
+    ];
+
+    /**
+     * Only enable this endpoint if the user has access to the admin area and
+     * the user has saved a user token, - ID and blog ID.
+     */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed() && App::getInstance()->client->hasAuthentication();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerRoute(): string
+    {
+        return self::ROUTE . '/(?P<metric>[^/]+)';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerArguments(): array
+    {
+        return [
+            'methods' => \WP_REST_Server::READABLE,
+            'callback' => [$this, 'callback'],
+        ];
+    }
+
+    /**
+     * Method will dynamically request the requested statistic. If the metric
+     * is filterable and filters are provided, it will apply them before
+     * retrieving the data.
+     * @example /wp-json/metricool/v1/statistics/countries?filters[start]=20250618&filters[end]=20250718&filters[country]=nl
+     */
+    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    {
+        try {
+            $response = $this->buildResponse($request);
+        } catch (\Exception $e) {
+            return $this->sendHttpErrorResponse(esc_html__('Failed to load Analytics data', 'metricool'), $e->getMessage(), 500);
+        }
+
+        return $this->sendHttpResponse($response);
+    }
+
+    /**
+     * Build the specific Analytics response for the endpoint. This is mainly
+     * used in the plugin Dashboard to reflect non-realtime statistics.
+     * Building it server side prevents client-side complexity.
+     *
+     * @throws \Exception
+     */
+    private function buildResponse(\WP_REST_Request $request): array
+    {
+        $metric = ($request->get_param('metric') ?: '');
+        $requestFilters = ($request->get_param('filters') ?: []);
+
+        // Load the statistics
+        $statistics = $this->getStatisticsForMetric($metric, $requestFilters);
+
+        // Find the associated response object for the metric
+        $response = $this->createResponseObjectFromMetric($metric, $statistics);
+
+        return $response->body();
+    }
+
+    /**
+     * Loads the results from the Metricool API
+     * @return Collection|DistributionDTO[]
+     */
+    protected function getStatisticsForMetric(string $metric, array $filters): Collection
+    {
+        $statisticsModule = App::getInstance()->client->statistics();
+
+        // Load the results
+        $metricModule = $statisticsModule->$metric();
+        if (!empty($filters)) {
+            $metricModule->filter($filters);
+        }
+
+        return $metricModule->get();
+    }
+
+    /**
+     * Find the response that matches the requested metric or throw an exception.
+     * Each metric has its own specific serialisation of the results and chartData
+     * @param Collection|DistributionDTO[] $statistics
+     */
+    protected function createResponseObjectFromMetric(string $metric, Collection $statistics): DistributionResponse
+    {
+        if (!array_key_exists($metric, self::METRICS_RESPONSE_MAPPER)) {
+            throw new \InvalidArgumentException("Metric $metric is not accepted by this endpoint");
+        }
+
+        $response = self::METRICS_RESPONSE_MAPPER[$metric];
+
+        return new $response($statistics);
+    }
+}

@@ -1,0 +1,38 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Metricool\Controllers;
+
+use Metricool\Bootstrap\App;
+use Metricool\Traits\HasViews;
+use Metricool\Services\TrackingScriptService;
+use Metricool\Interfaces\ControllerInterface;
+
+class TrackingScriptController implements ControllerInterface
+{
+    use hasViews;
+
+    private TrackingScriptService $service;
+
+    public function __construct(TrackingScriptService $service)
+    {
+        $this->service = $service;
+    }
+
+    public function register(): void
+    {
+        add_action('wp_footer', [$this, 'renderTrackingWidget']);
+    }
+
+    public function renderTrackingWidget(): void
+    {
+        if (!$this->service->canRenderTrackingScript()) {
+            return;
+        }
+        $this->render('public/tracking-script', [
+            'script_url' => App::getInstance()->env->getUrl('metricool.tracking_script_url'),
+            'hash' => $this->service->getTrackingHash(),
+        ]);
+    }
+}

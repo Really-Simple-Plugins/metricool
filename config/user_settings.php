@@ -1,6 +1,6 @@
 <?php
 
-use Metricool\App;
+use Metricool\Bootstrap\App;
 
 return [
     'fields' => [
@@ -61,7 +61,7 @@ return [
         ],
         'metricoolUserSettings' => [
             'storage' => 'RemoteStorage',
-            'client' => App::provide('client')->userSettings(),
+            'client' => App::getInstance()->client->userSettings(),
             'method' => 'patch',
             'casing' => 'camelCase',
         ],
