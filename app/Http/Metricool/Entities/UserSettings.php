@@ -32,13 +32,39 @@ class UserSettings
      */
     public function patch(array $data): array
     {
-        // Don't build the query parameters with http_build_query because we need
-        // the "fields" query variable multiple times.
-        $endpoint = $this->endpoint . '?fields=' . implode('&fields=', array_keys($data));
-        $data = json_encode($data);
-
-        $response = $this->client->patch($endpoint, $data);
+        $response = $this->client->patch(
+            $this->getFieldPatchEndpoint($data),
+            json_encode($data)
+        );
 
         return ($response['data'] ?? []);
+    }
+
+    /**
+     * This method will return the endpoint to be used for the patch request.
+     * It will append the fields as query parameters to the endpoint.
+     *
+     * @example /v2/settings/users/123?fields=name&fields=language
+     *
+     * @internal We cannot use {@see add_query_arg()} here because it does not
+     * support multiple query parameters with the same name:
+     * {@see https://core.trac.wordpress.org/ticket/51552}
+     */
+    private function getFieldPatchEndpoint(array $payload): string
+    {
+        if (empty($this->endpoint)) {
+            throw new \InvalidArgumentException('Endpoint cannot be empty');
+        }
+
+        $filters = array_keys($payload);
+        $queryString = implode('&', array_map(function ($value) {
+            return 'fields=' . urlencode($value);
+        }, $filters));
+
+        if (empty($queryString)) {
+            return $this->endpoint;
+        }
+
+        return $this->endpoint . '?' . $queryString;
     }
 }
