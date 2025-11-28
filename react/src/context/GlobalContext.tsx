@@ -112,6 +112,9 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
             }
             return { ...state, metricool: { ...action.change.metricool } };
         }
+        case "setOnboardingComplete": {
+            return { ...state, metricool: { ...state.metricool, is_onboarding_completed: true } };
+        }
         case "setTranslations": {
             if (!state.metricool) {
                 throw new Error("No metricool data");
