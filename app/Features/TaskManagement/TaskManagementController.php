@@ -54,6 +54,7 @@ class TaskManagementController implements FeatureInterface
     /**
      * This method adds the initial tasks to the database if they are not
      * already present.
+     * @throws \Exception If task class cannot be instantiated
      */
     private function initiateTasks(): void
     {
@@ -70,7 +71,7 @@ class TaskManagementController implements FeatureInterface
      * This method makes sure that if new tasks are added in the update that
      * these tasks are added in the database. Existing tasks will be updated
      * if the version is higher than the current existing task with the same id.
-     * @throws \Exception
+     * @throws \Exception If task class cannot be instantiated
      */
     public function upgradeTasks(): void
     {
