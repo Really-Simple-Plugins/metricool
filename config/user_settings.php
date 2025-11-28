@@ -58,6 +58,7 @@ return [
         'default' => [
             'storage' => 'OptionsStorage',
             'prefix' => 'metricool_',
+            'casing' => 'snakeCase',
         ],
         'metricoolUserSettings' => [
             'storage' => 'RemoteStorage',
