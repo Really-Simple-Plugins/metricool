@@ -54,7 +54,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                         <Controller
                             control={control}
                             render={({ field }) =>
-                                <Input {...field} id={"email"} placeholder={__("Enter your email", "metricool")} className={clsx("bg-white font-semibold text-black max-w-80)", formValidationErrors.email?.message && "data-[slot=input]:border-rsp-error-dark")}/>}
+                                <Input {...field} id={"email"} placeholder={__("Enter your email", "metricool")} className={clsx("bg-white font-semibold text-black max-w-5/6", formValidationErrors.email?.message && "data-[slot=input]:border-rsp-error-dark")}/>}
                             name={"email"}
                         />
                         <span className={clsx("text-rsp-error-dark text-sm h-0 opacity-0 transition-all ease-in-out duration-600", formValidationErrors.email?.message && "h-3 opacity-100")}>
@@ -68,7 +68,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                         <Controller
                             control={control}
                             render={({ field }) =>
-                                <Input type={"password"} {...field} id={"password"} placeholder={__("Write your password here", "metricool")} className={clsx("bg-white font-semibold text-black max-w-80", formValidationErrors.password?.message && "data-[slot=input]:border-rsp-error-dark")}/>}
+                                <Input type={"password"} {...field} id={"password"} placeholder={__("Write your password here", "metricool")} className={clsx("bg-white font-semibold text-black max-w-5/6", formValidationErrors.password?.message && "data-[slot=input]:border-rsp-error-dark")}/>}
                             name={"password"}
                         />
                         <span className={clsx("text-rsp-error-dark text-sm h-0 opacity-0 transition-all ease-in-out duration-600", formValidationErrors.password?.message && "h-3 opacity-100")}>
