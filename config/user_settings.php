@@ -62,7 +62,7 @@ return [
         ],
         'metricoolUserSettings' => [
             'storage' => 'RemoteStorage',
-            'client' => App::getInstance()->client->userSettings(),
+            'client' => App::getInstance()->client->userSettings(), // todo - move this to the RemoteStorage object itself? That prevents App being needed here
             'method' => 'patch',
             'casing' => 'camelCase',
         ],
