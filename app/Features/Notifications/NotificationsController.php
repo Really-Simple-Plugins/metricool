@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Notifications;
 
+use Metricool\Bootstrap\App;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Interfaces\NoticeInterface;
 
@@ -30,25 +31,26 @@ class NotificationsController implements FeatureInterface
     }
 
     /**
-     * This method returns an array of Notice objects that should be added
+     * This method returns an array of Notice class-strings that should be added
      * to the database.
      *
      * @internal New Notices should be added here. Upgrade the Notice version if
      * the Notice should be updated. If a Notice should be removed, remove the
      * Notice from this list.
      *
-     * @return array<int,NoticeInterface>
+     * @return array<int,string<NoticeInterface>> Array of Notice class-strings
      */
-    private function getNoticeObjects(): array
+    private function getNoticeClassStrings(): array
     {
         return [
-            new Notices\FirstConnectionNotice(),
+            Notices\FirstConnectionNotice::class,
         ];
     }
 
     /**
      * This method adds the initial Notices to the database if they are not
      * already present.
+     * @throws \Exception If notice class cannot be instantiated
      */
     private function initiateNotices(): void
     {
@@ -57,7 +59,7 @@ class NotificationsController implements FeatureInterface
         }
 
         $this->service->addNotices(
-            $this->getNoticeObjects()
+            $this->getNoticeClassStrings()
         );
     }
 
@@ -65,6 +67,7 @@ class NotificationsController implements FeatureInterface
      * This method makes sure that if new Notices are added in the update that
      * these Notices are added in the database. Existing Notices will be updated
      * if the version is higher than the current existing Notification with the same id.
+     * @throws \Exception If notice class cannot be instantiated
      */
     public function upgradeNotices(): void
     {
@@ -73,7 +76,7 @@ class NotificationsController implements FeatureInterface
         }
 
         $this->service->upgradeNotices(
-            $this->getNoticeObjects()
+            $this->getNoticeClassStrings()
         );
     }
 }

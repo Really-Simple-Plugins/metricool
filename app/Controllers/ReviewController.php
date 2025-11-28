@@ -9,6 +9,8 @@ use Metricool\Bootstrap\App;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\ControllerInterface;
+use Metricool\Support\Helpers\Storages\RequestStorage;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class ReviewController implements ControllerInterface
 {
@@ -17,8 +19,16 @@ class ReviewController implements ControllerInterface
 
     private const MIN_SESSIONS_COUNT = 20;
 
+    private EnvironmentConfig $env;
+    private RequestStorage $request;
     private string $reviewAction = 'rsp_metricool_review_form_submit';
     private string $reviewNonceName = 'rsp_metricool_review_nonce';
+
+    public function __construct(EnvironmentConfig $env, RequestStorage $request)
+    {
+        $this->env = $env;
+        $this->request = $request;
+    }
 
     public function register(): void
     {
@@ -40,8 +50,8 @@ class ReviewController implements ControllerInterface
         }
 
         $this->render('admin/review-notice', [
-            'logoUrl' => App::getInstance()->env->getUrl('plugin.assets_url') . 'img/mc-logo.svg',
-            'reviewUrl' => App::getInstance()->env->getUrl('plugin.review_url'),
+            'logoUrl' => $this->env->getUrl('plugin.assets_url') . 'img/mc-logo.svg',
+            'reviewUrl' => $this->env->getUrl('plugin.review_url'),
             'reviewMessage' => $this->getReviewNoticeMessage(),
             'reviewAction' => $this->reviewAction,
             'reviewNonceName' => $this->reviewNonceName,
@@ -53,18 +63,16 @@ class ReviewController implements ControllerInterface
      */
     public function processReviewFormSubmit(): void
     {
-        $request = App::getInstance()->request;
-
-        if ($request->isEmpty('rsp_metricool_review_form')) {
+        if ($this->request->isEmpty('rsp_metricool_review_form')) {
             return;
         }
 
-        $nonce = $request->get($this->reviewNonceName);
+        $nonce = $this->request->get($this->reviewNonceName);
         if (wp_verify_nonce($nonce, $this->reviewAction) === false) {
             return; // Invalid nonce
         }
 
-        $choice = $request->getString('rsp_metricool_review_choice');
+        $choice = $this->request->getString('rsp_metricool_review_choice');
         if ($choice === 'later') {
             update_option('metricool_review_notice_dismissed_time', time(), false);
             update_option('metricool_review_notice_choice', 'later', false);
@@ -164,7 +172,7 @@ class ReviewController implements ControllerInterface
             // translators: %s is replaced by eiter "x sessions" or "statistics", %2$ and %23$ are replaced with opening and closing a tag containing hyperlink
             __('Hi, Metricool has tracked %s on your site for the last 30 days. If you have a moment, please consider leaving a review on wordpress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %2$smessage%3$s.', 'metricool'),
             $mentionedStatistic,
-            '<a href="' . App::getInstance()->env->getUrl('plugin.support_url') . '"  rel="noopener noreferrer"  target="_blank">',
+            '<a href="' . $this->env->getUrl('plugin.support_url') . '"  rel="noopener noreferrer"  target="_blank">',
             '</a>'
         );
     }

@@ -2,58 +2,29 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Providers;
+namespace Metricool\Support\Helpers\Storages;
 
 use Metricool\Support\Helpers\Storage;
 
-class ConfigServiceProvider extends Provider
+/**
+ * General config helper used in DI container.
+ */
+final class GeneralConfig extends Storage
 {
-    protected array $provides = [
-        'env',
-        'settings',
-        'config',
+    private array $filesToSkip = [
+        'env', // EnvironmentConfig
+        'user_settings', // UserSettingsConfig
     ];
 
-    /**
-     * Provides the environment data in the container.
-     * @example $this->app->env->getString('plugin.features_path')
-     */
-    public function provideEnv(): Storage
+    public function __construct()
     {
-        return new Storage(
-            require dirname(__FILE__, 3) . '/config/env.php'
+        parent::__construct(
+            $this->storageFromPath(dirname(__FILE__, 5) . '/config', $this->filesToSkip, true)
         );
     }
 
     /**
-     * Provides the settings data in the container.
-     * @example $this->app->settings->getString('some.setting.key')
-     */
-    public function provideSettings(): Storage
-    {
-        return new Storage(
-            require dirname(__FILE__, 3) . '/config/user_settings.php'
-        );
-    }
-
-    /**
-     * Provides all config files from /config in the container, EXCEPT the env
-     * file!
-     * @example All: $this->app->config->get()
-     * @example Name: $this->app->config->getString('env.plugin.name')
-     */
-    public function provideConfig(): Storage
-    {
-        // Skip these files because they are provided separately.
-        $filesToSkip = [
-            'env',
-            'user_settings',
-        ];
-        return $this->storageFromPath(dirname(__FILE__, 3) . '/config', $filesToSkip, true);
-    }
-
-    /**
-     * Return all config files as Storage. If path is a directory, it will
+     * Return all config files as GeneralConfig. If path is a directory, it will
      * merge all the files in the directory.
      *
      * @param bool $prefixWithFileName Can be used to prefix the keys with the
@@ -63,7 +34,7 @@ class ConfigServiceProvider extends Provider
      *
      * @throws \InvalidArgumentException
      */
-    private function storageFromPath(string $path, array $skip = [], bool $prefixWithFileName = false): Storage
+    private function storageFromPath(string $path, array $skip = [], bool $prefixWithFileName = false): array
     {
         if (!file_exists($path)) {
             throw new \InvalidArgumentException(
@@ -134,6 +105,7 @@ class ConfigServiceProvider extends Provider
             }
         }
 
-        return new Storage($data);
+        return $data;
     }
+
 }

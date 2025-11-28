@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Metricool\Features\TaskManagement\Tasks;
 
-use Metricool\Bootstrap\App;
 use Metricool\Support\Helpers\MetricoolUrl;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class HistoricalDataTask extends AbstractTask
 {
@@ -20,6 +20,13 @@ class HistoricalDataTask extends AbstractTask
      * @inheritDoc
      */
     protected bool $premium = true;
+
+    private EnvironmentConfig $env;
+
+    public function __construct(EnvironmentConfig $env)
+    {
+        $this->env = $env;
+    }
 
     /**
      * @inheritDoc
@@ -36,7 +43,7 @@ class HistoricalDataTask extends AbstractTask
     {
         return [
             'text' => __('Upgrade', 'metricool'),
-            'link' => MetricoolUrl::adminUrl(App::getInstance()->env->getUrl('metricool.upgrade_premium_url')),
+            'link' => MetricoolUrl::adminUrl($this->env->getUrl('metricool.upgrade_premium_url')),
             'target' => '_blank',
         ];
     }

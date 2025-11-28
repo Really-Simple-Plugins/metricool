@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Providers;
 
 use Metricool\Http\Metricool\MetricoolClient;
-use Metricool\Http\Metricool\MetricoolEntities;
+use Metricool\Http\Metricool\MetricoolApi;
 
 class ClientServiceProvider extends Provider
 {
@@ -17,7 +17,7 @@ class ClientServiceProvider extends Provider
      * Provides the API client for the application to use
      * @example $this->app->client || $this->app->get('client')
      */
-    public function provideClient(): MetricoolEntities
+    public function provideClient(): MetricoolApi
     {
         $client = new MetricoolClient();
 
@@ -40,7 +40,7 @@ class ClientServiceProvider extends Provider
 
         try {
             $client->connect();
-            return new MetricoolEntities($client);
+            return new MetricoolApi($client);
         } catch (\Exception $e) {
             throw new \RuntimeException('Failed to setup the Metricool API in the container: ' . $e->getMessage());
         }

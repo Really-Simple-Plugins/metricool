@@ -21,8 +21,8 @@ namespace Metricool\Bootstrap;
  * @method static \Metricool\Support\Helpers\Storage request()
  * @property-read \Metricool\Support\Helpers\Storage $files {@see \Metricool\Providers\RequestServiceProvider::provideFiles}
  * @method static \Metricool\Support\Helpers\Storage files()
- * @property-read \Metricool\Http\Metricool\MetricoolEntities|\Metricool\Http\Metricool\MetricoolClient $client {@see \Metricool\Providers\ClientServiceProvider::provideClient}
- * @method static \Metricool\Http\Metricool\MetricoolEntities|\Metricool\Http\Metricool\MetricoolClient client()
+ * @property-read \Metricool\Http\Metricool\MetricoolApi|\Metricool\Http\Metricool\MetricoolClient $client {@see \Metricool\Providers\ClientServiceProvider::provideClient}
+ * @method static \Metricool\Http\Metricool\MetricoolApi|\Metricool\Http\Metricool\MetricoolClient client()
  */
 class App
 {
@@ -186,6 +186,9 @@ class App
             // Inject the current container, never a new one.
             if ($dependencyClass === self::class) {
                 // todo - check for circular dependencies?
+                echo '<pre>';
+                var_dump(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3));
+                exit();
                 $arguments[] = $this;
                 continue;
             }

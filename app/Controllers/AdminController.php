@@ -4,23 +4,29 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
-use Metricool\Bootstrap\App;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\ControllerInterface;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class AdminController implements ControllerInterface
 {
     use HasAllowlistControl;
     use hasViews;
 
+    private EnvironmentConfig $env;
+
+    public function __construct(EnvironmentConfig $env)
+    {
+        $this->env = $env;
+    }
+
     public function register(): void
     {
         if ($this->adminAccessAllowed() === false) {
             return;
         }
-
-        add_filter('plugin_action_links_' . App::getInstance()->env->getString('plugin.base_file'), [$this, 'addPluginSettingsAction']);
+        add_filter('plugin_action_links_' . $this->env->getString('plugin.base_file'), [$this, 'addPluginSettingsAction']);
     }
 
     /**
@@ -32,11 +38,11 @@ class AdminController implements ControllerInterface
             return $links;
         }
 
-        $settings_link = '<a href="' . App::getInstance()->env->getUrl('plugin.dashboard_url') . '">' . esc_html__('Settings', 'metricool') . '</a>';
+        $settings_link = '<a href="' . $this->env->getUrl('plugin.dashboard_url') . '">' . esc_html__('Settings', 'metricool') . '</a>';
         array_unshift($links, $settings_link);
 
         //support
-        $support = '<a rel="noopener noreferrer" target="_blank" href="' . esc_attr(App::getInstance()->env->getUrl('plugin.support_url')) . '">' . esc_html__('Support', 'metricool') . '</a>';
+        $support = '<a rel="noopener noreferrer" target="_blank" href="' . esc_attr($this->env->getUrl('plugin.support_url')) . '">' . esc_html__('Support', 'metricool') . '</a>';
         array_unshift($links, $support);
 
         return $links;

@@ -9,16 +9,19 @@ use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Services\RelatedPluginService;
 use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Support\Helpers\Storages\GeneralConfig;
 
 class RelatedPluginsEndpoints implements MultiEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
 
+    private GeneralConfig $config;
     private RelatedPluginService $service;
 
-    public function __construct(RelatedPluginService $service)
+    public function __construct(GeneralConfig $config, RelatedPluginService $service)
     {
+        $this->config = $config;
         $this->service = $service;
     }
 
@@ -90,7 +93,7 @@ class RelatedPluginsEndpoints implements MultiEndpointInterface
      */
     public function buildRelatedPluginData(string $targetPluginSlug = ''): array
     {
-        $plugins = App::getInstance()->config->get('related.plugins');
+        $plugins = $this->config->get('related.plugins');
 
         if (!empty($targetPluginSlug)) {
             $plugins = array_filter($plugins, function($plugin) use ($targetPluginSlug) {

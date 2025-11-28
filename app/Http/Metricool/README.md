@@ -2,14 +2,14 @@
 To use the Client singleton in the App container, you can call the method below. This will return an instance of a Metricool client that you can use to interact with the API:
 ```php
 /**
- * Get the MetricoolEntities facade to easily access
+ * Get the MetricoolApi facade to easily access
  * the Metricool API
  */
 App::getInstance()->client;
 ```
 
 ## Entities Facade
-To make it easier to interact with the Metricool API, the client provides a facade that allows you to access various entities. These entities represent different aspects of your Metricool account, such as statistics, brands, subscription and more. This means that `App::getInstance()->client` will return an instance of the `MetricoolEntities` class.
+To make it easier to interact with the Metricool API, the client provides a facade that allows you to access various entities. These entities represent different aspects of your Metricool account, such as statistics, brands, subscription and more. This means that `App::getInstance()->client` will return an instance of the `MetricoolApi` class.
 
 ### Entities
 All entities work quite similar. They register their endpoint, require the `MetricoolClient` and can do some basic operations like `get()`, `post()`, `put()`, and `delete()`. If an entity is filterable the Trait `isFilterable` can be used to add the ability to filter the results based on certain criteria. The `getAcceptedFilters()` method should be implemented in each entity to define which filters are accepted.

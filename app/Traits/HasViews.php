@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Traits;
 
 use Metricool\Bootstrap\App;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 trait HasViews
 {
@@ -14,7 +15,7 @@ trait HasViews
      */
     public function view(string $path, array $variables = [], string $extension = 'php'): string
     {
-        $basePath = App::getInstance()->env->getString('plugin.view_path');
+        $basePath = App::getInstance()->get(EnvironmentConfig::class)->getString('plugin.view_path');
         $filePath = realpath($basePath . $path . '.' . $extension);
 
         // Someone is doing something dirty

@@ -20,7 +20,7 @@ class Storage extends Dot
      * parent {@see Dot} class. This internal class is extendable but the
      * construct should not be overridable, it is therefor made final.
      */
-    final public function __construct($items = [], $parse = false, $delimiter = ".")
+    public function __construct($items = [], $parse = false, $delimiter = ".")
     {
         parent::__construct($items, $parse, $delimiter);
     }

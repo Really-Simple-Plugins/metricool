@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
-use Metricool\Bootstrap\App;
 use Metricool\Support\Helpers\Event;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasNonces;
@@ -12,6 +11,8 @@ use Metricool\Support\Helpers\Storage;
 use Metricool\Support\Helpers\MetricoolUrl;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\ControllerInterface;
+use Metricool\Support\Helpers\Storages\RequestStorage;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class SharePostController implements ControllerInterface
 {
@@ -22,6 +23,15 @@ class SharePostController implements ControllerInterface
     private const DEFAULT_POST_TYPES = ['post', 'page'];
     private const POST_COLUMN_KEY = 'metricool';
     private const SHARE_POST_ACTION = 'share_post';
+
+    private EnvironmentConfig $env;
+    private RequestStorage $request;
+
+    public function __construct(EnvironmentConfig $env, RequestStorage $request)
+    {
+        $this->env = $env;
+        $this->request = $request;
+    }
 
     public function register(): void
     {
@@ -92,21 +102,20 @@ class SharePostController implements ControllerInterface
      */
     public function processShareAction(): void
     {
-        $request = App::getInstance()->request;
-        $pageIsDashboardPage = ($request->getString('page') === 'metricool');
-        $actionIsShareAction = ($request->getString('metricool_action') === self::SHARE_POST_ACTION);
+        $pageIsDashboardPage = ($this->request->getString('page') === 'metricool');
+        $actionIsShareAction = ($this->request->getString('metricool_action') === self::SHARE_POST_ACTION);
 
         if (!$pageIsDashboardPage || !$actionIsShareAction) {
             return; // abort
         }
 
         // Validate nonce or wp_die on empty
-        $nonce = $request->getString('_metricool_action_nonce');
+        $nonce = $this->request->getString('_metricool_action_nonce');
         if (empty($nonce) || !$this->verifyNonce($nonce, 'metricool_action')) {
             wp_die(__('Invalid nonce.', 'metricool'));
         }
 
-        $this->handleSharePostAction($request);
+        $this->handleSharePostAction();
     }
 
     /**
@@ -128,9 +137,9 @@ class SharePostController implements ControllerInterface
     {
         wp_enqueue_style(
             'metricool-admin-general-styles',
-            App::getInstance()->env->getUrl('plugin.url') . 'assets/css/admin.css',
+            $this->env->getUrl('plugin.url') . 'assets/css/admin.css',
             [],
-            App::getInstance()->env->getString('plugin.version')
+            $this->env->getString('plugin.version')
         );
     }
 
@@ -147,7 +156,7 @@ class SharePostController implements ControllerInterface
             'metricool_action' => self::SHARE_POST_ACTION,
             'metricool_post_id' => $postId,
             '_metricool_action_nonce' => wp_create_nonce('metricool_action'),
-        ], App::getInstance()->env->getUrl('plugin.dashboard_url'));
+        ], $this->env->getUrl('plugin.dashboard_url'));
 
         $this->render('admin/share-post/button', [
             'actionableUrl' => $actionableUrl,
@@ -158,9 +167,9 @@ class SharePostController implements ControllerInterface
     /**
      * Redirects to the Metricool create post screen with the content and media
      */
-    protected function handleSharePostAction(Storage $request): void
+    protected function handleSharePostAction(): void
     {
-        $postId = $request->getInt('metricool_post_id');
+        $postId = $this->request->getInt('metricool_post_id');
         $postExists = (get_post_status($postId) !== false);
 
         if ($postExists === false) {

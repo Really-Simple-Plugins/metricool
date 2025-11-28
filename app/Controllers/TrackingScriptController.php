@@ -4,19 +4,21 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
-use Metricool\Bootstrap\App;
 use Metricool\Traits\HasViews;
 use Metricool\Services\TrackingScriptService;
 use Metricool\Interfaces\ControllerInterface;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class TrackingScriptController implements ControllerInterface
 {
     use hasViews;
 
+    private EnvironmentConfig $env;
     private TrackingScriptService $service;
 
-    public function __construct(TrackingScriptService $service)
+    public function __construct(EnvironmentConfig $env, TrackingScriptService $service)
     {
+        $this->env = $env;
         $this->service = $service;
     }
 
@@ -32,7 +34,7 @@ class TrackingScriptController implements ControllerInterface
         }
 
         $this->render('public/tracking-script', [
-            'script_url' => App::getInstance()->env->getUrl('metricool.tracking_script_url'),
+            'script_url' => $this->env->getUrl('metricool.tracking_script_url'),
             'hash' => $this->service->getTrackingHash(),
         ]);
     }

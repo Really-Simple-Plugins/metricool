@@ -11,6 +11,8 @@ use Metricool\Managers\FeatureManager;
 use Metricool\Managers\EndpointManager;
 use Metricool\Managers\ProviderManager;
 use Metricool\Managers\ControllerManager;
+use Metricool\Support\Helpers\Storages\GeneralConfig;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class Plugin
 {
@@ -27,10 +29,10 @@ class Plugin
     {
         $this->app = App::getInstance();
 
-        $this->featureManager = new FeatureManager($this->app);
-        $this->providerManager = new ProviderManager($this->app);
-        $this->controllerManager = new ControllerManager($this->app);
-        $this->endpointManager = new EndpointManager($this->app);
+        $this->featureManager = $this->app->make(FeatureManager::class);
+        $this->providerManager = $this->app->make(ProviderManager::class);
+        $this->endpointManager = $this->app->make(EndpointManager::class);
+        $this->controllerManager = $this->app->make(ControllerManager::class);
     }
 
     /**
@@ -143,8 +145,6 @@ class Plugin
     public function registerProviders(): void
     {
         $this->providerManager->register([
-            Providers\ConfigServiceProvider::class,
-            Providers\RequestServiceProvider::class,
             Providers\ClientServiceProvider::class,
         ]);
     }
@@ -199,7 +199,7 @@ class Plugin
     public function checkForUpgrades(): void
     {
         $previousSavedVersion = (string) get_option('_metricool_current_version', '');
-        if ($previousSavedVersion === $this->app->env->getString('plugin.version')) {
+        if ($previousSavedVersion === $this->app->get(EnvironmentConfig::class)->getString('plugin.version')) {
             return; // Nothing to do
         }
 
@@ -214,11 +214,11 @@ class Plugin
         // Trigger upgrade hook if we are upgrading from a previous version.
         // Action can be used by Controllers to hook into the upgrade process
         if (!empty($previousSavedVersion)) {
-            do_action('metricool_plugin_version_upgrade', $previousSavedVersion, $this->app->env->getString('plugin.version'));
+            do_action('metricool_plugin_version_upgrade', $previousSavedVersion, $this->app->get(EnvironmentConfig::class)->getString('plugin.version'));
         }
 
         // Also makes sure $previousSavedVersion will only be empty one time
-        update_option('_metricool_current_version', $this->app->env->getString('plugin.version'), false);
+        update_option('_metricool_current_version', $this->app->get(EnvironmentConfig::class)->getString('plugin.version'), false);
     }
 
     /**

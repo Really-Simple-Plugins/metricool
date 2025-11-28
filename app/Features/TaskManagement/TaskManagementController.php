@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Features\TaskManagement;
 
+use Metricool\Bootstrap\App;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Interfaces\TaskInterface;
 
@@ -30,23 +31,23 @@ class TaskManagementController implements FeatureInterface
     }
 
     /**
-     * This method returns an array of task objects that should be added to the
-     * database.
+     * This method returns an array of Task class-strings that should be added
+     * to the database.
      *
      * @internal New tasks should be added here. Upgrade the task version if the
      * task should be updated. If a task should be removed, remove the task from
      * this list.
      *
-     * @return array<int,TaskInterface>
+     * @return array<int,string<TaskInterface>> Array of Task class-strings
      */
     private function getTaskObjects(): array
     {
         return [
-            new Tasks\TwitterTask(),
-            new Tasks\LinkedInTask(),
-            new Tasks\HistoricalDataTask(),
-            new Tasks\FirstConnectionTask(),
-            new Tasks\SchedulePostTask(),
+            Tasks\TwitterTask::class,
+            Tasks\LinkedInTask::class,
+            Tasks\HistoricalDataTask::class,
+            Tasks\FirstConnectionTask::class,
+            Tasks\SchedulePostTask::class,
         ];
     }
 

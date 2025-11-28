@@ -9,12 +9,20 @@ use Metricool\Traits\HasViews;
 use Metricool\Traits\HasUserAccess;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\ControllerInterface;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class DashboardController implements ControllerInterface
 {
     use HasViews;
     use HasUserAccess;
     use HasAllowlistControl;
+
+    private EnvironmentConfig $env;
+
+    public function __construct(EnvironmentConfig $env)
+    {
+        $this->env = $env;
+    }
 
     public function register(): void
     {
@@ -42,7 +50,7 @@ class DashboardController implements ControllerInterface
             return;
         }
 
-        wp_safe_redirect(App::getInstance()->env->getUrl('plugin.dashboard_url'));
+        wp_safe_redirect($this->env->getUrl('plugin.dashboard_url'));
         exit;
     }
 
@@ -109,7 +117,7 @@ class DashboardController implements ControllerInterface
 
         wp_enqueue_style(
             'metricool-tailwind',
-            App::getInstance()->env->getUrl('plugin.assets_url') . '/css/tailwind.generated.css', // todo - feel free to place this in a different location
+            $this->env->getUrl('plugin.assets_url') . '/css/tailwind.generated.css', // todo - feel free to place this in a different location
             [],
             ($chunkTranslation['version'] ?? '')
         );
@@ -124,7 +132,7 @@ class DashboardController implements ControllerInterface
      */
     public function enqueueReactScripts(): void
     {
-        $manifest = App::getInstance()->env->getString('plugin.react_path') . '/build/.vite/manifest.json';
+        $manifest = $this->env->getString('plugin.react_path') . '/build/.vite/manifest.json';
         $json_translations = [];
         if (file_exists($manifest)) {
             $manifest_contents = file_get_contents($manifest);
@@ -133,7 +141,7 @@ class DashboardController implements ControllerInterface
                 if (substr($value['file'], - 3) === '.js') {
                     wp_register_script(
                         $key,
-                        App::getInstance()->env->getUrl('plugin.react_url') . '/build/' . $value['file'],
+                        $this->env->getUrl('plugin.react_url') . '/build/' . $value['file'],
                         [],
                         null,
                         false,
@@ -146,7 +154,7 @@ class DashboardController implements ControllerInterface
                     if (!empty($value['isEntry']) && $value['isEntry'] === true) {
                         wp_enqueue_script(
                             'metricool-main-script',
-                            App::getInstance()->env->getUrl('plugin.react_url') . '/build/' . $value['file'],
+                            $this->env->getUrl('plugin.react_url') . '/build/' . $value['file'],
                             [],
                             null,
                             false,
@@ -156,7 +164,7 @@ class DashboardController implements ControllerInterface
                 if (!empty($value['css'])) {
                     wp_enqueue_style(
                         'metricool-tailwind',
-                        App::getInstance()->env->getUrl('plugin.react_url') . '/build/' . $value['css'][0],
+                        $this->env->getUrl('plugin.react_url') . '/build/' . $value['css'][0],
                         [],
                         null,
                     );
@@ -188,7 +196,7 @@ class DashboardController implements ControllerInterface
         }
 
         // get all files from the settings/build folder
-        $buildDirPath = App::getInstance()->env->getString('plugin.react_path') . '/build';
+        $buildDirPath = $this->env->getString('plugin.react_path') . '/build';
         $filenames = scandir($buildDirPath);
 
         $jsFileName = '';
@@ -212,8 +220,8 @@ class DashboardController implements ControllerInterface
             // remove extension from $filename
             $chunkHandle = str_replace('.js', '', $filename);
             // temporarily register the script, so we can get a translations object.
-            $chunkSource = App::getInstance()->env->getUrl('plugin.react_url') . '/build/' . $filename;
-            wp_register_script($chunkHandle, $chunkSource, [], App::getInstance()->env->getString('plugin.version'), true);
+            $chunkSource = $this->env->getUrl('plugin.react_url') . '/build/' . $filename;
+            wp_register_script($chunkHandle, $chunkSource, [], $this->env->getString('plugin.version'), true);
 
             //as there is no pro version of this plugin, no need to declare a path
             $localeData = load_script_textdomain($chunkHandle, 'metricool');
@@ -253,13 +261,13 @@ class DashboardController implements ControllerInterface
                 'x_wp_nonce' => wp_create_nonce('wp_rest'),
                 'ajax_url' => admin_url('admin-ajax.php'),
                 'rest_url' => get_rest_url(),
-                'rest_namespace' => App::getInstance()->env->getString('http.namespace'),
-                'rest_version' => App::getInstance()->env->getString('http.version'),
+                'rest_namespace' => $this->env->getString('http.namespace'),
+                'rest_version' => $this->env->getString('http.version'),
                 'site_url' => site_url(),
-                'assets_url' => App::getInstance()->env->getUrl('plugin.assets_url'),
+                'assets_url' => $this->env->getUrl('plugin.assets_url'),
                 'json_translations' => ($chunkTranslation['json_translations'] ?? []),
                 'is_onboarding_completed' => $this->isOnboardingCompleted(),
-                'support' => App::getInstance()->env->get('metricool.support'),
+                'support' => $this->env->get('metricool.support'),
                 'locale' => str_replace("_", "-", get_user_locale()),
                 'blogId' => (defined('METRICOOL_BLOG_ID') && !empty(METRICOOL_BLOG_ID) ? METRICOOL_BLOG_ID : ""),
                 'userId' => (defined('METRICOOL_USER_ID') && !empty(METRICOOL_USER_ID) ? METRICOOL_USER_ID : ""),

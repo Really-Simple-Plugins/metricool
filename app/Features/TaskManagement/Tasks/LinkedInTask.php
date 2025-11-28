@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Metricool\Features\TaskManagement\Tasks;
 
-use Metricool\Bootstrap\App;
 use Metricool\Support\Helpers\MetricoolUrl;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class LinkedInTask extends AbstractTask
 {
@@ -20,6 +20,13 @@ class LinkedInTask extends AbstractTask
      * @inheritDoc
      */
     protected bool $premium = true;
+
+    private EnvironmentConfig $env;
+
+    public function __construct(EnvironmentConfig $env)
+    {
+        $this->env = $env;
+    }
 
     /**
      * @inheritDoc
@@ -36,7 +43,7 @@ class LinkedInTask extends AbstractTask
     {
         return [
             'text' => __('Connect', 'metricool'),
-            'link' => MetricoolUrl::adminUrl(App::getInstance()->env->getUrl('metricool.connect_linkedin_url')),
+            'link' => MetricoolUrl::adminUrl($this->env->getUrl('metricool.connect_linkedin_url')),
             'target' => '_blank',
         ];
     }

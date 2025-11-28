@@ -7,7 +7,7 @@ namespace Metricool\Http\Metricool;
 /**
  * Facade for Metricool API entities.
  */
-class MetricoolEntities
+class MetricoolApi
 {
     protected ?MetricoolClient $client = null;
 

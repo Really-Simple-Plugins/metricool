@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Support\Helpers;
 
 use Metricool\Bootstrap\App;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class MetricoolUrl
 {
@@ -44,6 +45,7 @@ class MetricoolUrl
             $queryArgs['post.media'] = $mediaUrl;
         }
 
-        return add_query_arg(array_filter($queryArgs), App::getInstance()->env->getUrl('metricool.create_post_url'));
+        $env = App::getInstance()->get(EnvironmentConfig::class);
+        return add_query_arg(array_filter($queryArgs), $env->getUrl('metricool.create_post_url'));
     }
 }
