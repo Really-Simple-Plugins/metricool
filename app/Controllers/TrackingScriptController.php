@@ -27,12 +27,23 @@ class TrackingScriptController implements ControllerInterface
 
     public function renderTrackingWidget(): void
     {
-        if (!$this->service->canRenderTrackingScript()) {
+        if (!$this->canRenderTrackingScript()) {
             return;
         }
+
         $this->render('public/tracking-script', [
             'script_url' => App::getInstance()->env->getUrl('metricool.tracking_script_url'),
             'hash' => $this->service->getTrackingHash(),
         ]);
+    }
+
+    /**
+     * Checks if the tracking script can be rendered. Only if the tracking hash
+     * is set and the user has enabled the widget.
+     */
+    private function canRenderTrackingScript(): bool
+    {
+        $trackingHashIsNotEmpty = (strlen($this->service->getTrackingHash()) > 0);
+        return $trackingHashIsNotEmpty && $this->service->isTrackingWidgetActive();
     }
 }
