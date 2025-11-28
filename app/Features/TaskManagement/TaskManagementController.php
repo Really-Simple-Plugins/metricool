@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Bootstrap\App;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Interfaces\TaskInterface;
 

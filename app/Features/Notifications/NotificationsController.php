@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Notifications;
 
-use Metricool\Bootstrap\App;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Interfaces\NoticeInterface;
 

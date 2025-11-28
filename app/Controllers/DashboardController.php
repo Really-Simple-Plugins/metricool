@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
-use Metricool\Bootstrap\App;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasUserAccess;
 use Metricool\Traits\HasAllowlistControl;

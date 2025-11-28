@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Features\UserSettings;
 
-use Metricool\Bootstrap\App;
 use Metricool\Support\Helpers\Collection;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Support\Helpers\Storages\UserSettingsConfig;
