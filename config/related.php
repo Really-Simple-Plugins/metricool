@@ -45,7 +45,7 @@ return [
             'activation_slug' => 'simplybook/simplybook.php',
             'create' => admin_url('admin.php?page=simplybook-integration'),
             'url' => 'https://wordpress.org/plugins/simplybook/',
-            'title' => 'Metricool.me - ' . esc_html__('Online Booking System', 'metricool'),
+            'title' => 'SimplyBook.me - ' . esc_html__('Online Booking System', 'metricool'),
             'color' => '#06ADEF'
         ],
     ],
