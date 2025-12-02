@@ -13,7 +13,7 @@ return [
         'assets_path' => dirname(__DIR__) . '/assets/',
         'lang_path' => dirname(__DIR__) . '/assets/languages/',
         'view_path' => dirname(__DIR__).'/views/',
-        'feature_path' => dirname(__DIR__) . '/app/features/',
+        'feature_path' => dirname(__DIR__) . '/app/Features/',
         'react_path' => dirname(__DIR__) . '/react',
         'dir' => plugin_basename(dirname(__DIR__)),
         'base_file' => plugin_basename(dirname(__DIR__)) . '/' . plugin_basename(dirname(__DIR__)) . '.php',
