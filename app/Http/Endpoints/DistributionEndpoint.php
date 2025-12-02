@@ -72,7 +72,7 @@ class DistributionEndpoint implements SingleEndpointInterface
         try {
             $response = $this->buildResponse($request);
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(esc_html__('Failed to load Analytics data', 'metricool'), $e->getMessage(), 500);
+            return $this->sendHttpErrorResponse(__('Failed to load Analytics data', 'metricool'), $e->getMessage(), 500);
         }
 
         return $this->sendHttpResponse($response);

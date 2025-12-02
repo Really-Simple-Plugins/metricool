@@ -45,11 +45,11 @@ class OnboardingController implements FeatureInterface
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
         $code = 200;
-        $message = esc_html__('Successfully finished onboarding!', 'metricool');
+        $message = __('Successfully finished onboarding!', 'metricool');
 
         $success = $this->service->setOnboardingCompleted();
         if (!$success) {
-            $message = esc_html__('An error occurred while finishing the onboarding process', 'metricool');
+            $message = __('An error occurred while finishing the onboarding process', 'metricool');
             $code = 500;
         }
 
@@ -64,10 +64,10 @@ class OnboardingController implements FeatureInterface
     {
 //        $success = $this->service->delete_all_options(); // todo
         $success = (bool) random_int(0, 1); // todo
-        $message = esc_html__('Successfully removed all previous data.', 'metricool');
+        $message = __('Successfully removed all previous data.', 'metricool');
 
         if (!$success) {
-            $message = esc_html__('An error occurred while trying to remove previous data.', 'metricool');
+            $message = __('An error occurred while trying to remove previous data.', 'metricool');
         }
 
         return $this->service->sendHttpResponse([], $success, $message);

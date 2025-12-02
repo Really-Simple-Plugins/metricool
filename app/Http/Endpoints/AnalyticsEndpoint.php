@@ -66,7 +66,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         try {
             $response = $this->buildResponse($request);
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(esc_html__('Failed to load Analytics data', 'metricool'), $e->getMessage());
+            return $this->sendHttpErrorResponse(__('Failed to load Analytics data', 'metricool'), $e->getMessage());
         }
 
         return $this->sendHttpResponse($response);
@@ -86,23 +86,23 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         $this->service->setRequestFilters($requestFilters);
 
         if (in_array('pageViews', $requestMetrics)) {
-            $this->service->loadMetric('pageViews', esc_html__('Page views', 'metricool'), $statisticsModule->pageViews());
+            $this->service->loadMetric('pageViews', __('Page views', 'metricool'), $statisticsModule->pageViews());
         }
 
         if (in_array('visits', $requestMetrics)) {
-            $this->service->loadMetric('visits', esc_html__('Visits', 'metricool'), $statisticsModule->visits());
+            $this->service->loadMetric('visits', __('Visits', 'metricool'), $statisticsModule->visits());
         }
 
         if (in_array('visitors', $requestMetrics)) {
-            $this->service->loadMetric('visitors', esc_html__('Visitors', 'metricool'), $statisticsModule->visitors());
+            $this->service->loadMetric('visitors', __('Visitors', 'metricool'), $statisticsModule->visitors());
         }
 
         if (in_array('posts', $requestMetrics)) {
-            $this->service->loadMetric('posts', esc_html__('Posts', 'metricool'), $statisticsModule->posts());
+            $this->service->loadMetric('posts', __('Posts', 'metricool'), $statisticsModule->posts());
         }
 
         if (in_array('comments', $requestMetrics)) {
-            $this->service->loadMetric('comments', esc_html__('Comments', 'metricool'), $statisticsModule->comments());
+            $this->service->loadMetric('comments', __('Comments', 'metricool'), $statisticsModule->comments());
         }
 
         $response = new AnalyticsResponse();

@@ -13,7 +13,7 @@ return [
             'constant_premium' => 'rsssl_pro',
             'url' => 'https://wordpress.org/plugins/really-simple-ssl/',
             'upgrade_url' => 'https://really-simple-ssl.com/pro?src=metricool-plugin',
-            'title' => "Really Simple Security - " . esc_html__("Lightweight plugin. Heavyweight security features.", "metricool" ),
+            'title' => "Really Simple Security - " . __("Lightweight plugin. Heavyweight security features.", "metricool" ),
             'color' => '#f4bf3e'
         ],
         'complianz-gdpr' => [
@@ -25,7 +25,7 @@ return [
             'create' => admin_url('admin.php?page=complianz'),
             'url' => 'https://wordpress.org/plugins/complianz-gdpr/',
             'upgrade_url' => 'https://complianz.io?src=metricool-plugin',
-            'title' => 'Complianz - ' . esc_html__('Consent Management as it should be', 'metricool'),
+            'title' => 'Complianz - ' . __('Consent Management as it should be', 'metricool'),
             'color' => '#009fff'
         ],
         'complianz-terms-conditions' => [
@@ -45,7 +45,7 @@ return [
             'activation_slug' => 'simplybook/simplybook.php',
             'create' => admin_url('admin.php?page=simplybook-integration'),
             'url' => 'https://wordpress.org/plugins/simplybook/',
-            'title' => 'SimplyBook.me - ' . esc_html__('Online Booking System', 'metricool'),
+            'title' => 'SimplyBook.me - ' . __('Online Booking System', 'metricool'),
             'color' => '#06ADEF'
         ],
     ],

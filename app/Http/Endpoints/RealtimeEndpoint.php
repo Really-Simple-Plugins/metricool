@@ -64,7 +64,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
         try {
             $response = $this->buildResponse($request);
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(esc_html__('Failed to load Realtime data', 'metricool'), $e->getMessage());
+            return $this->sendHttpErrorResponse(__('Failed to load Realtime data', 'metricool'), $e->getMessage());
         }
 
         return $this->sendHttpResponse($response);
@@ -92,9 +92,9 @@ class RealtimeEndpoint implements SingleEndpointInterface
         }
 
         // Add the pageViews to the timeline and totals
-        $this->service->addMetric('pageViews', esc_html__('Page views', 'metricool'), $sessions['timeline']);
+        $this->service->addMetric('pageViews', __('Page views', 'metricool'), $sessions['timeline']);
         // Add visitors just to the totals
-        $this->service->addTotals('visitors', esc_html__('Visitors', 'metricool'), $values['activeVisits']);
+        $this->service->addTotals('visitors', __('Visitors', 'metricool'), $values['activeVisits']);
 
         $response = new RealtimeResponse();
         $response->setTotals($this->service->getTotals());

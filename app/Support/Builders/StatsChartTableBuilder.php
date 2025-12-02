@@ -32,8 +32,8 @@ class StatsChartTableBuilder
      * Sets the columns that holds the property names of the DTO to be used in the chart table.
      * Example:
      * [
-     *   'amount' => esc_html__('Amount', 'metricool'),
-     *   'metric' => esc_html__('Visitors', 'metricool')
+     *   'amount' => __('Amount', 'metricool'),
+     *   'metric' => __('Visitors', 'metricool')
      * ]
      */
     public function setColumns(array $columns): self

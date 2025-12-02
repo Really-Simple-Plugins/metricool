@@ -19,8 +19,8 @@ class CountriesResponse extends DistributionResponse
     {
         return [
             'value' => 'value',
-            'country' => esc_html__('Country', 'metricool'),
-            'visitors' => esc_html__('Visitors', 'metricool'),
+            'country' => __('Country', 'metricool'),
+            'visitors' => __('Visitors', 'metricool'),
         ];
     }
 
