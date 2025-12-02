@@ -199,9 +199,7 @@ class App
             // Dependencies are often for multi-use and therefor adding them
             // to the registry is beneficial for speed
             if ($registerDependencies === true) {
-                $this->set($dependencyClass, static function() use ($dependency) {
-                    return $dependency;
-                });
+                $this->instances[$dependencyClass] = $dependency;
             }
 
             $arguments[] = $this->get($dependencyClass);
@@ -210,9 +208,7 @@ class App
         $made = new $class(...$arguments);
 
         if ($register) {
-            $this->set($class, static function() use ($made) {
-                return $made;
-            });
+            $this->instances[$class] = $made;
         }
 
         return $made;
