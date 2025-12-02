@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Bootstrap\App;
 use Metricool\Support\Helpers\Collection;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Endpoints\Responses\DistributionResponse;
@@ -26,13 +26,20 @@ class DistributionEndpoint implements SingleEndpointInterface
         'referers' => RefererResponse::class,
     ];
 
+    public MetricoolApi $metricoolApi;
+
+    public function __construct(MetricoolApi $metricoolApi)
+    {
+        $this->metricoolApi = $metricoolApi;
+    }
+
     /**
      * Only enable this endpoint if the user has access to the admin area and
      * the user has saved a user token, - ID and blog ID.
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && App::getInstance()->client->hasAuthentication();
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication();
     }
 
     /**
@@ -98,7 +105,7 @@ class DistributionEndpoint implements SingleEndpointInterface
      */
     protected function getStatisticsForMetric(string $metric, array $filters): Collection
     {
-        $statisticsModule = App::getInstance()->client->statistics();
+        $statisticsModule = $this->metricoolApi->statistics();
 
         // Load the results
         $metricModule = $statisticsModule->$metric();

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Bootstrap\App;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Services\AnalyticsService;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
 
@@ -17,11 +17,14 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     use HasAllowlistControl;
 
     public const ROUTE = 'analytics';
-    public AnalyticsService $service;
 
-    public function __construct(AnalyticsService $service)
+    public AnalyticsService $service;
+    public MetricoolApi $metricoolApi;
+
+    public function __construct(AnalyticsService $service, MetricoolApi $metricoolApi)
     {
         $this->service = $service;
+        $this->metricoolApi = $metricoolApi;
     }
 
     /**
@@ -30,7 +33,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && App::getInstance()->client->hasAuthentication();
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication();
     }
 
     /**
@@ -76,7 +79,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
      */
     private function buildResponse(\WP_REST_Request $request): array
     {
-        $statisticsModule = App::getInstance()->client->statistics();
+        $statisticsModule = $this->metricoolApi->statistics();
         $requestFilters = ($request->get_param('filters') ?: []);
         $requestMetrics = ($request->get_param('metrics') ?: ['pageViews', 'visits', 'visitors', 'posts', 'comments']);
 

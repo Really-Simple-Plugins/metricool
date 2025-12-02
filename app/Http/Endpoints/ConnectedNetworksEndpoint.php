@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Bootstrap\App;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
 
@@ -17,13 +17,20 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
 
     public const ROUTE = 'connected_networks';
 
+    public MetricoolApi $metricoolApi;
+
+    public function __construct(MetricoolApi $metricoolApi)
+    {
+        $this->metricoolApi = $metricoolApi;
+    }
+
     /**
      * Only enable this endpoint if the user has access to the admin area and
      * the user has saved a user token.
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && App::getInstance()->client->hasUserToken();
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken();
     }
 
     /**
@@ -66,7 +73,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
      */
     public function buildResponse(\WP_REST_Request $request): array
     {
-        $connectedBrand = App::getInstance()->client->connectedBrands()->get();
+        $connectedBrand = $this->metricoolApi->connectedBrands()->get();
         $response = new ConnectedNetworksResponse($connectedBrand);
 
         return $response->body();

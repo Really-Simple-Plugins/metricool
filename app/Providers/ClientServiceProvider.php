@@ -11,15 +11,19 @@ use Metricool\Http\Metricool\MetricoolApi;
 // We can do that by requiring it as a dependency in the constructor of classes that need it.
 class ClientServiceProvider extends Provider
 {
-    protected array $provides = [
-        'client',
+    /**
+     * @inheritDoc
+     */
+    protected array $singletons = [
+        'client' => MetricoolApi::class,
     ];
 
     /**
      * Provides the API client for the application to use
-     * @example $this->app->client || $this->app->get('client')
+     * Example: $this->app->get(MetricoolApi::clas)
+     * Example DI: public function __construct(MetricoolApi $client) { ... }
      */
-    public function provideClient(): MetricoolApi
+    public static function provideClientSingleton(): MetricoolApi
     {
         $client = new MetricoolClient();
 

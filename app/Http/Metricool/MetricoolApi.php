@@ -5,7 +5,15 @@ declare(strict_types=1);
 namespace Metricool\Http\Metricool;
 
 /**
- * Facade for Metricool API entities.
+ * Facade for Metricool API entities. Calls to undefined methods are routed to
+ * {@see MetricoolClient}
+ *
+ * @method bool hasAuthentication()
+ * @method bool hasUserToken()
+ * @method bool hasUserId()
+ * @method bool hasBlogId()
+ * @method bool isTesting()
+ * @method bool isConnected()
  */
 class MetricoolApi
 {

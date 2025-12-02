@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Metricool\Controllers;
 
 use Carbon\Carbon;
-use Metricool\Bootstrap\App;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\ControllerInterface;
 use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
@@ -21,13 +21,15 @@ class ReviewController implements ControllerInterface
 
     private EnvironmentConfig $env;
     private RequestStorage $request;
+    private MetricoolApi $metricoolApi;
     private string $reviewAction = 'rsp_metricool_review_form_submit';
     private string $reviewNonceName = 'rsp_metricool_review_nonce';
 
-    public function __construct(EnvironmentConfig $env, RequestStorage $request)
+    public function __construct(EnvironmentConfig $env, RequestStorage $request, MetricoolApi $metricoolApi)
     {
         $this->env = $env;
         $this->request = $request;
+        $this->metricoolApi = $metricoolApi;
     }
 
     public function register(): void
@@ -184,7 +186,7 @@ class ReviewController implements ControllerInterface
     private function getSessionCountLast30Days(): int
     {
         try {
-            return App::getInstance()->client->statistics()->visits()->filter([
+            return $this->metricoolApi->statistics()->visits()->filter([
                 'period' => 'last30days',
             ])->get()->sum('amount');
         } catch (\Throwable $e) {

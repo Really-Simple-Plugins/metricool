@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Bootstrap\App;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
 
 class SubscriptionEndpoint implements SingleEndpointInterface
@@ -16,13 +16,20 @@ class SubscriptionEndpoint implements SingleEndpointInterface
 
     public const ROUTE = 'subscription';
 
+    public MetricoolApi $metricoolApi;
+
+    public function __construct(MetricoolApi $metricoolApi)
+    {
+        $this->metricoolApi = $metricoolApi;
+    }
+
     /**
      * Only enable this endpoint if the user has access to the admin area and
      * the user has saved a user token and ID.
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && App::getInstance()->client->hasUserToken() && App::getInstance()->client->hasUserId();
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken() && $this->metricoolApi->hasUserId();
     }
 
     /**
@@ -50,7 +57,7 @@ class SubscriptionEndpoint implements SingleEndpointInterface
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
-            $response = App::getInstance()->client->subscription()->get();
+            $response = $this->metricoolApi->subscription()->get();
         } catch (\Throwable $e) {
             echo '<pre>';
             var_dump($e->getMessage()); // todo

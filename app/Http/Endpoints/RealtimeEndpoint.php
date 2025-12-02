@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Bootstrap\App;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Services\RealtimeService;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Http\Endpoints\Responses\RealtimeResponse;
 
@@ -17,11 +17,14 @@ class RealtimeEndpoint implements SingleEndpointInterface
     use HasAllowlistControl;
 
     public const ROUTE = 'realtime';
-    public RealtimeService $service;
 
-    public function __construct(RealtimeService $service)
+    public RealtimeService $service;
+    public MetricoolApi $metricoolApi;
+
+    public function __construct(RealtimeService $service, MetricoolApi $metricoolApi)
     {
         $this->service = $service;
+        $this->metricoolApi = $metricoolApi;
     }
 
     /**
@@ -30,7 +33,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && App::getInstance()->client->hasAuthentication();
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication();
     }
 
     /**
@@ -75,7 +78,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
      */
     private function buildResponse(\WP_REST_Request $request): array
     {
-        $realtimeModule = App::getInstance()->client->realtime();
+        $realtimeModule = $this->metricoolApi->realtime();
 
         // Get our data
         $sessions = $realtimeModule->sessions()->get();
