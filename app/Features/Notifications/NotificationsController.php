@@ -37,7 +37,7 @@ class NotificationsController implements FeatureInterface
      * the Notice should be updated. If a Notice should be removed, remove the
      * Notice from this list.
      *
-     * @return array<int,string<NoticeInterface>> Array of Notice class-strings
+     * @return array<int,class-string<NoticeInterface>> Array of Notice class-strings
      */
     private function getNoticeClassStrings(): array
     {

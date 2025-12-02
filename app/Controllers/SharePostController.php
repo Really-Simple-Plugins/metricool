@@ -7,7 +7,6 @@ namespace Metricool\Controllers;
 use Metricool\Support\Helpers\Event;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasNonces;
-use Metricool\Support\Helpers\Storage;
 use Metricool\Support\Helpers\MetricoolUrl;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\ControllerInterface;

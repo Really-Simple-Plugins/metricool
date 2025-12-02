@@ -37,7 +37,7 @@ class TaskManagementController implements FeatureInterface
      * task should be updated. If a task should be removed, remove the task from
      * this list.
      *
-     * @return array<int,string<TaskInterface>> Array of Task class-strings
+     * @return array<int,class-string<TaskInterface>> Array of Task class-strings
      */
     private function getTaskObjects(): array
     {

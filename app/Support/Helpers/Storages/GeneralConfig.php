@@ -107,5 +107,4 @@ final class GeneralConfig extends Storage
 
         return $data;
     }
-
 }

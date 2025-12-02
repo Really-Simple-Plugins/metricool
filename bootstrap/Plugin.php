@@ -11,7 +11,6 @@ use Metricool\Managers\FeatureManager;
 use Metricool\Managers\EndpointManager;
 use Metricool\Managers\ProviderManager;
 use Metricool\Managers\ControllerManager;
-use Metricool\Support\Helpers\Storages\GeneralConfig;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class Plugin
@@ -198,8 +197,9 @@ class Plugin
      */
     public function checkForUpgrades(): void
     {
+        $config = $this->app->get(EnvironmentConfig::class);
         $previousSavedVersion = (string) get_option('_metricool_current_version', '');
-        if ($previousSavedVersion === $this->app->get(EnvironmentConfig::class)->getString('plugin.version')) {
+        if ($previousSavedVersion === $config->getString('plugin.version')) {
             return; // Nothing to do
         }
 
@@ -214,11 +214,11 @@ class Plugin
         // Trigger upgrade hook if we are upgrading from a previous version.
         // Action can be used by Controllers to hook into the upgrade process
         if (!empty($previousSavedVersion)) {
-            do_action('metricool_plugin_version_upgrade', $previousSavedVersion, $this->app->get(EnvironmentConfig::class)->getString('plugin.version'));
+            do_action('metricool_plugin_version_upgrade', $previousSavedVersion, $config->getString('plugin.version'));
         }
 
         // Also makes sure $previousSavedVersion will only be empty one time
-        update_option('_metricool_current_version', $this->app->get(EnvironmentConfig::class)->getString('plugin.version'), false);
+        update_option('_metricool_current_version', $config->getString('plugin.version'), false);
     }
 
     /**
