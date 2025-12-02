@@ -10,21 +10,8 @@ namespace Metricool\Bootstrap;
  * dependencies in a structured and reusable way. This is important because it
  * decouples classes from concrete implementations (new..) and makes the
  * codebase easier to test and maintain.
- *
- * @property-read \Metricool\Support\Helpers\Storage $config {@see \Metricool\Providers\ConfigServiceProvider::provideConfig}
- * @method static \Metricool\Support\Helpers\Storage config()
- * @property-read \Metricool\Support\Helpers\Storage $settings {@see \Metricool\Providers\ConfigServiceProvider::provideSettings}
- * @method static \Metricool\Support\Helpers\Storage settings()
- * @property-read \Metricool\Support\Helpers\Storage $env {@see \Metricool\Providers\ConfigServiceProvider::provideEnv}
- * @method static \Metricool\Support\Helpers\Storage env()
- * @property-read \Metricool\Support\Helpers\Storage $request {@see \Metricool\Providers\RequestServiceProvider::provideRequest}
- * @method static \Metricool\Support\Helpers\Storage request()
- * @property-read \Metricool\Support\Helpers\Storage $files {@see \Metricool\Providers\RequestServiceProvider::provideFiles}
- * @method static \Metricool\Support\Helpers\Storage files()
- * @property-read \Metricool\Http\Metricool\MetricoolApi|\Metricool\Http\Metricool\MetricoolClient $client {@see \Metricool\Providers\ClientServiceProvider::provideClient}
- * @method static \Metricool\Http\Metricool\MetricoolApi|\Metricool\Http\Metricool\MetricoolClient client()
  */
-class App
+final class App
 {
     /**
      * Singleton instance holder. Ensures a single container is shared across
@@ -194,8 +181,8 @@ class App
             // Using get() will also resolve dependencies of dependencies
             $dependency = $this->get($dependencyClass);
 
-            // Dependencies are often for multi-use and therefor adding them
-            // to the registry is beneficial for speed
+            // Note: the registry is untouched here as that is only for deferred
+            // factories (closures). The instances prop is used in get() too.
             if ($registerDependencies === true) {
                 $this->instances[$dependencyClass] = $dependency;
             }
@@ -205,37 +192,12 @@ class App
 
         $made = new $class(...$arguments);
 
+        // Note: the registry is untouched here as that is only for deferred
+        // factories (closures). The instances prop is used in get() too.
         if ($register) {
             $this->instances[$class] = $made;
         }
 
         return $made;
-    }
-
-    /**
-     * Calls {@see get} immediately for unknown properties.
-     *
-     * @throws \Exception If the target is not instantiable.
-     * @throws \ReflectionException If reflection fails.
-     */
-    public function __get(string $name): object
-    {
-        return $this->get($name);
-    }
-
-    /**
-     * Helper method to be able to do static calls like so:
-     * App::config()->getString('env.plugin.name');
-     *
-     * Instead of:
-     * App::getInstance()->config->getString('env.plugin.name');
-     *
-     * @param list<mixed> $arguments
-     * @return mixed
-     * @throws \ReflectionException
-     */
-    public static function __callStatic(string $name, array $arguments = [])
-    {
-        return self::getInstance()->get($name);
     }
 }
