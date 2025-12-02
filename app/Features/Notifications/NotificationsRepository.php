@@ -125,6 +125,6 @@ class NotificationsRepository
      */
     public function saveNoticesToDatabase(): void
     {
-        update_option(self::OPTION_NAME, $this->notices);
+        update_option(self::OPTION_NAME, $this->notices, false);
     }
 }

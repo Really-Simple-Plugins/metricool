@@ -124,6 +124,6 @@ class TaskManagementRepository
      */
     public function saveTasksToDatabase(): void
     {
-        update_option(self::OPTION_NAME, $this->tasks);
+        update_option(self::OPTION_NAME, $this->tasks, false);
     }
 }
