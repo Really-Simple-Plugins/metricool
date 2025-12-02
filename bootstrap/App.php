@@ -183,14 +183,12 @@ class App
             /** @var class-string $dependencyClass */
             $dependencyClass = $type->getName();
 
-            // Inject the current container, never a new one.
             if ($dependencyClass === self::class) {
-                // todo - check for circular dependencies?
-                echo '<pre>';
-                var_dump(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 3));
-                exit();
-                $arguments[] = $this;
-                continue;
+                throw new \Exception(sprintf(
+                    'Cannot resolve App container dependency for $%s in [%s] to prevent circular dependencies.',
+                    $parameter->getName(),
+                    $class
+                ));
             }
 
             // Using get() will also resolve dependencies of dependencies
