@@ -101,15 +101,15 @@ class SharePostController implements ControllerInterface
      */
     public function processShareAction(): void
     {
-        $pageIsDashboardPage = ($this->request->getString('page') === 'metricool');
-        $actionIsShareAction = ($this->request->getString('metricool_action') === self::SHARE_POST_ACTION);
+        $pageIsDashboardPage = ($this->request->getString('global.page') === 'metricool');
+        $actionIsShareAction = ($this->request->getString('global.metricool_action') === self::SHARE_POST_ACTION);
 
         if (!$pageIsDashboardPage || !$actionIsShareAction) {
             return; // abort
         }
 
         // Validate nonce or wp_die on empty
-        $nonce = $this->request->getString('_metricool_action_nonce');
+        $nonce = $this->request->getString('global._metricool_action_nonce');
         if (empty($nonce) || !$this->verifyNonce($nonce, 'metricool_action')) {
             wp_die(__('Invalid nonce.', 'metricool'));
         }
@@ -168,7 +168,7 @@ class SharePostController implements ControllerInterface
      */
     protected function handleSharePostAction(): void
     {
-        $postId = $this->request->getInt('metricool_post_id');
+        $postId = $this->request->getInt('global.metricool_post_id');
         $postExists = (get_post_status($postId) !== false);
 
         if ($postExists === false) {

@@ -65,16 +65,16 @@ class ReviewController implements ControllerInterface
      */
     public function processReviewFormSubmit(): void
     {
-        if ($this->request->isEmpty('rsp_metricool_review_form')) {
+        if ($this->request->isEmpty('global.rsp_metricool_review_form')) {
             return;
         }
 
-        $nonce = $this->request->get($this->reviewNonceName);
+        $nonce = $this->request->get('global.' . $this->reviewNonceName);
         if (wp_verify_nonce($nonce, $this->reviewAction) === false) {
             return; // Invalid nonce
         }
 
-        $choice = $this->request->getString('rsp_metricool_review_choice');
+        $choice = $this->request->getString('global.rsp_metricool_review_choice');
         if ($choice === 'later') {
             update_option('metricool_review_notice_dismissed_time', time(), false);
             update_option('metricool_review_notice_choice', 'later', false);
