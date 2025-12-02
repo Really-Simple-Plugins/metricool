@@ -12,7 +12,7 @@ class RequiredValidator extends AbstractValidator
      * Checks if the field is required and is not empty
      * @inheritDoc
      */
-    public function validate($value, \WP_REST_Request $request = null): void
+    public function validate($value, ?\WP_REST_Request $request = null): void
     {
         if ($this->isEmptyValue($value)) {
             throw new ValidatorFailedException(__('Please enter a value', 'metricool'), $this);

@@ -211,7 +211,7 @@ class Field
      * @param mixed $value
      * @throws ValidatorFailedException
      */
-    public function validate($value, \WP_REST_Request $request = null): void
+    public function validate($value, ?\WP_REST_Request $request = null): void
     {
         foreach ($this->validators as $validator) {
             $validator->validate($value, $request);

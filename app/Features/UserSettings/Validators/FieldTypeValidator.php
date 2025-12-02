@@ -12,7 +12,7 @@ class FieldTypeValidator extends AbstractValidator
      * Checks if the field value is valid based on its type
      * @inheritDoc
      */
-    public function validate($value, \WP_REST_Request $request = null): void
+    public function validate($value, ?\WP_REST_Request $request = null): void
     {
         if (!$this->isEmptyValue($value)) {
             return;
