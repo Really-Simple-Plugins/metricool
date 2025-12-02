@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Metricool\Features\UserSettings\Storage;
 
-use Metricool\Features\UserSettings\Exceptions\ClientRequiredException;
+use Metricool\Bootstrap\App;
+use Metricool\Http\Metricool\MetricoolApi;
 
 /**
  * This storage uses a client to store and retrieve the UserSettings
@@ -23,11 +24,7 @@ class RemoteStorage extends AbstractStorage
 
     public function __construct(string $name, array $config)
     {
-        if (!isset($config['client'])) {
-            throw new ClientRequiredException('Client is required for storage: ' . $name . '. Please add it to the config.');
-        }
-
-        $this->client = $config['client'];
+        $this->client = App::getInstance()->get(MetricoolApi::class)->userSettings();
         $this->method = $config['method'] ?? 'post';
         $this->casing = $config['casing'] ?? '';
 

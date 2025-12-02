@@ -1,7 +1,5 @@
 <?php
 
-use Metricool\Bootstrap\App;
-
 return [
     'fields' => [
         'sendToAlternativeEmail' => [
@@ -56,13 +54,12 @@ return [
     ],
     'storages' => [
         'default' => [
-            'storage' => 'OptionsStorage',
+            'class' => 'OptionsStorage',
             'prefix' => 'metricool_',
             'casing' => 'snakeCase',
         ],
         'metricoolUserSettings' => [
-            'storage' => 'RemoteStorage',
-            'client' => App::getInstance()->client->userSettings(), // todo - move this to the RemoteStorage object itself? That prevents App being needed here
+            'class' => 'RemoteStorage',
             'method' => 'patch',
             'casing' => 'camelCase',
         ],
