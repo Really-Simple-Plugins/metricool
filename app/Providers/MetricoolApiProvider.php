@@ -7,9 +7,7 @@ namespace Metricool\Providers;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\MetricoolApi;
 
-// todo - should we just bind MetricoolApi instead of wrapping it in a provider?
-// We can do that by requiring it as a dependency in the constructor of classes that need it.
-class ClientServiceProvider extends Provider
+class MetricoolApiProvider extends Provider
 {
     /**
      * @inheritDoc

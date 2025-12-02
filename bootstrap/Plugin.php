@@ -144,7 +144,7 @@ class Plugin
     public function registerProviders(): void
     {
         $this->providerManager->register([
-            Providers\ClientServiceProvider::class,
+            Providers\MetricoolApiProvider::class,
         ]);
     }
 
