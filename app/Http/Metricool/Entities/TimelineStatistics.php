@@ -11,6 +11,7 @@ use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\Metricool\Traits\IsFilterable;
 use Metricool\Traits\IsHydratable;
+use Metricool\Http\Metricool\Filters\PeriodFilter;
 
 /**
  * API responses for the timeline statistics contain of array entries where each
@@ -80,48 +81,17 @@ class TimelineStatistics
         ];
     }
 
-
     /**
      * Applies the period filter
-     * @see IsFilterable
+     * @see \Metricool\Http\Metricool\Traits\IsFilterable::doFilter
      */
     protected function applyPeriodFilter(string $period): void
     {
-        $startDate = Carbon::now();
-        $endDate = Carbon::now();
-
-        switch (strtolower($period)) {
-            case 'yesterday':
-                $startDate->subDay();
-                $endDate->subDay();
-                break;
-            case 'lastweek':
-                $startDate->subDays(7);
-                $endDate->subDay();
-                break;
-            case 'previousmonth':
-                $startDate->subMonths(1)->startOfMonth();
-                $endDate->subMonths(1)->endOfMonth();
-                break;
-            case 'last30days':
-                $startDate->subDays(30);
-                break;
-            case 'last3months':
-                $startDate->subDay()->subMonths(3);
-                break;
-            case 'last6months':
-                $startDate->subDay()->subMonths(6);
-                break;
-            case 'last12months':
-                $startDate->subDay()->subMonths(12);
-                break;
-            case 'currentmonth':
-                $startDate->startOfMonth();
-                break;
-        }
-
-        $this->applyFilter('start', $startDate->format('Ymd'));
-        $this->applyFilter('end', $endDate->format('Ymd'));
+        $filter = PeriodFilter::parse($period, true);
+        $this->applyFilters([
+            'start' => $filter->getStartDate()->format('Ymd'),
+            'end' => $filter->getEndDate()->format('Ymd'),
+        ]);
     }
 
     /**

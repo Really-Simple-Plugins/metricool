@@ -121,4 +121,14 @@ trait IsFilterable
             $this->endpoint
         );
     }
+
+    /**
+     * Apply multiple filters at once.
+     */
+    protected function applyFilters(array $filters): void
+    {
+        foreach ($filters as $filterName => $filterValue) {
+            $this->applyFilter($filterName, $filterValue);
+        }
+    }
 }
