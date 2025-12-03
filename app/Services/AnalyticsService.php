@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Metricool\Services;
 
 use InvalidArgumentException;
+use Metricool\Http\Metricool\Filters\PeriodFilter;
 use Metricool\Support\Builders\StatsTimelineBuilder;
 use Metricool\Support\Helpers\Collection;
 use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 use Metricool\Services\Analytics\TrendService;
-use Metricool\Support\Utility\DateUtility;
 
 class AnalyticsService
 {
@@ -34,10 +34,14 @@ class AnalyticsService
         $this->trendService = $trendService;
     }
 
+    /**
+     * Sets the request filters to be used in the analytics service. These
+     * filters are used to filter the results of the metrics when fetching data
+     * from the API: {@see TimelineStatistics::filter()} in {@see loadMetric()}
+     */
     public function setRequestFilters(array $requestFilters): self
     {
         $this->requestFilters = $requestFilters;
-
         return $this;
     }
 
@@ -57,6 +61,9 @@ class AnalyticsService
         return $this;
     }
 
+    /**
+     * Gets the totals of all loaded metrics
+     */
     public function getTotals(): array
     {
         $totals = [];
@@ -102,8 +109,7 @@ class AnalyticsService
      */
     public function calcTotalAmount(string $metric): float
     {
-        return $this->getResults($metric)
-            ->sum('amount');
+        return $this->getResults($metric)->sum('amount');
     }
 
     /**
@@ -114,7 +120,6 @@ class AnalyticsService
         return $this->trendService->getTrend(
             $this->getTimelineStatistics($metric),
             $this->getResults($metric),
-            $this->requestFilters
         );
     }
 
@@ -126,28 +131,12 @@ class AnalyticsService
     {
         $builder = new StatsTimelineBuilder();
 
-        // todo: Not sure if this ok. Because period filter is deep inside the TimelineStatistics class we cannot access it from here.
-        // to fix it would require a complete rework of the filter system
-
-        // Switch date format based on period filter
-        switch ($this->requestFilters['period'] ?? null) {
-            case 'yesterday':
-                $builder->setDateFormat('LT');
-                break;
-            case 'lastweek':
-                $builder->setDateFormat('ddd D MMM');
-                break;
-            case 'currentmonth':
-            case 'lastmonth':
-            case 'previousmonth':
-            case 'last30days':
-                $builder->setDateFormat('D MMM');
-                break;
-            default:
-                $builder->setDateFormat(DateUtility::localIsoDateMonthFormat());
+        if (!empty($this->requestFilters['period'])) {
+            $builder->setDateFormat(
+                PeriodFilter::getIsoDateMonthFormat($this->requestFilters['period'])
+            );
         }
 
-        return $builder->setMetrics($this->metrics)
-            ->build();
+        return $builder->setMetrics($this->metrics)->build();
     }
 }

@@ -16,7 +16,11 @@ class TrendService
      * Method returns the trend for the given statistic module based on the
      * given filters. To be able to calculate the trend the filters need
      * at least a start and an end date in Ymd format. Otherwise, a
-     * 'stable' trend is returned,
+     * 'stable' trend is returned
+     *
+     * @param array $filters Optional filters to override the filters used on
+     * the TimelineStatistics instance.  Must contain 'start' and 'end' keys
+     * in Ymd format.
      */
     public function getTrend(TimelineStatistics $statistic, Collection $currentStatistics, array $filters = []): string
     {
@@ -27,7 +31,8 @@ class TrendService
 
         $trend = self::TREND_STABLE;
 
-        // Check for mandatory period filters
+        // Check for mandatory start- and end-filter. If not present, use
+        // the filters used on the given statistic instance.
         if (empty($filters) || empty($filters['start']) || empty($filters['end'])) {
             $filters = $statistic->getFilters();
         }
@@ -69,8 +74,6 @@ class TrendService
 
         $start = Carbon::createFromFormat('Ymd', $filters['start']);
         $end = Carbon::createFromFormat('Ymd', $filters['end']);
-
-        // We do +1 to end the previous period one day before the current period
         $diffInDays = $start->diffInDays($end);
 
         // Previous end is one day before current start

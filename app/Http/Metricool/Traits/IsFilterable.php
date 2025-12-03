@@ -105,7 +105,10 @@ trait IsFilterable
     }
 
     /**
-     * Takes a filter name and value and append it to the request.
+     * Takes a filter name and value and append it to the request. Applied
+     * filters are stored in $this->filters property for later retrieval via
+     * {@see getFilters()}, useful here:
+     * {@see \Metricool\Services\Analytics\TrendService::getTrend}
      */
     protected function applyFilter(string $filterName, string $filterValue): void
     {
@@ -114,5 +117,18 @@ trait IsFilterable
             sanitize_text_field($filterValue),
             $this->endpoint
         );
+
+        // store applied filter to make them retrievable later via getFilters()
+        $this->filters[sanitize_text_field($filterName)] = sanitize_text_field($filterValue);
+    }
+
+    /**
+     * Apply multiple filters at once.
+     */
+    protected function applyFilters(array $filters): void
+    {
+        foreach ($filters as $filterName => $filterValue) {
+            $this->applyFilter($filterName, $filterValue);
+        }
     }
 }
