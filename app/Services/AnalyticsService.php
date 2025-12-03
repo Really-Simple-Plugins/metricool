@@ -114,7 +114,6 @@ class AnalyticsService
         return $this->trendService->getTrend(
             $this->getTimelineStatistics($metric),
             $this->getResults($metric),
-            $this->requestFilters
         );
     }
 
