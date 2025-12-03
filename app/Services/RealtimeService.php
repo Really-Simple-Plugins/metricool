@@ -65,7 +65,11 @@ class RealtimeService
         return $collection;
     }
 
-    public function addTotals(string $metric, string $label, int $amount): void
+    /**
+     * Adds a total to be used in the response
+     * @param int|float $amount
+     */
+    public function addTotals(string $metric, string $label, $amount): void
     {
         $this->totals[$metric] = [
             'label' => $label,
