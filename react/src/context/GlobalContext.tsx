@@ -21,6 +21,7 @@ const defaultMetricoolData = {
     assets_url: "",
     json_translations: [],
     is_onboarding_completed: false,
+    was_dashboard_modal_closed: false,
     support: null,
     locale: "",
     blogId: "",
@@ -114,6 +115,9 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
         }
         case "setOnboardingComplete": {
             return { ...state, metricool: { ...state.metricool, is_onboarding_completed: true } };
+        }
+        case "setDashboardModalClosed": {
+            return { ...state, metricool: { ...state.metricool, was_dashboard_modal_closed: true } };
         }
         case "setTranslations": {
             if (!state.metricool) {
