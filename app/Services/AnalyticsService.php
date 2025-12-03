@@ -11,7 +11,6 @@ use Metricool\Support\Helpers\Collection;
 use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 use Metricool\Services\Analytics\TrendService;
-use Metricool\Support\Utility\DateUtility;
 
 class AnalyticsService
 {
