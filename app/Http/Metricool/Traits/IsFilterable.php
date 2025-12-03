@@ -90,6 +90,9 @@ trait IsFilterable
     /**
      * Method used to execute a filter. Calls apply{FilterName}Filter() method when
      * present. Falls back to self::applyFilter();
+     * Applied filters are stored in $this->filters property for later retrieval
+     * via {@see getFilters()}, useful here:
+     * {@see \Metricool\Services\Analytics\TrendService::getTrend}
      */
     private function doFilter(string $filterName, string $filterValue): void
     {
@@ -102,6 +105,9 @@ trait IsFilterable
             // execute default filter
             $this->applyFilter($filterName, $filterValue);
         }
+
+        // store applied filter to make them retrievable later via getFilters()
+        $this->filters[sanitize_text_field($filterName)] = $filterValue;
     }
 
     /**
