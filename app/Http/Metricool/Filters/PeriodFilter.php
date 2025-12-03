@@ -136,5 +136,4 @@ final class PeriodFilter
 
         return $monthPos < $dayPos ? 'MM/DD' : 'DD/MM';
     }
-
 }
