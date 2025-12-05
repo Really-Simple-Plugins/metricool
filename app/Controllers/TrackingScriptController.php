@@ -29,7 +29,7 @@ class TrackingScriptController implements ControllerInterface
 
     public function renderTrackingWidget(): void
     {
-        if (!$this->canRenderTrackingScript()) {
+        if ($this->canRenderTrackingScript() === false) {
             return;
         }
 
@@ -45,7 +45,9 @@ class TrackingScriptController implements ControllerInterface
      */
     private function canRenderTrackingScript(): bool
     {
+        $outOfScope = (is_admin() || is_feed() || is_robots() || is_trackback());
         $trackingHashIsNotEmpty = (strlen($this->service->getTrackingHash()) > 0);
-        return $trackingHashIsNotEmpty && $this->service->isTrackingWidgetActive();
+
+        return $trackingHashIsNotEmpty && $this->service->isTrackingWidgetActive() && ($outOfScope === false);
     }
 }
