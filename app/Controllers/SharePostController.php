@@ -201,8 +201,6 @@ class SharePostController implements ControllerInterface
     /**
      * Renders the content of the Metricool meta box on the post edit screen.
      * Only shows the share button for published posts.
-     *
-     * @param \WP_Post $post The post object
      */
     public function renderShareMetaBox(\WP_Post $post): void
     {
