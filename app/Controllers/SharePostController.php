@@ -200,16 +200,15 @@ class SharePostController implements ControllerInterface
 
     /**
      * Renders the content of the Metricool meta box on the post edit screen.
-     * Only shows the share button for published posts.
      */
     public function renderShareMetaBox(\WP_Post $post): void
     {
-        if (get_post_status($post->ID) !== 'publish') {
-            echo '<i>' . esc_html__('Sharing is only possible for published posts.', 'metricool') . '</i>';
-            return;
-        }
+        $arguments = [
+            'published' => (strtolower(get_post_status($post->ID)) === 'publish'),
+            'unpublishedText' => __('Sharing is only possible for published posts.', 'metricool'),
+        ];
 
-        $this->render('admin/share-post/meta-box', $this->getArgumentsToSharePost($post->ID));
+        $this->render('admin/share-post/meta-box', $this->getArgumentsToSharePost($post->ID, $arguments));
     }
 
     /**
