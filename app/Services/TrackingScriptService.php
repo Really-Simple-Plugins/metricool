@@ -11,7 +11,7 @@ class TrackingScriptService
      */
     public function isTrackingWidgetActive(): bool
     {
-        return get_option('metricool_tracking_script_active', false);
+        return (bool) get_option('metricool_tracking_script_active', false);
     }
 
     /**
@@ -19,6 +19,6 @@ class TrackingScriptService
      */
     public function getTrackingHash(): string
     {
-        return get_option('metricool_tracking_script_hash', '');
+        return (string) get_option('metricool_tracking_script_hash', '');
     }
 }
