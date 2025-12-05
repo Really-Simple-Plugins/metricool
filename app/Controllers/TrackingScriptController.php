@@ -25,6 +25,7 @@ class TrackingScriptController implements ControllerInterface
     public function register(): void
     {
         add_action('wp_footer', [$this, 'renderTrackingWidget']);
+        add_action('metricool_plugin_version_upgrade', [$this, 'handlePluginUpgrade'], 10, 2);
     }
 
     public function renderTrackingWidget(): void
@@ -49,5 +50,16 @@ class TrackingScriptController implements ControllerInterface
         $trackingHashIsNotEmpty = (strlen($this->service->getTrackingHash()) > 0);
 
         return $trackingHashIsNotEmpty && $this->service->isTrackingWidgetActive() && ($outOfScope === false);
+    }
+
+    /**
+     * Handle plugin upgrades regarding the tracking script
+     */
+    public function handlePluginUpgrade(string $previousVersion, string $newVersion): void
+    {
+        // Legacy upgrade
+        if ($previousVersion && version_compare($previousVersion, '2.0', '<')) {
+            $this->service->upgradeProfileIdToTrackingHash();
+        }
     }
 }
