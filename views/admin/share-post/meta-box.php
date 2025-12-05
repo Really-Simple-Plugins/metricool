@@ -18,4 +18,3 @@
         <i><?php echo esc_html($unpublishedText); ?></i>
     <?php endif; ?>
 </div>
-
