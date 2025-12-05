@@ -40,6 +40,7 @@ class SharePostController implements ControllerInterface
 
         add_action('init', [$this, 'registerSharePostColumn']);
         add_action('admin_init', [$this, 'processShareAction']);
+        add_action('add_meta_boxes', [$this, 'addShareMetaBox']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueGeneralAdminStyles']);
         add_filter('default_hidden_columns', [$this, 'filterDefaultHiddenColumns'], 10, 2);
     }
@@ -151,16 +152,7 @@ class SharePostController implements ControllerInterface
             return;
         }
 
-        $actionableUrl = add_query_arg([
-            'metricool_action' => self::SHARE_POST_ACTION,
-            'metricool_post_id' => $postId,
-            '_metricool_action_nonce' => wp_create_nonce('metricool_action'),
-        ], $this->env->getUrl('plugin.dashboard_url'));
-
-        $this->render('admin/share-post/button', [
-            'actionableUrl' => $actionableUrl,
-            'label' => __('Share', 'metricool')
-        ]);
+        $this->render('admin/share-post/button', $this->getArgumentsToSharePost($postId));
     }
 
     /**
@@ -186,5 +178,63 @@ class SharePostController implements ControllerInterface
         // Redirect to the deeplink
         header('Location: ' . $metricoolCreatePostUrl);
         exit();
+    }
+
+    /**
+     * Adds the Metricool meta box to the post edit screen. Works for both
+     * Gutenberg and classic editor. Also adds the meta box for public
+     * post-types for which the column is not shown by default.
+     */
+    public function addShareMetaBox(): void
+    {
+        foreach ($this->getAllPublicPostTypes() as $postType) {
+            add_meta_box(
+                'metricool-share-post',
+                __('Metricool', 'metricool'),
+                [$this, 'renderShareMetaBox'],
+                $postType,
+                'side',
+            );
+        }
+    }
+
+    /**
+     * Renders the content of the Metricool meta box on the post edit screen.
+     * Only shows the share button for published posts.
+     *
+     * @param \WP_Post $post The post object
+     */
+    public function renderShareMetaBox(\WP_Post $post): void
+    {
+        if (get_post_status($post->ID) !== 'publish') {
+            echo '<i>' . esc_html__('Sharing is only possible for published posts.', 'metricool') . '</i>';
+            return;
+        }
+
+        $this->render('admin/share-post/meta-box', $this->getArgumentsToSharePost($post->ID));
+    }
+
+    /**
+     * Prepares the arguments needed to render the share post button used in:
+     * {@see insertPostTableColumnContent} and the meta box via:
+     * {@see renderShareMetaBox}
+     *
+     * @param ?array $arguments Additional args to merge, overrides defaults
+     */
+    private function getArgumentsToSharePost(int $postID, ?array $arguments = []): array
+    {
+        $actionableUrl = add_query_arg([
+            'metricool_action' => self::SHARE_POST_ACTION,
+            'metricool_post_id' => $postID,
+            '_metricool_action_nonce' => wp_create_nonce('metricool_action'),
+        ], $this->env->getUrl('plugin.dashboard_url'));
+
+        $defaultArguments = [
+            'actionableUrl' => $actionableUrl,
+            'label' => __('Share', 'metricool')
+        ];
+
+        // Merge passed arguments with priority over default arguments
+        return array_merge($defaultArguments, $arguments);
     }
 }
