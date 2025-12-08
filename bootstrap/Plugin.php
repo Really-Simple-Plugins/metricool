@@ -158,7 +158,6 @@ class Plugin
         $this->controllerManager->register([
             Controllers\AdminController::class,
             Controllers\DashboardController::class,
-            Controllers\SettingsController::class,
             Controllers\CapabilityController::class,
             Controllers\ReviewController::class,
             Controllers\TrackingScriptController::class,

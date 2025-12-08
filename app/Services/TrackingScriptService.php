@@ -11,7 +11,7 @@ class TrackingScriptService
      */
     public function isTrackingWidgetActive(): bool
     {
-        return get_option('metricool_tracking_script_active', false);
+        return (bool) get_option('metricool_tracking_script_active', false);
     }
 
     /**
@@ -19,6 +19,23 @@ class TrackingScriptService
      */
     public function getTrackingHash(): string
     {
-        return get_option('metricool_tracking_script_hash', '');
+        return (string) get_option('metricool_tracking_script_hash', '');
+    }
+
+    /**
+     * Saves the tracking hash from the legacy option 'metricool_profile_id' if
+     * it exists, and then deletes the legacy option.
+     * @internal Call this method when upgrading from legacy version.
+     */
+    public function upgradeProfileIdToTrackingHash(): void
+    {
+        $profileId = get_option('metricool_profile_id', '');
+
+        if (!empty(trim($profileId))) {
+            update_option('metricool_tracking_script_hash', $profileId, false);
+            update_option('metricool_tracking_script_active', true, false);
+        }
+
+        delete_option('metricool_profile_id');
     }
 }
