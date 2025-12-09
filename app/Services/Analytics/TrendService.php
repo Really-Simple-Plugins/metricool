@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Metricool\Services\Analytics;
 
 use Carbon\Carbon;
@@ -25,39 +27,23 @@ class TrendService
     public function getTrend(TimelineStatistics $statistic, Collection $currentStatistics, array $filters = []): string
     {
         $cacheName = get_class($statistic) . ':' . $statistic->getMetric() . '#' . md5(json_encode($filters));
-        if ($cache = wp_cache_get($cacheName, 'metricool')) {
-            return $cache;
-        }
-
-        $trend = self::TREND_STABLE;
-
-        // Check for mandatory start- and end-filter. If not present, use
-        // the filters used on the given statistic instance.
-        if (empty($filters) || empty($filters['start']) || empty($filters['end'])) {
-            $filters = $statistic->getFilters();
+        $cacheValue = wp_cache_get($cacheName, 'metricool', false, $found);
+        if ($found && is_string($cacheValue)) {
+            return $cacheValue;
         }
 
         try {
+            $filters = $this->getCurrentPeriodFilters($filters, $statistic);
             $previousStatistics = $statistic->filter(
                 $this->getPreviousPeriodFilters($filters)
             )->get();
         } catch (\Throwable $e) {
-            return $trend;
+            return self::TREND_STABLE;
         }
 
-        // Compare the sum of both periods
-        $statisticSumCurrentPeriod = $currentStatistics->sum('amount');
-        $statisticSumPreviousPeriod = $previousStatistics->sum('amount');
+        $trend = $this->calculateTrendFromPeriods($currentStatistics, $previousStatistics);
 
-        if ($statisticSumCurrentPeriod > $statisticSumPreviousPeriod) {
-            $trend = self::TREND_UP;
-        }
-
-        if ($statisticSumCurrentPeriod < $statisticSumPreviousPeriod) {
-            $trend = self::TREND_DOWN;
-        }
-
-        wp_cache_set($cacheName, $trend, 'metricool');
+        wp_cache_set($cacheName, $trend, 'metricool', (5 * MINUTE_IN_SECONDS));
         return $trend;
     }
 
@@ -65,6 +51,11 @@ class TrendService
      * Method returns filters for the previous period based on the given
      * filters. A period is defined as the difference between start and
      * end date.
+     *
+     * @param array $filters Must contain 'start' and 'end' keys and should
+     * reflect the current period to calculate the previous period from.
+     *
+     * @throws \InvalidArgumentException When start or end filters are missing
      */
     public function getPreviousPeriodFilters(array $filters): array
     {
@@ -84,5 +75,51 @@ class TrendService
             'start' => $previousStart->format('Ymd'),
             'end'   => $previousEnd->format('Ymd'),
         ];
+    }
+
+    /**
+     * Method is used to calculate the trend based on the sums of the "amount"
+     * key from the two given periods.
+     *
+     * @param Collection $currentPeriod Statistics for the current period
+     * @param Collection $previousPeriod Statistics for the previous period
+     *
+     * @return string One of the TREND_* constants
+     */
+    private function calculateTrendFromPeriods(Collection $currentPeriod, Collection $previousPeriod): string
+    {
+        $statisticSumCurrentPeriod = $currentPeriod->sum('amount');
+        $statisticSumPreviousPeriod = $previousPeriod->sum('amount');
+
+        if ($statisticSumCurrentPeriod > $statisticSumPreviousPeriod) {
+            return self::TREND_UP;
+        }
+
+        if ($statisticSumCurrentPeriod < $statisticSumPreviousPeriod) {
+            return self::TREND_DOWN;
+        }
+
+        return self::TREND_STABLE;
+    }
+
+    /**
+     * Returns the used 'start' and 'end' filters for the given statistic. Uses
+     * the given filters first, and if they are missing, uses the filters from
+     * the used statistic instance.
+     *
+     * @throws \InvalidArgumentException When start or end filters are missing
+     * even when using the statistic's filters.
+     */
+    private function getCurrentPeriodFilters(array $filters, TimelineStatistics $statistic): array
+    {
+        if (empty($filters['start']) || empty($filters['end'])) {
+            $filters = $statistic->getFilters();
+        }
+
+        if (empty($filters) || empty($filters['start']) || empty($filters['end'])) {
+            throw new \InvalidArgumentException("Filters 'start' and 'end' are required to process statistic filters");
+        }
+
+        return $filters;
     }
 }
