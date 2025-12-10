@@ -33,6 +33,10 @@ declare module '@tanstack/react-router' {
     }
 }
 
+window.addEventListener("scroll", () => {
+    document.documentElement.style.setProperty("--scroll-progress-in-pixels", `${window.scrollY}px`);
+})
+
 // Wait for DOMContentLoaded to render the app
 // to allow WordPress to load properly first
 document.addEventListener("DOMContentLoaded", () => {
