@@ -76,7 +76,7 @@ export const OnboardingLayout = () => {
                 open={signInModalOpen}
                 onOpenChange={setSignInModalOpen}
                 showCloseButton={true}
-                className={"flex flex-col justify-center items-center"}
+                className={"flex flex-col gap-6 justify-center items-center"}
             >
                 <DialogHeader className={"!gap-0 mt-8"}>
                     <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[37px]"} alt={"Metricool logo"}/>
