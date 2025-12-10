@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import SignInForm from "../custom/SignInForm.tsx";
 import OnboardingForm from "../custom/OnboardingForm.tsx";
 import DOMPurify from "dompurify";
-import { VerifyEmailStep, LoadingStep, ConnectBrandStep } from "../custom/OnboardingSteps.tsx";
+import { ConnectBrandStep, LoadingStep, VerifyEmailStep } from "../custom/OnboardingSteps.tsx";
 
 export const OnboardingLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
@@ -16,14 +16,19 @@ export const OnboardingLayout = () => {
     const [enteredEmail, setEnteredEmail] = useState<string>("");
     const [activeStep, setActiveStep] = useState<number>(0);
     const onboardingSteps = [
-        (<VerifyEmailStep enteredEmail={enteredEmail} />),
+        (<VerifyEmailStep enteredEmail={enteredEmail}/>),
         (<LoadingStep/>),
         (<ConnectBrandStep/>),
     ];
 
     const { mutate: onSubmit } = useMutation({
-        mutationFn: async (formValues: { signUpEmail: string; signUpPassword: string; terms: boolean; marketing: boolean; }) => {
-            setEnteredEmail(formValues.signUpEmail)
+        mutationFn: async (formValues: {
+            signUpEmail: string;
+            signUpPassword: string;
+            terms: boolean;
+            marketing: boolean;
+        }) => {
+            setEnteredEmail(formValues.signUpEmail);
             setOnboardingModalOpen(true);
             // const response = await httpClient?.setRoute("").setPayload({
             // }).post();
@@ -68,7 +73,7 @@ export const OnboardingLayout = () => {
             </OnboardingHeader>
             <div className={"w-full h-[2px] bg-[image:var(--gradient-brand-secondary)]"}></div>
             <FlexContainer direction={"row"} className={"w-full !gap-0"}>
-                <OnboardingForm onSubmit={(values)=> onSubmit(values)} />
+                <OnboardingForm onSubmit={(values) => onSubmit(values)}/>
                 <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={"Metricool logo"}/>
             </FlexContainer>
             <Dialog
@@ -86,8 +91,8 @@ export const OnboardingLayout = () => {
                 </DialogHeader>
                 <SignInForm onSubmit={(values) => {
                     console.log(values);
-                    dispatch({dispatchType: "setOnboardingComplete"});
-                } }/>
+                    dispatch({ dispatchType: "setOnboardingComplete" });
+                }}/>
             </Dialog>
             <Dialog
                 id={"onboarding-modal"}
