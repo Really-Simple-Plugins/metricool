@@ -1,9 +1,21 @@
-import { Button, DialogHeader, DialogTitle, FlexContainer, Icon, Select, SelectOption, Label } from "../components";
+import {
+    Button,
+    DialogHeader,
+    DialogTitle,
+    FlexContainer,
+    Icon,
+    Select,
+    SelectOption,
+    FieldWrapper
+} from "../components";
 import DOMPurify from "dompurify";
 import { __, sprintf } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useMutation } from "@tanstack/react-query";
 import { clsx } from "clsx";
+import { Controller, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type OnboardingStepsProps = {
     enteredEmail: string
@@ -94,43 +106,86 @@ const LoadingStep = () => {
     );
 }
 
+const formSchema = z.object({
+    brand: z.string(),
+}).required();
+
 const ConnectBrandStep = () => {
     const { dispatch } = useGlobalContext();
+
+    const {
+        handleSubmit,
+        formState: { dirtyFields },
+        control,
+    } = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            brand: "",
+        },
+    });
+
+    const onSubmit = (values: z.infer<typeof formSchema>) => {
+        console.log(values);
+        dispatch({dispatchType: "setOnboardingComplete"});
+    }
+
     return (
-        <FlexContainer direction={"column"} className={"justify-center items-center"}>
-            <DialogHeader className={"!gap-8 justify-center items-center"}>
-                <DialogTitle className={"font-bold font-nunito m-0 text-2xl"}>
-                    {__("Connect your brand", "metricool")}
-                </DialogTitle>
-            </DialogHeader>
-            <div className={"text-base text-center"}>
-                {__("Choose the brand that you want to connect to this website", "metricool")}
-            </div>
-            <Label>{__("Choose your brand", "metricool")}</Label>
-            <Select
-                className={"border-neutral-200 font-semibold !text-black"}
-                placeholder={__("Select a brand", "metricool")}
-            >
-                <SelectOption
-                    value={"1"}
-                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
+        <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center w-2/3"}>
+            <FlexContainer direction={"column"} className={"w-full !gap-2"}>
+                <DialogHeader className={"!gap-8 justify-center items-center"}>
+                    <DialogTitle className={"font-bold font-nunito m-0 text-2xl"}>
+                        {__("Connect your brand", "metricool")}
+                    </DialogTitle>
+                </DialogHeader>
+                <div className={"text-base text-center"}>
+                    {__("Choose the brand that you want to connect to this website", "metricool")}
+                </div>
+            </FlexContainer>
+            <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-4 w-full"}>
+                <Controller
+                    control={control}
+                    name={"brand"}
+                    render={({ field, fieldState }) => (
+                        <FieldWrapper
+                            htmlFor={"select-brand"}
+                            label={__("Choose your brand", "metricool")}
+                            fieldState={{
+                                invalid: fieldState.invalid,
+                                error: { message: fieldState.error?.message }
+                            }}
+                        >
+                            <Select
+                                onValueChange={field.onChange}
+                                id={"select-brand"}
+                                className={"border-neutral-200 font-semibold !text-black"}
+                                placeholder={__("Select a brand", "metricool")}
+                            >
+                                <SelectOption
+                                    value={"1"}
+                                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
+                                >
+                                    {__("Brand one", "metricool")}
+                                </SelectOption>
+                                <SelectOption
+                                    value={"2"}
+                                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
+                                >
+                                    {__("Brand two", "metricool")}
+                                </SelectOption>
+                            </Select>
+                        </FieldWrapper>
+                    )}
+                />
+                <Button
+                    variant={"black"}
+                    type={"submit"}
+                    icon={"arrow-right"}
+                    iconPosition={"right"}
+                    disabled={!dirtyFields.brand}
                 >
-                    {__("Brand one", "metricool")}
-                </SelectOption>
-                <SelectOption
-                    value={"2"}
-                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
-                >
-                    {__("Brand two", "metricool")}
-                </SelectOption>
-            </Select>
-            <Button
-                variant={"black"}
-                onClick={()=>{dispatch({dispatchType: "setOnboardingComplete"})}}
-                icon={"arrow-right"}
-                iconPosition={"right"}>
-                {__("Finish", "metricool")}
-            </Button>
+                    {__("Finish", "metricool")}
+                </Button>
+            </form>
         </FlexContainer>
     );
 }
