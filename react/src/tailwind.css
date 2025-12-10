@@ -67,19 +67,3 @@ Metricool Brand Style Guide
 
     --gradient-brand-secondary: linear-gradient(90deg,#589CBC 0%,#EE5B91 53.02%,#F5CA32 100%);
 }
-
-/**
-======================================
-WP style overwrites
-======================================
-**/
-#wpcontent {
-    padding-left: 0 !important;
-}
-
-/* Tailwind adds a base 'display: block' style on all imgs.
-This messes with some admin menu icons, so we overwrite it with 'initial'.
-Not overwriting for all imgs as Tailwind might rely on it under the hood. */
-#adminmenu .wp-menu-image img {
-    display: initial;
-}
