@@ -74,7 +74,7 @@ export const OnboardingLayout = () => {
             <Dialog
                 id={"sign-in-modal"}
                 open={signInModalOpen}
-                onOpenChange={() => setSignInModalOpen(!signInModalOpen)}
+                onOpenChange={setSignInModalOpen}
                 showCloseButton={true}
                 className={"flex flex-col justify-center items-center"}
             >
