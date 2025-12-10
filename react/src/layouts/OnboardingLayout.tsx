@@ -22,8 +22,8 @@ export const OnboardingLayout = () => {
     ];
 
     const { mutate: onSubmit } = useMutation({
-        mutationFn: async (formValues: { email: string; password: string; terms: boolean; marketing: boolean; }) => {
-            setEnteredEmail(formValues.email)
+        mutationFn: async (formValues: { signUpEmail: string; signUpPassword: string; terms: boolean; marketing: boolean; }) => {
+            setEnteredEmail(formValues.signUpEmail)
             setOnboardingModalOpen(true);
             // const response = await httpClient?.setRoute("").setPayload({
             // }).post();
