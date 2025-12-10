@@ -11,10 +11,10 @@ import { VerifyEmailStep, LoadingStep, ConnectBrandStep } from "../custom/Onboar
 
 export const OnboardingLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
-    const [signInModalOpen, setSignInModalOpen] = useState(false);
-    const [onboardingModalOpen, setOnboardingModalOpen] = useState(false);
-    const [enteredEmail, setEnteredEmail] = useState("");
-    const [activeStep, setActiveStep] = useState(0);
+    const [signInModalOpen, setSignInModalOpen] = useState<boolean>(false);
+    const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
+    const [enteredEmail, setEnteredEmail] = useState<string>("");
+    const [activeStep, setActiveStep] = useState<number>(0);
     const onboardingSteps = [
         (<VerifyEmailStep enteredEmail={enteredEmail} />),
         (<LoadingStep/>),
