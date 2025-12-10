@@ -69,7 +69,7 @@ export const OnboardingLayout = () => {
             <div className={"w-full h-[2px] bg-[image:var(--gradient-brand-secondary)]"}></div>
             <FlexContainer direction={"row"} className={"w-full !gap-0"}>
                 <OnboardingForm onSubmit={(values)=> onSubmit(values)} />
-                <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%]"} alt={"Metricool logo"}/>
+                <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={"Metricool logo"}/>
             </FlexContainer>
             <Dialog
                 id={"sign-in-modal"}
