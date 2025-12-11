@@ -11,26 +11,28 @@ use Metricool\Managers\FeatureManager;
 use Metricool\Managers\EndpointManager;
 use Metricool\Managers\ProviderManager;
 use Metricool\Managers\ControllerManager;
+use Metricool\Managers\MigrationManager;
 
 class Plugin
 {
-    private App $app;
     private FeatureManager $featureManager;
     private ProviderManager $providerManager;
     private EndpointManager $endpointManager;
     private ControllerManager $controllerManager;
+    private MigrationManager $migrationManager;
 
     /**
      * Plugin constructor
      */
     public function __construct()
     {
-        $this->app = App::getInstance();
+        $app = App::getInstance();
 
-        $this->featureManager = $this->app->make(FeatureManager::class);
-        $this->providerManager = $this->app->make(ProviderManager::class);
-        $this->endpointManager = $this->app->make(EndpointManager::class);
-        $this->controllerManager = $this->app->make(ControllerManager::class);
+        $this->featureManager = $app->make(FeatureManager::class);
+        $this->providerManager = $app->make(ProviderManager::class);
+        $this->endpointManager = $app->make(EndpointManager::class);
+        $this->controllerManager = $app->make(ControllerManager::class);
+        $this->migrationManager = $app->make(MigrationManager::class);
     }
 
     /**
@@ -49,6 +51,7 @@ class Plugin
         add_action('plugins_loaded', [$this, 'registerProviders']); // Provide functionality to the plugin
         add_action('metricool_providers_loaded', [$this->featureManager, 'registerFeatures']); // Makes sure features exist when Controllers need them
         add_action('metricool_features_loaded', [$this, 'registerControllers']); // Control the functionality of the plugin
+        add_action('metricool_plugin_version_upgrade', [$this->migrationManager, 'runMigrations'], 10, 2);
         add_action('rest_api_init', [$this, 'registerEndpoints']);
         add_action('admin_init', [$this, 'fireActivationHook']);
     }

@@ -10,7 +10,7 @@ use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
 
-final class EndpointManager extends AbstractManager
+final class EndpointManager extends AbstractInstancesManager
 {
     use HasNonces;
     use HasAllowlistControl;

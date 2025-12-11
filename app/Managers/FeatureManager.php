@@ -15,7 +15,7 @@ use Metricool\Interfaces\FeatureInterface;
  * needed. We prevent loading feature files by utilizing the
  * {@see AbstractLoader} class at {@see FeatureManager:92}
  */
-final class FeatureManager extends AbstractManager
+final class FeatureManager extends AbstractInstancesManager
 {
     private const PRO_FEATURE_HANDLE = 'Pro:';
 

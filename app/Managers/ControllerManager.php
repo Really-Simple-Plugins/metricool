@@ -6,7 +6,7 @@ namespace Metricool\Managers;
 
 use Metricool\Interfaces\ControllerInterface;
 
-final class ControllerManager extends AbstractManager
+final class ControllerManager extends AbstractInstancesManager
 {
     /**
      * @inheritDoc

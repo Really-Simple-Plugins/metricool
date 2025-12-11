@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
-use Metricool\Services\MigrationService;
 use Metricool\Interfaces\ControllerInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
@@ -13,27 +12,15 @@ class UpgradeController implements ControllerInterface
     private const LEGACY_VERSION = '1.24';
 
     private EnvironmentConfig $env;
-    private MigrationService $service;
 
-    public function __construct(EnvironmentConfig $env, MigrationService $service)
+    public function __construct(EnvironmentConfig $env)
     {
         $this->env = $env;
-        $this->service = $service;
     }
 
     public function register(): void
     {
         add_action('metricool_controllers_loaded', [$this, 'checkForUpgrades']);
-        add_action('metricool_plugin_version_upgrade', [$this, 'runMigrations'], 10, 2);
-    }
-
-    /**
-     * Run the migrations that apply for the given version upgrade.
-     */
-    public function runMigrations(string $previousVersion, string $newVersion): void
-    {
-        // todo - is this all the controller should do? Seems like a wrapper..
-        $this->service->runApplicableMigrations($previousVersion, $newVersion);
     }
 
     /**

@@ -2,12 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Services;
+namespace Metricool\Managers;
 
 use Metricool\Interfaces\MigrationInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
-class MigrationService
+/**
+ * This manager dynamically fetches and runs the migrations of the plugin. It
+ * differs from other manager classes due to this nature and is not an instance
+ * of {@see AbstractInstancesManager} because it does not create and registers
+ * any instances. Its sole purpose is to run migration files that implement
+ * {@see MigrationInterface}
+ */
+final class MigrationManager
 {
     private EnvironmentConfig $env;
     private ?string $toVersion = null;
@@ -19,20 +26,12 @@ class MigrationService
     }
 
     /**
-     * Main method to run all migrations fitting for the given versions. This
-     * method will determine automatically if we are upgrading or downgrading
-     * and run the migrations accordingly. It also skips migrations that do not
-     * fit the version range.
-     *
-     * @param string|null $fromVersion The version we are migrating from, falls
-     * back to the {@see $fromVersion} property if null.
-     * @param string|null $toVersion The version we are migrating to, falls
-     * back to the {@see $toVersion} property if null.
+     * Run the migrations that apply for the given version upgrade.
      */
-    public function runApplicableMigrations(?string $fromVersion = null, ?string $toVersion = null): void
+    public function runMigrations(string $previousVersion, string $newVersion): void
     {
-        $this->fromVersion = ($fromVersion ?? $this->fromVersion);
-        $this->toVersion = ($toVersion ?? $this->toVersion);
+        $this->fromVersion = $previousVersion;
+        $this->toVersion = $newVersion;
 
         $migrations = $this->getAllMigrations();
 
@@ -40,14 +39,14 @@ class MigrationService
             $this->run($migration);
         }
 
-        $this->cleanup();
+        $this->afterMigrate();
     }
 
     /**
      * Run a single migration. Silently skips the migration if it does not fit
      * the version range.
      */
-    public function run(MigrationInterface $migration): void
+    private function run(MigrationInterface $migration): void
     {
         if ($this->shouldRunMigration($migration) === false) {
             return;
@@ -77,7 +76,7 @@ class MigrationService
      *
      * @return bool True if migration should run
      */
-    public function shouldRunMigration(MigrationInterface $migration): bool
+    private function shouldRunMigration(MigrationInterface $migration): bool
     {
         if ($this->isUpgrading()) {
             return version_compare($migration->version(), $this->fromVersion, '>')
@@ -96,7 +95,7 @@ class MigrationService
      * Get all migration files from the migrations directory, sorted by version.
      * @return array<int, MigrationInterface>
      */
-    public function getAllMigrations(): array
+    private function getAllMigrations(): array
     {
         $migrationsPath = $this->env->getString('plugin.migrations_path');
         if (!is_dir($migrationsPath)) {
@@ -122,22 +121,11 @@ class MigrationService
         return $migrations;
     }
 
-    public function cleanup(): void
-    {
-        $this->fromVersion = null;
-        $this->toVersion = null;
-    }
-
-    public function setFromVersion(string $version): void
-    {
-        $this->fromVersion = $version;
-    }
-
-    public function setToVersion(string $version): void
-    {
-        $this->toVersion = $version;
-    }
-
+    /**
+     * Determine if the migration is a downgrade. A downgrade occurs when
+     * the toVersion is less than the fromVersion.
+     * @throws \RuntimeException When developer is doing something wrong
+     */
     private function isDowngrading(): bool
     {
         if ($this->fromVersion === null || $this->toVersion === null) {
@@ -147,6 +135,11 @@ class MigrationService
         return version_compare($this->toVersion, $this->fromVersion, '<');
     }
 
+    /**
+     * Determine if the migration is an upgrade. An upgrade occurs when
+     * the toVersion is greater than the fromVersion.
+     * @throws \RuntimeException When developer is doing something wrong
+     */
     private function isUpgrading(): bool
     {
         if ($this->fromVersion === null || $this->toVersion === null) {
@@ -155,4 +148,24 @@ class MigrationService
 
         return version_compare($this->toVersion, $this->fromVersion, '>');
     }
+
+    /**
+     * Cleanup internal state after migrations have run.
+     */
+    private function cleanup(): void
+    {
+        $this->fromVersion = null;
+        $this->toVersion = null;
+    }
+
+    /**
+     * Actions to perform after all migrations have run. This includes
+     * cleaning up internal state and firing an action hook.
+     */
+    private function afterMigrate(): void
+    {
+        $this->cleanup();
+        do_action('metricool_migrations_run');
+    }
+
 }
