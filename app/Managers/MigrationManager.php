@@ -167,5 +167,4 @@ final class MigrationManager
         $this->cleanup();
         do_action('metricool_migrations_run');
     }
-
 }
