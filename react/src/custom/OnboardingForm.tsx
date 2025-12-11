@@ -115,7 +115,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                         render={({ field, fieldState }) => (
                             <FieldWrapper
                                 flexDirection={"row-reverse"}
-                                className={"!gap-3"}
+                                className={"!gap-3 justify-end"}
                                 label={(
                                     <span
                                         className={"required-asterisk"}
@@ -154,7 +154,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                         render={({ field, fieldState }) => (
                             <FieldWrapper
                                 flexDirection={"row-reverse"}
-                                className={"!gap-3"}
+                                className={"!gap-3 justify-end"}
                                 label={(
                                     <span
                                         dangerouslySetInnerHTML={{
