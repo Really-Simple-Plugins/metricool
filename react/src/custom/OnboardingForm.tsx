@@ -63,6 +63,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                             >
                                 <Input
                                     {...field}
+                                    aria-required
                                     aria-invalid={fieldState.invalid}
                                     id={"sign-up-email"}
                                     placeholder={__("Enter your email", "metricool")}
@@ -86,6 +87,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                             >
                                 <Input
                                     {...field}
+                                    aria-required
                                     aria-invalid={fieldState.invalid}
                                     id={"sign-up-password"}
                                     placeholder={__("Write your password here", "metricool")}
@@ -137,6 +139,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                                 }}
                             >
                                 <Switch
+                                    aria-required
                                     id={"terms"}
                                     aria-invalid={fieldState.invalid}
                                     checked={field.value}
