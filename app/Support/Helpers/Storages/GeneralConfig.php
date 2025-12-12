@@ -5,22 +5,37 @@ declare(strict_types=1);
 namespace Metricool\Support\Helpers\Storages;
 
 use Metricool\Support\Helpers\Storage;
+use Metricool\Support\Helpers\DeferredObject;
 
 /**
  * General config helper used in DI container.
+ *
+ * @mixin Storage This class acts as a proxy to Storage. All method calls are
+ * resolved dynamically through {@see DeferredObject::__get()}
  */
-final class GeneralConfig extends Storage
+final class GeneralConfig extends DeferredObject
 {
     private array $filesToSkip = [
         'env', // EnvironmentConfig
         'user_settings', // UserSettingsConfig
     ];
 
-    public function __construct()
+    /**
+     * @inheritDoc
+     */
+    protected function deferredClassString(): string
     {
-        parent::__construct(
-            $this->storageFromPath(dirname(__FILE__, 5) . '/config', $this->filesToSkip, true)
-        );
+        return Storage::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function deferredConstructArguments(): array
+    {
+        return [
+            $this->storageFromPath(dirname(__FILE__, 5) . '/config', $this->filesToSkip, true),
+        ];
     }
 
     /**
