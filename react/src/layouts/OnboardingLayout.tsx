@@ -6,7 +6,6 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import SignInForm from "../custom/SignInForm.tsx";
 import OnboardingForm from "../custom/OnboardingForm.tsx";
-import DOMPurify from "dompurify";
 import { ConnectBrandStep, LoadingStep, VerifyEmailStep } from "../custom/OnboardingSteps.tsx";
 
 export const OnboardingLayout = () => {
@@ -46,12 +45,6 @@ export const OnboardingLayout = () => {
         },
         onError: (data) => {
             console.log(data);
-        }
-    });
-
-    DOMPurify.addHook("afterSanitizeAttributes", (node) => {
-        if (node.hasAttribute("href") && node.getAttribute("href") !== "https://metricool.com/legal-terms/") {
-            node.remove();
         }
     });
 
