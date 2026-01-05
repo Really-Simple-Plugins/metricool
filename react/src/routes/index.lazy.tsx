@@ -8,11 +8,11 @@ export const Route = createLazyFileRoute('/')({
 });
 
 function Index() {
-    const { globalState } = useGlobalContext();
+    const { metricool } = useGlobalContext();
 
     return (
         <>
-            {globalState.metricool.is_onboarding_completed ? (
+            {metricool.is_onboarding_completed ? (
                 <DashboardLayout />
             ) : (
                 <OnboardingLayout />
