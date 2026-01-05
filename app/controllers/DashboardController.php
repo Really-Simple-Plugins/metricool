@@ -255,6 +255,7 @@ class DashboardController implements ControllerInterface
                 'site_url' => site_url(),
                 'assets_url' => App::env('plugin.assets_url'),
                 'json_translations' => ($chunkTranslation['json_translations'] ?? []),
+                'trusted_urls' => App::env('frontend.trusted_urls'),
                 'is_onboarding_completed' => $this->onboarding_completed(),
                 'support' => App::env('metricool.support'),
                 'locale' => str_replace("_", "-", get_user_locale()),

@@ -38,4 +38,7 @@ return [
         'version' => 'v1',
         'namespace' => 'metricool',
     ],
+    'frontend' => [
+        'trusted_urls' => ['legal_terms' => 'https://metricool.com/legal-terms/'],
+    ]
 ];
