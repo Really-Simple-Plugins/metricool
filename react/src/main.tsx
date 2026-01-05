@@ -33,6 +33,8 @@ declare module '@tanstack/react-router' {
     }
 }
 
+// Event listener to keep track of scroll progress as a CSS variable,
+// which can be used in Tailwind classes
 window.addEventListener("scroll", () => {
     document.documentElement.style.setProperty("--scroll-progress-in-pixels", `${window.scrollY}px`);
 })
