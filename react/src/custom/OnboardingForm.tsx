@@ -37,12 +37,6 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
         },
     });
 
-    DOMPurify.addHook("afterSanitizeAttributes", (node) => {
-        if (node.hasAttribute("href") && node.getAttribute("href") !== "https://metricool.com/legal-terms/") {
-            node.remove();
-        }
-    });
-
     return (
         <FlexContainer direction={"column"} className={"min-w-[45%] max-w-[45%]"}>
             <h1 className={"font-bold font-nunito text-[1.75rem] leading-8"}>{__("Join more than 2 million professionals, agencies and brands that use Metricool as their one-stop shop for social media and online ad management.", "metricool")}</h1>
