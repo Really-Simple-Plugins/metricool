@@ -20,6 +20,9 @@ const defaultMetricoolData = {
     site_url: "",
     assets_url: "",
     json_translations: [],
+    trusted_urls: {
+        legal_terms: "",
+    },
     is_onboarding_completed: false,
     was_dashboard_modal_closed: false,
     support: null,
