@@ -4,6 +4,7 @@ import { Controller, useForm } from "react-hook-form";
 import DOMPurify from "dompurify";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useGlobalContext } from "../context/GlobalContext.tsx";
 
 const formSchema = z.object({
     signUpEmail: z.email({
@@ -23,6 +24,7 @@ type OnboardingFormProps = {
 };
 
 const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
+    const { metricool } = useGlobalContext();
     const {
         handleSubmit,
         formState: { dirtyFields },
@@ -119,7 +121,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                                                     sprintf(
                                                         /*! translators: the two variables are opening and closing anchor tags */
                                                         __("I have read and accept the %sLegal Terms%s by Metricool.", "metricool"),
-                                                        `<a href="https://metricool.com/legal-terms/" target="_blank">`,
+                                                        `<a href=${metricool.trusted_urls.legal_terms} target="_blank">`,
                                                         `</a>`),
                                                     { ADD_ATTR: ["target"] }
                                                 )
