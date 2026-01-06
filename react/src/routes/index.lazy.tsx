@@ -12,8 +12,15 @@ function Index() {
     const { metricool } = useGlobalContext();
 
     DOMPurify.addHook("afterSanitizeAttributes", (node) => {
-        if (node.hasAttribute("href") && node.getAttribute("href") !== "https://metricool.com/legal-terms/") {
-            node.remove();
+        // This first check is to ensure the metricool object has been populated
+        // with the data from the backend properly.
+        // todo: remove or simplify check once the context has been set up better
+        const listOfAcceptedLinks = Object.values(metricool.trusted_urls);
+        if (!listOfAcceptedLinks.some((link) => link === "")) {
+            const href = node.getAttribute("href");
+            if (href && !listOfAcceptedLinks.includes(href)) {
+                node.remove();
+            }
         }
     });
 
