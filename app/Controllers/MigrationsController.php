@@ -2,19 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Managers;
+namespace Metricool\Controllers;
 
 use Metricool\Interfaces\MigrationInterface;
+use Metricool\Interfaces\ControllerInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
-/**
- * This manager dynamically fetches and runs the migrations of the plugin. It
- * differs from other manager classes due to this nature and is not an instance
- * of {@see AbstractInstancesManager} because it does not create and registers
- * any instances. Its sole purpose is to run migration files that implement
- * {@see MigrationInterface}
- */
-final class MigrationManager
+class MigrationsController implements ControllerInterface
 {
     private EnvironmentConfig $env;
     private ?string $toVersion = null;
@@ -23,6 +17,11 @@ final class MigrationManager
     public function __construct(EnvironmentConfig $env)
     {
         $this->env = $env;
+    }
+
+    public function register(): void
+    {
+        add_action('metricool_plugin_version_upgrade', [$this, 'runMigrations']);
     }
 
     /**
@@ -54,10 +53,6 @@ final class MigrationManager
 
         if ($this->isUpgrading()) {
             $migration->up();
-        }
-
-        if ($this->isDowngrading()) {
-            $migration->down();
         }
     }
 
