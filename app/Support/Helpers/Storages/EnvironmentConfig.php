@@ -5,16 +5,39 @@ declare(strict_types=1);
 namespace Metricool\Support\Helpers\Storages;
 
 use Metricool\Support\Helpers\Storage;
+use Metricool\Support\Helpers\DeferredObject;
 
 /**
  * Environment configuration helper used in DI container.
+ *
+ * @mixin Storage This class acts as a proxy to Storage. All method calls are
+ * resolved dynamically through {@see DeferredObject::__get()}
  */
-final class EnvironmentConfig extends Storage
+final class EnvironmentConfig extends DeferredObject
 {
-    public function __construct()
+    /**
+     * @inheritDoc
+     */
+    protected function deferredClassString(): string
     {
-        parent::__construct(
-            require dirname(__FILE__, 5) . '/config/env.php'
-        );
+        return Storage::class;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function deferredConstructArguments(): array
+    {
+        return [
+            'items' => $this->getStorageItems(),
+        ];
+    }
+
+    /**
+     * Method automatically resolves the environment configuration file.
+     */
+    private function getStorageItems(): array
+    {
+        return require dirname(__FILE__, 5) . '/config/env.php';
     }
 }
