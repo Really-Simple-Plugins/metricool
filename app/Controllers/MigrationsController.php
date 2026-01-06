@@ -21,7 +21,7 @@ class MigrationsController implements ControllerInterface
 
     public function register(): void
     {
-        add_action('metricool_plugin_version_upgrade', [$this, 'runMigrations']);
+        add_action('metricool_plugin_version_upgrade', [$this, 'runMigrations'], 10, 2);
     }
 
     /**
