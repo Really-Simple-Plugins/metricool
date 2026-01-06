@@ -6,7 +6,7 @@ namespace Metricool\Managers;
 
 use Metricool\Interfaces\ProviderInterface;
 
-final class ProviderManager extends AbstractInstancesManager
+final class ProviderManager extends AbstractManager
 {
     /**
      * @inheritDoc

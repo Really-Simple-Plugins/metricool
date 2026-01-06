@@ -7,7 +7,7 @@ namespace Metricool\Managers;
 use Metricool\Bootstrap\App;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
-abstract class AbstractInstancesManager
+abstract class AbstractManager
 {
     protected EnvironmentConfig $env;
 
