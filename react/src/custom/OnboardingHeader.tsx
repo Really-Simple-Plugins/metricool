@@ -2,10 +2,13 @@ import { FlexContainer } from "../components";
 import type { ReactNode } from "react";
 
 type OnboardingHeaderProps = {
-    logo: { src: string, alt: string },
+    logo: {
+        src: string,
+        alt: string,
+    },
     actions: ReactNode | ReactNode[],
 };
-const OnboardingHeader = ({logo, children, actions}: React.ComponentProps<"div"> & OnboardingHeaderProps) => {
+const OnboardingHeader = ({ logo, children, actions }: React.ComponentProps<"div"> & OnboardingHeaderProps) => {
     return (
         <FlexContainer direction={"row"} className={"justify-between items-center pb-4"}>
             <FlexContainer direction={"row"} className={"text-base font-bold font-nunito items-center"}>
