@@ -1,31 +1,27 @@
-import { Button, FieldWrapper, FlexContainer, Input } from "../components";
+import { Button, FieldWrapper, FlexContainer, Input } from "../../components";
 import { __ } from "@wordpress/i18n";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import OnboardingSchema from "./OnboardingSchema.ts";
 
-const formSchema = z.object({
-    signInEmail: z.email({
-        error: () => __("Please enter a valid email address", "metricool"),
-    }),
-    signInPassword: z.string().min(8, {
-        error: () => __("Password must be at least 8 characters", "metricool"),
-    }),
-}).required();
+const signInSchema = OnboardingSchema.pick({ credentials: true });
 
 type SignInFormProps = {
-    onSubmit: (values: z.infer<typeof formSchema>) => void,
+    onSubmit: (values: z.infer<typeof signInSchema>) => void,
 };
 const SignInForm = ({ onSubmit }: SignInFormProps) => {
     const {
         handleSubmit,
         formState: { dirtyFields },
         control,
-    } = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    } = useForm<z.infer<typeof signInSchema>>({
+        resolver: zodResolver(signInSchema),
         defaultValues: {
-            signInEmail: "",
-            signInPassword: "",
+            credentials: {
+                email: "",
+                password: "",
+            },
         },
     });
 
@@ -35,7 +31,7 @@ const SignInForm = ({ onSubmit }: SignInFormProps) => {
                 <FlexContainer direction={"column"}>
                     <Controller
                         control={control}
-                        name={"signInEmail"}
+                        name={"credentials.email"}
                         render={({ field, fieldState }) => (
                             <FieldWrapper
                                 required
@@ -58,7 +54,7 @@ const SignInForm = ({ onSubmit }: SignInFormProps) => {
                     />
                     <Controller
                         control={control}
-                        name={"signInPassword"}
+                        name={"credentials.password"}
                         render={({ field, fieldState }) => (
                             <FieldWrapper
                                 required
@@ -86,7 +82,7 @@ const SignInForm = ({ onSubmit }: SignInFormProps) => {
                     icon={"arrow-right"}
                     iconPosition={"right"}
                     type={"submit"}
-                    disabled={!(dirtyFields.signInEmail && dirtyFields.signInPassword)}
+                    disabled={!(dirtyFields.credentials)}
                 >
                     {__("Sign in", "metricool")}
                 </Button>

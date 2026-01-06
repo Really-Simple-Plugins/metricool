@@ -1,12 +1,14 @@
 import { __ } from "@wordpress/i18n";
 import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "../components";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
-import OnboardingHeader from "../custom/OnboardingHeader.tsx";
+import OnboardingHeader from "../custom/Onboarding/OnboardingHeader.tsx";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import SignInForm from "../custom/SignInForm.tsx";
-import OnboardingForm from "../custom/OnboardingForm.tsx";
-import { ConnectBrandStep, LoadingStep, VerifyEmailStep } from "../custom/OnboardingSteps.tsx";
+import SignInForm from "../custom/Onboarding/SignInForm.tsx";
+import OnboardingForm from "../custom/Onboarding/OnboardingForm.tsx";
+import ConnectBrandStep from "../custom/Onboarding/OnboardingSteps/ConnectBrand.tsx";
+import LoadingStep from "../custom/Onboarding/OnboardingSteps/LoadingStep.tsx";
+import VerifyEmailStep from "../custom/Onboarding/OnboardingSteps/VerifyEmailStep.tsx";
 
 export const OnboardingLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
@@ -22,12 +24,14 @@ export const OnboardingLayout = () => {
 
     const { mutate: onSubmit } = useMutation({
         mutationFn: async (formValues: {
-            signUpEmail: string;
-            signUpPassword: string;
+            credentials: {
+                email: string;
+                password: string;
+            };
             terms: boolean;
             marketing: boolean;
         }) => {
-            setEnteredEmail(formValues.signUpEmail);
+            setEnteredEmail(formValues.credentials.email);
             setOnboardingModalOpen(true);
             // const response = await httpClient?.setRoute("").setPayload({
             // }).post();

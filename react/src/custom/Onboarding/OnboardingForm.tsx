@@ -1,26 +1,16 @@
-import { Button, FieldWrapper, FlexContainer, Input, Switch } from "../components";
+import { Button, FieldWrapper, FlexContainer, Input, Switch } from "../../components";
 import { __, sprintf } from "@wordpress/i18n";
 import { Controller, useForm } from "react-hook-form";
 import DOMPurify from "dompurify";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { useGlobalContext } from "../../context/GlobalContext.tsx";
+import OnboardingSchema from "./OnboardingSchema.ts";
 
-const formSchema = z.object({
-    signUpEmail: z.email({
-        error: () => __("Please enter a valid email address", "metricool"),
-    }),
-    signUpPassword: z.string().min(8, {
-        error: () => __("Password must be at least 8 characters", "metricool"),
-    }),
-    terms: z.boolean().refine((val) => val === true, {
-        error: () => __("Please read and accept the Legal Terms", "metricool"),
-    }),
-    marketing: z.boolean(),
-}).required();
+const onboardingFormSchema = OnboardingSchema.omit({ brand: true });
 
 type OnboardingFormProps = {
-    onSubmit: (values: z.infer<typeof formSchema>) => void,
+    onSubmit: (values: z.infer<typeof onboardingFormSchema>) => void,
 };
 
 const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
@@ -29,11 +19,13 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
         handleSubmit,
         formState: { dirtyFields },
         control,
-    } = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    } = useForm<z.infer<typeof onboardingFormSchema>>({
+        resolver: zodResolver(onboardingFormSchema),
         defaultValues: {
-            signUpEmail: "",
-            signUpPassword: "",
+            credentials: {
+                email: "",
+                password: "",
+            },
             terms: false,
             marketing: false,
         },
@@ -46,7 +38,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                 <FlexContainer direction={"column"}>
                     <Controller
                         control={control}
-                        name={"signUpEmail"}
+                        name={"credentials.email"}
                         render={({ field, fieldState }) => (
                             <FieldWrapper
                                 required
@@ -70,7 +62,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                     />
                     <Controller
                         control={control}
-                        name={"signUpPassword"}
+                        name={"credentials.password"}
                         render={({ field, fieldState }) => (
                             <FieldWrapper
                                 required
@@ -100,7 +92,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                     icon={"arrow-right"}
                     iconPosition={"right"}
                     type={"submit"}
-                    disabled={!(dirtyFields.signUpEmail && dirtyFields.signUpPassword)}
+                    disabled={!(dirtyFields.credentials)}
                 >
                     {__("Create your free account", "metricool")}
                 </Button>
