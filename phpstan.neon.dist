@@ -1,0 +1,22 @@
+parameters:
+    phpVersion:
+        min: 70400
+        max: 80400
+    level: 6
+    paths:
+        - metricool.php
+        - app
+        - bootstrap
+    dynamicConstantNames:
+        EXTENDIFY_PARTNER_ID: string|null
+    reportUnmatchedIgnoredErrors: false
+    ignoreErrors:
+        # Ignore errors for add_action and add_filter callbacks that have a return type declared
+        - identifier: return.void
+          message: '#^Action callback returns .+ but should not return anything\.$#'
+
+        # We accept just the type "array" instead of "array<int,string>"
+        - identifier: missingType.iterableValue
+
+        # Some stubs report generics for, for example, WP_REST_Request. This is not needed in the WordPress context.
+        - identifier: missingType.generics
