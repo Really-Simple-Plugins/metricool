@@ -92,7 +92,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                     icon={"arrow-right"}
                     iconPosition={"right"}
                     type={"submit"}
-                    disabled={!(dirtyFields.credentials)}
+                    disabled={!(dirtyFields.credentials?.email && dirtyFields.credentials?.password)}
                 >
                     {__("Create your free account", "metricool")}
                 </Button>
