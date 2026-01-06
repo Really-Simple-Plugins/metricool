@@ -64,23 +64,27 @@ class MigrationsController implements ControllerInterface
      * the exact version of the migration to apply all changes up to that
      * version.
      *
-     * When downgrading: run migration if version is between toVersion and
-     * fromVersion or equal to fromVersion. Makes sure down() is run when
-     * downgrading from the exact version of the migration to revert any
-     * changes done by up() from that version.
+     * When downgrading: the version is less than fromVersion, but greater than
+     * toVersion. Migrations cannot run in this case, because the current code
+     * does not know about the changes that were made in future versions.
      *
      * @return bool True if migration should run
+     * @throws \InvalidArgumentException When migration version is invalid
      */
     private function shouldRunMigration(MigrationInterface $migration): bool
     {
+        if (version_compare($migration->version(), '0.0.1', '>=') === false) {
+            throw new \InvalidArgumentException('Migration version must be a valid version number string.');
+        }
+
         if ($this->isUpgrading()) {
             return version_compare($migration->version(), $this->fromVersion, '>')
                 && version_compare($migration->version(), $this->toVersion, '<=');
         }
 
+        // We cannot revert migrations from the future. Can you see the future?
         if ($this->isDowngrading()) {
-            return version_compare($migration->version(), $this->fromVersion, '<=')
-                && version_compare($migration->version(), $this->toVersion, '>');
+            return false;
         }
 
         return false;
