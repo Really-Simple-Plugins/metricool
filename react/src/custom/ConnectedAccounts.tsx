@@ -64,7 +64,7 @@ const ConnectedAccounts = () => {
     });
 
     return (
-        <Block>
+        <Block className={"min-h-[18rem] max-h-[18rem]"}>
             <BlockHeader title={__("Connected Accounts", "metricool")}/>
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
                 {isLoading ? (
