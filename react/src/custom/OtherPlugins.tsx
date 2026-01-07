@@ -28,7 +28,7 @@ type OtherPlugin = {
 }
 
 const OtherPlugins = () => {
-    const { httpClient } = useGlobalContext();
+    const { httpClient, metricool } = useGlobalContext();
     const { isLoading, error, data: otherPlugins = {} } = useQuery({
         queryKey: ["other_plugins_data"],
         queryFn: () => httpClient?.setRoute("related_plugins_data").get(),
@@ -109,7 +109,16 @@ const OtherPlugins = () => {
 
     return (
         <Block variant={"transparent"} className={"xl:min-h-58 xl:max-h-58"}>
-            <BlockHeader title={__("Other Plugins", "metricool")}/>
+            <BlockHeader
+                title={__("Other Plugins", "metricool")}
+                action={(
+                    <img
+                        className={"h-3.5"}
+                        src={`${metricool.assets_url}img/really-simple-plugins-logo.svg`}
+                        alt={__("Really Simple Plugins logo", "metricool")}
+                    />
+                )}
+            />
             <FlexContainer direction={"column"} className={"!gap-2"}>
                 {isLoading ? (
                     <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
