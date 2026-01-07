@@ -22,7 +22,7 @@ const MetricTile = ({ children, className, variant, trend, metric, inactive, dis
         )}>
             <div className={clsx("flex flex-row text-white text-[16px] items-center gap-1.5 justify-center")}>
                 {metric}
-                {trend && <Icon size={"xs"} icon={trend} iconClass={"text-white"}/>}
+                {trend && <Icon size={"xs"} icon={trend} className={"text-white"}/>}
             </div>
             <div className={"flex w-full items-center justify-center text-white text-xs"}>{children}</div>
         </div>

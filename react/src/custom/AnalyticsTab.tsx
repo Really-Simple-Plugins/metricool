@@ -145,7 +145,7 @@ const AnalyticsTab = () => {
         <FlexContainer direction={"column"} className={"justify-between grow"}>
             {isLoading ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
-                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                    <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center"}>
@@ -171,7 +171,7 @@ const AnalyticsTab = () => {
                     {isPending && (
                         <div className={"absolute w-full h-full bg-white opacity-45"}>
                             <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
-                                <Icon icon={"loading"} iconClass={"size-5"}/>
+                                <Icon icon={"loading"} className={"size-5"}/>
                             </FlexContainer>
                         </div>
                     )}
@@ -190,7 +190,7 @@ const AnalyticsTab = () => {
                 <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
                     <Select
                         defaultValue={periodFilter}
-                        icon={{ icon: "upsell", iconClass: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
+                        icon={{ icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
                         inputSize={"sm"}
                         className={"border-neutral-200 font-semibold !text-black max-w-fit flex-row-reverse"}
                         onValueChange={(value) => {
