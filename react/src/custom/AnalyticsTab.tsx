@@ -25,11 +25,6 @@ type TimelineData = {
 
 const dateFilterOptions = [
     {
-        label: __("Yesterday", "metricool"),
-        option: "yesterday",
-        isUpsell: false,
-    },
-    {
         label: __("Last week", "metricool"),
         option: "lastweek",
         isUpsell: false,
@@ -74,7 +69,7 @@ const AnalyticsTab = () => {
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
     });
-    const [periodFilter, setPeriodFilter] = useState(dashboardSettings.analytics?.activePeriodFilter ?? dateFilterOptions[3].option);
+    const [periodFilter, setPeriodFilter] = useState(dashboardSettings.analytics?.activePeriodFilter ?? dateFilterOptions[2].option);
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
