@@ -14,7 +14,7 @@ const pluginStatuses: Record<string, string> = {
     "upgrade-to-premium": __("Upgrade", "metricool"),
 };
 
-type RelatedPlugin = {
+type OtherPlugin = {
     action: keyof typeof pluginStatuses,
     activation_slug: string,
     constant_free: string,
@@ -27,13 +27,13 @@ type RelatedPlugin = {
     url: string,
 }
 
-const RelatedPlugins = () => {
+const OtherPlugins = () => {
     const { httpClient } = useGlobalContext();
-    const { isLoading, error, data: relatedPlugins = {} } = useQuery({
+    const { isLoading, error, data: otherPlugins = {} } = useQuery({
         queryKey: ["other_plugins_data"],
         queryFn: () => httpClient?.setRoute("related_plugins_data").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): Record<string, RelatedPlugin> => {
+        select: (data): Record<string, OtherPlugin> => {
             return data.data.plugins;
         }
     });
@@ -45,16 +45,16 @@ const RelatedPlugins = () => {
             key: string,
         }) => {
             if (action === "download" || action === "activate") {
-                const currentRelatedPluginsData: {
-                    data: { plugins: Record<string, RelatedPlugin> },
+                const currentOtherPluginsData: {
+                    data: { plugins: Record<string, OtherPlugin> },
                 } = queryClient.getQueryData(["other_plugins_data"]) ?? { data: { plugins: {} } };
-                const newPluginData = relatedPlugins;
+                const newPluginData = otherPlugins;
                 newPluginData[key] = {
                     ...newPluginData[key],
                     action: action === "download" ? "downloading" : action === "activate" ? "activating" : ""
                 };
-                currentRelatedPluginsData.data.plugins = newPluginData;
-                queryClient.setQueryData(["other_plugins_data"], { ...currentRelatedPluginsData });
+                currentOtherPluginsData.data.plugins = newPluginData;
+                queryClient.setQueryData(["other_plugins_data"], { ...currentOtherPluginsData });
             }
 
             const updatedPluginItemResponse = await httpClient?.setRoute("do_plugin_action").setPayload({
@@ -72,20 +72,20 @@ const RelatedPlugins = () => {
             return updatedPluginItem;
         },
         onSuccess: (data, variables) => {
-            const currentRelatedPluginsData: {
-                data: { plugins: Record<string, RelatedPlugin> },
+            const currentOtherPluginsData: {
+                data: { plugins: Record<string, OtherPlugin> },
             } = queryClient.getQueryData(["other_plugins_data"]) ?? { data: { plugins: {} } };
-            const newPluginData = relatedPlugins;
+            const newPluginData = otherPlugins;
             newPluginData[variables.key] = data;
-            currentRelatedPluginsData.data.plugins = newPluginData;
-            queryClient.setQueryData(["other_plugins_data"], { ...currentRelatedPluginsData });
+            currentOtherPluginsData.data.plugins = newPluginData;
+            queryClient.setQueryData(["other_plugins_data"], { ...currentOtherPluginsData });
             if (data.action === "activate") {
                 runPluginAction({ slug: data.slug, action: data.action, key: variables.key })
             }
         }
     });
 
-    const getRelatedPluginAction = (plugin: RelatedPlugin, pluginKey: string) => {
+    const getOtherPluginAction = (plugin: OtherPlugin, pluginKey: string) => {
         switch (plugin.action) {
             case "upgrade-to-premium": {
                 return () => {
@@ -109,7 +109,7 @@ const RelatedPlugins = () => {
 
     return (
         <Block variant={"transparent"} className={"xl:min-h-58 xl:max-h-58"}>
-            <BlockHeader title={__("Related Plugins", "metricool")}/>
+            <BlockHeader title={__("Other Plugins", "metricool")}/>
             <FlexContainer direction={"column"} className={"!gap-2"}>
                 {isLoading ? (
                     <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
@@ -117,14 +117,14 @@ const RelatedPlugins = () => {
                     </FlexContainer>
                 ) : error ? (
                     <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                        {__("There was an error fetching the related plugins.", "metricool")}
+                        {__("There was an error fetching other plugin data.", "metricool")}
                     </FlexContainer>
-                ) : relatedPlugins && Object.entries(relatedPlugins).map(([pluginKey, pluginData]) => (
+                ) : otherPlugins && Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (
                     <ListItem
                         icon={"circle"}
                         iconColor={pluginData.options_prefix.split("_")[0]}
                         iconPosition={"left"}
-                        action={getRelatedPluginAction(pluginData, pluginKey)}
+                        action={getOtherPluginAction(pluginData, pluginKey)}
                         actionText={pluginStatuses[pluginData.action]}
                         className={"font-semibold"}
                     >
@@ -136,4 +136,4 @@ const RelatedPlugins = () => {
     );
 };
 
-export default RelatedPlugins;
+export default OtherPlugins;
