@@ -108,7 +108,7 @@ const RelatedPlugins = () => {
     }
 
     return (
-        <Block variant={"transparent"} className={"min-h-[18rem] max-h-[18rem]"}>
+        <Block variant={"transparent"} className={"xl:min-h-58 xl:max-h-58"}>
             <BlockHeader title={__("Related Plugins", "metricool")}/>
             <FlexContainer direction={"column"} className={"!gap-2"}>
                 {isLoading ? (
