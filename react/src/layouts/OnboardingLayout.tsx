@@ -1,14 +1,104 @@
-import React from 'react';
-import { __ } from '@wordpress/i18n';
+import { __ } from "@wordpress/i18n";
+import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "../components";
+import { useGlobalContext } from "../context/GlobalContext.tsx";
+import OnboardingHeader from "../custom/Onboarding/OnboardingHeader.tsx";
+import { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import SignInForm from "../custom/Onboarding/SignInForm.tsx";
+import OnboardingForm from "../custom/Onboarding/OnboardingForm.tsx";
+import ConnectBrandStep from "../custom/Onboarding/OnboardingSteps/ConnectBrand.tsx";
+import LoadingStep from "../custom/Onboarding/OnboardingSteps/LoadingStep.tsx";
+import VerifyEmailStep from "../custom/Onboarding/OnboardingSteps/VerifyEmailStep.tsx";
 
-export const OnboardingLayout = ({ children }: { children?: React.ReactNode }) => {
+export const OnboardingLayout = () => {
+    const { metricool, dispatch } = useGlobalContext();
+    const [signInModalOpen, setSignInModalOpen] = useState<boolean>(false);
+    const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
+    const [enteredEmail, setEnteredEmail] = useState<string>("");
+    const [activeStep, setActiveStep] = useState<number>(0);
+    const onboardingSteps = [
+        (<VerifyEmailStep enteredEmail={enteredEmail}/>),
+        (<LoadingStep/>),
+        (<ConnectBrandStep/>),
+    ];
+
+    const { mutate: onSubmit } = useMutation({
+        mutationFn: async (formValues: {
+            credentials: {
+                email: string;
+                password: string;
+            };
+            terms: boolean;
+            marketing: boolean;
+        }) => {
+            setEnteredEmail(formValues.credentials.email);
+            setOnboardingModalOpen(true);
+            // const response = await httpClient?.setRoute("").setPayload({
+            // }).post();
+            const timer = new Promise(resolve => setTimeout(resolve, 8000));
+            await timer;
+
+            return formValues;
+        },
+        onSuccess: async (data) => {
+            console.log(data);
+            setActiveStep(1);
+            const timer = new Promise(resolve => setTimeout(resolve, 8000));
+            await timer;
+            setActiveStep(2);
+        },
+        onError: (data) => {
+            console.log(data);
+        }
+    });
+
     return (
-        <div>
-            <div className='p-2 flex gap-2'>
-                {__('Onboarding', 'metricool')}
-            </div>
-            <hr/>
-            {children}
-        </div>
+        <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 !gap-0"}>
+            <OnboardingHeader
+                logo={{ src: `${metricool.assets_url}img/mc-logo.svg`, alt: "Metricool Logo" }}
+                actions={[
+                    (__("Already a Metricooler?", "metricool")),
+                    (
+                        <Button variant={"primary-gradient-ghost"} className={"p-0 after:!bg-white after:!border-none !border-none"} onClick={() => setSignInModalOpen(true)}>
+                            {__("Sign in here", "metricool")}
+                        </Button>
+                    )
+                ]}
+            >
+                <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={"Metricool logo"}/>
+                {__("The digital Swiss Army Knife for social media marketers", "metricool")}
+            </OnboardingHeader>
+            <div className={"w-full h-[2px] bg-[image:var(--gradient-brand-secondary)]"}></div>
+            <FlexContainer direction={"row"} className={"w-full !gap-0"}>
+                <OnboardingForm onSubmit={(values) => onSubmit(values)}/>
+                <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={"Metricool logo"}/>
+            </FlexContainer>
+            <Dialog
+                id={"sign-in-modal"}
+                open={signInModalOpen}
+                onOpenChange={setSignInModalOpen}
+                showCloseButton={true}
+                className={"flex flex-col gap-6 justify-center items-center"}
+            >
+                <DialogHeader className={"!gap-0 mt-8 justify-center items-center"}>
+                    <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[37px] w-auto"} alt={"Metricool logo"}/>
+                    <DialogTitle className={"font-bold font-nunito m-0 text-2xl leading-6"}>
+                        {__("Sign in with your credentials", "metricool")}
+                    </DialogTitle>
+                </DialogHeader>
+                <SignInForm onSubmit={(values) => {
+                    console.log(values);
+                    dispatch({ dispatchType: "setOnboardingComplete" });
+                }}/>
+            </Dialog>
+            <Dialog
+                id={"onboarding-modal"}
+                open={onboardingModalOpen}
+                showCloseButton={false}
+                className={"flex flex-col justify-center items-center h-[500px]"}
+            >
+                {onboardingSteps[activeStep]}
+            </Dialog>
+        </FlexContainer>
     );
 };

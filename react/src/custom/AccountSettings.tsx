@@ -11,7 +11,8 @@ import { useGlobalContext } from "../context/GlobalContext.tsx";
 
 const formSchema = z.object({
     sendToAlternativeEmail: z.boolean(),
-    alternativeEmail: z.email(__("Please enter a valid email address", "metricool")),
+    alternativeEmail: z.email({ error: () => __("Please enter a valid email address", "metricool")
+    }),
 }).required();
 
 const AccountSettings = () => {

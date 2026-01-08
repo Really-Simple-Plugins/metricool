@@ -20,7 +20,11 @@ const defaultMetricoolData = {
     site_url: "",
     assets_url: "",
     json_translations: [],
+    trusted_urls: {
+        legal_terms: "",
+    },
     is_onboarding_completed: false,
+    was_dashboard_modal_closed: false,
     support: null,
     locale: "",
     blogId: "",
@@ -110,7 +114,13 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
             if (!action.change.metricool) {
                 return { ...state };
             }
-            return { ...state, metricool: { ...action.change.metricool, is_onboarding_completed: true } };
+            return { ...state, metricool: { ...action.change.metricool } };
+        }
+        case "setOnboardingComplete": {
+            return { ...state, metricool: { ...state.metricool, is_onboarding_completed: true } };
+        }
+        case "setDashboardModalClosed": {
+            return { ...state, metricool: { ...state.metricool, was_dashboard_modal_closed: true } };
         }
         case "setTranslations": {
             if (!state.metricool) {
