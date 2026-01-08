@@ -1,4 +1,4 @@
-import { Block, BlockHeader, FlexContainer, Input, Label, showToast, Switch, Icon } from "../components";
+import { Block, BlockHeader, FieldWrapper, FlexContainer, Icon, Input, showToast, Switch } from "../components";
 import { __ } from "@wordpress/i18n";
 import FormFooter from "./FormFooter.tsx";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,7 +11,8 @@ import { useGlobalContext } from "../context/GlobalContext.tsx";
 
 const formSchema = z.object({
     sendToAlternativeEmail: z.boolean(),
-    alternativeEmail: z.email({ error: () => __("Please enter a valid email address", "metricool")
+    alternativeEmail: z.email({
+        error: () => __("Please enter a valid email address", "metricool"),
     }),
 }).required();
 
@@ -31,6 +32,8 @@ const AccountSettings = () => {
     const {
         handleSubmit,
         formState: { errors: formValidationErrors, isDirty },
+        getValues,
+        resetField,
         control,
         setError,
     } = useForm<z.infer<typeof formSchema>>({
@@ -84,7 +87,9 @@ const AccountSettings = () => {
             showToast.error(__("There was an error updating your settings", "metricool"));
             if (data.fields) {
                 try {
-                    (Object.entries(data.fields) as [keyof z.infer<typeof formSchema>, {message: string}][]).forEach(([fieldKey, fieldContent]) => {
+                    (Object.entries(data.fields) as [keyof z.infer<typeof formSchema>, {
+                        message: string
+                    }][]).forEach(([fieldKey, fieldContent]) => {
                         setError(fieldKey, {
                             type: "custom",
                             message: fieldContent?.message,
@@ -127,28 +132,57 @@ const AccountSettings = () => {
                         </div>
                     ) : (
                         <FlexContainer direction={"column"}>
-                            <FlexContainer direction={"column"} className={"!gap-2"}>
-                                <FlexContainer direction={"row"} className={"w-full justify-between"}>
-                                    <Label htmlFor={"sendToAlternativeEmail"}>{__("Receive monthly summary", "metricool")}</Label>
-                                    <Controller
-                                        control={control}
-                                        render={({ field }) =>
-                                            <Switch checked={field.value} onCheckedChange={field.onChange}/>}
-                                        name={"sendToAlternativeEmail"}
-                                    />
-                                </FlexContainer>
-                                <span className={"text-red-500 text-sm"}>{formValidationErrors.sendToAlternativeEmail?.message}</span>
-                            </FlexContainer>
-                            <FlexContainer direction={"column"} className={"!gap-2"}>
-                                <Label htmlFor={"alternativeEmail"}>{__("Custom e-mail for the monthly summary", "metricool")}</Label>
+                            <Controller
+                                control={control}
+                                name={"sendToAlternativeEmail"}
+                                render={({ field, fieldState }) => (
+                                    <FieldWrapper
+                                        flexDirection={"row"}
+                                        className={"justify-between"}
+                                        label={__("Receive monthly summary", "metricool")}
+                                        htmlFor={"send-to-alternative-email"}
+                                        fieldState={{
+                                            invalid: fieldState.invalid,
+                                            error: { message: fieldState.error?.message }
+                                        }}
+                                    >
+                                        <Switch
+                                            id={"send-to-alternative-email"}
+                                            checked={field.value}
+                                            onCheckedChange={
+                                                (checked) => {
+                                                    field.onChange(checked);
+                                                    if (!checked) {
+                                                        resetField("alternativeEmail");
+                                                    }
+                                                }
+                                            }
+                                        />
+                                    </FieldWrapper>
+                                )}
+                            />
+                            {getValues().sendToAlternativeEmail && (
                                 <Controller
                                     control={control}
-                                    render={({ field }) =>
-                                        <Input {...field} id={"alternativeEmail"} placeholder={__("Placeholder", "metricool")}/>}
                                     name={"alternativeEmail"}
+                                    render={({ field, fieldState }) => (
+                                        <FieldWrapper
+                                            label={__("Custom e-mail for the monthly summary", "metricool")}
+                                            htmlFor={"alternative-email"}
+                                            fieldState={{
+                                                invalid: fieldState.invalid,
+                                                error: { message: fieldState.error?.message }
+                                            }}
+                                        >
+                                            <Input
+                                                {...field}
+                                                id={"alternative-email"}
+                                                placeholder={__("Placeholder", "metricool")}
+                                            />
+                                        </FieldWrapper>
+                                    )}
                                 />
-                                <span className={"text-red-500 text-sm"}>{formValidationErrors.alternativeEmail?.message}</span>
-                            </FlexContainer>
+                            )}
                         </FlexContainer>
                     )}
                 </Block>
