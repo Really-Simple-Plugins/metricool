@@ -12,7 +12,15 @@ type AccountTileProps = {
     link?: string,
 }
 
-const AccountTile = ({ label, icon, connectedClasses, unconnectedClasses, upsell, userName, link }: AccountTileProps) => {
+const AccountTile = ({
+    label,
+    icon,
+    connectedClasses,
+    unconnectedClasses,
+    upsell,
+    userName,
+    link
+}: AccountTileProps) => {
     return (
         <FlexContainer
             direction={"row"}
