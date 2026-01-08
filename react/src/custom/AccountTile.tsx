@@ -1,4 +1,4 @@
-import { Icon, type IconProps } from "../components";
+import { FlexContainer, Icon, type IconProps } from "../components";
 import { clsx } from "clsx";
 import { __, sprintf } from "@wordpress/i18n";
 
@@ -14,15 +14,22 @@ type AccountTileProps = {
 
 const AccountTile = ({ label, icon, connectedClasses, unconnectedClasses, upsell, userName, link }: AccountTileProps) => {
     return (
-        <div onClick={() => {window.open(link, "_blank"); window.focus();}}
-             className={clsx("flex rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2 cursor-pointer",
-                 userName ? "border-neutral-200" : unconnectedClasses,
-        )}>
-            <div className={"min-w-[25px] flex items-center justify-center"}>
+        <FlexContainer
+            direction={"row"}
+            onClick={() => {
+                window.open(link, "_blank");
+                window.focus();
+            }}
+            className={clsx(
+                "flex rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2 cursor-pointer",
+                userName ? "border-neutral-200" : unconnectedClasses,
+            )}
+        >
+            <FlexContainer direction={"row"} className={"min-w-[25px] items-center justify-center"}>
                 <Icon icon={icon} className={clsx("size-6", userName ? connectedClasses : "text-white")}/>
-            </div>
-            <div className={"flex justify-between items-center grow"}>
-                <div className={clsx("text-sm flex flex-col justify-center")}>
+            </FlexContainer>
+            <FlexContainer direction={"row"} className={"justify-between items-center grow"}>
+                <FlexContainer direction={"column"} className={clsx("text-sm justify-center")}>
                     {userName ? (
                         <>
                             <span className={"text-gray-500"}>{label}</span>
@@ -31,12 +38,12 @@ const AccountTile = ({ label, icon, connectedClasses, unconnectedClasses, upsell
                     ) : (
                         <span className={"text-white"}>{sprintf(__("Connect a %s Account"), label)}</span>
                     )}
-                </div>
+                </FlexContainer>
                 {upsell && (
                     <Icon icon={"upsell"} className={"size-2.5 p-0.5 bg-upsell rounded-full text-black"}/>
                 )}
-            </div>
-        </div>
+            </FlexContainer>
+        </FlexContainer>
     );
 };
 
