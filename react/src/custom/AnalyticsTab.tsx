@@ -1,4 +1,12 @@
-import { Button, type ChartConfig, FlexContainer, LineChart, Select, SelectOption } from "../components";
+import {
+    Button,
+    type ChartConfig,
+    DisabledSelectOption,
+    FlexContainer,
+    LineChart,
+    Select,
+    SelectOption
+} from "../components";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -197,16 +205,15 @@ const AnalyticsTab = () => {
                     >
                         {dateFilterOptions.map((filterOption) =>
                             filterOption.isUpsell ? (
-                                <FlexContainer
+                                <DisabledSelectOption
+                                    className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
                                     onClick={() => {window.open(metricoolSSOLink); window.focus();}}
-                                    direction={"row"}
-                                    className={clsx("items-center rounded-xs py-1.5 px-2 !gap-2 text-sm outline-hidden select-none font-semibold cursor-pointer bg-secondary-light hover:bg-upsell focus:bg-upsell")}
                                 >
                                     <span className="flex size-3.5 items-center justify-center">
                                         <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
                                     </span>
                                     {filterOption.label}
-                                </FlexContainer>
+                                </DisabledSelectOption>
                             ) : (
                                 <SelectOption
                                     value={filterOption.option}
