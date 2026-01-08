@@ -26,8 +26,8 @@ const ConnectedAccounts = () => {
                 {
                     label: "Web",
                     icon: "web",
-                    connectedClasses: "text-[#5c90a8]",
-                    unconnectedClasses: "bg-[#5c90a8] border-[#5c90a8]",
+                    connectedClasses: "text-web",
+                    unconnectedClasses: "bg-web border-web",
                     upsell: false,
                     link: `https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.web && data.data.web.url && { userName: data.data.web.url }),
@@ -35,8 +35,8 @@ const ConnectedAccounts = () => {
                 {
                     label: "Twitter / X",
                     icon: "twitter",
-                    connectedClasses: "text-black",
-                    unconnectedClasses: "bg-black border-black",
+                    connectedClasses: "text-x",
+                    unconnectedClasses: "bg-x border-x",
                     upsell: true,
                     link: `https://app.metricool.com/evolution/twitter?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.twitter && { userName: data.data.twitter.username }),
