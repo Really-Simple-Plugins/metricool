@@ -3,7 +3,7 @@ import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "../com
 import Progress from "../custom/Progress.tsx";
 import WebsiteAnalytics from "../custom/WebsiteAnalytics.tsx";
 import ConnectedAccounts from "../custom/ConnectedAccounts.tsx";
-import OtherPlugins from "../custom/RelatedPlugins.tsx";
+import OtherPlugins from "../custom/OtherPlugins.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 
