@@ -19,7 +19,7 @@ const AccountTile = ({ label, icon, connectedClasses, unconnectedClasses, upsell
                  userName ? "border-neutral-200" : unconnectedClasses,
         )}>
             <div className={"min-w-[25px] flex items-center justify-center"}>
-                <Icon icon={icon} size={"xl"} className={clsx(userName ? connectedClasses : "text-white")}/>
+                <Icon icon={icon} className={clsx("size-6", userName ? connectedClasses : "text-white")}/>
             </div>
             <div className={"flex justify-between items-center grow"}>
                 <div className={clsx("text-sm flex flex-col justify-center")}>
