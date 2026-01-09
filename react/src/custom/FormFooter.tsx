@@ -55,7 +55,7 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
             {isPageScrollable && <ScrollProgressBar scrollProgress={scrollProgressPercent}/>}
             <FlexContainer direction={"row"} className={"justify-end items-center p-2"}>
                 {settingsStates.find(state => state.condition)?.message}
-                <Button disabled={!formHasUnsavedChanges} type={"submit"} variant={"black"}>Save changes</Button>
+                <Button disabled={(!formHasUnsavedChanges || formIsSubmitting)} type={"submit"} variant={"black"}>Save changes</Button>
             </FlexContainer>
         </div>
     );
