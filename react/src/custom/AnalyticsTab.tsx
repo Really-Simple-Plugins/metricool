@@ -31,7 +31,7 @@ type TimelineData = {
     visitors: number,
 }[]
 
-const dateFilterOptions = [
+const periodFilterOptions = [
     {
         label: __("Last week", "metricool"),
         option: "lastweek",
@@ -77,7 +77,7 @@ const AnalyticsTab = () => {
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
     });
-    const [periodFilter, setPeriodFilter] = useState(dashboardSettings.analytics?.activePeriodFilter ?? dateFilterOptions[2].option);
+    const [periodFilter, setPeriodFilter] = useState(dashboardSettings.analytics?.activePeriodFilter ?? periodFilterOptions[2].option);
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
@@ -204,9 +204,9 @@ const AnalyticsTab = () => {
                             });
                             updateChartData({ period: value });
                         }}
-                        placeholder={dateFilterOptions.find((filterOption) => filterOption.option === periodFilter)?.label}
+                        placeholder={periodFilterOptions.find((filterOption) => filterOption.option === periodFilter)?.label}
                     >
-                        {dateFilterOptions.map((filterOption) =>
+                        {periodFilterOptions.map((filterOption) =>
                             filterOption.isUpsell ? (
                                 <DisabledSelectOption
                                     className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
