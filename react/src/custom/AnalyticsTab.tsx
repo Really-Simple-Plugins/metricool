@@ -211,8 +211,7 @@ const AnalyticsTab = () => {
                         inputSize={"sm"}
                         className={"border-neutral-200 font-semibold !text-black max-w-fit flex-row-reverse"}
                         onValueChange={(value) => {
-                            const selectedPeriodFilter = periodFilterOptions.find((option) => option.option === value);
-                            setPeriodFilter(selectedPeriodFilter ?? periodFilterOptions[2]);
+                            setPeriodFilter((prevState) => periodFilterOptions.find((option) => option.option === value) ?? prevState);
                             dispatch({
                                 dispatchType: "setDashboardSetting",
                                 change: { dashboardSettings: { analytics: { activePeriodFilter: value } } }
