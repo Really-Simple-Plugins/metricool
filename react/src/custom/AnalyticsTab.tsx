@@ -84,7 +84,7 @@ const AnalyticsTab = () => {
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
     });
-    const [periodFilter, setPeriodFilter] = useState(dashboardSettings.analytics?.activePeriodFilter ?? periodFilterOptions[2].option);
+    const [periodFilter, setPeriodFilter] = useState(periodFilterOptions.find((option) => option.option === dashboardSettings.analytics?.activePeriodFilter) ?? periodFilterOptions[2]);
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
@@ -116,7 +116,7 @@ const AnalyticsTab = () => {
 
     const { data: analyticsData, isLoading, error } = useQuery({
         queryKey: ["analytics"],
-        queryFn: () => httpClient?.setRoute("analytics").setFilters({ period: periodFilter }).get(),
+        queryFn: () => httpClient?.setRoute("analytics").setFilters({ period: periodFilter.option }).get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): { totals: Record<string, MetricData>, timelineData: TimelineData } => data.data,
     });
@@ -199,19 +199,20 @@ const AnalyticsTab = () => {
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
                 <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
                     <Select
-                        defaultValue={periodFilter}
+                        defaultValue={periodFilter.option}
                         icon={{ icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
                         inputSize={"sm"}
                         className={"border-neutral-200 font-semibold !text-black max-w-fit flex-row-reverse"}
                         onValueChange={(value) => {
-                            setPeriodFilter(value);
+                            const selectedPeriodFilter = periodFilterOptions.find((option) => option.option === value);
+                            setPeriodFilter(selectedPeriodFilter ?? periodFilterOptions[2]);
                             dispatch({
                                 dispatchType: "setDashboardSetting",
                                 change: { dashboardSettings: { analytics: { activePeriodFilter: value } } }
                             });
                             updateChartData({ period: value });
                         }}
-                        placeholder={periodFilterOptions.find((filterOption) => filterOption.option === periodFilter)?.label}
+                        placeholder={periodFilter.label}
                     >
                         {periodFilterOptions.map((filterOption) =>
                             filterOption.isUpsell ? (
