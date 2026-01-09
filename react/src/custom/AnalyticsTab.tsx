@@ -113,6 +113,7 @@ const AnalyticsTab = () => {
         },
     });
     const lineChartXAxisDataKey = "label";
+    const [xAxisInterval, setXAxisInterval] = useState(periodFilterOptions[2].interval);
 
     const { data: analyticsData, isLoading, error } = useQuery({
         queryKey: ["analytics"],
@@ -148,6 +149,7 @@ const AnalyticsTab = () => {
                 data: { totals: Record<string, MetricData>, timelineData: TimelineData },
             } = queryClient.getQueryData(["analytics"]) ?? { data: { totals: {}, timelineData: [] } };
             queryClient.setQueryData(["analytics"], { ...currentChartData, data: data });
+            setXAxisInterval(periodFilter.interval);
         }
     });
 
@@ -191,6 +193,7 @@ const AnalyticsTab = () => {
                         chartSettings={{
                             xAxisKey: lineChartXAxisDataKey,
                             general: { height: 290 },
+                            xAxis: { interval: xAxisInterval },
                         }}
                         chartData={analyticsData.timelineData}
                         linesSettings={{ type: "monotone" }}/>
