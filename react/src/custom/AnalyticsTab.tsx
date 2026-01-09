@@ -36,36 +36,43 @@ const periodFilterOptions = [
         label: __("Last week", "metricool"),
         option: "lastweek",
         isUpsell: false,
+        interval: 0,
     },
     {
         label: __("Current month", "metricool"),
         option: "currentmonth",
         isUpsell: false,
+        interval: 4,
     },
     {
         label: __("Last 30 days", "metricool"),
         option: "last30days",
         isUpsell: false,
+        interval: 4,
     },
     {
         label: __("Previous month", "metricool"),
         option: "previousmonth",
         isUpsell: false,
+        interval: 4,
     },
     {
         label: __("Last 3 months", "metricool"),
         option: "last3months",
         isUpsell: false,
+        interval: 6,
     },
     {
         label: __("Last 6 months", "metricool"),
         option: "last6months",
         isUpsell: true,
+        interval: 29,
     },
     {
         label: __("Last 12 months", "metricool"),
         option: "last12months",
         isUpsell: true,
+        interval: 29,
     },
 ];
 
