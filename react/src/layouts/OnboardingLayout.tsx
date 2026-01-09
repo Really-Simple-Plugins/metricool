@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import SignInForm from "../custom/Onboarding/SignInForm.tsx";
 import OnboardingForm from "../custom/Onboarding/OnboardingForm.tsx";
-import ConnectBrandStep from "../custom/Onboarding/OnboardingSteps/ConnectBrand.tsx";
+import ConnectBrandStep from "../custom/Onboarding/OnboardingSteps/ConnectBrandStep.tsx";
 import LoadingStep from "../custom/Onboarding/OnboardingSteps/LoadingStep.tsx";
 import VerifyEmailStep from "../custom/Onboarding/OnboardingSteps/VerifyEmailStep.tsx";
 
