@@ -198,7 +198,10 @@ const AnalyticsTab = () => {
                         className={"border-neutral-200 font-semibold !text-black max-w-fit flex-row-reverse"}
                         onValueChange={(value) => {
                             setPeriodFilter(value);
-                            dispatch({dispatchType: "setDashboardSetting", change: {dashboardSettings: { analytics: {activePeriodFilter: value} }}})
+                            dispatch({
+                                dispatchType: "setDashboardSetting",
+                                change: { dashboardSettings: { analytics: { activePeriodFilter: value } } }
+                            });
                             updateChartData({ period: value });
                         }}
                         placeholder={dateFilterOptions.find((filterOption) => filterOption.option === periodFilter)?.label}
