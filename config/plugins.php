@@ -2,7 +2,7 @@
     exit;
 }
 
-// The related config can only be used AFTER or ON the 'init' hook.
+// The plugnis config can only be used AFTER or ON the 'init' hook.
 return [
     'really-simple-ssl' => [
         'slug' => 'really-simple-ssl',
