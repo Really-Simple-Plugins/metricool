@@ -6,11 +6,11 @@ namespace Metricool\Services;
 
 use Metricool\Support\Helpers\Storage;
 
-class RelatedPluginService
+class OtherPluginService
 {
     /**
-     * Should be a Storage object based on one entry in the related config
-     * {@see config/related.php}
+     * Should be a Storage object based on one entry in the plugins config
+     * {@see config/plugins.php}
      */
     protected Storage $pluginConfig;
 
@@ -24,7 +24,7 @@ class RelatedPluginService
 
     /**
      * Use this method as the default way to set the plugin config. For an
-     * example see {@see \Metricool\Http\Endpoints\RelatedPluginEndpoints}
+     * example see {@see \Metricool\Http\Endpoints\OtherPluginEndpoints}
      */
     public function setPluginConfig(array $pluginConfig): void
     {
@@ -69,7 +69,7 @@ class RelatedPluginService
     }
 
     /**
-     * Execute action for a related plugin
+     * Execute action for another plugin
      */
     public function executeAction(string $action): void
     {
@@ -94,7 +94,7 @@ class RelatedPluginService
     }
 
     /**
-     * Download the related plugin currently stored in the plugin config
+     * Download the other plugin currently stored in the plugin config
      * property.
      */
     protected function downloadCurrentPlugin(): bool
@@ -136,7 +136,7 @@ class RelatedPluginService
     }
 
     /**
-     * Activate the related plugin currently stored in the plugin config
+     * Activate the other plugin currently stored in the plugin config
      * property.
      */
     protected function activateCurrentPlugin(): bool
