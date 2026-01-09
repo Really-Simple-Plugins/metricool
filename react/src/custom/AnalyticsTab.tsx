@@ -149,7 +149,11 @@ const AnalyticsTab = () => {
                 data: { totals: Record<string, MetricData>, timelineData: TimelineData },
             } = queryClient.getQueryData(["analytics"]) ?? { data: { totals: {}, timelineData: [] } };
             queryClient.setQueryData(["analytics"], { ...currentChartData, data: data });
-            setXAxisInterval(periodFilter.interval);
+            if (periodFilter.option === "currentmonth") {
+                setXAxisInterval(data.timelineData.length < 14 ? 0 : 4);
+            } else {
+                setXAxisInterval(periodFilter.interval);
+            }
         }
     });
 
