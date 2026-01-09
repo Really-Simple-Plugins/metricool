@@ -18,7 +18,7 @@ import OnboardingSchema from "../OnboardingSchema.ts";
 const brandSchema = OnboardingSchema.pick({ brand: true });
 
 const ConnectBrandStep = () => {
-    const { dispatch } = useGlobalContext();
+    const { dispatch, metricool } = useGlobalContext();
 
     const {
         handleSubmit,
@@ -37,9 +37,10 @@ const ConnectBrandStep = () => {
     }
 
     return (
-        <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center w-2/3"}>
+        <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center"}>
             <FlexContainer direction={"column"} className={"w-full !gap-2"}>
-                <DialogHeader className={"!gap-8 justify-center items-center"}>
+                <DialogHeader className={"justify-center items-center"}>
+                    <img src={`${metricool.assets_url}img/onboarding-connect-brand.svg`} alt="Link icon"/>
                     <DialogTitle className={"font-bold font-nunito m-0 text-2xl"}>
                         {__("Connect your brand", "metricool")}
                     </DialogTitle>
@@ -48,7 +49,7 @@ const ConnectBrandStep = () => {
                     {__("Choose the brand that you want to connect to this website", "metricool")}
                 </div>
             </FlexContainer>
-            <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-4 w-full"}>
+            <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
                 <Controller
                     control={control}
                     name={"brand"}

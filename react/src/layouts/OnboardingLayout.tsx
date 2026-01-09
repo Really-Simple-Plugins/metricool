@@ -95,7 +95,7 @@ export const OnboardingLayout = () => {
                 id={"onboarding-modal"}
                 open={onboardingModalOpen}
                 showCloseButton={false}
-                className={"flex flex-col justify-center items-center h-[500px]"}
+                className={"flex flex-col justify-center items-center"}
             >
                 {onboardingSteps[activeStep]}
             </Dialog>

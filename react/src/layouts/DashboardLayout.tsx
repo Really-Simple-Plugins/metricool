@@ -27,12 +27,12 @@ export const DashboardLayout = () => {
                 open={!metricool.was_dashboard_modal_closed}
                 showCloseButton={true}
                 onOpenChange={() => dispatch({ dispatchType: "setDashboardModalClosed" })}
-                className={"flex flex-col justify-center items-center h-[500px]"}
+                className={"flex flex-col justify-center items-center"}
             >
                 <FlexContainer direction={"column"} className={"justify-center items-center !gap-6"}>
-                    <div className={"rounded-full min-h-[186px] min-w-[186px] bg-secondary"}></div>
+                    <img src={`${metricool.assets_url}img/onboarding-completed.svg`} alt="Checkmark icon"/>
                     <FlexContainer direction={"column"} className={"!gap-2"}>
-                        <DialogHeader className={"!gap-8 justify-center items-center"}>
+                        <DialogHeader className={"justify-center items-center"}>
                             <DialogTitle className={"font-bold font-nunito m-0 text-2xl"}>
                                 {__("You're all set!", "metricool")}
                             </DialogTitle>

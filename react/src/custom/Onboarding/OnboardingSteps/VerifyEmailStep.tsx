@@ -26,8 +26,8 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
     });
     return (
         <FlexContainer direction={"column"} className={"justify-center items-center"}>
-            <DialogHeader className={"!gap-8 justify-center items-center"}>
-                <img src={`${metricool.assets_url}img/metricool_welcome.png`} className={"min-h-[150px] max-h-[150px] w-auto"} alt={"Metricool welcome"}/>
+            <DialogHeader className={"justify-center items-center"}>
+                <img src={`${metricool.assets_url}img/onboarding-email-sent.svg`} alt={"Metricool welcome"}/>
                 <FlexContainer direction={"column"} className={"w-full justify-center items-center"}>
                     {resendEmailSuccess && (
                         <FlexContainer direction={"row"} className={"!gap-2 justify-center items-center rounded-md bg-rsp-success-light px-3 py-2 "}>
