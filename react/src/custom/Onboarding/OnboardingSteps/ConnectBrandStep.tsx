@@ -40,7 +40,7 @@ const ConnectBrandStep = () => {
         <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center"}>
             <FlexContainer direction={"column"} className={"w-full !gap-2"}>
                 <DialogHeader className={"justify-center items-center"}>
-                    <img src={`${metricool.assets_url}img/onboarding-connect-brand.svg`} alt="Link icon"/>
+                    <img src={`${metricool.assets_url}img/onboarding-connect-brand.svg`} alt={__("Link icon", "metricool")}/>
                     <DialogTitle className={"font-bold font-nunito m-0 text-2xl"}>
                         {__("Connect your brand", "metricool")}
                     </DialogTitle>

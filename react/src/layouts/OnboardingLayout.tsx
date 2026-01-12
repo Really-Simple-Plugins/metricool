@@ -65,13 +65,13 @@ export const OnboardingLayout = () => {
                     )
                 ]}
             >
-                <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={"Metricool logo"}/>
+                <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={__("Metricool logo", "metricool")}/>
                 {__("The digital Swiss Army Knife for social media marketers", "metricool")}
             </OnboardingHeader>
             <div className={"w-full h-[2px] bg-[image:var(--gradient-brand-secondary)]"}></div>
             <FlexContainer direction={"row"} className={"w-full !gap-0"}>
                 <OnboardingForm onSubmit={(values) => onSubmit(values)}/>
-                <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={"Metricool logo"}/>
+                <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={__("Laptop and phone displaying the Metricool app", "metricool")}/>
             </FlexContainer>
             <Dialog
                 id={"sign-in-modal"}
@@ -81,7 +81,7 @@ export const OnboardingLayout = () => {
                 className={"flex flex-col gap-6 justify-center items-center"}
             >
                 <DialogHeader className={"!gap-0 mt-8 justify-center items-center"}>
-                    <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[37px] w-auto"} alt={"Metricool logo"}/>
+                    <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[37px] w-auto"} alt={__("Metricool logo", "metricool")}/>
                     <DialogTitle className={"font-bold font-nunito m-0 text-2xl leading-6"}>
                         {__("Sign in with your credentials", "metricool")}
                     </DialogTitle>

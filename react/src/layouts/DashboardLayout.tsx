@@ -30,7 +30,7 @@ export const DashboardLayout = () => {
                 className={"flex flex-col justify-center items-center"}
             >
                 <FlexContainer direction={"column"} className={"justify-center items-center !gap-6"}>
-                    <img src={`${metricool.assets_url}img/onboarding-completed.svg`} alt="Checkmark icon"/>
+                    <img src={`${metricool.assets_url}img/onboarding-completed.svg`} alt={__("Checkmark icon", "metricool")}/>
                     <FlexContainer direction={"column"} className={"!gap-2"}>
                         <DialogHeader className={"justify-center items-center"}>
                             <DialogTitle className={"font-bold font-nunito m-0 text-2xl"}>
