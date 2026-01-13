@@ -36,43 +36,43 @@ const periodFilterOptions = [
         label: __("Last week", "metricool"),
         option: "lastweek",
         isUpsell: false,
-        interval: 0,
+        xAxisInterval: 0,
     },
     {
         label: __("Current month", "metricool"),
         option: "currentmonth",
         isUpsell: false,
-        interval: 4,
+        xAxisInterval: 4,
     },
     {
         label: __("Last 30 days", "metricool"),
         option: "last30days",
         isUpsell: false,
-        interval: 4,
+        xAxisInterval: 4,
     },
     {
         label: __("Previous month", "metricool"),
         option: "previousmonth",
         isUpsell: false,
-        interval: 4,
+        xAxisInterval: 4,
     },
     {
         label: __("Last 3 months", "metricool"),
         option: "last3months",
         isUpsell: false,
-        interval: 6,
+        xAxisInterval: 6,
     },
     {
         label: __("Last 6 months", "metricool"),
         option: "last6months",
         isUpsell: true,
-        interval: 29,
+        xAxisInterval: 29,
     },
     {
         label: __("Last 12 months", "metricool"),
         option: "last12months",
         isUpsell: true,
-        interval: 29,
+        xAxisInterval: 29,
     },
 ];
 
@@ -113,7 +113,7 @@ const AnalyticsTab = () => {
         },
     });
     const lineChartXAxisDataKey = "label";
-    const [xAxisInterval, setXAxisInterval] = useState(periodFilterOptions[2].interval);
+    const [xAxisInterval, setXAxisInterval] = useState(periodFilterOptions[2].xAxisInterval);
 
     const { data: analyticsData, isLoading, error } = useQuery({
         queryKey: ["analytics"],
@@ -152,7 +152,7 @@ const AnalyticsTab = () => {
             if (periodFilter.option === "currentmonth") {
                 setXAxisInterval(data.timelineData.length < 14 ? 0 : 4);
             } else {
-                setXAxisInterval(periodFilter.interval);
+                setXAxisInterval(periodFilter.xAxisInterval);
             }
         }
     });
