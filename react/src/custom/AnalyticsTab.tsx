@@ -23,6 +23,13 @@ type MetricData = {
     trend: "stable" | "up" | "down",
 }
 
+export type PeriodFilterOption = {
+    label: string,
+    option: string,
+    isUpsell: boolean,
+    xAxisInterval: number,
+}
+
 type TimelineData = {
     date: string,
     pageViews: number,
