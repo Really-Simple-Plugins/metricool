@@ -136,10 +136,10 @@ const AnalyticsTab = () => {
         }) => {
             return httpClient?.setRoute("analytics").setFilters({ period: period }).get();
         },
-        onSuccess: (data) => {
-            queryClient.setQueryData(["analytics"], { ...data });
+        onSuccess: (response) => {
+            queryClient.setQueryData(["analytics"], { ...response });
             if (periodFilter.option === "currentmonth") {
-                setXAxisInterval(data.timelineData.length < 14 ? 0 : 4);
+                setXAxisInterval(response.data.timelineData.length < 14 ? 0 : 4);
             } else {
                 setXAxisInterval(periodFilter.xAxisInterval);
             }
