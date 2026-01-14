@@ -50,7 +50,7 @@ const OtherPlugins = () => {
 
                 if (!currentOtherPluginsData){
                     return;
-                } // abort
+                } // abort - should never trigger as this mutation is not callable by users without other_plugins_data available but appeases TS
 
                 const newPluginData = otherPlugins;
                 newPluginData[key] = {
@@ -78,7 +78,7 @@ const OtherPlugins = () => {
 
             if (!currentOtherPluginsData) {
                 return;
-            } // abort - should never trigger as this mutation is not callable without other_plugins_data available but appeases TS
+            } // abort - should never trigger as this mutation is not callable by users without other_plugins_data available but appeases TS
 
             const newPluginData = otherPlugins;
             newPluginData[variables.key] = response.data.plugin;
