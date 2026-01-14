@@ -231,7 +231,7 @@ const AnalyticsTab = () => {
                         }}
                         placeholder={periodFilter.label}
                     >
-                        {periodFilterOptions.map((filterOption) =>
+                        {Object.values(periodFilterOptions).map((filterOption) =>
                             filterOption.isUpsell ? (
                                 <DisabledSelectOption
                                     className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
