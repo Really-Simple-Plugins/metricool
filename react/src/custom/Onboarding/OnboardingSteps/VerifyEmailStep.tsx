@@ -17,11 +17,11 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
 
             return new Promise(resolve => setTimeout(resolve, 2000));
         },
-        onSuccess: (data) => {
-            console.log(data);
+        onSuccess: (response) => {
+            console.log(response);
         },
-        onError: (data) => {
-            console.log(data);
+        onError: (error) => {
+            console.error(error);
         }
     });
     return (

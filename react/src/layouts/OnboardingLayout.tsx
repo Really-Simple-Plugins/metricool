@@ -40,15 +40,15 @@ export const OnboardingLayout = () => {
 
             return formValues;
         },
-        onSuccess: async (data) => {
-            console.log(data);
+        onSuccess: async (response) => {
+            console.log(response);
             setActiveStep(1);
             const timer = new Promise(resolve => setTimeout(resolve, 8000));
             await timer;
             setActiveStep(2);
         },
-        onError: (data) => {
-            console.log(data);
+        onError: (error) => {
+            console.error(error);
         }
     });
 
