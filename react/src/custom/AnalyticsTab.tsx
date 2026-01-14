@@ -84,6 +84,14 @@ const periodFilterOptions: Record<string, PeriodFilterOption> = {
     },
 };
 
+const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activePeriodFilterInContext: PeriodFilterOption | undefined): PeriodFilterOption => {
+    if (activePeriodFilterInContext) {
+        return activePeriodFilterInContext;
+    }
+
+    return defaultPeriodFilter;
+};
+
 const AnalyticsTab = () => {
     const { httpClient, metricool, dispatch, dashboardSettings } = useGlobalContext();
     const metricoolSSOLink = `https://app.metricool.com/user-settings/plan?blogId=${metricool.blogId}&userId=${metricool.userId}`;
@@ -92,7 +100,8 @@ const AnalyticsTab = () => {
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
     });
-    const [periodFilter, setPeriodFilter] = useState(periodFilterOptions.find((option) => option.option === dashboardSettings.analytics?.activePeriodFilter) ?? periodFilterOptions[2]);
+    const defaultPeriodFilter = periodFilterOptions.last30Days;
+    const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.analytics?.activePeriodFilter));
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
