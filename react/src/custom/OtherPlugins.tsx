@@ -1,4 +1,4 @@
-import { Block, BlockHeader, FlexContainer, Icon } from "../components";
+import { Block, BlockHeader, FlexContainer, Icon, showToast } from "../components";
 import { __ } from "@wordpress/i18n";
 import ListItem from "./ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -39,15 +39,19 @@ const OtherPlugins = () => {
     });
 
     const { mutate: runPluginAction } = useMutation({
-        mutationFn: async ({ slug, action, key }: {
-            slug: string,
+        onMutate: ({ action, key }: {
             action: string,
             key: string,
         }) => {
             if (action === "download" || action === "activate") {
                 const currentOtherPluginsData: {
                     data: { plugins: Record<string, OtherPlugin> },
-                } = queryClient.getQueryData(["other_plugins_data"]) ?? { data: { plugins: {} } };
+                } | undefined = queryClient.getQueryData(["other_plugins_data"]);
+
+                if (!currentOtherPluginsData){
+                    return;
+                } // abort
+
                 const newPluginData = otherPlugins;
                 newPluginData[key] = {
                     ...newPluginData[key],
@@ -56,20 +60,16 @@ const OtherPlugins = () => {
                 currentOtherPluginsData.data.plugins = newPluginData;
                 queryClient.setQueryData(["other_plugins_data"], { ...currentOtherPluginsData });
             }
-
-            const updatedPluginItemResponse = await httpClient?.setRoute("do_plugin_action").setPayload({
+        },
+        mutationFn: async ({ slug, action }: {
+            slug: string,
+            action: string,
+            key: string,
+        }) => {
+            return httpClient?.setRoute("do_plugin_action").setPayload({
                 "slug": slug,
                 "action": action,
             }).post();
-
-            const updatedPluginItem = updatedPluginItemResponse?.data?.plugin;
-
-            if (!updatedPluginItem) {
-                console.error("Error fetching updated plugin item: ", updatedPluginItemResponse?.message);
-                return;
-            }
-
-            return updatedPluginItem;
         },
         onSuccess: (data, variables) => {
             const currentOtherPluginsData: {
@@ -82,6 +82,10 @@ const OtherPlugins = () => {
             if (data.action === "activate") {
                 runPluginAction({ slug: data.slug, action: data.action, key: variables.key })
             }
+        },
+        onError: (error) => {
+            showToast.error(__("There was an unexpected error executing the action for the selected plugin", "metricool"));
+            console.error(error.message);
         }
     });
 
