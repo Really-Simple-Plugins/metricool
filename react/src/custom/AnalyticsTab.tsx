@@ -5,7 +5,8 @@ import {
     FlexContainer,
     LineChart,
     Select,
-    SelectOption
+    SelectOption,
+    showToast,
 } from "../components";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
@@ -133,16 +134,7 @@ const AnalyticsTab = () => {
         mutationFn: async ({ period }: {
             period: string,
         }) => {
-            const response = await httpClient?.setRoute("analytics").setFilters({ period: period }).get();
-
-            const newChartData = response?.data;
-
-            if (!newChartData) {
-                console.error("Error fetching chart data: ", response?.message);
-                return;
-            }
-
-            return newChartData;
+            return httpClient?.setRoute("analytics").setFilters({ period: period }).get();
         },
         onSuccess: (data) => {
             const currentChartData: {
@@ -154,6 +146,10 @@ const AnalyticsTab = () => {
             } else {
                 setXAxisInterval(periodFilter.xAxisInterval);
             }
+        },
+        onError: (error) => {
+            showToast.error(__("There was an fetching the chart data", "metricool"));
+            console.error(error.message);
         }
     });
 
