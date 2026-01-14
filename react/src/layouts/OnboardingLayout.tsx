@@ -9,6 +9,8 @@ import OnboardingForm from "../custom/Onboarding/OnboardingForm.tsx";
 import ConnectBrandStep from "../custom/Onboarding/OnboardingSteps/ConnectBrand.tsx";
 import LoadingStep from "../custom/Onboarding/OnboardingSteps/LoadingStep.tsx";
 import VerifyEmailStep from "../custom/Onboarding/OnboardingSteps/VerifyEmailStep.tsx";
+import OnboardingSchema from "../custom/Onboarding/OnboardingSchema.ts";
+import { z } from "zod";
 
 export const OnboardingLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
@@ -23,14 +25,7 @@ export const OnboardingLayout = () => {
     ];
 
     const { mutate: onSubmit } = useMutation({
-        mutationFn: async (formValues: {
-            credentials: {
-                email: string;
-                password: string;
-            };
-            terms: boolean;
-            marketing: boolean;
-        }) => {
+        mutationFn: async (formValues:  Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
             setEnteredEmail(formValues.credentials.email);
             setOnboardingModalOpen(true);
             // const response = await httpClient?.setRoute("").setPayload({
