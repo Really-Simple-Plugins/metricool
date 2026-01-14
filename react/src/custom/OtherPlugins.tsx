@@ -71,16 +71,21 @@ const OtherPlugins = () => {
                 "action": action,
             }).post();
         },
-        onSuccess: (data, variables) => {
+        onSuccess: (response, variables) => {
             const currentOtherPluginsData: {
                 data: { plugins: Record<string, OtherPlugin> },
-            } = queryClient.getQueryData(["other_plugins_data"]) ?? { data: { plugins: {} } };
+            } | undefined = queryClient.getQueryData(["other_plugins_data"]);
+
+            if (!currentOtherPluginsData) {
+                return;
+            } // abort - should never trigger as this mutation is not callable without other_plugins_data available but appeases TS
+
             const newPluginData = otherPlugins;
-            newPluginData[variables.key] = data;
+            newPluginData[variables.key] = response.data.plugin;
             currentOtherPluginsData.data.plugins = newPluginData;
             queryClient.setQueryData(["other_plugins_data"], { ...currentOtherPluginsData });
-            if (data.action === "activate") {
-                runPluginAction({ slug: data.slug, action: data.action, key: variables.key })
+            if (response.data.plugin.action === "activate") {
+                runPluginAction({ slug: response.data.plugin.slug, action: response.data.plugin.action, key: variables.key });
             }
         },
         onError: (error) => {
@@ -105,11 +110,11 @@ const OtherPlugins = () => {
                     slug: plugin.slug,
                     action: plugin.action,
                     key: pluginKey,
-                })
+                });
             }
 
         }
-    }
+    };
 
     return (
         <Block variant={"transparent"} className={"xl:min-h-58 xl:max-h-58"}>
