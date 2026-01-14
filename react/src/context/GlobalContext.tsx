@@ -1,6 +1,7 @@
 import React, { createContext, type Dispatch, useContext, useEffect, useReducer, } from "react";
 import HttpClient from "../api/HttpClient.tsx";
 import { setLocaleData } from "@wordpress/i18n";
+import type { PeriodFilterOption } from "../custom/AnalyticsTab.tsx";
 
 interface GlobalContext {
     globalState: GlobalState,
@@ -34,7 +35,11 @@ const defaultMetricoolData = {
 interface GlobalState {
     metricool: typeof defaultMetricoolData;
     httpClient: HttpClient | null;
-    dashboardSettings: Record<string, Record<string, string>>;
+    dashboardSettings: {
+        analytics?: {
+            activePeriodFilter?: PeriodFilterOption,
+        }
+    };
 }
 
 /**
