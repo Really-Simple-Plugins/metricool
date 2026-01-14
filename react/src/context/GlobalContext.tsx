@@ -158,7 +158,10 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
             if (!action.change) {
                 throw new Error("No new values provided");
             }
-            return { ...state, dashboardSettings: { ...state.dashboardSettings, ...action?.change?.dashboardSettings } };
+            return {
+                ...state,
+                dashboardSettings: { ...state.dashboardSettings, ...action?.change?.dashboardSettings },
+            };
         }
         default: {
             throw new Error("Unknown action: " + action.dispatchType);
