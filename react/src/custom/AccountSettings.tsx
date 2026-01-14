@@ -47,20 +47,10 @@ const AccountSettings = () => {
 
     const { mutate: onSubmit, isPending } = useMutation({
         mutationFn: async ({ sendToAlternativeEmail, alternativeEmail }: z.infer<typeof formSchema>) => {
-            const response = await httpClient?.setRoute("user_settings").setPayload({
+            return httpClient?.setRoute("user_settings").setPayload({
                 "sendToAlternativeEmail": sendToAlternativeEmail,
                 "alternativeEmail": alternativeEmail,
             }).post();
-
-            const newFormValues = response?.data;
-
-            if (!newFormValues) {
-                console.error("Error updating settings: ", response?.message);
-                showToast.error(__("There was an error updating your settings", "metricool"));
-                return;
-            }
-
-            return newFormValues;
         },
         onSuccess: (data) => {
             const currentSettingsData: {
