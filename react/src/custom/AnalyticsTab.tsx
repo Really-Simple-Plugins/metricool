@@ -219,7 +219,7 @@ const AnalyticsTab = () => {
                         defaultValue={periodFilter.option}
                         icon={{ icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
                         inputSize={"sm"}
-                        className={"border-neutral-200 font-semibold !text-black max-w-fit flex-row-reverse"}
+                        className={"border-neutral-200 font-semibold !text-black min-w-36 max-w-36 flex-row-reverse"}
                         onValueChange={(value) => {
                             setPeriodFilter((prevState) => periodFilterOptions.find((option) => option.option === value) ?? prevState);
                             dispatch({
