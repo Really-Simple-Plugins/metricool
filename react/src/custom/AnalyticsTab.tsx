@@ -39,50 +39,50 @@ type TimelineData = {
     visitors: number,
 }[]
 
-const periodFilterOptions = [
-    {
+const periodFilterOptions: Record<string, PeriodFilterOption> = {
+    lastWeek: {
         label: __("Last week", "metricool"),
         option: "lastweek",
         isUpsell: false,
         xAxisInterval: 0,
     },
-    {
+    currentMonth: {
         label: __("Current month", "metricool"),
         option: "currentmonth",
         isUpsell: false,
         xAxisInterval: 4,
     },
-    {
+    last30Days: {
         label: __("Last 30 days", "metricool"),
         option: "last30days",
         isUpsell: false,
         xAxisInterval: 4,
     },
-    {
+    previousMonth: {
         label: __("Previous month", "metricool"),
         option: "previousmonth",
         isUpsell: false,
         xAxisInterval: 4,
     },
-    {
+    last3Months: {
         label: __("Last 3 months", "metricool"),
         option: "last3months",
         isUpsell: false,
         xAxisInterval: 6,
     },
-    {
+    last6Months: {
         label: __("Last 6 months", "metricool"),
         option: "last6months",
         isUpsell: true,
         xAxisInterval: 29,
     },
-    {
+    last12Months: {
         label: __("Last 12 months", "metricool"),
         option: "last12months",
         isUpsell: true,
         xAxisInterval: 29,
     },
-];
+};
 
 const AnalyticsTab = () => {
     const { httpClient, metricool, dispatch, dashboardSettings } = useGlobalContext();
