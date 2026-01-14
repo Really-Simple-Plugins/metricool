@@ -225,7 +225,7 @@ const AnalyticsTab = () => {
                             setPeriodFilter((prevState) => selectedPeriodFilter ?? prevState);
                             dispatch({
                                 dispatchType: "setDashboardSetting",
-                                change: { dashboardSettings: { analytics: { activePeriodFilter: value } } }
+                                change: { dashboardSettings: { analytics: { activePeriodFilter: selectedPeriodFilter } } }
                             });
                             updateChartData({ period: value });
                         }}
