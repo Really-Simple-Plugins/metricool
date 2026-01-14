@@ -154,8 +154,9 @@ const AnalyticsTab = () => {
         },
         onSuccess: (response) => {
             queryClient.setQueryData(["analytics"], { ...response });
-            if (periodFilter.option === "currentmonth") {
-                setXAxisInterval(response.data.timelineData.length < 14 ? 0 : 4);
+            if (periodFilter === periodFilterOptions.currentMonth) {
+                const halfMonthInDays = 14;
+                setXAxisInterval(response.data.timelineData.length <= halfMonthInDays ? periodFilterOptions.lastWeek.xAxisInterval : periodFilterOptions.currentMonth.xAxisInterval);
             } else {
                 setXAxisInterval(periodFilter.xAxisInterval);
             }
