@@ -215,55 +215,59 @@ const AnalyticsTab = () => {
             )}
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
                 <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
-                    <Select
-                        defaultValue={periodFilter.option}
-                        icon={{ icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
-                        inputSize={"sm"}
-                        className={"border-neutral-200 font-semibold !text-black min-w-36 max-w-36 flex-row-reverse"}
-                        onValueChange={(value) => {
-                            const selectedPeriodFilter = Object.values(periodFilterOptions).find((option) => option.option === value);
-                            setPeriodFilter((prevState) => selectedPeriodFilter ?? prevState);
-                            dispatch({
-                                dispatchType: "setDashboardSetting",
-                                change: { dashboardSettings: { analytics: { activePeriodFilter: selectedPeriodFilter } } }
-                            });
-                            updateChartData({ period: value });
-                        }}
-                        placeholder={periodFilter.label}
-                    >
-                        {Object.values(periodFilterOptions).map((filterOption) =>
-                            filterOption.isUpsell ? (
-                                <DisabledSelectOption
-                                    className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
-                                    onClick={() => {
-                                        window.open(metricoolSSOLink);
-                                        window.focus();
-                                    }}
-                                >
+                    {analyticsData && (
+                        <>
+                            <Select
+                                defaultValue={periodFilter.option}
+                                icon={{ icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
+                                inputSize={"sm"}
+                                className={"border-neutral-200 font-semibold !text-black min-w-36 max-w-36 flex-row-reverse "}
+                                onValueChange={(value) => {
+                                    const selectedPeriodFilter = Object.values(periodFilterOptions).find((option) => option.option === value);
+                                    setPeriodFilter((prevState) => selectedPeriodFilter ?? prevState);
+                                    dispatch({
+                                        dispatchType: "setDashboardSetting",
+                                        change: { dashboardSettings: { analytics: { activePeriodFilter: selectedPeriodFilter } } }
+                                    });
+                                    updateChartData({ period: value });
+                                }}
+                                placeholder={periodFilter.label}
+                            >
+                                {Object.values(periodFilterOptions).map((filterOption) =>
+                                    filterOption.isUpsell ? (
+                                        <DisabledSelectOption
+                                            className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
+                                            onClick={() => {
+                                                window.open(metricoolSSOLink);
+                                                window.focus();
+                                            }}
+                                        >
                                     <span className="flex size-3.5 items-center justify-center">
                                         <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
                                     </span>
-                                    {filterOption.label}
-                                </DisabledSelectOption>
-                            ) : (
-                                <SelectOption
-                                    value={filterOption.option}
-                                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
-                                >
-                                    {filterOption.label}
-                                </SelectOption>
-                            )
-                        )}
-                    </Select>
-                    <Button
-                        variant={"upsell"}
-                        size={"sm"}
-                        icon={"file"}
-                        iconPosition={"left"}
-                        link={`https://app.metricool.com/evolution/reports?blogId=${metricool.blogId}&userId=${metricool.userId}`}
-                    >
-                        {__("Report", "metricool")}
-                    </Button>
+                                            {filterOption.label}
+                                        </DisabledSelectOption>
+                                    ) : (
+                                        <SelectOption
+                                            value={filterOption.option}
+                                            className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
+                                        >
+                                            {filterOption.label}
+                                        </SelectOption>
+                                    )
+                                )}
+                            </Select>
+                            <Button
+                                variant={"upsell"}
+                                size={"sm"}
+                                icon={"file"}
+                                iconPosition={"left"}
+                                link={`https://app.metricool.com/evolution/reports?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                            >
+                                {__("Report", "metricool")}
+                            </Button>
+                        </>
+                    )}
                 </FlexContainer>
                 <Button
                     variant={"primary-gradient-ghost"}
