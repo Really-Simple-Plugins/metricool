@@ -52,23 +52,8 @@ const AccountSettings = () => {
                 "alternativeEmail": alternativeEmail,
             }).post();
         },
-        onSuccess: (data) => {
-            const currentSettingsData: {
-                data: z.infer<typeof formSchema>,
-            } = queryClient.getQueryData(["user_settings"]) ?? {
-                data: {
-                    sendToAlternativeEmail: false,
-                    alternativeEmail: "",
-                }
-            };
-            queryClient.setQueryData(["user_settings"], {
-                ...currentSettingsData,
-                data: {
-                    ...currentSettingsData.data,
-                    sendToAlternativeEmail: data.sendToAlternativeEmail,
-                    alternativeEmail: data.alternativeEmail,
-                }
-            });
+        onSuccess: (response) => {
+            queryClient.setQueryData(["user_settings"], { ...response });
             showToast.success(__("Settings have been saved", "metricool"));
         },
         onError: (data: {
