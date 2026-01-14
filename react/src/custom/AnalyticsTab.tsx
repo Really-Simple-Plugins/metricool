@@ -130,7 +130,7 @@ const AnalyticsTab = () => {
         },
     });
     const lineChartXAxisDataKey = "label";
-    const [xAxisInterval, setXAxisInterval] = useState(periodFilterOptions[2].xAxisInterval);
+    const [xAxisInterval, setXAxisInterval] = useState(defaultPeriodFilter.xAxisInterval);
 
     const { data: analyticsData, isLoading, error } = useQuery({
         queryKey: ["analytics"],
