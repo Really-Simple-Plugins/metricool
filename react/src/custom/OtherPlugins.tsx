@@ -95,7 +95,7 @@ const OtherPlugins = () => {
                 return () => {
                     window.open(plugin.upgrade_url, "_blank");
                     window.focus();
-                }
+                };
             }
             case "installed": {
                 return undefined;
