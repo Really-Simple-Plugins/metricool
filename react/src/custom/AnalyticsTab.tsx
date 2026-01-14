@@ -235,7 +235,10 @@ const AnalyticsTab = () => {
                             filterOption.isUpsell ? (
                                 <DisabledSelectOption
                                     className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
-                                    onClick={() => {window.open(metricoolSSOLink); window.focus();}}
+                                    onClick={() => {
+                                        window.open(metricoolSSOLink);
+                                        window.focus();
+                                    }}
                                 >
                                     <span className="flex size-3.5 items-center justify-center">
                                         <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
