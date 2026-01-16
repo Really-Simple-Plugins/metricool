@@ -17,7 +17,7 @@ const ConnectionsSettings = () => {
         queryKey: ["connected", "accounts"],
         queryFn: () => httpClient.setRoute("connected_networks").get(),
         staleTime: 1000 * 60, // 1 minute
-        select: (data): ConnectedAccount[] => {
+        select: (response): ConnectedAccount[] => {
             return ([
                 {
                     label: "Web",
@@ -26,7 +26,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-web border-web hover:bg-transparent hover:**:data-content:text-web",
                     upsell: false,
                     metricoolWebsitePath: "evolution/web",
-                    ...(data.data.web && data.data.web.url && { userName: data.data.web.url }),
+                    isConnected: !!response.data.web?.url,
+                    ...(response.data.web && response.data.web.url && { userName: response.data.web.url }),
                 },
                 {
                     label: "Blog",
@@ -35,7 +36,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-blog border-blog hover:bg-transparent hover:**:data-content:text-blog",
                     upsell: false,
                     metricoolWebsitePath: "evolution/web",
-                    ...(data.data.web && data.data.web.feedRss && { userName: data.data.web.feedRss }),
+                    isConnected: !!response.data.web?.feedRss,
+                    ...(response.data.web && response.data.web.feedRss && { userName: response.data.web.feedRss }),
                 },
                 {
                     label: "Facebook",
@@ -44,7 +46,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-facebook border-facebook hover:bg-transparent hover:**:data-content:text-facebook",
                     upsell: false,
                     metricoolWebsitePath: "evolution/facebookPage",
-                    ...(data.data.facebook && { userName: data.data.facebook.username }),
+                    isConnected: !!response.data.facebook?.username,
+                    ...(response.data.facebook && { userName: response.data.facebook.username }),
                 },
                 {
                     label: "Instagram",
@@ -53,7 +56,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-instagram border-instagram hover:bg-transparent hover:**:data-content:text-instagram",
                     upsell: false,
                     metricoolWebsitePath: "evolution/instagram",
-                    ...(data.data.instagram && { userName: data.data.instagram.username }),
+                    isConnected: !!response.data.instagram?.username,
+                    ...(response.data.instagram && { userName: response.data.instagram.username }),
                 },
                 {
                     label: "Threads",
@@ -62,7 +66,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-threads border-threads hover:bg-transparent hover:**:data-content:text-threads",
                     upsell: false,
                     metricoolWebsitePath: "evolution/threads",
-                    ...(data.data.threads && { userName: data.data.threads.username }),
+                    isConnected: !!response.data.threads?.username,
+                    ...(response.data.threads && { userName: response.data.threads.username }),
                 },
                 {
                     label: "Twitter / X",
@@ -71,7 +76,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-x border-x hover:bg-transparent hover:**:data-content:text-x",
                     upsell: true,
                     metricoolWebsitePath: "evolution/twitter",
-                    ...(data.data.twitter && { userName: data.data.twitter.username }),
+                    isConnected: !!response.data.twitter?.username,
+                    ...(response.data.twitter && { userName: response.data.twitter.username }),
                 },
                 {
                     label: "Bluesky",
@@ -80,7 +86,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-bluesky border-bluesky hover:bg-transparent hover:**:data-content:text-bluesky",
                     upsell: false,
                     metricoolWebsitePath: "evolution/bluesky",
-                    ...(data.data.bluesky && { userName: data.data.bluesky.username }),
+                    isConnected: !!response.data.bluesky?.username,
+                    ...(response.data.bluesky && { userName: response.data.bluesky.username }),
                 },
                 {
                     label: "LinkedIn",
@@ -89,7 +96,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-linkedin border-linkedin hover:bg-transparent hover:**:data-content:text-linkedin",
                     upsell: true,
                     metricoolWebsitePath: "evolution/linkedin",
-                    ...(data.data.linkedin && { userName: data.data.linkedin.username }),
+                    isConnected: !!response.data.linkedin?.username,
+                    ...(response.data.linkedin && { userName: response.data.linkedin.username }),
                 },
                 {
                     label: "Pinterest",
@@ -98,16 +106,18 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-pinterest border-pinterest hover:bg-transparent hover:**:data-content:text-pinterest",
                     upsell: false,
                     metricoolWebsitePath: "evolution/pinterest",
-                    ...(data.data.pinterest && { userName: data.data.pinterest.username }),
+                    isConnected: !!response.data.pinterest?.username,
+                    ...(response.data.pinterest && { userName: response.data.pinterest.username }),
                 },
                 {
-                    label: `TikTok ${data.data.tiktok ? data.data.tiktok.accountType.toLowerCase() : ""}`,
+                    label: `TikTok ${response.data.tiktok ? response.data.tiktok.accountType.toLowerCase() : ""}`,
                     icon: "tiktok",
                     connectedClasses: "text-tiktok",
                     unconnectedClasses: "bg-tiktok border-tiktok hover:bg-transparent hover:**:data-content:text-tiktok",
                     upsell: false,
                     metricoolWebsitePath: "evolution/tiktok",
-                    ...(data.data.tiktok && { userName: data.data.tiktok.username }),
+                    isConnected: !!response.data.tiktok?.username,
+                    ...(response.data.tiktok && { userName: response.data.tiktok.username }),
                 },
                 {
                     label: "Google Business Profile",
@@ -116,7 +126,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-gbp border-gbp hover:bg-transparent hover:**:data-content:text-gbp",
                     upsell: false,
                     metricoolWebsitePath: "evolution/gmb",
-                    ...(data.data.gbp && { userName: data.data.gbp.username }),
+                    isConnected: !!response.data.gbp?.username,
+                    ...(response.data.gbp && { userName: response.data.gbp.username }),
                 },
                 {
                     label: "YouTube",
@@ -125,7 +136,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-youtube border-youtube hover:bg-transparent hover:**:data-content:text-youtube",
                     upsell: false,
                     metricoolWebsitePath: "evolution/youtube",
-                    ...(data.data.youtube && { userName: data.data.youtube.username }),
+                    isConnected: !!response.data.youtube?.username,
+                    ...(response.data.youtube && { userName: response.data.youtube.username }),
                 },
                 {
                     label: "Twitch",
@@ -134,7 +146,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-twitch border-twitch hover:bg-transparent hover:**:data-content:text-twitch",
                     upsell: false,
                     metricoolWebsitePath: "evolution/twitch",
-                    ...(data.data.twitch && { userName: data.data.twitch.username }),
+                    isConnected: !!response.data.twitch?.username,
+                    ...(response.data.twitch && { userName: response.data.twitch.username }),
                 },
                 {
                     label: "Meta Ads",
@@ -143,7 +156,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-facebook border-facebook hover:bg-transparent hover:**:data-content:text-facebook",
                     upsell: false,
                     metricoolWebsitePath: "evolution/facebookAds",
-                    ...(data.data.facebookAds && { userName: data.data.facebookAds.username }),
+                    isConnected: !!response.data.facebookAds?.username,
+                    ...(response.data.facebookAds && { userName: response.data.facebookAds.username }),
                 },
                 {
                     label: "Google Ads",
@@ -152,7 +166,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-ga border-ga hover:bg-transparent hover:**:data-content:text-ga",
                     upsell: false,
                     metricoolWebsitePath: "evolution/googleAds",
-                    ...(data.data.googleAds && { userName: data.data.googleAds.providerUserId }),
+                    isConnected: !!response.data.googleAds?.providerUserId,
+                    ...(response.data.googleAds && { userName: response.data.googleAds.providerUserId }),
                 },
                 {
                     label: "TikTok Ads",
@@ -161,7 +176,8 @@ const ConnectionsSettings = () => {
                     unconnectedClasses: "bg-tiktok border-tiktok hover:bg-transparent hover:**:data-content:text-tiktok",
                     upsell: false,
                     metricoolWebsitePath: "evolution/tiktokAds",
-                    ...(data.data.tiktokAds && { userName: data.data.tiktokAds.username }),
+                    isConnected: !!response.data.tiktokAds?.username,
+                    ...(response.data.tiktokAds && { userName: response.data.tiktokAds.username }),
                 },
             ]);
         }

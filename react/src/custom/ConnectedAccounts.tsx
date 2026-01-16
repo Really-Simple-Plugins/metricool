@@ -13,6 +13,7 @@ export type ConnectedAccount = {
     userName?: string,
     link: string,
     metricoolWebsitePath: string,
+    isConnected: boolean,
 };
 
 const ConnectedAccounts = () => {
@@ -21,7 +22,7 @@ const ConnectedAccounts = () => {
         queryKey: ["connected", "accounts"],
         queryFn: () => httpClient?.setRoute("connected_networks").get(),
         staleTime: 1000 * 60, // 1 minute
-        select: (data): ConnectedAccount[] => {
+        select: (response): ConnectedAccount[] => {
             return ([
                 {
                     label: "Web",
@@ -30,7 +31,8 @@ const ConnectedAccounts = () => {
                     unconnectedClasses: "bg-web border-web hover:bg-transparent hover:**:data-content:text-web",
                     upsell: false,
                     metricoolWebsitePath: "evolution/web",
-                    ...(data.data.web && data.data.web.url && { userName: data.data.web.url }),
+                    isConnected: !!response.data.web?.url,
+                    ...(response.data.web && response.data.web.url && { userName: response.data.web.url }),
                 },
                 {
                     label: "Twitter / X",
@@ -39,7 +41,8 @@ const ConnectedAccounts = () => {
                     unconnectedClasses: "bg-x border-x hover:bg-transparent hover:**:data-content:text-x",
                     upsell: true,
                     metricoolWebsitePath: "evolution/twitter",
-                    ...(data.data.twitter && { userName: data.data.twitter.username }),
+                    isConnected: !!response.data.twitter?.username,
+                    ...(response.data.twitter && { userName: response.data.twitter.username }),
                 },
                 {
                     label: "YouTube",
@@ -48,7 +51,8 @@ const ConnectedAccounts = () => {
                     unconnectedClasses: "bg-youtube border-youtube hover:bg-transparent hover:**:data-content:text-youtube",
                     upsell: false,
                     metricoolWebsitePath: "evolution/youtube",
-                    ...(data.data.youtube && { userName: data.data.youtube.username }),
+                    isConnected: !!response.data.youtube?.username,
+                    ...(response.data.youtube && { userName: response.data.youtube.username }),
                 },
                 {
                     label: "LinkedIn",
@@ -57,7 +61,8 @@ const ConnectedAccounts = () => {
                     unconnectedClasses: "bg-linkedin border-linkedin hover:bg-transparent hover:**:data-content:text-linkedin",
                     upsell: true,
                     metricoolWebsitePath: "/evolution/linkedin",
-                    ...(data.data.linkedin && { userName: data.data.linkedin.username }),
+                    isConnected: !!response.data.linkedin?.username,
+                    ...(response.data.linkedin && { userName: response.data.linkedin.username }),
                 },
             ]);
         }
