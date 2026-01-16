@@ -3,6 +3,14 @@ import HttpClient from "../api/HttpClient.tsx";
 import { setLocaleData } from "@wordpress/i18n";
 import type { PeriodFilterOption } from "../custom/AnalyticsTab.tsx";
 
+// @ts-expect-error the metricool variable is globally set in the DashboardController
+// but the tsc complains it can't find it
+const METRICOOL_DATA = window.metricool.values;
+const MC_API_URL = METRICOOL_DATA.rest_url + METRICOOL_DATA.rest_namespace + "/" + METRICOOL_DATA.rest_version + "/";
+// @ts-expect-error same as above
+// setting to undefined so it is no longer accessible in the browser devtools console
+window.metricool = undefined;
+
 interface GlobalContext {
     globalState: GlobalState,
     metricool: typeof defaultMetricoolData,
