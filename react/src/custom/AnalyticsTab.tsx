@@ -159,8 +159,8 @@ const AnalyticsTab = () => {
                 const isCurrentMonthTooLongForXAxis = response.data.timelineData.length >= maxPossibleDataPointsOnXAxis;
                 const appropriateXAxisIntervalForCurrentMonth =
                     isCurrentMonthTooLongForXAxis ?
-                    periodFilterOptions.previousMonth.xAxisInterval :
-                    periodFilterOptions.currentMonth.xAxisInterval;
+                        periodFilterOptions.previousMonth.xAxisInterval :
+                        periodFilterOptions.currentMonth.xAxisInterval;
                 setXAxisInterval(appropriateXAxisIntervalForCurrentMonth);
             } else {
                 setXAxisInterval(periodFilter.xAxisInterval);
@@ -248,9 +248,9 @@ const AnalyticsTab = () => {
                                                 window.focus();
                                             }}
                                         >
-                                    <span className="flex size-3.5 items-center justify-center">
-                                        <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
-                                    </span>
+                                            <span className="flex size-3.5 items-center justify-center">
+                                                <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
+                                            </span>
                                             {filterOption.label}
                                         </DisabledSelectOption>
                                     ) : (
