@@ -19,7 +19,6 @@ const formSchema = z.object({
 const AccountSettings = () => {
     const { httpClient } = useGlobalContext();
     const { data: values, isLoading, error: queryError } = useQuery({
-        enabled: !!httpClient,
         queryKey: ["user_settings"],
         queryFn: () => httpClient?.setRoute("user_settings").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes

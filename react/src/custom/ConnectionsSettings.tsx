@@ -23,7 +23,6 @@ type ConnectedAccount = {
 const ConnectionsSettings = () => {
     const { httpClient, metricool } = useGlobalContext();
     const { data: connectedAccountsData, isLoading, error } = useQuery({
-        enabled: !!httpClient,
         queryKey: ["connected", "accounts"],
         queryFn: () => httpClient?.setRoute("connected_networks").get(),
         staleTime: 1000 * 60, // 1 minute
