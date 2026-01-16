@@ -25,12 +25,22 @@ abstract class AbstractValidator
     abstract public function validate($value, \WP_REST_Request $request): void;
 
     /**
-     * Validates if the value is considered empty. This uses
-     * {@see StringUtility::isEmptyValue} for string values.
+     * Validates if the value is considered empty. If the value is considered a
+     * boolean, it will never be considered empty. For strings, it will use the
+     * {@see StringUtility::isEmptyValue} method to determine if the string is
+     * empty. Falls back to PHP's empty() function for other types.
      * @param mixed $value
      */
     protected function isEmptyValue($value): bool
     {
-        return is_string($value) ? StringUtility::isEmptyValue($value) : empty($value);
+        if (is_bool($value)) {
+            return false;
+        }
+
+        if (is_string($value)) {
+            return StringUtility::isEmptyValue($value);
+        }
+
+        return empty($value);
     }
 }
