@@ -157,11 +157,11 @@ const AnalyticsTab = () => {
             if (periodFilter === periodFilterOptions.currentMonth) {
                 const maxPossibleDataPointsOnXAxis = 14;
                 const isCurrentMonthTooLongForXAxis = response.data.timelineData.length >= maxPossibleDataPointsOnXAxis;
-                setXAxisInterval(
+                const appropriateXAxisIntervalForCurrentMonth =
                     isCurrentMonthTooLongForXAxis ?
                     periodFilterOptions.previousMonth.xAxisInterval :
-                    periodFilterOptions.currentMonth.xAxisInterval
-                );
+                    periodFilterOptions.currentMonth.xAxisInterval;
+                setXAxisInterval(appropriateXAxisIntervalForCurrentMonth);
             } else {
                 setXAxisInterval(periodFilter.xAxisInterval);
             }
