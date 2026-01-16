@@ -37,7 +37,7 @@ class DynamicUrl {
         // }
 
         Object.entries(parameters).forEach(([paramKey, paramValue]) => {
-            this.dynamicUrl.searchParams.set(`filters[${paramKey}]`, paramValue);
+            this.dynamicUrl.searchParams.set(paramKey, paramValue);
         });
 
         return this;
