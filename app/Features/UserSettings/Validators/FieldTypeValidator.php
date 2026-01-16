@@ -14,7 +14,7 @@ class FieldTypeValidator extends AbstractValidator
      */
     public function validate($value, ?\WP_REST_Request $request = null): void
     {
-        if (!$this->isEmptyValue($value)) {
+        if ($this->isEmptyValue($value)) {
             return;
         }
 
