@@ -31,7 +31,7 @@ class DynamicUrl {
      * @param parameters - Object with parameters to be set.
      * @returns The DynamicUrl instance.
      */
-    public setParameters(parameters: Record<string, string>) {
+    public setSearchParams(parameters: Record<string, string>) {
         Object.entries(parameters).forEach(([paramKey, paramValue]) => {
             this.dynamicUrl.searchParams.set(paramKey, paramValue);
         });
