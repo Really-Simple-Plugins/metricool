@@ -25,7 +25,7 @@ const columns = [
 ];
 
 const CountriesTab = () => {
-    const { httpClient, metricool } = useGlobalContext();
+    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
     const { data: countryData, isLoading, error } = useQuery({
         queryKey: ["analytics", "countries"],
         queryFn: () => httpClient?.setRoute("distribution/countries").get(),
@@ -80,7 +80,7 @@ const CountriesTab = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                    link={metricoolDynamicUrl.setPath("evolution/web").toString()}
                 >
                     {__("View Analytics", "metricool")}
                 </Button>

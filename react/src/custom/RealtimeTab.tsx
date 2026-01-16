@@ -5,7 +5,7 @@ import { Button, FlexContainer, Icon, LineChart } from "../components";
 import MetricTile from "./MetricTile.tsx";
 
 const RealtimeTab = () => {
-    const { httpClient, metricool } = useGlobalContext();
+    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
     const lineChartXAxisDataKey = "label";
 
     const { data: realTimeData, isLoading, error } = useQuery({
@@ -63,7 +63,7 @@ const RealtimeTab = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                    link={metricoolDynamicUrl.setPath("evolution/web").toString()}
                 >
                     {__("View Analytics", "metricool")}
                 </Button>

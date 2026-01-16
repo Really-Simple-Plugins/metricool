@@ -24,7 +24,7 @@ const columns = [
 ];
 
 const TrafficTab = () => {
-    const { httpClient, metricool } = useGlobalContext();
+    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
     const { data: trafficData, isLoading, error } = useQuery({
         queryKey: ["analytics", "traffic"],
         queryFn: () => httpClient?.setRoute("distribution/referers").get(),
@@ -60,7 +60,7 @@ const TrafficTab = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                    link={metricoolDynamicUrl.setPath("evolution/web").toString()}
                 >
                     {__("View Analytics", "metricool")}
                 </Button>

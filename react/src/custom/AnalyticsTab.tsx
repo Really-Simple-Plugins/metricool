@@ -93,8 +93,7 @@ const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activeP
 };
 
 const AnalyticsTab = () => {
-    const { httpClient, metricool, dispatch, dashboardSettings } = useGlobalContext();
-    const metricoolSSOLink = `https://app.metricool.com/user-settings/plan?blogId=${metricool.blogId}&userId=${metricool.userId}`;
+    const { httpClient, metricool, dispatch, dashboardSettings, metricoolDynamicUrl } = useGlobalContext();
     const numberFormatter = Intl.NumberFormat(metricool.locale, {
         notation: "compact",
         minimumFractionDigits: 0,
@@ -244,7 +243,7 @@ const AnalyticsTab = () => {
                                         <DisabledSelectOption
                                             className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
                                             onClick={() => {
-                                                window.open(metricoolSSOLink);
+                                                window.open(metricoolDynamicUrl.setPath("user-settings/plan").toString());
                                                 window.focus();
                                             }}
                                         >
@@ -268,7 +267,7 @@ const AnalyticsTab = () => {
                                 size={"sm"}
                                 icon={"file"}
                                 iconPosition={"left"}
-                                link={`https://app.metricool.com/evolution/reports?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                                link={metricoolDynamicUrl.setPath("evolution/reports").toString()}
                             >
                                 {__("Report", "metricool")}
                             </Button>
@@ -280,7 +279,7 @@ const AnalyticsTab = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                    link={metricoolDynamicUrl.setPath("evolution/web").toString()}
                 >
                     {__("View Analytics", "metricool")}
                 </Button>
