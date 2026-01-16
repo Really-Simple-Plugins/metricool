@@ -43,7 +43,7 @@ const defaultMetricoolData = {
 
 interface GlobalState {
     metricool: typeof defaultMetricoolData;
-    httpClient: HttpClient | null;
+    httpClient: HttpClient;
     dashboardSettings: {
         analytics?: {
             activePeriodFilter?: PeriodFilterOption,
@@ -71,7 +71,11 @@ export const useGlobalContext = () => {
 
 const initialGlobalState: GlobalState = {
     metricool: defaultMetricoolData,
-    httpClient: null,
+    httpClient: new HttpClient({
+        NONCE: METRICOOL_DATA.nonce,
+        X_WP_NONCE: METRICOOL_DATA.x_wp_nonce,
+        MC_API_URL: MC_API_URL,
+    }),
     dashboardSettings: {},
 };
 
@@ -87,14 +91,8 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
     );
 
     useEffect(() => {
-        // @ts-expect-error the metricool variable is globally set in the DashboardController
-        // but the tsc complains it can't find it
-        dispatch({ dispatchType: "setMetricoolVariables", change: { metricool: { ...window.metricool.values } } });
-        dispatch({ dispatchType: "initialiseHttpClient" });
+        dispatch({ dispatchType: "setMetricoolVariables", change: { metricool: { ...METRICOOL_DATA } } });
         dispatch({ dispatchType: "setTranslations" });
-        // @ts-expect-error same as above
-        // setting to undefined so it is no longer accessible in the devtools
-        window.metricool = undefined;
     }, []);
 
     return (
@@ -149,18 +147,6 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
                 localeData[""].domain = "metricool";
                 setLocaleData(localeData, "metricool");
             });
-            return { ...state };
-        }
-        case "initialiseHttpClient": {
-            if (state.metricool.rest_url && state.metricool.rest_namespace && state.metricool.rest_version && state.metricool.x_wp_nonce && state.metricool.nonce) {
-                const MC_API_URL = state.metricool.rest_url + state.metricool.rest_namespace + "/" + state.metricool.rest_version + "/";
-                const httpClient: HttpClient = new HttpClient({
-                    NONCE: state.metricool.nonce,
-                    X_WP_NONCE: state.metricool.x_wp_nonce,
-                    MC_API_URL: MC_API_URL,
-                });
-                return { ...state, httpClient: httpClient };
-            }
             return { ...state };
         }
         case "setDashboardSetting": {
