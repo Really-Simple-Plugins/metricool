@@ -17,11 +17,11 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
 
             return new Promise(resolve => setTimeout(resolve, 2000));
         },
-        onSuccess: (data) => {
-            console.log(data);
+        onSuccess: (response) => {
+            console.log(response);
         },
-        onError: (data) => {
-            console.log(data);
+        onError: (error) => {
+            console.error(error);
         }
     });
     return (
@@ -31,7 +31,7 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
                 <FlexContainer direction={"column"} className={"w-full justify-center items-center"}>
                     {resendEmailSuccess && (
                         <FlexContainer direction={"row"} className={"!gap-2 justify-center items-center rounded-md bg-rsp-success-light px-3 py-2 "}>
-                            <Icon icon={"info"} iconClass={"text-rsp-success-dark"}/>
+                            <Icon icon={"info"} className={"text-rsp-success-dark"}/>
                             <div className={"text-md text-center text-rsp-success-dark font-semibold"}
                                  dangerouslySetInnerHTML={{
                                      __html:

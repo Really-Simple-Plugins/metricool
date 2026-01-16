@@ -1,4 +1,4 @@
-import { Block, BlockHeader, FlexContainer, Icon } from "../components";
+import { Block, BlockHeader, FlexContainer, Icon, showToast } from "../components";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import { useState } from "react";
@@ -37,21 +37,16 @@ const Progress = () => {
         mutationFn: async ({ taskId }: {
             taskId: string,
         }) => {
-            const response = await httpClient?.setRoute("dismiss_task").setPayload({
+            return httpClient?.setRoute("dismiss_task").setPayload({
                 "taskId": taskId,
             }).post();
-
-            const taskDismissed = response?.data;
-
-            if (!taskDismissed) {
-                console.error("Error dismissing task: ", response?.message);
-                return;
-            }
-
-            return taskDismissed;
         },
         onSuccess: async () => {
             await refetch();
+        },
+        onError: (error) => {
+            showToast.error(__("There was an error dismissing your task", "metricool"));
+            console.error(error.message);
         }
     });
 
@@ -75,7 +70,7 @@ const Progress = () => {
             />
             {isLoading ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
-                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                    <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center"}>

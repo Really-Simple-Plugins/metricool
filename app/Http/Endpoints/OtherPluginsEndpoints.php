@@ -6,19 +6,19 @@ namespace Metricool\Http\Endpoints;
 
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
-use Metricool\Services\RelatedPluginService;
+use Metricool\Services\OtherPluginService;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Support\Helpers\Storages\GeneralConfig;
 
-class RelatedPluginsEndpoints implements MultiEndpointInterface
+class OtherPluginsEndpoints implements MultiEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
 
     private GeneralConfig $config;
-    private RelatedPluginService $service;
+    private OtherPluginService $service;
 
-    public function __construct(GeneralConfig $config, RelatedPluginService $service)
+    public function __construct(GeneralConfig $config, OtherPluginService $service)
     {
         $this->config = $config;
         $this->service = $service;
@@ -38,13 +38,13 @@ class RelatedPluginsEndpoints implements MultiEndpointInterface
     public function registerRoutes(): array
     {
         return [
-            'related_plugins_data' => [
+            'other_plugins_data' => [
                 'methods' => \WP_REST_Server::READABLE,
-                'callback' => [$this, 'getRelatedPluginsData'],
+                'callback' => [$this, 'getOtherPluginsData'],
             ],
             'do_plugin_action' => [
                 'methods' => \WP_REST_Server::CREATABLE,
-                'callback' => [$this, 'doRelatedPluginAction'],
+                'callback' => [$this, 'doOtherPluginAction'],
             ],
         ];
     }
@@ -52,9 +52,9 @@ class RelatedPluginsEndpoints implements MultiEndpointInterface
     /**
      * Get plugin data for other plugin section
      */
-    public function getRelatedPluginsData(\WP_REST_Request $request): \WP_REST_Response
+    public function getOtherPluginsData(\WP_REST_Request $request): \WP_REST_Response
     {
-        $plugins = $this->buildRelatedPluginData();
+        $plugins = $this->buildOtherPluginData();
         return $this->sendHttpResponse([
             'plugins' => $plugins
         ]);
@@ -63,14 +63,14 @@ class RelatedPluginsEndpoints implements MultiEndpointInterface
     /**
      * Perform an action on a plugin
      */
-    public function doRelatedPluginAction(\WP_REST_Request $request): \WP_REST_Response
+    public function doOtherPluginAction(\WP_REST_Request $request): \WP_REST_Response
     {
         $storage = $this->retrieveHttpStorage($request);
 
         $slug = $storage->getString('slug', 'really-simple-ssl');
         $action = $storage->getString('action', 'download');
 
-        $plugins = $this->buildRelatedPluginData($slug);
+        $plugins = $this->buildOtherPluginData($slug);
         $plugin = reset($plugins);
 
         $this->service->setPluginConfig($plugin);
@@ -85,14 +85,14 @@ class RelatedPluginsEndpoints implements MultiEndpointInterface
     }
 
     /**
-     * Get related plugins from the related config and manipulate the array
+     * Get other plugins from the other config and manipulate the array
      * with the Installer class.
      * @param string $targetPluginSlug Can be used to filter the plugins array
      * for a specific plugin entry based on the slug key.
      */
-    public function buildRelatedPluginData(string $targetPluginSlug = ''): array
+    public function buildOtherPluginData(string $targetPluginSlug = ''): array
     {
-        $plugins = $this->config->get('related.plugins');
+        $plugins = $this->config->get('plugins');
 
         if (!empty($targetPluginSlug)) {
             $plugins = array_filter($plugins, function($plugin) use ($targetPluginSlug) {

@@ -179,7 +179,7 @@ class Plugin
             Http\Endpoints\DistributionEndpoint::class,
             Http\Endpoints\AnalyticsEndpoint::class,
             Http\Endpoints\RealtimeEndpoint::class,
-            Http\Endpoints\RelatedPluginsEndpoints::class,
+            Http\Endpoints\OtherPluginsEndpoints::class,
         ]);
     }
 

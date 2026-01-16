@@ -1,4 +1,13 @@
-import { Button, type ChartConfig, FlexContainer, LineChart, Select, SelectOption } from "../components";
+import {
+    Button,
+    type ChartConfig,
+    DisabledSelectOption,
+    FlexContainer,
+    LineChart,
+    Select,
+    SelectOption,
+    showToast,
+} from "../components";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -14,6 +23,13 @@ type MetricData = {
     trend: "stable" | "up" | "down",
 }
 
+export type PeriodFilterOption = {
+    label: string,
+    option: string,
+    isUpsell: boolean,
+    xAxisInterval: number,
+}
+
 type TimelineData = {
     date: string,
     pageViews: number,
@@ -23,48 +39,58 @@ type TimelineData = {
     visitors: number,
 }[]
 
-const dateFilterOptions = [
-    {
-        label: __("Yesterday", "metricool"),
-        option: "yesterday",
-        isUpsell: false,
-    },
-    {
+const periodFilterOptions: Record<string, PeriodFilterOption> = {
+    lastWeek: {
         label: __("Last week", "metricool"),
         option: "lastweek",
         isUpsell: false,
+        xAxisInterval: 0,
     },
-    {
+    currentMonth: {
         label: __("Current month", "metricool"),
         option: "currentmonth",
         isUpsell: false,
+        xAxisInterval: 0,
     },
-    {
+    last30Days: {
         label: __("Last 30 days", "metricool"),
         option: "last30days",
         isUpsell: false,
+        xAxisInterval: 2,
     },
-    {
+    previousMonth: {
         label: __("Previous month", "metricool"),
         option: "previousmonth",
         isUpsell: false,
+        xAxisInterval: 2,
     },
-    {
+    last3Months: {
         label: __("Last 3 months", "metricool"),
         option: "last3months",
         isUpsell: false,
+        xAxisInterval: 6,
     },
-    {
+    last6Months: {
         label: __("Last 6 months", "metricool"),
         option: "last6months",
         isUpsell: true,
+        xAxisInterval: 29,
     },
-    {
+    last12Months: {
         label: __("Last 12 months", "metricool"),
         option: "last12months",
         isUpsell: true,
+        xAxisInterval: 29,
     },
-];
+};
+
+const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activePeriodFilterInContext: PeriodFilterOption | undefined): PeriodFilterOption => {
+    if (activePeriodFilterInContext) {
+        return activePeriodFilterInContext;
+    }
+
+    return defaultPeriodFilter;
+};
 
 const AnalyticsTab = () => {
     const { httpClient, metricool, dispatch, dashboardSettings } = useGlobalContext();
@@ -74,7 +100,8 @@ const AnalyticsTab = () => {
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
     });
-    const [periodFilter, setPeriodFilter] = useState(dashboardSettings.analytics?.activePeriodFilter ?? dateFilterOptions[3].option);
+    const defaultPeriodFilter = periodFilterOptions.last30Days;
+    const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.analytics?.activePeriodFilter));
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
@@ -103,10 +130,11 @@ const AnalyticsTab = () => {
         },
     });
     const lineChartXAxisDataKey = "label";
+    const [xAxisInterval, setXAxisInterval] = useState(defaultPeriodFilter.xAxisInterval);
 
-    const { data: analyticsData, isLoading, error } = useQuery({
+    const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData } = useQuery({
         queryKey: ["analytics"],
-        queryFn: () => httpClient?.setRoute("analytics").setFilters({ period: periodFilter }).get(),
+        queryFn: () => httpClient?.setRoute("analytics").setFilters({ period: periodFilter.option }).get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): { totals: Record<string, MetricData>, timelineData: TimelineData } => data.data,
     });
@@ -122,22 +150,25 @@ const AnalyticsTab = () => {
         mutationFn: async ({ period }: {
             period: string,
         }) => {
-            const response = await httpClient?.setRoute("analytics").setFilters({ period: period }).get();
-
-            const newChartData = response?.data;
-
-            if (!newChartData) {
-                console.error("Error fetching chart data: ", response?.message);
-                return;
-            }
-
-            return newChartData;
+            return httpClient?.setRoute("analytics").setFilters({ period: period }).get();
         },
-        onSuccess: (data) => {
-            const currentChartData: {
-                data: { totals: Record<string, MetricData>, timelineData: TimelineData },
-            } = queryClient.getQueryData(["analytics"]) ?? { data: { totals: {}, timelineData: [] } };
-            queryClient.setQueryData(["analytics"], { ...currentChartData, data: data });
+        onSuccess: (response) => {
+            queryClient.setQueryData(["analytics"], { ...response });
+            if (periodFilter === periodFilterOptions.currentMonth) {
+                const maxPossibleDataPointsOnXAxis = 14;
+                const isCurrentMonthTooLongForXAxis = response.data.timelineData.length >= maxPossibleDataPointsOnXAxis;
+                const appropriateXAxisIntervalForCurrentMonth =
+                    isCurrentMonthTooLongForXAxis ?
+                    periodFilterOptions.previousMonth.xAxisInterval :
+                    periodFilterOptions.currentMonth.xAxisInterval;
+                setXAxisInterval(appropriateXAxisIntervalForCurrentMonth);
+            } else {
+                setXAxisInterval(periodFilter.xAxisInterval);
+            }
+        },
+        onError: (error) => {
+            showToast.error(__("There was an fetching the chart data", "metricool"));
+            console.error(error.message);
         }
     });
 
@@ -145,13 +176,13 @@ const AnalyticsTab = () => {
         <FlexContainer direction={"column"} className={"justify-between grow"}>
             {isLoading ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
-                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                    <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center"}>
                     {__("There was an error fetching the data", "metricool")}
                 </FlexContainer>
-            ) : analyticsData && (
+            ) : hasAnalyticsData && (
                 <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>
                         {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
@@ -171,7 +202,7 @@ const AnalyticsTab = () => {
                     {isPending && (
                         <div className={"absolute w-full h-full bg-white opacity-45"}>
                             <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
-                                <Icon icon={"loading"} iconClass={"size-5"}/>
+                                <Icon icon={"loading"} className={"size-5"}/>
                             </FlexContainer>
                         </div>
                     )}
@@ -181,56 +212,68 @@ const AnalyticsTab = () => {
                         chartSettings={{
                             xAxisKey: lineChartXAxisDataKey,
                             general: { height: 290 },
+                            xAxis: { interval: xAxisInterval },
                         }}
                         chartData={analyticsData.timelineData}
-                        linesSettings={{ type: "monotone" }}/>
+                        linesSettings={{ type: "monotone" }}
+                    />
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
                 <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
-                    <Select
-                        defaultValue={periodFilter}
-                        icon={{ icon: "upsell", iconClass: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
-                        inputSize={"sm"}
-                        className={"border-neutral-200 font-semibold !text-black max-w-fit flex-row-reverse"}
-                        onValueChange={(value) => {
-                            setPeriodFilter(value);
-                            dispatch({dispatchType: "setDashboardSetting", change: {dashboardSettings: { analytics: {activePeriodFilter: value} }}})
-                            updateChartData({ period: value });
-                        }}
-                        placeholder={dateFilterOptions.find((filterOption) => filterOption.option === periodFilter)?.label}
-                    >
-                        {dateFilterOptions.map((filterOption) =>
-                            filterOption.isUpsell ? (
-                                <FlexContainer
-                                    onClick={() => {window.open(metricoolSSOLink); window.focus();}}
-                                    direction={"row"}
-                                    className={clsx("items-center rounded-xs py-1.5 px-2 !gap-2 text-sm outline-hidden select-none font-semibold cursor-pointer bg-secondary-light hover:bg-upsell focus:bg-upsell")}
-                                >
+                    {hasAnalyticsData && (
+                        <>
+                            <Select
+                                defaultValue={periodFilter.option}
+                                icon={{ icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
+                                inputSize={"sm"}
+                                className={"border-neutral-200 font-semibold !text-black min-w-36 max-w-36 flex-row-reverse "}
+                                onValueChange={(value) => {
+                                    const selectedPeriodFilter = Object.values(periodFilterOptions).find((option) => option.option === value);
+                                    setPeriodFilter((prevState) => selectedPeriodFilter ?? prevState);
+                                    dispatch({
+                                        dispatchType: "setDashboardSetting",
+                                        change: { dashboardSettings: { analytics: { activePeriodFilter: selectedPeriodFilter } } }
+                                    });
+                                    updateChartData({ period: value });
+                                }}
+                                placeholder={periodFilter.label}
+                            >
+                                {Object.values(periodFilterOptions).map((filterOption) =>
+                                    filterOption.isUpsell ? (
+                                        <DisabledSelectOption
+                                            className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
+                                            onClick={() => {
+                                                window.open(metricoolSSOLink);
+                                                window.focus();
+                                            }}
+                                        >
                                     <span className="flex size-3.5 items-center justify-center">
                                         <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
                                     </span>
-                                    {filterOption.label}
-                                </FlexContainer>
-                            ) : (
-                                <SelectOption
-                                    value={filterOption.option}
-                                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
-                                >
-                                    {filterOption.label}
-                                </SelectOption>
-                            )
-                        )}
-                    </Select>
-                    <Button
-                        variant={"upsell"}
-                        size={"sm"}
-                        icon={"file"}
-                        iconPosition={"left"}
-                        link={`https://app.metricool.com/evolution/reports?blogId=${metricool.blogId}&userId=${metricool.userId}`}
-                    >
-                        {__("Report", "metricool")}
-                    </Button>
+                                            {filterOption.label}
+                                        </DisabledSelectOption>
+                                    ) : (
+                                        <SelectOption
+                                            value={filterOption.option}
+                                            className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
+                                        >
+                                            {filterOption.label}
+                                        </SelectOption>
+                                    )
+                                )}
+                            </Select>
+                            <Button
+                                variant={"upsell"}
+                                size={"sm"}
+                                icon={"file"}
+                                iconPosition={"left"}
+                                link={`https://app.metricool.com/evolution/reports?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                            >
+                                {__("Report", "metricool")}
+                            </Button>
+                        </>
+                    )}
                 </FlexContainer>
                 <Button
                     variant={"primary-gradient-ghost"}
