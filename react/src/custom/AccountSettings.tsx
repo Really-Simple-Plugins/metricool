@@ -20,7 +20,7 @@ const AccountSettings = () => {
     const { httpClient } = useGlobalContext();
     const { data: values, isLoading, error: queryError } = useQuery({
         queryKey: ["user_settings"],
-        queryFn: () => httpClient?.setRoute("user_settings").get(),
+        queryFn: () => httpClient.setRoute("user_settings").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): z.infer<typeof formSchema> => ({
             sendToAlternativeEmail: data.data.sendToAlternativeEmail,
