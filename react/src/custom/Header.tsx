@@ -28,7 +28,7 @@ const Header = () => {
                         icon={"faq"}
                         iconPosition={"left"}
                         iconClass={"text-white"}
-                        link={"https://help.metricool.com"}
+                        link={metricool.metricool_help_url}
                     >
                         {__("Help Center", "metricool")}
                     </Button>

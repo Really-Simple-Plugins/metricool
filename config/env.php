@@ -28,6 +28,7 @@ return [
     ],
     'metricool' => [
         'base_url' => 'https://app.metricool.com/',
+        'help_url' => 'https://help.metricool.com',
         'upgrade_premium_url' => 'https://app.metricool.com/user-settings/plan',
         'connect_network_url' => 'https://app.metricool.com/evolution/brandSummary',
         'connect_linkedin_url' => 'https://app.metricool.com/evolution/linkedin',

@@ -38,6 +38,7 @@ const defaultMetricoolData = {
     was_dashboard_modal_closed: false,
     support: null,
     metricool_base_url: "",
+    metricool_help_url: "",
     locale: "",
     blogId: "",
     userId: "",
