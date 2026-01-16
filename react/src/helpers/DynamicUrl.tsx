@@ -17,7 +17,9 @@ class DynamicUrl {
     }
 
     /**
-     * Returns the dynamicUrl as a string.
+     * Function to obtain the string value of the DynamicUrl using the URL api's
+     * built in .href stringifier.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/URL/href
      * @returns the dynamicUrl as a string
      */
     public toString() {
