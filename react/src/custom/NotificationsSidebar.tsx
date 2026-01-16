@@ -26,9 +26,8 @@ const NotificationsSidebar = () => {
         select: (location) => location.pathname.split("/").at(-1),
     });
     const { data: noticeData, isLoading, error, isFetched } = useQuery({
-        enabled: !!httpClient,
         queryKey: ["notices"],
-        queryFn: () => httpClient?.setRoute("get_notices").get(),
+        queryFn: () => httpClient.setRoute("get_notices").get(),
         staleTime: 1000 * 60, // 1 minute
         select: (data): Record<string, Notice[]> => {
             const noticesWithVisibility = data.data.map((notice: Notice) => ({
