@@ -45,7 +45,7 @@ class DynamicUrl {
      * @returns The DynamicUrl instance.
      */
     public setPath(pathname: string) {
-        this.dynamicUrl.pathname = pathname;
+        this.dynamicUrl.pathname = pathname.trim();
         return this;
     }
 }
