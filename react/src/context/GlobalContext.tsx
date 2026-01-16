@@ -2,6 +2,7 @@ import React, { createContext, type Dispatch, useContext, useEffect, useReducer,
 import HttpClient from "../api/HttpClient.tsx";
 import { setLocaleData } from "@wordpress/i18n";
 import type { PeriodFilterOption } from "../custom/AnalyticsTab.tsx";
+import DynamicUrl from "../helpers/DynamicUrl.tsx";
 
 // @ts-expect-error the metricool variable is globally set in the DashboardController
 // but the tsc complains it can't find it
@@ -17,6 +18,7 @@ interface GlobalContext {
     httpClient: GlobalState["httpClient"],
     dispatch: Dispatch<ReducerAction>,
     dashboardSettings: GlobalState["dashboardSettings"],
+    metricoolDynamicUrl: GlobalState["metricoolDynamicUrl"],
 }
 
 const defaultMetricoolData = {
@@ -49,6 +51,7 @@ interface GlobalState {
             activePeriodFilter?: PeriodFilterOption,
         }
     };
+    metricoolDynamicUrl: DynamicUrl,
 }
 
 /**
@@ -77,6 +80,12 @@ const initialGlobalState: GlobalState = {
         MC_API_URL: MC_API_URL,
     }),
     dashboardSettings: {},
+    metricoolDynamicUrl: new DynamicUrl({
+        baseUrl: METRICOOL_DATA.metricool_base_url,
+    }).setSearchParams({
+        blogId: METRICOOL_DATA.blogId,
+        userId: METRICOOL_DATA.userId,
+    }),
 };
 
 /**
@@ -103,6 +112,7 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
                 httpClient: globalState.httpClient,
                 dispatch,
                 dashboardSettings: globalState.dashboardSettings,
+                metricoolDynamicUrl: globalState.metricoolDynamicUrl,
             }}
         >
             {children}
