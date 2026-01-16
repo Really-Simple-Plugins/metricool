@@ -210,7 +210,8 @@ const AnalyticsTab = () => {
                             xAxis: { interval: xAxisInterval },
                         }}
                         chartData={analyticsData.timelineData}
-                        linesSettings={{ type: "monotone" }}/>
+                        linesSettings={{ type: "monotone" }}
+                    />
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
