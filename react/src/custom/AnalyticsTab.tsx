@@ -50,19 +50,19 @@ const periodFilterOptions: Record<string, PeriodFilterOption> = {
         label: __("Current month", "metricool"),
         option: "currentmonth",
         isUpsell: false,
-        xAxisInterval: 4,
+        xAxisInterval: 0,
     },
     last30Days: {
         label: __("Last 30 days", "metricool"),
         option: "last30days",
         isUpsell: false,
-        xAxisInterval: 4,
+        xAxisInterval: 2,
     },
     previousMonth: {
         label: __("Previous month", "metricool"),
         option: "previousmonth",
         isUpsell: false,
-        xAxisInterval: 4,
+        xAxisInterval: 2,
     },
     last3Months: {
         label: __("Last 3 months", "metricool"),
@@ -155,8 +155,13 @@ const AnalyticsTab = () => {
         onSuccess: (response) => {
             queryClient.setQueryData(["analytics"], { ...response });
             if (periodFilter === periodFilterOptions.currentMonth) {
-                const halfMonthInDays = 14;
-                setXAxisInterval(response.data.timelineData.length <= halfMonthInDays ? periodFilterOptions.lastWeek.xAxisInterval : periodFilterOptions.currentMonth.xAxisInterval);
+                const maxPossibleDataPointsOnXAxis = 14;
+                const isCurrentMonthTooLongForXAxis = response.data.timelineData.length >= maxPossibleDataPointsOnXAxis;
+                setXAxisInterval(
+                    isCurrentMonthTooLongForXAxis ?
+                    periodFilterOptions.previousMonth.xAxisInterval :
+                    periodFilterOptions.currentMonth.xAxisInterval
+                );
             } else {
                 setXAxisInterval(periodFilter.xAxisInterval);
             }
