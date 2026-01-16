@@ -26,8 +26,8 @@ const ConnectedAccounts = () => {
                 {
                     label: "Web",
                     icon: "web",
-                    connectedClasses: "text-[#5c90a8]",
-                    unconnectedClasses: "bg-[#5c90a8] border-[#5c90a8]",
+                    connectedClasses: "text-web",
+                    unconnectedClasses: "bg-web border-web hover:bg-transparent hover:**:data-content:text-web",
                     upsell: false,
                     link: `https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.web && data.data.web.url && { userName: data.data.web.url }),
@@ -35,8 +35,8 @@ const ConnectedAccounts = () => {
                 {
                     label: "Twitter / X",
                     icon: "twitter",
-                    connectedClasses: "text-black",
-                    unconnectedClasses: "bg-black border-black",
+                    connectedClasses: "text-x",
+                    unconnectedClasses: "bg-x border-x hover:bg-transparent hover:**:data-content:text-x",
                     upsell: true,
                     link: `https://app.metricool.com/evolution/twitter?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.twitter && { userName: data.data.twitter.username }),
@@ -45,7 +45,7 @@ const ConnectedAccounts = () => {
                     label: "YouTube",
                     icon: "youtube",
                     connectedClasses: "text-youtube",
-                    unconnectedClasses: "bg-youtube border-youtube",
+                    unconnectedClasses: "bg-youtube border-youtube hover:bg-transparent hover:**:data-content:text-youtube",
                     upsell: false,
                     link: `https://app.metricool.com/evolution/youtube?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.youtube && { userName: data.data.youtube.username }),
@@ -54,7 +54,7 @@ const ConnectedAccounts = () => {
                     label: "LinkedIn",
                     icon: "linkedIn",
                     connectedClasses: "text-linkedin",
-                    unconnectedClasses: "bg-linkedin border-linkedin",
+                    unconnectedClasses: "bg-linkedin border-linkedin hover:bg-transparent hover:**:data-content:text-linkedin",
                     upsell: true,
                     link: `https://app.metricool.com/evolution/linkedin?blogId=${metricool.blogId}&userId=${metricool.userId}`,
                     ...(data.data.linkedin && { userName: data.data.linkedin.username }),
@@ -64,12 +64,12 @@ const ConnectedAccounts = () => {
     });
 
     return (
-        <Block>
+        <Block className={"xl:min-h-58 xl:max-h-58"}>
             <BlockHeader title={__("Connected Accounts", "metricool")}/>
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
                 {isLoading ? (
                     <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
-                        <Icon icon={"loading"} iconClass={"size-5"}/>
+                        <Icon icon={"loading"} className={"size-5"}/>
                     </FlexContainer>
                 ) : error ? (
                     <FlexContainer direction={"row"} className={"justify-center items-center"}>
