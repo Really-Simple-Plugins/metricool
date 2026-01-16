@@ -4,21 +4,12 @@ import {
     Button,
     FlexContainer,
     Icon,
-    type IconProps
 } from "../components";
 import { __ } from "@wordpress/i18n";
 import AccountTile from "./AccountTile.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
-
-type ConnectedAccount = {
-    label: string,
-    icon: IconProps["icon"],
-    connectedClasses: string,
-    unconnectedClasses: string,
-    upsell: boolean,
-    userName?: string,
-};
+import type { ConnectedAccount } from "./ConnectedAccounts.tsx";
 
 const ConnectionsSettings = () => {
     const { httpClient, metricool } = useGlobalContext();

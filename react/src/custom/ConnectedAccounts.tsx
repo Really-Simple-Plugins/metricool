@@ -4,7 +4,7 @@ import AccountTile from "./AccountTile.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 
-type ConnectedAccount = {
+export type ConnectedAccount = {
     label: string,
     icon: IconProps["icon"],
     connectedClasses: string,
