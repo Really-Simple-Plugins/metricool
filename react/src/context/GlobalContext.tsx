@@ -35,6 +35,7 @@ const defaultMetricoolData = {
     is_onboarding_completed: false,
     was_dashboard_modal_closed: false,
     support: null,
+    metricool_base_url: "",
     locale: "",
     blogId: "",
     userId: "",

@@ -27,6 +27,7 @@ return [
         'review_url' => 'https://wordpress.org/support/plugin/metricool/reviews/#new-post',
     ],
     'metricool' => [
+        'base_url' => 'https://app.metricool.com/',
         'upgrade_premium_url' => 'https://app.metricool.com/user-settings/plan',
         'connect_network_url' => 'https://app.metricool.com/evolution/brandSummary',
         'connect_linkedin_url' => 'https://app.metricool.com/evolution/linkedin',
