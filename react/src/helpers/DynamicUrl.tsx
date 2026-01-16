@@ -20,7 +20,7 @@ class DynamicUrl {
      * Returns the dynamicUrl as a string.
      * @returns the dynamicUrl as a string
      */
-    public get() {
+    public toString() {
         return this.dynamicUrl.href;
     }
 
