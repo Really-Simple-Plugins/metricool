@@ -32,10 +32,6 @@ class DynamicUrl {
      * @returns The DynamicUrl instance.
      */
     public setParameters(parameters: Record<string, string>) {
-        // if (!this.route || this.route === this.httpClientSettings.MC_API_URL) {
-        //     throw new Error(__("Route not set. Please use setRoute before using setFilters.", "metricool"));
-        // }
-
         Object.entries(parameters).forEach(([paramKey, paramValue]) => {
             this.dynamicUrl.searchParams.set(paramKey, paramValue);
         });
@@ -52,8 +48,6 @@ class DynamicUrl {
         this.dynamicUrl.pathname = pathname;
         return this;
     }
-
-
 }
 
 export default DynamicUrl;
