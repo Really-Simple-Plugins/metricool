@@ -132,7 +132,7 @@ const AnalyticsTab = () => {
     const lineChartXAxisDataKey = "label";
     const [xAxisInterval, setXAxisInterval] = useState(defaultPeriodFilter.xAxisInterval);
 
-    const { data: analyticsData, isLoading, error } = useQuery({
+    const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData } = useQuery({
         queryKey: ["analytics"],
         queryFn: () => httpClient?.setRoute("analytics").setFilters({ period: periodFilter.option }).get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
@@ -177,7 +177,7 @@ const AnalyticsTab = () => {
                 <FlexContainer direction={"row"} className={"justify-center items-center"}>
                     {__("There was an error fetching the data", "metricool")}
                 </FlexContainer>
-            ) : analyticsData && (
+            ) : hasAnalyticsData && (
                 <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>
                         {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
@@ -215,7 +215,7 @@ const AnalyticsTab = () => {
             )}
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
                 <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
-                    {analyticsData && (
+                    {hasAnalyticsData && (
                         <>
                             <Select
                                 defaultValue={periodFilter.option}
