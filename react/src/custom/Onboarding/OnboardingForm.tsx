@@ -143,13 +143,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                             <FieldWrapper
                                 flexDirection={"row-reverse"}
                                 className={"!gap-3 justify-end"}
-                                label={(
-                                    <span
-                                        dangerouslySetInnerHTML={{
-                                            __html: DOMPurify.sanitize(__("I wish to receive communications about news and/or promotions from Metricool Software.", "metricool"))
-                                        }}
-                                    />
-                                )}
+                                label={__("I wish to receive communications about news and/or promotions from Metricool Software.", "metricool")}
                                 htmlFor={"marketing"}
                                 fieldState={{
                                     invalid: fieldState.invalid,
