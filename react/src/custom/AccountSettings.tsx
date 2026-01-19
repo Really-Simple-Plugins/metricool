@@ -46,7 +46,7 @@ const AccountSettings = () => {
 
     const { mutate: onSubmit, isPending } = useMutation({
         mutationFn: async ({ sendToAlternativeEmail, alternativeEmail }: z.infer<typeof formSchema>) => {
-            return httpClient?.setRoute("user_settings").setPayload({
+            return httpClient.setRoute("user_settings").setPayload({
                 "sendToAlternativeEmail": sendToAlternativeEmail,
                 "alternativeEmail": alternativeEmail,
             }).post();

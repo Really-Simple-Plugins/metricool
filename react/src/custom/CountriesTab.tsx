@@ -28,7 +28,7 @@ const CountriesTab = () => {
     const { httpClient, metricoolDynamicUrl } = useGlobalContext();
     const { data: countryData, isLoading, error } = useQuery({
         queryKey: ["analytics", "countries"],
-        queryFn: () => httpClient?.setRoute("distribution/countries").get(),
+        queryFn: () => httpClient.setRoute("distribution/countries").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): { tableData: DataTableColumns[], chartData: string[][] } => data.data,
     });

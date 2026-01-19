@@ -11,7 +11,7 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
 
     const { mutate: resendEmail, isPending: resendEmailPending, isSuccess: resendEmailSuccess } = useMutation({
         mutationFn: async () => {
-            // const response = await httpClient?.setRoute("").setPayload({
+            // const response = await httpClient.setRoute("").setPayload({
             // }).post();
 
             return new Promise(resolve => setTimeout(resolve, 2000));

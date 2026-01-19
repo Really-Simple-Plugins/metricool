@@ -27,7 +27,7 @@ const TrafficTab = () => {
     const { httpClient, metricoolDynamicUrl } = useGlobalContext();
     const { data: trafficData, isLoading, error } = useQuery({
         queryKey: ["analytics", "traffic"],
-        queryFn: () => httpClient?.setRoute("distribution/referers").get(),
+        queryFn: () => httpClient.setRoute("distribution/referers").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): { tableData: DataTableColumns[] } => data.data,
     });

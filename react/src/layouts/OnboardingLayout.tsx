@@ -28,7 +28,7 @@ export const OnboardingLayout = () => {
         mutationFn: async (formValues:  Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
             setEnteredEmail(formValues.credentials.email);
             setOnboardingModalOpen(true);
-            // const response = await httpClient?.setRoute("").setPayload({
+            // const response = await httpClient.setRoute("").setPayload({
             // }).post();
             const timer = new Promise(resolve => setTimeout(resolve, 8000));
             await timer;

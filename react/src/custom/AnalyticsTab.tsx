@@ -133,7 +133,7 @@ const AnalyticsTab = () => {
 
     const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData } = useQuery({
         queryKey: ["analytics"],
-        queryFn: () => httpClient?.setRoute("analytics").setFilters({ period: periodFilter.option }).get(),
+        queryFn: () => httpClient.setRoute("analytics").setFilters({ period: periodFilter.option }).get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): { totals: Record<string, MetricData>, timelineData: TimelineData } => data.data,
     });
@@ -149,7 +149,7 @@ const AnalyticsTab = () => {
         mutationFn: async ({ period }: {
             period: string,
         }) => {
-            return httpClient?.setRoute("analytics").setFilters({ period: period }).get();
+            return httpClient.setRoute("analytics").setFilters({ period: period }).get();
         },
         onSuccess: (response) => {
             queryClient.setQueryData(["analytics"], { ...response });

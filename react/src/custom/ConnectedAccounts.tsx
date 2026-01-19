@@ -20,7 +20,7 @@ const ConnectedAccounts = () => {
     const { httpClient, metricoolDynamicUrl } = useGlobalContext();
     const { data: connectedAccountsData, isLoading, error } = useQuery({
         queryKey: ["connected", "accounts"],
-        queryFn: () => httpClient?.setRoute("connected_networks").get(),
+        queryFn: () => httpClient.setRoute("connected_networks").get(),
         staleTime: 1000 * 60, // 1 minute
         select: (response): ConnectedAccount[] => {
             return ([

@@ -31,7 +31,7 @@ const OtherPlugins = () => {
     const { httpClient, metricool } = useGlobalContext();
     const { isLoading, error, data: otherPlugins = {} } = useQuery({
         queryKey: ["other_plugins_data"],
-        queryFn: () => httpClient?.setRoute("other_plugins_data").get(),
+        queryFn: () => httpClient.setRoute("other_plugins_data").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): Record<string, OtherPlugin> => {
             return data.data.plugins;
@@ -66,7 +66,7 @@ const OtherPlugins = () => {
             action: string,
             key: string,
         }) => {
-            return httpClient?.setRoute("do_plugin_action").setPayload({
+            return httpClient.setRoute("do_plugin_action").setPayload({
                 "slug": slug,
                 "action": action,
             }).post();

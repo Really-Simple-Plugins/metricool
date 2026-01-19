@@ -10,7 +10,7 @@ const RealtimeTab = () => {
 
     const { data: realTimeData, isLoading, error } = useQuery({
         queryKey: ["analytics", "realtime"],
-        queryFn: () => httpClient?.setRoute("realtime").get(),
+        queryFn: () => httpClient.setRoute("realtime").get(),
         staleTime: 1000 * 60, // 1 minute
         refetchInterval: 1000 * 60, // 1 minute
         select: (data) => data.data,

@@ -10,7 +10,7 @@ const Progress = () => {
     const { httpClient } = useGlobalContext();
     const { data: taskData, isLoading, error, refetch } = useQuery({
         queryKey: ["tasks"],
-        queryFn: () => httpClient?.setRoute("get_tasks").get(),
+        queryFn: () => httpClient.setRoute("get_tasks").get(),
         staleTime: 1000 * 60, // 1 minute
         select: (data): {
             tasks: TaskProps[],
@@ -37,7 +37,7 @@ const Progress = () => {
         mutationFn: async ({ taskId }: {
             taskId: string,
         }) => {
-            return httpClient?.setRoute("dismiss_task").setPayload({
+            return httpClient.setRoute("dismiss_task").setPayload({
                 "taskId": taskId,
             }).post();
         },
