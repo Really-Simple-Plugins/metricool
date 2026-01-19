@@ -33,10 +33,11 @@ const defaultMetricoolData = {
     json_translations: [],
     trusted_urls: {
         legal_terms: "",
+        new_support_ticket: "",
     },
     is_onboarding_completed: false,
     was_dashboard_modal_closed: false,
-    support: null,
+    support: "",
     metricool_base_url: "",
     metricool_help_url: "",
     locale: "",

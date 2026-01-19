@@ -41,6 +41,9 @@ return [
         'namespace' => 'metricool',
     ],
     'frontend' => [
-        'trusted_urls' => ['legal_terms' => 'https://metricool.com/legal-terms/'],
+        'trusted_urls' => [
+            'legal_terms' => 'https://metricool.com/legal-terms/',
+            'new_support_ticket' => 'https://wordpress.org/support/plugin/metricool/#new-topic-0',
+        ],
     ]
 ];
