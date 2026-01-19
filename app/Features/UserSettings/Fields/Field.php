@@ -179,22 +179,31 @@ class Field
      */
     protected function castValue($value)
     {
-        switch ($this->type) {
-            case 'boolean':
-                return (bool) $value;
-            case 'integer':
-                return (int) $value;
-            case 'float':
-                return (float) $value;
-            case 'string':
-                return (string) $value;
-            case 'array':
-                return (array) $value;
-            case 'object':
-                return (object) $value;
-            default:
-                return $value;
+        if ($this->isBoolean()) {
+            return (bool) $value;
         }
+
+        if ($this->isInteger()) {
+            return (int) $value;
+        }
+
+        if ($this->isFloat()) {
+            return (float) $value;
+        }
+
+        if ($this->isString()) {
+            return (string) $value;
+        }
+
+        if ($this->isArray()) {
+            return (array) $value;
+        }
+
+        if ($this->isObject()) {
+            return (object) $value;
+        }
+
+        return $value;
     }
 
     /**
