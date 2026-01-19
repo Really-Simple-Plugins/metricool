@@ -128,7 +128,7 @@ const OtherPlugins = () => {
                     />
                 )}
             />
-            <FlexContainer direction={"column"} className={"!gap-2"}>
+            <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
                 {isLoading ? (
                     <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                         <Icon icon={"loading"} className={"size-5"}/>
@@ -137,18 +137,22 @@ const OtherPlugins = () => {
                     <FlexContainer direction={"row"} className={"justify-center items-center"}>
                         {__("There was an error fetching other plugin data.", "metricool")}
                     </FlexContainer>
-                ) : otherPlugins && Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (
-                    <ListItem
-                        icon={"circle"}
-                        iconColor={pluginData.options_prefix.split("_")[0]}
-                        iconPosition={"left"}
-                        action={getOtherPluginAction(pluginData, pluginKey)}
-                        actionText={pluginStatuses[pluginData.action]}
-                        className={"font-semibold"}
-                    >
-                        {pluginData.title}
-                    </ListItem>
-                ))}
+                ) : otherPlugins && (
+                    <FlexContainer direction={"column"} className={"!gap-2"}>
+                        {Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (
+                            <ListItem
+                                icon={"circle"}
+                                iconColor={pluginData.options_prefix.split("_")[0]}
+                                iconPosition={"left"}
+                                action={getOtherPluginAction(pluginData, pluginKey)}
+                                actionText={pluginStatuses[pluginData.action]}
+                                className={"font-semibold"}
+                            >
+                                {pluginData.title}
+                            </ListItem>
+                        ))}
+                    </FlexContainer>
+                )}
             </FlexContainer>
         </Block>
     );
