@@ -1,4 +1,11 @@
-import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer, Icon } from "../components";
+import {
+    Button,
+    type Column,
+    DataTable,
+    DataTableColumnHeader,
+    FlexContainer,
+    Icon
+} from "../components";
 import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
@@ -68,7 +75,7 @@ const CountriesTab = () => {
                         columns={columns}
                         data={countryData.tableData}
                         tableSettings={{ pageSize: 3 }}
-                        stringFormatter={(...args: [string,string]) => {
+                        stringFormatter={(...args: [string, string]) => {
                             return sprintf(__("Page %s of %s", "metricool"), [...args]);
                         }}
                     />
