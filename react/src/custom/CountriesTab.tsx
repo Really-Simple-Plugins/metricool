@@ -2,7 +2,7 @@ import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer, I
 import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
-import { __ } from "@wordpress/i18n";
+import { __, sprintf } from "@wordpress/i18n";
 
 type DataTableColumns = { country: string, visitors: number, percentage: number };
 
@@ -45,7 +45,7 @@ const CountriesTab = () => {
         <FlexContainer direction={"column"} className={"justify-between grow !gap-2"}>
             {isLoading ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
-                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                    <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center"}>
@@ -64,7 +64,14 @@ const CountriesTab = () => {
                             />
                         </div>
                     </FlexContainer>
-                    <DataTable columns={columns} data={countryData.tableData} tableSettings={{ pageSize: 3 }}/>
+                    <DataTable
+                        columns={columns}
+                        data={countryData.tableData}
+                        tableSettings={{ pageSize: 3 }}
+                        stringFormatter={(...args: [string,string]) => {
+                            return sprintf(__("Page %s of %s", "metricool"), [...args]);
+                        }}
+                    />
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>

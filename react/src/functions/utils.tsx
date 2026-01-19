@@ -14,7 +14,12 @@ export const getScrollProgressPercent = () => {
 };
 
 export const setNoticeToVisible = (noticeId: string) => {
-    const noticeData: { data: Notice[] } = queryClient.getQueryData(["notices"]) ?? { data: [] };
+    const noticeData: { data: Notice[] } | undefined = queryClient.getQueryData(["notices"]);
+
+    if (!noticeData) {
+        return;
+    } // abort - should never get triggered but appeases TS
+
     const updatedNoticeArray = noticeData.data.map((notice) => {
         if (notice.id === noticeId) {
             return {...notice, visible: true}

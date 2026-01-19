@@ -1,4 +1,5 @@
 import { Badge, type BadgeVariantsProps, Button, FlexContainer } from "../components";
+import { clsx } from "clsx";
 
 export type TaskProps = {
     id: string,
@@ -66,7 +67,12 @@ const Task = ({
                 >
                     {label}
                 </Badge>
-                <div className={"font-semibold"}>{text}</div>
+                <div className={clsx(
+                    "font-semibold",
+                    status === "dismissed" && "text-gray-400 line-through",
+                )}>
+                    {text}
+                </div>
             </FlexContainer>
             <FlexContainer direction={"row"} className={"items-center"}>
                 {action && (

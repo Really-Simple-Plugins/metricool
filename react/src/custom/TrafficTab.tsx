@@ -1,5 +1,5 @@
 import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer, Icon } from "../components";
-import { __ } from "@wordpress/i18n";
+import { __, sprintf } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
 
@@ -36,7 +36,7 @@ const TrafficTab = () => {
         <FlexContainer direction={"column"} className={"justify-between grow"}>
             {isLoading ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
-                    <Icon icon={"loading"} iconClass={"size-5"}/>
+                    <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
                 <FlexContainer direction={"row"} className={"justify-center items-center"}>
@@ -44,7 +44,14 @@ const TrafficTab = () => {
                 </FlexContainer>
             ) : trafficData && (
                 <FlexContainer direction={"column"}>
-                    <DataTable data={trafficData.tableData} columns={columns} tableSettings={{ pageSize: 8 }}/>
+                    <DataTable
+                        data={trafficData.tableData}
+                        columns={columns}
+                        tableSettings={{ pageSize: 8 }}
+                        stringFormatter={(...args: [string,string]) => {
+                            return sprintf(__("Page %s of %s", "metricool"), [...args]);
+                        }}
+                    />
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>

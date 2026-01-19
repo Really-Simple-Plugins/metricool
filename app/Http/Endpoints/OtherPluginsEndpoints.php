@@ -1,0 +1,111 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Metricool\Http\Endpoints;
+
+use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Services\OtherPluginService;
+use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Support\Helpers\Storages\GeneralConfig;
+
+class OtherPluginsEndpoints implements MultiEndpointInterface
+{
+    use HasRestAccess;
+    use HasAllowlistControl;
+
+    private GeneralConfig $config;
+    private OtherPluginService $service;
+
+    public function __construct(GeneralConfig $config, OtherPluginService $service)
+    {
+        $this->config = $config;
+        $this->service = $service;
+    }
+
+    /**
+     * Only enable this endpoint if the user has access to the admin area
+     */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerRoutes(): array
+    {
+        return [
+            'other_plugins_data' => [
+                'methods' => \WP_REST_Server::READABLE,
+                'callback' => [$this, 'getOtherPluginsData'],
+            ],
+            'do_plugin_action' => [
+                'methods' => \WP_REST_Server::CREATABLE,
+                'callback' => [$this, 'doOtherPluginAction'],
+            ],
+        ];
+    }
+
+    /**
+     * Get plugin data for other plugin section
+     */
+    public function getOtherPluginsData(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $plugins = $this->buildOtherPluginData();
+        return $this->sendHttpResponse([
+            'plugins' => $plugins
+        ]);
+    }
+
+    /**
+     * Perform an action on a plugin
+     */
+    public function doOtherPluginAction(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $storage = $this->retrieveHttpStorage($request);
+
+        $slug = $storage->getString('slug', 'really-simple-ssl');
+        $action = $storage->getString('action', 'download');
+
+        $plugins = $this->buildOtherPluginData($slug);
+        $plugin = reset($plugins);
+
+        $this->service->setPluginConfig($plugin);
+        $this->service->executeAction($action);
+
+        // After executing the action, a new action should be available
+        $plugin['action'] = $this->service->getAvailablePluginAction();
+
+        return $this->sendHttpResponse([
+            'plugin' => $plugin
+        ]);
+    }
+
+    /**
+     * Get other plugins from the other config and manipulate the array
+     * with the Installer class.
+     * @param string $targetPluginSlug Can be used to filter the plugins array
+     * for a specific plugin entry based on the slug key.
+     */
+    public function buildOtherPluginData(string $targetPluginSlug = ''): array
+    {
+        $plugins = $this->config->get('plugins');
+
+        if (!empty($targetPluginSlug)) {
+            $plugins = array_filter($plugins, function($plugin) use ($targetPluginSlug) {
+                return isset($plugin['slug']) && ($plugin['slug'] === $targetPluginSlug);
+            });
+        }
+
+        foreach ($plugins as $index => $plugin) {
+            $this->service->setPluginConfig($plugin);
+            $plugins[$index]['url'] = $this->service->getPluginUrl();
+            $plugins[$index]['action'] = $this->service->getAvailablePluginAction();
+        }
+
+        return $plugins;
+    }
+}

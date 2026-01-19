@@ -1,0 +1,140 @@
+stages:
+  - lint
+  - quality
+
+# Setup PHP + Composer template
+.setup_php:
+  image: php:7.4-cli
+  before_script:
+    # OS deps for Composer (needed for dist/source installs)
+    - apt-get update -qq
+    - apt-get install -yqq --no-install-recommends git unzip libzip-dev > /dev/null
+    - docker-php-ext-configure zip >/dev/null
+    - docker-php-ext-install -j"$(nproc)" zip >/dev/null
+
+    # Composer (verified install)
+    - curl -sSL https://composer.github.io/installer.sig -o installer.sig
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php -r "if (hash_file('SHA384', 'composer-setup.php') !== trim(file_get_contents('installer.sig'))) { echo 'Invalid composer installer'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - rm -f composer-setup.php installer.sig
+
+    # Install PHP deps (fast & deterministic with lock file from repo)
+    - composer install --no-interaction --no-progress --prefer-dist --quiet
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-composer"
+    paths:
+      - vendor/
+
+phpcs:reviewdog:
+  stage: lint
+  extends: .setup_php
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - when: never
+  script:
+    - |
+      echo "PHPCS: Starting.."
+
+      # Run PHPCS but don't abort the shell on non-zero
+      set +e
+
+      # Create reports with PHPCS - checkstyle for reviewdog
+      vendor/bin/phpcs -q \
+      --standard=phpcs.xml.dist \
+      --report=full --report-file=phpcs-report.txt \
+      --report-checkstyle=phpcs-checkstyle.xml
+
+      # Remember the PHPCS result
+      PHPCS_EXIT=$?
+      set -e
+
+      # If no errors were reported, exit successfully
+      if [ "$PHPCS_EXIT" -eq 0 ]; then
+        echo "PHPCS: clean!"
+        exit 0
+      fi
+
+      echo "PHPCS: issues found -> creating automatic code review with reviewdog."
+
+      # Install reviewdog
+      curl -sSfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /usr/local/bin >/dev/null
+
+      # Add line and column to the message in the checkstyle report
+      sed -i 's|\(<error [^>]*line="\)\([0-9]\+\)\("[^>]*column="\)\([0-9]\+\)\("[^>]*message="\)\([^"]*\)"|\1\2\3\4\5\6 (line:\2:\4)"|g' phpcs-checkstyle.xml || true
+
+      # Post inline MR comments; FAIL if any finding (warnings or errors) exists
+      reviewdog -f=checkstyle \
+        -name="PHPCS" \
+        -reporter=gitlab-mr-discussion \
+        -filter-mode=diff_context \
+        -level=warning \
+        -fail-level=any \
+        < phpcs-checkstyle.xml >/dev/null
+
+      exit "$PHPCS_EXIT"
+  artifacts:
+    when: on_failure
+    paths:
+      - phpcs-checkstyle.xml
+      - phpcs-report.txt
+    expire_in: 1 week
+  variables:
+    REVIEWDOG_GITLAB_API_SERVER: "$CI_SERVER_URL/api/v4"
+    REVIEWDOG_GITLAB_API_TOKEN: "$MR_REVIEW_GITLAB_API_TOKEN"
+
+phpstan:reviewdog:
+  stage: quality
+  extends: .setup_php
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - when: never
+  script:
+    - |
+      echo "PHPStan: Starting.."
+
+      # Run PHPStan but don't abort the shell on non-zero
+      set +e
+
+      # Create reports with PHPStan - checkstyle for reviewdog
+      vendor/bin/phpstan analyse --configuration=phpstan.neon.dist \
+      --memory-limit=2048M \
+      --error-format=checkstyle \
+      --no-progress > phpstan-checkstyle.xml
+      
+      # Remember the PHPStan result
+      PHPSTAN_EXIT=$?
+      set -e
+
+      # Exit silently if all clean
+      if [ "$PHPSTAN_EXIT" -eq 0 ]; then
+        echo "PHPStan: clean!"
+        exit 0
+      fi
+
+      echo "PHPStan: issues found -> generating checkstyle report and posting with reviewdog."
+
+      # Install reviewdog
+      curl -sSfL https://raw.githubusercontent.com/reviewdog/reviewdog/master/install.sh | sh -s -- -b /usr/local/bin >/dev/null
+
+      # Add line to the message in the checkstyle report (no column, that is always "1" for phpstan)
+      sed -i 's|\(<error [^>]*line="\)\([0-9]\+\)\("[^>]*message="\)\([^"]*\)"|\1\2\3\4 (line:\2)"|g' phpstan-checkstyle.xml || true
+
+      # Post inline MR comments; fail the job on any findings
+      reviewdog -f=checkstyle \
+        -name="PHPStan" \
+        -reporter=gitlab-mr-discussion \
+        -filter-mode=diff_context \
+        -level=warning \
+        -fail-level=any \
+        < phpstan-checkstyle.xml >/dev/null
+
+      exit "$PHPSTAN_EXIT"
+  artifacts:
+    when: on_failure
+    paths:
+      - phpstan-checkstyle.xml
+    expire_in: 1 week
+  variables:
+    REVIEWDOG_GITLAB_API_SERVER: "$CI_SERVER_URL/api/v4"
+    REVIEWDOG_GITLAB_API_TOKEN: "$MR_REVIEW_GITLAB_API_TOKEN"

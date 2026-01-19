@@ -31,13 +31,13 @@ const ListItem = ({
     action,
     actionText,
     children,
-    className
+    className,
 }: React.ComponentProps<"div"> & ListItemProps) => {
     return (
         <FlexContainer direction={"row"} className={"items-center justify-between"}>
             <FlexContainer direction={"row"} className={clsx("items-center !gap-2", iconPosition === "right" && "flex-row-reverse")}>
                 {icon && (
-                    <Icon icon={icon} iconClass={clsx(iconClass,
+                    <Icon icon={icon} className={clsx(iconClass,
                         icon === "circle" && "h-3 w-3",
                         iconColor === "warning" && "text-rsp-warning",
                         iconColor === "success" && "text-rsp-success",

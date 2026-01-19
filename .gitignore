@@ -82,3 +82,13 @@ react/.tanstack
 assets/languages/*
 !assets/languages/index.php
 !assets/languages/*.pot
+
+# Ignore PHPCS and PHPStan reports
+phpcs-report.txt
+phpcs-checkstyle.xml
+phpstan-report.txt
+phpstan-checkstyle.xml
+
+# Ignore PHPCS and PHPStan local configs
+phpcs.xml
+phpstan.neon
