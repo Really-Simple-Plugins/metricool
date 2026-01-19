@@ -6,10 +6,12 @@ import Task, { type TaskProps } from "./Task.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
+import { queryClient } from "../main.tsx";
 
 const Progress = () => {
     const { httpClient } = useGlobalContext();
     const { data: taskData, isLoading, error, refetch, errorUpdateCount } = useQuery({
+        enabled: queryClient.getQueryData(["connected", "accounts"]) !== undefined,
         queryKey: ["tasks"],
         queryFn: () => httpClient.setRoute("get_tasks").get(),
         staleTime: 1000 * 60, // 1 minute
