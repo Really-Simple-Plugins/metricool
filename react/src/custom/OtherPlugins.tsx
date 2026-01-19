@@ -85,7 +85,11 @@ const OtherPlugins = () => {
             currentOtherPluginsData.data.plugins = newPluginData;
             queryClient.setQueryData(["other_plugins_data"], { ...currentOtherPluginsData });
             if (response.data.plugin.action === "activate") {
-                runPluginAction({ slug: response.data.plugin.slug, action: response.data.plugin.action, key: variables.key });
+                runPluginAction({
+                    slug: response.data.plugin.slug,
+                    action: response.data.plugin.action,
+                    key: variables.key,
+                });
             }
         },
         onError: (error) => {
