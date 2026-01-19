@@ -83,7 +83,6 @@ const Progress = () => {
                             style={{ width: `${taskData.completionPercentage}%` }}
                         />
                     </div>
-
                     <div className={"flex items-center justify-start gap-4"}>
                         <span className={"font-bold text-2xl w-min"}>
                             {taskData.completionPercentage}%
@@ -93,7 +92,6 @@ const Progress = () => {
                             {taskData.remainingTasks.length > 0 && sprintf(_n("You're on your way. You still have %s task open.", "You're on your way. You still have %s tasks open.", taskData.remainingTasks.length, "metricool"), String(taskData.remainingTasks.length))}
                         </span>
                     </div>
-
                     {/* Task List */}
                     <div className="max-h-[300px] flex flex-col overflow-y-auto gap-4 pr-3">
                         {[...taskData.remainingTasks, ...(activeTab === 0 ? [...taskData.completedTasks] : [])]
