@@ -186,7 +186,7 @@ const ConnectionsSettings = () => {
     return (
         <div className={"flex flex-col min-w-full md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
-                <Block>
+                <Block className={"justify-between min-h-58"}>
                     <BlockHeader
                         title={__("Connections", "metricool")}
                         description={__("The accounts that are connected to Metricool", "metricool")}
