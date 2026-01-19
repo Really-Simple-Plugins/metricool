@@ -73,7 +73,7 @@ const ConnectedAccounts = () => {
             <BlockHeader title={__("Connected Accounts", "metricool")}/>
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
                 {isLoading ? (
-                    <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                    <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                         <Icon icon={"loading"} className={"size-5"}/>
                     </FlexContainer>
                 ) : error ? (

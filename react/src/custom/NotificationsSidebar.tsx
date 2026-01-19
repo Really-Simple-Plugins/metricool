@@ -46,7 +46,7 @@ const NotificationsSidebar = () => {
         <Block variant={"transparent"} className={"px-0"}>
             <BlockHeader title={__("Notifications", "metricool")} separator={true}/>
             {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (

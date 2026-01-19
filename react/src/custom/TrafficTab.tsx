@@ -35,7 +35,7 @@ const TrafficTab = () => {
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
             {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (

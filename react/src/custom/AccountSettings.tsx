@@ -97,7 +97,7 @@ const AccountSettings = () => {
                 <Block className={"rounded-t-md rounded-b-none"}>
                     <BlockHeader title={__("Monthly summary", "metricool")}/>
                     {isLoading ? (
-                        <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                        <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                             <Icon icon={"loading"} className={"size-5"}/>
                         </FlexContainer>
                     ) : queryError ? (
