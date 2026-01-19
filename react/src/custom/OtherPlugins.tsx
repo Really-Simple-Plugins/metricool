@@ -4,6 +4,7 @@ import ListItem from "./ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { queryClient } from "../main.tsx";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 const pluginStatuses: Record<string, string> = {
     installed: __("Installed", "metricool"),
@@ -29,7 +30,7 @@ type OtherPlugin = {
 
 const OtherPlugins = () => {
     const { httpClient, metricool } = useGlobalContext();
-    const { isLoading, error, data: otherPlugins = {} } = useQuery({
+    const { isLoading, error, data: otherPlugins = {}, refetch, errorUpdateCount } = useQuery({
         queryKey: ["other_plugins_data"],
         queryFn: () => httpClient.setRoute("other_plugins_data").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
@@ -138,9 +139,7 @@ const OtherPlugins = () => {
                         <Icon icon={"loading"} className={"size-5"}/>
                     </FlexContainer>
                 ) : error ? (
-                    <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                        {__("There was an error fetching other plugin data.", "metricool")}
-                    </FlexContainer>
+                    <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
                 ) : otherPlugins && (
                     <FlexContainer direction={"column"} className={"!gap-2"}>
                         {Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (

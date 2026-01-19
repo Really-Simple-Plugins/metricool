@@ -10,6 +10,7 @@ import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { __, sprintf } from "@wordpress/i18n";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 type DataTableColumns = { country: string, visitors: number, percentage: number };
 
@@ -33,7 +34,7 @@ const columns = [
 
 const CountriesTab = () => {
     const { httpClient, metricoolDynamicUrl } = useGlobalContext();
-    const { data: countryData, isLoading, error } = useQuery({
+    const { data: countryData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["analytics", "countries"],
         queryFn: () => httpClient.setRoute("distribution/countries").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
@@ -55,9 +56,7 @@ const CountriesTab = () => {
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data", "metricool")}
-                </FlexContainer>
+                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
             ) : countryData && (
                 <FlexContainer direction={"column"} className={"!gap-2"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>

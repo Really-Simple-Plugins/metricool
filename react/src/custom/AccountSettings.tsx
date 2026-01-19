@@ -8,6 +8,7 @@ import { useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../main.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 const formSchema = z.object({
     sendToAlternativeEmail: z.boolean(),
@@ -18,7 +19,7 @@ const formSchema = z.object({
 
 const AccountSettings = () => {
     const { httpClient } = useGlobalContext();
-    const { data: values, isLoading, error: queryError } = useQuery({
+    const { data: values, isLoading, error: queryError, errorUpdateCount, refetch } = useQuery({
         queryKey: ["user_settings"],
         queryFn: () => httpClient.setRoute("user_settings").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
@@ -101,9 +102,7 @@ const AccountSettings = () => {
                             <Icon icon={"loading"} className={"size-5"}/>
                         </FlexContainer>
                     ) : queryError ? (
-                        <div>
-                            {__("There was an error fetching your monthly summary settings", "metricool")}
-                        </div>
+                        <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
                     ) : (
                         <FlexContainer direction={"column"}>
                             <Controller

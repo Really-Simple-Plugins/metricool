@@ -16,6 +16,7 @@ import MetricTile from "./MetricTile.tsx";
 import { clsx } from "clsx";
 import Icon from "../components/src/components/Icon.tsx";
 import { queryClient } from "../main.tsx";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 type MetricData = {
     label: string,
@@ -131,7 +132,7 @@ const AnalyticsTab = () => {
     const lineChartXAxisDataKey = "label";
     const [xAxisInterval, setXAxisInterval] = useState(defaultPeriodFilter.xAxisInterval);
 
-    const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData } = useQuery({
+    const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData, refetch, errorUpdateCount } = useQuery({
         queryKey: ["analytics"],
         queryFn: () => httpClient.setRoute("analytics").setFilters({ period: periodFilter.option }).get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
@@ -178,9 +179,7 @@ const AnalyticsTab = () => {
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data", "metricool")}
-                </FlexContainer>
+                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
             ) : hasAnalyticsData && (
                 <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>

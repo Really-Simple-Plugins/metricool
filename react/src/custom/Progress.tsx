@@ -5,10 +5,11 @@ import { useState } from "react";
 import Task, { type TaskProps } from "./Task.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 const Progress = () => {
     const { httpClient } = useGlobalContext();
-    const { data: taskData, isLoading, error, refetch } = useQuery({
+    const { data: taskData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["tasks"],
         queryFn: () => httpClient.setRoute("get_tasks").get(),
         staleTime: 1000 * 60, // 1 minute
@@ -73,9 +74,7 @@ const Progress = () => {
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching your Tasks", "metricool")}
-                </FlexContainer>
+                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
             ) : taskData && (
                 <FlexContainer direction={"column"}>
                     <div className={"w-full bg-neutral-200 rounded-md h-5"}>

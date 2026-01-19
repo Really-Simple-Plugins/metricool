@@ -3,6 +3,7 @@ import { __ } from "@wordpress/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "@tanstack/react-router";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 export type Notice = {
     action: {
@@ -25,7 +26,7 @@ const NotificationsSidebar = () => {
     const pathname = useLocation({
         select: (location) => location.pathname.split("/").at(-1),
     });
-    const { data: noticeData, isLoading, error, isFetched } = useQuery({
+    const { data: noticeData, isLoading, error, isFetched, errorUpdateCount, refetch } = useQuery({
         queryKey: ["notices"],
         queryFn: () => httpClient.setRoute("get_notices").get(),
         staleTime: 1000 * 60, // 1 minute
@@ -50,9 +51,7 @@ const NotificationsSidebar = () => {
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching your Notifications", "metricool")}
-                </FlexContainer>
+                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
             ) : noticeData?.visibleNotifications && noticeData?.visibleNotifications?.length > 0 && (
                 noticeData.visibleNotifications.map((notice) => (
                     <Alert key={notice.id} title={notice.title} variant={notice.type}>
