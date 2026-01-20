@@ -56,7 +56,7 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
             <FlexContainer direction={"row"} className={"justify-end items-center p-2"}>
                 {settingsStates.find(state => state.condition)?.message}
                 <Button disabled={(!formHasUnsavedChanges || formIsSubmitting)} type={"submit"} variant={"black"}>
-                    Save changes
+                    {__("Save changes", "metricool")}
                 </Button>
             </FlexContainer>
         </div>
