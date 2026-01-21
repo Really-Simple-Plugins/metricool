@@ -20,12 +20,12 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
     };
 
     useEffect(() => {
-        const observer = new ResizeObserver(() => {
+        const resizeObserver = new ResizeObserver(() => {
             const isPageScrollableOnResize = document.documentElement.scrollHeight > window.innerHeight;
             setIsPageScrollable(isPageScrollableOnResize);
         });
-        observer.observe(document.documentElement);
-        return () => observer.disconnect();
+        resizeObserver.observe(document.documentElement);
+        return () => resizeObserver.disconnect();
     }, []);
 
     useEffect(() => {
