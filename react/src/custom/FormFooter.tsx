@@ -3,6 +3,7 @@ import { Button, FlexContainer } from "../components";
 import { useEffect, useState } from "react";
 import ScrollProgressBar from "./ScrollProgressBar.tsx";
 import { __ } from "@wordpress/i18n";
+import { getScrollProgressPercent } from "../functions/utils.tsx";
 
 type FormFooterProps = {
     formHasUnsavedChanges: boolean,
@@ -15,11 +16,7 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
     const [isPageScrollable, setIsPageScrollable] = useState<boolean>(document.documentElement.scrollHeight > window.innerHeight);
 
     const updateScrollProgress = () => {
-        const totalScrollableHeightInPixels =
-            document.documentElement.scrollHeight - window.innerHeight;
-        const roundedScrollPercentage =
-            Math.round((window.scrollY / totalScrollableHeightInPixels) * 100);
-        setScrollProgressPercent(roundedScrollPercentage);
+        setScrollProgressPercent(getScrollProgressPercent());
     };
 
     useEffect(() => {
