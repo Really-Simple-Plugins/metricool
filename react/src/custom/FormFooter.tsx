@@ -13,6 +13,7 @@ type FormFooterProps = {
 
 const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = false }: FormFooterProps) => {
     const [scrollProgressPercent, setScrollProgressPercent] = useState<number>(5);
+    const [isFormFooterSticky, setIsFormFooterSticky] = useState<boolean>(false);
     const [isPageScrollable, setIsPageScrollable] = useState<boolean>(document.documentElement.scrollHeight > window.innerHeight);
 
     const updateScrollProgress = () => {
@@ -26,6 +27,17 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
         });
         resizeObserver.observe(document.documentElement);
         return () => resizeObserver.disconnect();
+    }, []);
+
+    useEffect(() => {
+        const roundedCornersObserver = new IntersectionObserver(([entry]) => {
+            setIsFormFooterSticky(entry.intersectionRatio < 1);
+        }, { threshold: [1], rootMargin: "0px 0px -1px 0px" });
+        const form = document.getElementById("form-footer");
+        if (form) {
+            roundedCornersObserver.observe(form);
+        }
+        return () => roundedCornersObserver.disconnect();
     }, []);
 
     useEffect(() => {
@@ -46,9 +58,13 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
     ];
 
     return (
-        <div className={clsx("sticky bottom-0 start-0 z-10 shadow-lg bg-gray-50 w-full transition-all ease-in-out duration-200 rounded-none",
-            (!isPageScrollable || scrollProgressPercent >= 88) && "rounded-b-md",
-        )}>
+        <div
+            id={"form-footer"}
+            className={clsx(
+                "sticky bottom-0 start-0 z-10 shadow-lg bg-gray-50 w-full transition-all ease-in-out duration-200 rounded-none",
+                !isFormFooterSticky && "rounded-b-md",
+            )}
+        >
             {isPageScrollable && <ScrollProgressBar scrollProgress={scrollProgressPercent}/>}
             <FlexContainer direction={"row"} className={"justify-end items-center p-2"}>
                 {settingsStates.find(state => state.condition)?.message}
