@@ -10,7 +10,7 @@ import { queryClient } from "../main.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
-const formSchema = z.object({
+const userSettingsFormSchema = z.object({
     sendToAlternativeEmail: z.boolean(),
     alternativeEmail: z.email({
         error: () => __("Please enter a valid email address", "metricool"),
@@ -23,7 +23,7 @@ const AccountSettings = () => {
         queryKey: ["user_settings"],
         queryFn: () => httpClient.setRoute("user_settings").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): z.infer<typeof formSchema> => ({
+        select: (data): z.infer<typeof userSettingsFormSchema> => ({
             sendToAlternativeEmail: data.data.sendToAlternativeEmail,
             alternativeEmail: data.data.alternativeEmail,
         })
@@ -36,8 +36,8 @@ const AccountSettings = () => {
         resetField,
         control,
         setError,
-    } = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    } = useForm<z.infer<typeof userSettingsFormSchema>>({
+        resolver: zodResolver(userSettingsFormSchema),
         defaultValues: {
             sendToAlternativeEmail: false,
             alternativeEmail: "",
@@ -46,7 +46,7 @@ const AccountSettings = () => {
     });
 
     const { mutate: onSubmit, isPending } = useMutation({
-        mutationFn: async ({ sendToAlternativeEmail, alternativeEmail }: z.infer<typeof formSchema>) => {
+        mutationFn: async ({ sendToAlternativeEmail, alternativeEmail }: z.infer<typeof userSettingsFormSchema>) => {
             return httpClient.setRoute("user_settings").setPayload({
                 "sendToAlternativeEmail": sendToAlternativeEmail,
                 "alternativeEmail": alternativeEmail,
@@ -57,12 +57,12 @@ const AccountSettings = () => {
             showToast.success(__("Settings have been saved", "metricool"));
         },
         onError: (data: {
-            fields?: Record<keyof z.infer<typeof formSchema>, { message: string }>,
+            fields?: Record<keyof z.infer<typeof userSettingsFormSchema>, { message: string }>,
         }) => {
             showToast.error(__("There was an error updating your settings", "metricool"));
             if (data.fields) {
                 try {
-                    (Object.entries(data.fields) as [keyof z.infer<typeof formSchema>, {
+                    (Object.entries(data.fields) as [keyof z.infer<typeof userSettingsFormSchema>, {
                         message: string
                     }][]).forEach(([fieldKey, fieldContent]) => {
                         setError(fieldKey, {
