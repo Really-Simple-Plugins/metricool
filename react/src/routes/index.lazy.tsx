@@ -8,6 +8,20 @@ export const Route = createLazyFileRoute("/")({
     component: Index,
 });
 
+/**
+ * Defines what to render on the app's root route (`/`).
+ *
+ * Conditionally renders either the {@link DashboardLayout} or
+ * {@link SettingsLayout} based on the user's subscriptions data.
+ *
+ * Utilises lazy file routes for code splitting and ensuring the app loads
+ * properly withing the WP ecosystem.
+ *
+ * Sets up a custom {@link DOMPurify} hook which removes elements with `href`
+ * attributes that contain links not present in our list of `trusted_urls`,
+ * which is active for the entire app.
+ *
+ */
 function Index() {
     const { metricool } = useGlobalContext();
 
