@@ -9,7 +9,7 @@ import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 import { queryClient } from "../main.tsx";
 
 /**
- * The Progress block used in {@link DashboardLayout} .
+ * The Progress block used in {@link DashboardLayout}.
  *
  * Contains a {@link useQuery} which fetches tasks, sorts and filters them based
  * on status and calculates the completionPercentage.
@@ -19,7 +19,7 @@ import { queryClient } from "../main.tsx";
  * Contains the logic (state, array and callback) for the tabs
  * (All Tasks/Remaining Tasks)
  *
- * Displays everything in a Block with a fixed height (500px)
+ * Displays everything in a {@link Block} with a fixed height (500px)
  */
 const Progress = () => {
     const { httpClient } = useGlobalContext();
