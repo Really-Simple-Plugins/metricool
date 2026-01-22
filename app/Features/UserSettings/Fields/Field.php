@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Features\UserSettings\Fields;
 
-use Symfony\Component\Translation\Exception\LogicException;
 use Metricool\Features\UserSettings\Storage\AbstractStorage;
 use Metricool\Features\UserSettings\Factories\ValidatorFactory;
 use Metricool\Features\UserSettings\Validators\AbstractValidator;
@@ -133,13 +132,13 @@ class Field
      * @param mixed $value
      * @param \WP_REST_Request|null $request Pass the request object for
      * context-aware validation
-     * @throws LogicException when storage is not set by developer
+     * @throws \LogicException when storage is not set by developer
      * @throws ValidatorFailedException when validation fails
      */
     public function setValue($value, ?\WP_REST_Request $request = null): void
     {
         if (empty($this->storage)) {
-            throw new LogicException('Storage not set for field: ' . $this->name . '. First call setStorage() before setValue().');
+            throw new \LogicException('Storage not set for field: ' . $this->name . '. First call setStorage() before setValue().');
         }
 
         $this->validate($value, $request);
