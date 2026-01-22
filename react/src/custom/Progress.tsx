@@ -8,8 +8,23 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 import { queryClient } from "../main.tsx";
 
+/**
+ * The Progress block on the dashboard.
+ *
+ * Contains a {@link useQuery} which fetches tasks, sorts and filters them based
+ * on status and calculates the completionPercentage.
+ *
+ * Contains a {@link useMutation} which dismisses a task based on ID.
+ *
+ * Contains the logic (state, array and callback) for the tabs
+ * (All Tasks/Remaining Tasks)
+ *
+ * Displays everything in a Block with a fixed height (500px)
+ */
 const Progress = () => {
     const { httpClient } = useGlobalContext();
+    // useQuery uses enabled to ensure this queryFn doesn't run until the data
+    // for connected accounts has been fetched and stored in the queryContext.
     const { data: taskData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         enabled: queryClient.getQueryData(["connected", "accounts"]) !== undefined,
         queryKey: ["tasks"],
@@ -96,6 +111,10 @@ const Progress = () => {
                     </div>
                     {/* Task List */}
                     <div className="max-h-[300px] flex flex-col overflow-y-auto gap-4 pr-3">
+                        {/* using spread operators, the array of tasks to display is built dynamically
+                            if All Tasks is selected (activeTab === 0), the completed tasks are added on.
+                            This way, no extra filtering needs to be done.
+                         */}
                         {[...taskData.remainingTasks, ...(activeTab === 0 ? [...taskData.completedTasks] : [])]
                             .sort((a: TaskProps, b: TaskProps) => a.priority - b.priority)
                             .map((task) => (
