@@ -21,7 +21,7 @@ const userSettingsFormSchema = z.object({
  * The Account Settings section in Settings.
  *
  * Is a `<form>` component which contains {@link Block}(s). This way the form's
- * onSubmit property can be used and a submit callback function doesn't have
+ * onSubmit attribute can be used and a submit callback function doesn't have
  * to be passed down to the button in the {@link FormFooter}. No other button
  * with type "submit" should be added anywhere in the subtree of this component.
  *
