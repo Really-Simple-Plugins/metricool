@@ -12,6 +12,21 @@ import VerifyEmailStep from "../custom/Onboarding/OnboardingSteps/VerifyEmailSte
 import OnboardingSchema from "../custom/Onboarding/OnboardingSchema.ts";
 import { z } from "zod";
 
+/**
+ * The Onboarding Layout.
+ *
+ * Used in lazy.index.ts, conditionally rendered based on the user's
+ * subscriptions data.
+ *
+ * Contains a {@link OnboardingHeader}
+ *
+ * Contains a {@link useMutation} to make the sign-up request.
+ *
+ * Contains a {@link Dialog} to show the onboarding flow.
+ *
+ * Contains a {@link Dialog} to show the {@link SignInForm}
+ *
+ */
 export const OnboardingLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
     const [signInModalOpen, setSignInModalOpen] = useState<boolean>(false);
