@@ -15,7 +15,7 @@ import { z } from "zod";
 /**
  * The Onboarding Layout.
  *
- * Used in lazy.index.ts, conditionally rendered based on the user's
+ * Used in {@link Index}, conditionally rendered based on the user's
  * subscriptions data.
  *
  * Contains a {@link OnboardingHeader}

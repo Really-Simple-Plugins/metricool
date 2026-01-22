@@ -10,7 +10,7 @@ import { __ } from "@wordpress/i18n";
 /**
  * The Dashboard Layout.
  *
- * Used in lazy.index.ts, conditionally rendered based on the user's
+ * Used in {@link Index}, conditionally rendered based on the user's
  * subscriptions data.
  *
  * Contains a {@link Header}
