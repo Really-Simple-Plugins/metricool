@@ -7,6 +7,28 @@ import OtherPlugins from "../custom/OtherPlugins.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 
+/**
+ * The Dashboard Layout.
+ *
+ * Used in lazy.index.ts, conditionally rendered based on the user's
+ * subscriptions data.
+ *
+ * Contains a {@link Header}
+ *
+ * Contains the {@link Progress} component to show tasks
+ *
+ * Contains the {@link WebsiteAnalytics} component to Metricool's analytics
+ *
+ * Contains the {@link ConnectedAccounts} component to social media accounts
+ * connected through Metricool
+ *
+ * Contains the {@link OtherPlugins} component to show other RSP plugins and
+ * allow a user to install these.
+ *
+ * Contains a {@link Dialog} which shows the first time the user completes the
+ * onboarding.
+ *
+ */
 export const DashboardLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
     return (
