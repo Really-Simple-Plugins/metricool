@@ -8,6 +8,9 @@ import AnalyticsTab from "./AnalyticsTab.tsx";
 import TrafficTab from "./TrafficTab.tsx";
 
 const WebsiteAnalytics = () => {
+    // This state saves the activeTab's index in the tabs array, so it can be
+    // easily rendered with {tabs[activeTab].component} below.
+    // Initiated as 1 for the AnalyticsTab.
     const [activeTab, setActiveTab] = useState(1);
     const tabs = [{
         title: __("Real-time", "metricool"),

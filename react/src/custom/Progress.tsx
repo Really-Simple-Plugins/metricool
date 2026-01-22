@@ -68,6 +68,8 @@ const Progress = () => {
         }
     });
 
+    // This state saves the activeTab's index in the tabs array.
+    // Initiated as 1 for the Remaining Tasks.
     const [activeTab, setActiveTab] = useState(1);
     const tabs = [{
         title: `${__("All Tasks", "metricool")} (${taskData?.tasks.length})`,
