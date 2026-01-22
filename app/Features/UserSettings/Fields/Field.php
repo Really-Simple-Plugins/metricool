@@ -178,22 +178,31 @@ class Field
      */
     protected function castValue($value)
     {
-        switch ($this->type) {
-            case 'boolean':
-                return (bool) $value;
-            case 'integer':
-                return (int) $value;
-            case 'float':
-                return (float) $value;
-            case 'string':
-                return (string) $value;
-            case 'array':
-                return (array) $value;
-            case 'object':
-                return (object) $value;
-            default:
-                return $value;
+        if ($this->isBoolean()) {
+            return (bool) $value;
         }
+
+        if ($this->isInteger()) {
+            return (int) $value;
+        }
+
+        if ($this->isFloat()) {
+            return (float) $value;
+        }
+
+        if ($this->isString()) {
+            return (string) $value;
+        }
+
+        if ($this->isArray()) {
+            return (array) $value;
+        }
+
+        if ($this->isObject()) {
+            return (object) $value;
+        }
+
+        return $value;
     }
 
     /**
@@ -228,7 +237,8 @@ class Field
         $this->settingName = $config['settingName'] ?? null;
         $this->defaultValue = $config['defaultValue'] ?? null;
 
-        // Check if we should add the type validator
+        // Check if we should add the type validator, default is true
+        // Override by setting 'validateType' to false in config
         $validateType = $config['validateType'] ?? true;
         if ($validateType) {
             $this->addValidator(new FieldTypeValidator($this));
@@ -243,5 +253,35 @@ class Field
         }
 
         return $this;
+    }
+
+    public function isBoolean(): bool
+    {
+        return $this->type === 'boolean';
+    }
+
+    public function isInteger(): bool
+    {
+        return $this->type === 'integer';
+    }
+
+    public function isFloat(): bool
+    {
+        return $this->type === 'float';
+    }
+
+    public function isString(): bool
+    {
+        return $this->type === 'string';
+    }
+
+    public function isArray(): bool
+    {
+        return $this->type === 'array';
+    }
+
+    public function isObject(): bool
+    {
+        return $this->type === 'object';
     }
 }
