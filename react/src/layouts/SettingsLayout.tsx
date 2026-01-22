@@ -1,4 +1,4 @@
-import { FlexContainer, ToastContainer } from "../components";
+import { FlexContainer } from "../components";
 import Header from "../custom/Header.tsx";
 import SettingsMenu from "../custom/SettingsMenu.tsx";
 import NotificationsSidebar from "../custom/NotificationsSidebar.tsx";
@@ -19,7 +19,6 @@ import NotificationsSidebar from "../custom/NotificationsSidebar.tsx";
  *
  * Contains the {@link NotificationsSidebar} component to show notifications.
  *
- * Contains a {@link ToastContainer} to allow {@link showToast} to work.
  *
  */
 export const SettingsLayout = ({ children }: React.ComponentProps<"div">) => {
@@ -31,11 +30,6 @@ export const SettingsLayout = ({ children }: React.ComponentProps<"div">) => {
                 {children}
                 <NotificationsSidebar/>
             </FlexContainer>
-            {/* ToastContainer adds a 0px element to the DOM,
-                meaning it is taken into account in flex layouts, e.g. a gap
-                will be rendered either side of it.
-            */}
-            <ToastContainer/>
         </FlexContainer>
     );
 };
