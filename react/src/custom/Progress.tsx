@@ -9,7 +9,7 @@ import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 import { queryClient } from "../main.tsx";
 
 /**
- * The Progress block on the dashboard.
+ * The Progress block used in {@link DashboardLayout} .
  *
  * Contains a {@link useQuery} which fetches tasks, sorts and filters them based
  * on status and calculates the completionPercentage.
