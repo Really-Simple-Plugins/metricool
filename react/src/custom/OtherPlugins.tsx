@@ -28,6 +28,19 @@ type OtherPlugin = {
     url: string,
 }
 
+/**
+ * The OtherPlugins block used in {@link DashboardLayout}.
+ *
+ * Contains a {@link useQuery} which fetches the other plugins data, an object
+ * containing a {@link OtherPlugin} object for each plugin.
+ *
+ * Maps over this data to render a {@link ListItem} for each plugin.
+ *
+ * Contains a {@link useMutation} which runs the available action for that
+ * plugin.
+ *
+ * Displays everything in a {@link Block} with a fixed height (14.5rem)
+ */
 const OtherPlugins = () => {
     const { httpClient, metricool } = useGlobalContext();
     const { isLoading, error, data: otherPlugins = {}, refetch, errorUpdateCount } = useQuery({
