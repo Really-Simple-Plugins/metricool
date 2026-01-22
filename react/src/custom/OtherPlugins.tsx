@@ -52,6 +52,23 @@ const OtherPlugins = () => {
         }
     });
 
+    /**
+     * onMutate - is run before the `mutationFn`, changes the `action` string
+     * of the plugin and saves it in the queryContext. Used to give feedback
+     * to the user.
+     *
+     * mutationFn - sends a POST request to the backend with the action to
+     * execute.
+     *
+     * onSuccess - saves the updated state of the plugin returned by the POST
+     * request in the queryContext. Recursively runs the mutationFn again if the
+     * updated action is "activate" to immediately activate the plugin.
+     *
+     * onError - shows a toast with an error message to the user and
+     * console.error()s the returned message.
+     *
+     * todo: onError, undo `action` string change from onMutate
+     */
     const { mutate: runPluginAction } = useMutation({
         onMutate: ({ action, key }: {
             action: string,
