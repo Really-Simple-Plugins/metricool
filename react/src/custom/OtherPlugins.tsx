@@ -110,6 +110,12 @@ const OtherPlugins = () => {
             case "installed": {
                 return undefined;
             }
+            case "downloading": {
+                return undefined;
+            }
+            case "activating": {
+                return undefined;
+            }
             default: {
                 return () => runPluginAction({
                     slug: plugin.slug,
