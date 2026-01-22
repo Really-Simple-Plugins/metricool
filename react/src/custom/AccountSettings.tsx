@@ -17,6 +17,25 @@ const userSettingsFormSchema = z.object({
     }),
 }).required();
 
+/**
+ * The Account Settings section in Settings.
+ *
+ * Is a `<form>` component which contains {@link Block}(s). This way the form's
+ * onSubmit property can be used and a submit callback function doesn't have
+ * to be passed down to the button in the {@link FormFooter}. No other button
+ * with type "submit" should be added anywhere in the subtree of this component.
+ *
+ * Contains a {@link useQuery} which fetches the user settings.
+ *
+ * Contains a {@link useMutation} which updates the user settings and sets the
+ * forms error states if updating fails.
+ *
+ * Contains a {@link useForm} which implements the {@link userSettingsFormSchema}.
+ *
+ * Contains a {@link useBlocker} which requests user confirmation to leave or
+ * refresh the page if there are unsaved changes.
+ *
+ */
 const AccountSettings = () => {
     const { httpClient } = useGlobalContext();
     const { data: values, isLoading, error: queryError, errorUpdateCount, refetch } = useQuery({
@@ -125,6 +144,9 @@ const AccountSettings = () => {
                                             onCheckedChange={
                                                 (checked) => {
                                                     field.onChange(checked);
+                                                    // If the switch is set to false, the alternativeEmail field is
+                                                    // reset so the form doesn't think there are unsaved changes on
+                                                    // this field or send these changes to be saved
                                                     if (!checked) {
                                                         resetField("alternativeEmail");
                                                     }
@@ -134,6 +156,7 @@ const AccountSettings = () => {
                                     </FieldWrapper>
                                 )}
                             />
+                            {/* Render the email input field only if the value of sendToAlternativeEmail is true */}
                             {getValues().sendToAlternativeEmail && (
                                 <Controller
                                     control={control}
