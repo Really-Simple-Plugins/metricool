@@ -65,7 +65,10 @@ export const OnboardingLayout = () => {
             </OnboardingHeader>
             <div className={"w-full h-[2px] bg-[image:var(--gradient-brand-secondary)]"}></div>
             <FlexContainer direction={"row"} className={"w-full !gap-0"}>
-                <OnboardingForm onSubmit={(values) => onSubmit(values)}/>
+                <FlexContainer direction={"column"} className={"min-w-[45%] max-w-[45%]"}>
+                    <h1 className={"font-bold font-nunito text-[1.75rem] leading-8"}>{__("Join more than 2 million professionals, agencies and brands that use Metricool as their one-stop shop for social media and online ad management.", "metricool")}</h1>
+                    <OnboardingForm onSubmit={(values) => onSubmit(values)}/>
+                </FlexContainer>
                 <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={__("Laptop and phone displaying the Metricool app", "metricool")}/>
             </FlexContainer>
             <Dialog
