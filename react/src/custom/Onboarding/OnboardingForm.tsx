@@ -13,6 +13,14 @@ type OnboardingFormProps = {
     onSubmit: (values: z.infer<typeof onboardingFormSchema>) => void,
 };
 
+/**
+ * The main form used in the {@link OnboardingLayout}.
+ *
+ * Gets passed the onSubmit mutation function from OnboardingLayout.
+ *
+ * Contains a {@link useForm} which implements the {@link OnboardingSchema}
+ *
+ */
 const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
     const { metricool } = useGlobalContext();
     const {
@@ -102,6 +110,8 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                             flexDirection={"row-reverse"}
                             className={"!gap-3 justify-end"}
                             label={(
+                                // When links need to be displayed within translatable text, our only option is to use dangerouslySetInnerHTML.
+                                // DOMPurify is used to sanitize, with a custom hook to remove any element containing an href not specified in trusted_urls
                                 <span
                                     className={"required-asterisk"}
                                     dangerouslySetInnerHTML={{
