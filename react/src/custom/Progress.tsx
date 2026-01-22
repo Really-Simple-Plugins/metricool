@@ -17,7 +17,8 @@ import { queryClient } from "../main.tsx";
  * Contains a {@link useMutation} which dismisses a task based on ID.
  *
  * Contains the logic (state, array and callback) for the tabs
- * (All Tasks/Remaining Tasks)
+ * (All Tasks/Remaining Tasks), rendering the {@link TabNavigation} through
+ * the `action` prop of the {@link BlockHeader}.
  *
  * Displays everything in a {@link Block} with a fixed height (500px)
  */
