@@ -17,6 +17,18 @@ export type ConnectedAccount = {
     isConnected: boolean,
 };
 
+/**
+ * The ConnectedAccounts block used in {@link DashboardLayout}.
+ *
+ * Contains a {@link useQuery} which fetches all connected networks, which it
+ * then 'filters' using `select` by returning an array of {@link ConnectedAccount}
+ * objects with only the 4 accounts we need to show on the dashboard.
+ *
+ * Maps over this array to render a {@link AccountTile} for each of the selected
+ * networks.
+ *
+ * Displays everything in a {@link Block} with a fixed height (14.5rem)
+ */
 const ConnectedAccounts = () => {
     const { httpClient, metricoolDynamicUrl } = useGlobalContext();
     const { data: connectedAccountsData, isLoading, error, refetch, errorUpdateCount } = useQuery({
