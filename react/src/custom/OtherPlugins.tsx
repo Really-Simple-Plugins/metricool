@@ -137,12 +137,8 @@ const OtherPlugins = () => {
                     window.focus();
                 };
             }
-            case "installed": {
-                return undefined;
-            }
-            case "downloading": {
-                return undefined;
-            }
+            case "installed":
+            case "downloading":
             case "activating": {
                 return undefined;
             }
