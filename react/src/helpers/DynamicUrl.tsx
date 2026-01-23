@@ -27,6 +27,17 @@ class DynamicUrl {
     }
 
     /**
+     * This method can be used to combine {@link setPath} and
+     * {@link toString} in a single call.
+     * @param {string} pathname - string representing the new pathname.
+     * @returns the dynamicUrl as a string including the new pathname.
+     */
+    public withPath(pathname: string) {
+        return this.setPath(pathname).toString();
+    }
+
+
+    /**
      * Sets optional search parameters.
      * Overwrites an existing search param if the key is the same, otherwise adds it.
      * @param {Object} parameters - Object with parameters to be set.
