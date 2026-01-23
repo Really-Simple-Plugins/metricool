@@ -28,6 +28,8 @@ return [
         'review_url' => 'https://wordpress.org/support/plugin/metricool/reviews/#new-post',
     ],
     'metricool' => [
+        'base_url' => 'https://app.metricool.com/',
+        'help_url' => 'https://help.metricool.com',
         'upgrade_premium_url' => 'https://app.metricool.com/user-settings/plan',
         'connect_network_url' => 'https://app.metricool.com/evolution/brandSummary',
         'connect_linkedin_url' => 'https://app.metricool.com/evolution/linkedin',
@@ -40,6 +42,9 @@ return [
         'namespace' => 'metricool',
     ],
     'frontend' => [
-        'trusted_urls' => ['legal_terms' => 'https://metricool.com/legal-terms/'],
+        'trusted_urls' => [
+            'legal_terms' => 'https://metricool.com/legal-terms/',
+            'new_support_ticket' => 'https://wordpress.org/support/plugin/metricool/#new-topic-0',
+        ],
     ]
 ];

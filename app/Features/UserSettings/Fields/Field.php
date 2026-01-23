@@ -150,7 +150,7 @@ class Field
      * was not called before. If it was, the set value is returned. Method
      * returns default value when no value is found in storage.
      * @return mixed
-     * @throws LogicException when storage is not set by developer
+     * @throws \LogicException when storage is not set by developer
      */
     public function getValue()
     {
@@ -159,7 +159,7 @@ class Field
         }
 
         if (empty($this->storage)) {
-            throw new LogicException('Storage not set for field: ' . $this->name . '. First call setStorage() before getValue().');
+            throw new \LogicException('Storage not set for field: ' . $this->name . '. First call setStorage() before getValue().');
         }
 
         try {

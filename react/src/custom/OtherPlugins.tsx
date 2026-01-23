@@ -4,6 +4,7 @@ import ListItem from "./ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { queryClient } from "../main.tsx";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 const pluginStatuses: Record<string, string> = {
     installed: __("Installed", "metricool"),
@@ -27,17 +28,47 @@ type OtherPlugin = {
     url: string,
 }
 
+/**
+ * The OtherPlugins block used in {@link DashboardLayout}.
+ *
+ * Contains a {@link useQuery} which fetches the other plugins data, an object
+ * containing a {@link OtherPlugin} object for each plugin.
+ *
+ * Maps over this data to render a {@link ListItem} for each plugin.
+ *
+ * Contains a {@link useMutation} which runs the available action for that
+ * plugin.
+ *
+ * Displays everything in a {@link Block} with a fixed height (14.5rem)
+ */
 const OtherPlugins = () => {
     const { httpClient, metricool } = useGlobalContext();
-    const { isLoading, error, data: otherPlugins = {} } = useQuery({
+    const { isLoading, error, data: otherPlugins = {}, refetch, errorUpdateCount } = useQuery({
         queryKey: ["other_plugins_data"],
-        queryFn: () => httpClient?.setRoute("other_plugins_data").get(),
+        queryFn: () => httpClient.setRoute("other_plugins_data").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): Record<string, OtherPlugin> => {
             return data.data.plugins;
         }
     });
 
+    /**
+     * onMutate - is run before the `mutationFn`, changes the `action` string
+     * of the plugin and saves it in the queryContext. Used to give feedback
+     * to the user.
+     *
+     * mutationFn - sends a POST request to the backend with the action to
+     * execute.
+     *
+     * onSuccess - saves the updated state of the plugin returned by the POST
+     * request in the queryContext. Recursively runs the mutationFn again if the
+     * updated action is "activate" to immediately activate the plugin.
+     *
+     * onError - shows a toast with an error message to the user and
+     * console.error()s the returned message.
+     *
+     * todo: NL14RSP4-135 (onError, undo `action` string change from onMutate)
+     */
     const { mutate: runPluginAction } = useMutation({
         onMutate: ({ action, key }: {
             action: string,
@@ -48,7 +79,7 @@ const OtherPlugins = () => {
                     data: { plugins: Record<string, OtherPlugin> },
                 } | undefined = queryClient.getQueryData(["other_plugins_data"]);
 
-                if (!currentOtherPluginsData){
+                if (!currentOtherPluginsData) {
                     return;
                 } // abort - should never trigger as this mutation is not callable by users without other_plugins_data available but appeases TS
 
@@ -66,7 +97,7 @@ const OtherPlugins = () => {
             action: string,
             key: string,
         }) => {
-            return httpClient?.setRoute("do_plugin_action").setPayload({
+            return httpClient.setRoute("do_plugin_action").setPayload({
                 "slug": slug,
                 "action": action,
             }).post();
@@ -85,7 +116,11 @@ const OtherPlugins = () => {
             currentOtherPluginsData.data.plugins = newPluginData;
             queryClient.setQueryData(["other_plugins_data"], { ...currentOtherPluginsData });
             if (response.data.plugin.action === "activate") {
-                runPluginAction({ slug: response.data.plugin.slug, action: response.data.plugin.action, key: variables.key });
+                runPluginAction({
+                    slug: response.data.plugin.slug,
+                    action: response.data.plugin.action,
+                    key: variables.key,
+                });
             }
         },
         onError: (error) => {
@@ -102,7 +137,9 @@ const OtherPlugins = () => {
                     window.focus();
                 };
             }
-            case "installed": {
+            case "installed":
+            case "downloading":
+            case "activating": {
                 return undefined;
             }
             default: {
@@ -128,27 +165,29 @@ const OtherPlugins = () => {
                     />
                 )}
             />
-            <FlexContainer direction={"column"} className={"!gap-2"}>
+            <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
                 {isLoading ? (
-                    <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                    <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                         <Icon icon={"loading"} className={"size-5"}/>
                     </FlexContainer>
                 ) : error ? (
-                    <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                        {__("There was an error fetching other plugin data.", "metricool")}
+                    <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
+                ) : otherPlugins && (
+                    <FlexContainer direction={"column"} className={"!gap-2"}>
+                        {Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (
+                            <ListItem
+                                icon={"circle"}
+                                iconColor={pluginData.options_prefix.split("_")[0]}
+                                iconPosition={"left"}
+                                action={getOtherPluginAction(pluginData, pluginKey)}
+                                actionText={pluginStatuses[pluginData.action]}
+                                className={"font-semibold"}
+                            >
+                                {pluginData.title}
+                            </ListItem>
+                        ))}
                     </FlexContainer>
-                ) : otherPlugins && Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (
-                    <ListItem
-                        icon={"circle"}
-                        iconColor={pluginData.options_prefix.split("_")[0]}
-                        iconPosition={"left"}
-                        action={getOtherPluginAction(pluginData, pluginKey)}
-                        actionText={pluginStatuses[pluginData.action]}
-                        className={"font-semibold"}
-                    >
-                        {pluginData.title}
-                    </ListItem>
-                ))}
+                )}
             </FlexContainer>
         </Block>
     );

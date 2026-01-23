@@ -9,7 +9,7 @@ export const getScrollProgressPercent = () => {
     const totalScrollableHeightInPixels =
         document.documentElement.scrollHeight - window.innerHeight;
     const roundedScrollPercentage =
-        Math.round((window.scrollY / totalScrollableHeightInPixels) * 100);
+        Math.round((Math.ceil(window.scrollY) / totalScrollableHeightInPixels) * 100);
     return roundedScrollPercentage;
 };
 
