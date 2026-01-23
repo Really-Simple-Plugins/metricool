@@ -156,11 +156,13 @@ const AnalyticsTab = () => {
             queryClient.setQueryData(["analytics"], { ...response });
             if (periodFilter === periodFilterOptions.currentMonth) {
                 const maxPossibleDataPointsOnXAxis = 14;
-                const isCurrentMonthTooLongForXAxis = response.data.timelineData.length >= maxPossibleDataPointsOnXAxis;
-                const appropriateXAxisIntervalForCurrentMonth =
-                    isCurrentMonthTooLongForXAxis ?
-                        periodFilterOptions.previousMonth.xAxisInterval :
-                        periodFilterOptions.currentMonth.xAxisInterval;
+                const isCurrentMonthTooLongForXAxis = (response.data.timelineData.length >= maxPossibleDataPointsOnXAxis);
+                let appropriateXAxisIntervalForCurrentMonth = periodFilterOptions.currentMonth.xAxisInterval;
+
+                if (isCurrentMonthTooLongForXAxis) {
+                    appropriateXAxisIntervalForCurrentMonth = periodFilterOptions.previousMonth.xAxisInterval;
+                }
+
                 setXAxisInterval(appropriateXAxisIntervalForCurrentMonth);
             } else {
                 setXAxisInterval(periodFilter.xAxisInterval);
