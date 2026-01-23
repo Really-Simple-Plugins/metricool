@@ -13,20 +13,7 @@ import { __ } from "@wordpress/i18n";
  * Used in {@link Index}, conditionally rendered based on the user's
  * subscriptions data.
  *
- * Contains a {@link Header}
- *
- * Contains the {@link Progress} component to show tasks
- *
- * Contains the {@link WebsiteAnalytics} component to Metricool's analytics
- *
- * Contains the {@link ConnectedAccounts} component to social media accounts
- * connected through Metricool
- *
- * Contains the {@link OtherPlugins} component to show other RSP plugins and
- * allow a user to install these.
- *
- * Contains a {@link Dialog} which shows the first time the user completes the
- * onboarding.
+ * Contains the {@link Header}, {@link Progress}, {@link WebsiteAnalytics}, {@link ConnectedAccounts}, {@link OtherPlugins} and {@link Dialog} components.
  *
  */
 export const DashboardLayout = () => {
