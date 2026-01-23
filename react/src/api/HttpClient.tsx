@@ -4,7 +4,7 @@ import { DataError } from "./DataError.tsx";
 type HttpClientSettings = {
     NONCE: string;
     X_WP_NONCE: string;
-    MC_API_URL: string;
+    METRICOOL_API_URL: string;
 }
 
 /**
@@ -29,7 +29,7 @@ class HttpClient {
     constructor(settings: HttpClientSettings, route?: string,) {
         this.httpClientSettings = {
             NONCE: settings.NONCE,
-            MC_API_URL: settings.MC_API_URL,
+            METRICOOL_API_URL: settings.METRICOOL_API_URL,
             X_WP_NONCE: settings.X_WP_NONCE
         };
 
@@ -48,7 +48,7 @@ class HttpClient {
         };
 
         if (route) {
-            this.route = settings.MC_API_URL + route;
+            this.route = settings.METRICOOL_API_URL + route;
         }
     }
 
@@ -121,7 +121,7 @@ class HttpClient {
      * @returns The HttpClient instance.
      */
     public setRoute(route: string) {
-        this.route = this.httpClientSettings.MC_API_URL + route;
+        this.route = this.httpClientSettings.METRICOOL_API_URL + route;
         return this;
     }
 
@@ -170,7 +170,7 @@ class HttpClient {
      * @returns The HttpClient instance.
      */
     public setFilters(filters: Record<string, string>) {
-        if (!this.route || this.route === this.httpClientSettings.MC_API_URL) {
+        if (!this.route || this.route === this.httpClientSettings.METRICOOL_API_URL) {
             throw new Error(__("Route not set. Please use setRoute before using setFilters.", "metricool"));
         }
         const metricoolApiUrl = new URL(this.route);

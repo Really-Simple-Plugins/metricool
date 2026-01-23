@@ -10,6 +10,7 @@ type AccountTileProps = {
     upsell: boolean,
     userName?: string,
     link?: string,
+    isConnected: boolean,
 }
 
 const AccountTile = ({
@@ -19,12 +20,13 @@ const AccountTile = ({
     unconnectedClasses,
     upsell,
     userName,
-    link
+    link,
+    isConnected,
 }: AccountTileProps) => {
     return (
         <FlexContainer
             direction={"row"}
-            {...(!userName && {
+            {...(!isConnected && {
                 onClick: () => {
                     window.open(link, "_blank");
                     window.focus();
@@ -32,7 +34,7 @@ const AccountTile = ({
             })}
             className={clsx(
                 "flex rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2",
-                userName ? "border-neutral-200" : `${unconnectedClasses} cursor-pointer transition-all duration-300 ease-in-out`,
+                isConnected ? "border-neutral-200" : `${unconnectedClasses} cursor-pointer transition-all duration-300 ease-in-out`,
             )}
         >
             <FlexContainer direction={"row"} className={"min-w-[25px] items-center justify-center"}>
@@ -41,13 +43,13 @@ const AccountTile = ({
                     icon={icon}
                     className={clsx(
                         "size-6 transition-all duration-300 ease-in-out",
-                        userName ? connectedClasses : "text-white"
+                        isConnected ? connectedClasses : "text-white"
                     )}
                 />
             </FlexContainer>
             <FlexContainer  direction={"row"} className={"justify-between items-center grow"}>
                 <FlexContainer direction={"column"} className={clsx("text-sm justify-center !gap-0")}>
-                    {userName ? (
+                    {isConnected ? (
                         <>
                             <span className={"text-gray-500"}>{label}</span>
                             <div className={"font-semibold"}>{userName}</div>
@@ -57,12 +59,11 @@ const AccountTile = ({
                     )}
                 </FlexContainer>
                 <FlexContainer direction={"row"}>
-                    {userName && (
+                    {isConnected && (
                         <Button
                             size={"icon"}
                             variant={"icon"}
                             icon={"settings"}
-                            iconClass={userName ? "" : "text-white"}
                             iconPosition={"left"}
                             onClick={() => {
                                 window.open(link, "_blank");

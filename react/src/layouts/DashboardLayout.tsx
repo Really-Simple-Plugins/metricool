@@ -7,6 +7,15 @@ import OtherPlugins from "../custom/OtherPlugins.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 
+/**
+ * The Dashboard Layout.
+ *
+ * Used in {@link Index}, conditionally rendered based on the user's
+ * subscriptions data.
+ *
+ * Contains the {@link Header}, {@link Progress}, {@link WebsiteAnalytics}, {@link ConnectedAccounts}, {@link OtherPlugins} and {@link Dialog} components.
+ *
+ */
 export const DashboardLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
     return (

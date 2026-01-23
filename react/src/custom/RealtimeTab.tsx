@@ -3,14 +3,15 @@ import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 import { Button, FlexContainer, Icon, LineChart } from "../components";
 import MetricTile from "./MetricTile.tsx";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 const RealtimeTab = () => {
-    const { httpClient, metricool } = useGlobalContext();
+    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
     const lineChartXAxisDataKey = "label";
 
-    const { data: realTimeData, isLoading, error } = useQuery({
+    const { data: realTimeData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["analytics", "realtime"],
-        queryFn: () => httpClient?.setRoute("realtime").get(),
+        queryFn: () => httpClient.setRoute("realtime").get(),
         staleTime: 1000 * 60, // 1 minute
         refetchInterval: 1000 * 60, // 1 minute
         select: (data) => data.data,
@@ -26,13 +27,11 @@ const RealtimeTab = () => {
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
             {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data", "metricool")}
-                </FlexContainer>
+                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
             ) : realTimeData && (
                 <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"justify-between"}>
@@ -63,7 +62,7 @@ const RealtimeTab = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                    link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
                     {__("View Analytics", "metricool")}
                 </Button>
