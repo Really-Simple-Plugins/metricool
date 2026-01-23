@@ -7,7 +7,7 @@ import DynamicUrl from "../helpers/DynamicUrl.tsx";
 // @ts-expect-error the metricool variable is globally set in the DashboardController
 // but the tsc complains it can't find it
 const METRICOOL_DATA = window.metricool.values;
-const MC_API_URL = METRICOOL_DATA.rest_url + METRICOOL_DATA.rest_namespace + "/" + METRICOOL_DATA.rest_version + "/";
+const METRICOOL_API_URL = METRICOOL_DATA.rest_url + METRICOOL_DATA.rest_namespace + "/" + METRICOOL_DATA.rest_version + "/";
 // @ts-expect-error same as above
 // setting to undefined so it is no longer accessible in the browser devtools console
 window.metricool = undefined;
@@ -79,7 +79,7 @@ const initialGlobalState: GlobalState = {
     httpClient: new HttpClient({
         NONCE: METRICOOL_DATA.nonce,
         X_WP_NONCE: METRICOOL_DATA.x_wp_nonce,
-        MC_API_URL: MC_API_URL,
+        METRICOOL_API_URL: METRICOOL_API_URL,
     }),
     dashboardSettings: {},
     metricoolDynamicUrl: new DynamicUrl({
