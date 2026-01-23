@@ -13,7 +13,7 @@ export const Route = createLazyFileRoute("/")({
  * Defines what to render on the app's root route (`/`).
  *
  * Conditionally renders either the {@link DashboardLayout} or
- * {@link SettingsLayout} based on the user's subscriptions data.
+ * {@link OnboardingLayout} based on the user's subscriptions data.
  *
  * Utilises lazy file routes for code splitting and ensuring the app loads
  * properly withing the WP ecosystem.
