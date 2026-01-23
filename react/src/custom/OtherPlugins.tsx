@@ -67,7 +67,7 @@ const OtherPlugins = () => {
      * onError - shows a toast with an error message to the user and
      * console.error()s the returned message.
      *
-     * todo: onError, undo `action` string change from onMutate
+     * todo: NL14RSP4-135 (onError, undo `action` string change from onMutate)
      */
     const { mutate: runPluginAction } = useMutation({
         onMutate: ({ action, key }: {
