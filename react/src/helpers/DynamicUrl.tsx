@@ -29,7 +29,7 @@ class DynamicUrl {
     /**
      * Sets optional search parameters.
      * Overwrites an existing search param if the key is the same, otherwise adds it.
-     * @param parameters - Object with parameters to be set.
+     * @param {Object} parameters - Object with parameters to be set.
      * @returns The DynamicUrl instance.
      */
     public setSearchParams(parameters: Record<string, string>) {
@@ -43,7 +43,7 @@ class DynamicUrl {
     /**
      * Sets optional pathname.
      * Overwrites any previous pathname.
-     * @param pathname - Pathname to be set.
+     * @param {string} pathname - string representing the new pathname.
      * @returns The DynamicUrl instance.
      */
     public setPath(pathname: string) {
