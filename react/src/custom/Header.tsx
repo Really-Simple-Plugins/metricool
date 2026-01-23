@@ -4,7 +4,7 @@ import { Button } from "../components";
 import HeaderTab from "./HeaderTab.tsx";
 
 const Header = () => {
-    const { metricool } = useGlobalContext();
+    const { metricool, metricoolDynamicUrl } = useGlobalContext();
     return (
         <div className={"bg-white min-w-full"}>
             <div className={"max-w-[125rem] mx-auto px-4 flex justify-between items-center flex-wrap max-[700px]:gap-3 gap-8"}>
@@ -18,7 +18,7 @@ const Header = () => {
                     <HeaderTab link={"/settings"}>
                         {__("Settings", "metricool")}
                     </HeaderTab>
-                    <HeaderTab link={`https://app.metricool.com/planner/calendar?blogId=${metricool.blogId}&userId=${metricool.userId}`} external={true}>
+                    <HeaderTab link={metricoolDynamicUrl.withPath("planner/calendar")} external={true}>
                         {__("Planner", "metricool")}
                     </HeaderTab>
                 </div>
@@ -28,7 +28,7 @@ const Header = () => {
                         icon={"faq"}
                         iconPosition={"left"}
                         iconClass={"text-white"}
-                        link={"https://help.metricool.com"}
+                        link={metricool.metricool_help_url}
                     >
                         {__("Help Center", "metricool")}
                     </Button>
@@ -37,7 +37,7 @@ const Header = () => {
                         icon={"sparkle"}
                         iconPosition={"left"}
                         iconClass={"text-secondary"}
-                        link={`https://app.metricool.com/user-settings/plan?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                        link={metricoolDynamicUrl.withPath("user-settings/plan")}
                     >
                         {__("Upgrade to Premium", "metricool")}
                     </Button>

@@ -268,6 +268,8 @@ class DashboardController implements ControllerInterface
                 'trusted_urls' => $this->env->get('frontend.trusted_urls'),
                 'is_onboarding_completed' => $this->isOnboardingCompleted(),
                 'support' => $this->env->get('metricool.support'),
+                'metricool_base_url' => $this->env->get('metricool.base_url'),
+                'metricool_help_url' => $this->env->get('metricool.help_url'),
                 'locale' => str_replace("_", "-", get_user_locale()),
                 'blogId' => (defined('METRICOOL_BLOG_ID') && !empty(METRICOOL_BLOG_ID) ? METRICOOL_BLOG_ID : ""),
                 'userId' => (defined('METRICOOL_USER_ID') && !empty(METRICOOL_USER_ID) ? METRICOOL_USER_ID : ""),

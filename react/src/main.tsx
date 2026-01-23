@@ -18,6 +18,7 @@ const hashHistory = createHashHistory();
 export const queryClient = new QueryClient();
 
 // Create a new router instance
+// Use hashHistory to make routes relative to the WP route for the plugin
 const router = createRouter({
     routeTree,
     history: hashHistory,

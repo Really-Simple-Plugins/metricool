@@ -1,8 +1,16 @@
-import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer, Icon } from "../components";
+import {
+    Button,
+    type Column,
+    DataTable,
+    DataTableColumnHeader,
+    FlexContainer,
+    Icon
+} from "../components";
 import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { __, sprintf } from "@wordpress/i18n";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 type DataTableColumns = { country: string, visitors: number, percentage: number };
 
@@ -25,10 +33,10 @@ const columns = [
 ];
 
 const CountriesTab = () => {
-    const { httpClient, metricool } = useGlobalContext();
-    const { data: countryData, isLoading, error } = useQuery({
+    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
+    const { data: countryData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["analytics", "countries"],
-        queryFn: () => httpClient?.setRoute("distribution/countries").get(),
+        queryFn: () => httpClient.setRoute("distribution/countries").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): { tableData: DataTableColumns[], chartData: string[][] } => data.data,
     });
@@ -44,13 +52,11 @@ const CountriesTab = () => {
     return (
         <FlexContainer direction={"column"} className={"justify-between grow !gap-2"}>
             {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data", "metricool")}
-                </FlexContainer>
+                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
             ) : countryData && (
                 <FlexContainer direction={"column"} className={"!gap-2"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>
@@ -68,7 +74,7 @@ const CountriesTab = () => {
                         columns={columns}
                         data={countryData.tableData}
                         tableSettings={{ pageSize: 3 }}
-                        stringFormatter={(...args: [string,string]) => {
+                        stringFormatter={(...args: [string, string]) => {
                             return sprintf(__("Page %s of %s", "metricool"), [...args]);
                         }}
                     />
@@ -80,7 +86,7 @@ const CountriesTab = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                    link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
                     {__("View Analytics", "metricool")}
                 </Button>

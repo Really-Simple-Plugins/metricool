@@ -72,8 +72,8 @@ class UpgradeController implements ControllerInterface
             return $cache;
         }
 
-        $legacyProfileID = get_option('metricool_profile_id', '');
-        $upgradeWasFromLegacy = !empty($legacyProfileID);
+        $legacyOptionExistsIfNotNull = get_option('metricool_profile_id', null);
+        $upgradeWasFromLegacy = ($legacyOptionExistsIfNotNull !== null);
 
         wp_cache_set('metricool_was_legacy_plugin_active', $upgradeWasFromLegacy, 'metricool');
         return $upgradeWasFromLegacy;

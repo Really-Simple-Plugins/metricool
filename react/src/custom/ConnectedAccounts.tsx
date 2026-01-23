@@ -3,8 +3,9 @@ import { __ } from "@wordpress/i18n";
 import AccountTile from "./AccountTile.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
-type ConnectedAccount = {
+export type ConnectedAccount = {
     label: string,
     icon: IconProps["icon"],
     connectedClasses: string,
@@ -12,16 +13,29 @@ type ConnectedAccount = {
     upsell: boolean,
     userName?: string,
     link: string,
+    metricoolWebsitePath: string,
+    isConnected: boolean,
 };
 
+/**
+ * The ConnectedAccounts block used in {@link DashboardLayout}.
+ *
+ * Contains a {@link useQuery} which fetches all connected networks, which it
+ * then 'filters' using `select` by returning an array of {@link ConnectedAccount}
+ * objects with only the 4 accounts we need to show on the dashboard.
+ *
+ * Maps over this array to render a {@link AccountTile} for each of the selected
+ * networks.
+ *
+ * Displays everything in a {@link Block} with a fixed height (14.5rem)
+ */
 const ConnectedAccounts = () => {
-    const { httpClient, metricool } = useGlobalContext();
-    const metricoolSSOLink = `https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`;
-    const { data: connectedAccountsData, isLoading, error } = useQuery({
+    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
+    const { data: connectedAccountsData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["connected", "accounts"],
-        queryFn: () => httpClient?.setRoute("connected_networks").get(),
+        queryFn: () => httpClient.setRoute("connected_networks").get(),
         staleTime: 1000 * 60, // 1 minute
-        select: (data): ConnectedAccount[] => {
+        select: (response): ConnectedAccount[] => {
             return ([
                 {
                     label: "Web",
@@ -29,8 +43,9 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-web",
                     unconnectedClasses: "bg-web border-web hover:bg-transparent hover:**:data-content:text-web",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.web && data.data.web.url && { userName: data.data.web.url }),
+                    metricoolWebsitePath: "evolution/web",
+                    isConnected: !!response.data.web?.url,
+                    ...(response.data.web && response.data.web.url && { userName: response.data.web.url }),
                 },
                 {
                     label: "Twitter / X",
@@ -38,8 +53,9 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-x",
                     unconnectedClasses: "bg-x border-x hover:bg-transparent hover:**:data-content:text-x",
                     upsell: true,
-                    link: `https://app.metricool.com/evolution/twitter?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.twitter && { userName: data.data.twitter.username }),
+                    metricoolWebsitePath: "evolution/twitter",
+                    isConnected: !!response.data.twitter?.username,
+                    ...(response.data.twitter && { userName: response.data.twitter.username }),
                 },
                 {
                     label: "YouTube",
@@ -47,8 +63,9 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-youtube",
                     unconnectedClasses: "bg-youtube border-youtube hover:bg-transparent hover:**:data-content:text-youtube",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/youtube?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.youtube && { userName: data.data.youtube.username }),
+                    metricoolWebsitePath: "evolution/youtube",
+                    isConnected: !!response.data.youtube?.username,
+                    ...(response.data.youtube && { userName: response.data.youtube.username }),
                 },
                 {
                     label: "LinkedIn",
@@ -56,8 +73,9 @@ const ConnectedAccounts = () => {
                     connectedClasses: "text-linkedin",
                     unconnectedClasses: "bg-linkedin border-linkedin hover:bg-transparent hover:**:data-content:text-linkedin",
                     upsell: true,
-                    link: `https://app.metricool.com/evolution/linkedin?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.linkedin && { userName: data.data.linkedin.username }),
+                    metricoolWebsitePath: "/evolution/linkedin",
+                    isConnected: !!response.data.linkedin?.username,
+                    ...(response.data.linkedin && { userName: response.data.linkedin.username }),
                 },
             ]);
         }
@@ -68,17 +86,15 @@ const ConnectedAccounts = () => {
             <BlockHeader title={__("Connected Accounts", "metricool")}/>
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
                 {isLoading ? (
-                    <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                    <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                         <Icon icon={"loading"} className={"size-5"}/>
                     </FlexContainer>
                 ) : error ? (
-                    <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                        {__("There was an error fetching your connected accounts.", "metricool")}
-                    </FlexContainer>
+                    <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
                 ) : connectedAccountsData && (
                     <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
                         {connectedAccountsData.map((account) => (
-                            <AccountTile {...account} />
+                            <AccountTile {...account} link={metricoolDynamicUrl.withPath(account.metricoolWebsitePath)}/>
                         ))}
                     </div>
                 )}
@@ -87,7 +103,7 @@ const ConnectedAccounts = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={metricoolSSOLink}>
+                    link={metricoolDynamicUrl.withPath("evolution/settings/connections")}>
                     {__("Connected Accounts", "metricool")}
                 </Button>
             </FlexContainer>

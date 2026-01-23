@@ -4,30 +4,21 @@ import {
     Button,
     FlexContainer,
     Icon,
-    type IconProps
 } from "../components";
 import { __ } from "@wordpress/i18n";
 import AccountTile from "./AccountTile.tsx";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
-
-type ConnectedAccount = {
-    label: string,
-    icon: IconProps["icon"],
-    connectedClasses: string,
-    unconnectedClasses: string,
-    upsell: boolean,
-    userName?: string,
-};
+import type { ConnectedAccount } from "./ConnectedAccounts.tsx";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 const ConnectionsSettings = () => {
-    const { httpClient, metricool } = useGlobalContext();
-    const { data: connectedAccountsData, isLoading, error } = useQuery({
-        enabled: !!httpClient,
+    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
+    const { data: connectedAccountsData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["connected", "accounts"],
-        queryFn: () => httpClient?.setRoute("connected_networks").get(),
+        queryFn: () => httpClient.setRoute("connected_networks").get(),
         staleTime: 1000 * 60, // 1 minute
-        select: (data): ConnectedAccount[] => {
+        select: (response): ConnectedAccount[] => {
             return ([
                 {
                     label: "Web",
@@ -35,8 +26,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-web",
                     unconnectedClasses: "bg-web border-web hover:bg-transparent hover:**:data-content:text-web",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.web && data.data.web.url && { userName: data.data.web.url }),
+                    metricoolWebsitePath: "evolution/web",
+                    isConnected: !!response.data.web?.url,
+                    ...(response.data.web && response.data.web.url && { userName: response.data.web.url }),
                 },
                 {
                     label: "Blog",
@@ -44,8 +36,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-blog",
                     unconnectedClasses: "bg-blog border-blog hover:bg-transparent hover:**:data-content:text-blog",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.web && data.data.web.feedRss && { userName: data.data.web.feedRss }),
+                    metricoolWebsitePath: "evolution/web",
+                    isConnected: !!response.data.web?.feedRss,
+                    ...(response.data.web && response.data.web.feedRss && { userName: response.data.web.feedRss }),
                 },
                 {
                     label: "Facebook",
@@ -53,8 +46,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-facebook",
                     unconnectedClasses: "bg-facebook border-facebook hover:bg-transparent hover:**:data-content:text-facebook",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/facebookPage?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.facebook && { userName: data.data.facebook.username }),
+                    metricoolWebsitePath: "evolution/facebookPage",
+                    isConnected: !!response.data.facebook?.username,
+                    ...(response.data.facebook && { userName: response.data.facebook.username }),
                 },
                 {
                     label: "Instagram",
@@ -62,8 +56,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-instagram",
                     unconnectedClasses: "bg-instagram border-instagram hover:bg-transparent hover:**:data-content:text-instagram",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/instagram?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.instagram && { userName: data.data.instagram.username }),
+                    metricoolWebsitePath: "evolution/instagram",
+                    isConnected: !!response.data.instagram?.username,
+                    ...(response.data.instagram && { userName: response.data.instagram.username }),
                 },
                 {
                     label: "Threads",
@@ -71,8 +66,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-threads",
                     unconnectedClasses: "bg-threads border-threads hover:bg-transparent hover:**:data-content:text-threads",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/threads?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.threads && { userName: data.data.threads.username }),
+                    metricoolWebsitePath: "evolution/threads",
+                    isConnected: !!response.data.threads?.username,
+                    ...(response.data.threads && { userName: response.data.threads.username }),
                 },
                 {
                     label: "Twitter / X",
@@ -80,8 +76,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-x",
                     unconnectedClasses: "bg-x border-x hover:bg-transparent hover:**:data-content:text-x",
                     upsell: true,
-                    link: `https://app.metricool.com/evolution/twitter?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.twitter && { userName: data.data.twitter.username }),
+                    metricoolWebsitePath: "evolution/twitter",
+                    isConnected: !!response.data.twitter?.username,
+                    ...(response.data.twitter && { userName: response.data.twitter.username }),
                 },
                 {
                     label: "Bluesky",
@@ -89,8 +86,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-bluesky",
                     unconnectedClasses: "bg-bluesky border-bluesky hover:bg-transparent hover:**:data-content:text-bluesky",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/bluesky?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.bluesky && { userName: data.data.bluesky.username }),
+                    metricoolWebsitePath: "evolution/bluesky",
+                    isConnected: !!response.data.bluesky?.username,
+                    ...(response.data.bluesky && { userName: response.data.bluesky.username }),
                 },
                 {
                     label: "LinkedIn",
@@ -98,8 +96,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-linkedin",
                     unconnectedClasses: "bg-linkedin border-linkedin hover:bg-transparent hover:**:data-content:text-linkedin",
                     upsell: true,
-                    link: `https://app.metricool.com/evolution/linkedin?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.linkedin && { userName: data.data.linkedin.username }),
+                    metricoolWebsitePath: "evolution/linkedin",
+                    isConnected: !!response.data.linkedin?.username,
+                    ...(response.data.linkedin && { userName: response.data.linkedin.username }),
                 },
                 {
                     label: "Pinterest",
@@ -107,17 +106,19 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-pinterest",
                     unconnectedClasses: "bg-pinterest border-pinterest hover:bg-transparent hover:**:data-content:text-pinterest",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/pinterest?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.pinterest && { userName: data.data.pinterest.username }),
+                    metricoolWebsitePath: "evolution/pinterest",
+                    isConnected: !!response.data.pinterest?.username,
+                    ...(response.data.pinterest && { userName: response.data.pinterest.username }),
                 },
                 {
-                    label: `TikTok ${data.data.tiktok ? data.data.tiktok.accountType.toLowerCase() : ""}`,
+                    label: `TikTok ${response.data.tiktok ? response.data.tiktok.accountType.toLowerCase() : ""}`,
                     icon: "tiktok",
                     connectedClasses: "text-tiktok",
                     unconnectedClasses: "bg-tiktok border-tiktok hover:bg-transparent hover:**:data-content:text-tiktok",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/tiktok?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.tiktok && { userName: data.data.tiktok.username }),
+                    metricoolWebsitePath: "evolution/tiktok",
+                    isConnected: !!response.data.tiktok?.username,
+                    ...(response.data.tiktok && { userName: response.data.tiktok.username }),
                 },
                 {
                     label: "Google Business Profile",
@@ -125,8 +126,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-gbp",
                     unconnectedClasses: "bg-gbp border-gbp hover:bg-transparent hover:**:data-content:text-gbp",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/gmb?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.gbp && { userName: data.data.gbp.username }),
+                    metricoolWebsitePath: "evolution/gmb",
+                    isConnected: !!response.data.gbp?.username,
+                    ...(response.data.gbp && { userName: response.data.gbp.username }),
                 },
                 {
                     label: "YouTube",
@@ -134,8 +136,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-youtube",
                     unconnectedClasses: "bg-youtube border-youtube hover:bg-transparent hover:**:data-content:text-youtube",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/youtube?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.youtube && { userName: data.data.youtube.username }),
+                    metricoolWebsitePath: "evolution/youtube",
+                    isConnected: !!response.data.youtube?.username,
+                    ...(response.data.youtube && { userName: response.data.youtube.username }),
                 },
                 {
                     label: "Twitch",
@@ -143,8 +146,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-twitch",
                     unconnectedClasses: "bg-twitch border-twitch hover:bg-transparent hover:**:data-content:text-twitch",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/twitch?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.twitch && { userName: data.data.twitch.username }),
+                    metricoolWebsitePath: "evolution/twitch",
+                    isConnected: !!response.data.twitch?.username,
+                    ...(response.data.twitch && { userName: response.data.twitch.username }),
                 },
                 {
                     label: "Meta Ads",
@@ -152,8 +156,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-facebook",
                     unconnectedClasses: "bg-facebook border-facebook hover:bg-transparent hover:**:data-content:text-facebook",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/facebookAds?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.facebookAds && { userName: data.data.facebookAds.username }),
+                    metricoolWebsitePath: "evolution/facebookAds",
+                    isConnected: !!response.data.facebookAds?.username,
+                    ...(response.data.facebookAds && { userName: response.data.facebookAds.username }),
                 },
                 {
                     label: "Google Ads",
@@ -161,8 +166,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-ga",
                     unconnectedClasses: "bg-ga border-ga hover:bg-transparent hover:**:data-content:text-ga",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/googleAds?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.googleAds && { userName: data.data.googleAds.providerUserId }),
+                    metricoolWebsitePath: "evolution/googleAds",
+                    isConnected: !!response.data.googleAds?.providerUserId,
+                    ...(response.data.googleAds && { userName: response.data.googleAds.providerUserId }),
                 },
                 {
                     label: "TikTok Ads",
@@ -170,8 +176,9 @@ const ConnectionsSettings = () => {
                     connectedClasses: "text-tiktok",
                     unconnectedClasses: "bg-tiktok border-tiktok hover:bg-transparent hover:**:data-content:text-tiktok",
                     upsell: false,
-                    link: `https://app.metricool.com/evolution/tiktokAds?blogId=${metricool.blogId}&userId=${metricool.userId}`,
-                    ...(data.data.tiktokAds && { userName: data.data.tiktokAds.username }),
+                    metricoolWebsitePath: "evolution/tiktokAds",
+                    isConnected: !!response.data.tiktokAds?.username,
+                    ...(response.data.tiktokAds && { userName: response.data.tiktokAds.username }),
                 },
             ]);
         }
@@ -180,24 +187,22 @@ const ConnectionsSettings = () => {
     return (
         <div className={"flex flex-col min-w-full md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
-                <Block>
+                <Block className={"justify-between min-h-58"}>
                     <BlockHeader
                         title={__("Connections", "metricool")}
                         description={__("The accounts that are connected to Metricool", "metricool")}
                     />
                     <FlexContainer direction={"column"}>
                         {isLoading ? (
-                            <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                            <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                                 <Icon icon={"loading"} className={"size-5"}/>
                             </FlexContainer>
                         ) : error ? (
-                            <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                                {__("There was an error fetching your connected accounts.", "metricool")}
-                            </FlexContainer>
+                            <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
                         ) : connectedAccountsData && (
                             <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
                                 {connectedAccountsData.map((account) => (
-                                    <AccountTile {...account} />
+                                    <AccountTile {...account} link={metricoolDynamicUrl.withPath(account.metricoolWebsitePath)}/>
                                 ))}
                             </div>
                         )}
@@ -208,7 +213,7 @@ const ConnectionsSettings = () => {
                             icon={"external-link"}
                             iconPosition={"right"}
                             iconClass={"svg-gradient"}
-                            link={`https://app.metricool.com/evolution/settings/connections?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                            link={metricoolDynamicUrl.withPath("evolution/settings/connections")}
                         >
                             {__("Connected Accounts", "metricool")}
                         </Button>

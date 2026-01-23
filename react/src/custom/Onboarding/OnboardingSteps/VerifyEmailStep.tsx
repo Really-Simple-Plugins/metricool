@@ -1,7 +1,6 @@
 import { useGlobalContext } from "../../../context/GlobalContext.tsx";
 import { useMutation } from "@tanstack/react-query";
-import { Button, DialogHeader, DialogTitle, FlexContainer, Icon } from "../../../components";
-import DOMPurify from "dompurify";
+import { Button, DialogHeader, DialogTitle, FeedbackNotice, FlexContainer } from "../../../components";
 import { __, sprintf } from "@wordpress/i18n";
 
 type OnboardingStepsProps = {
@@ -12,7 +11,7 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
 
     const { mutate: resendEmail, isPending: resendEmailPending, isSuccess: resendEmailSuccess } = useMutation({
         mutationFn: async () => {
-            // const response = await httpClient?.setRoute("").setPayload({
+            // const response = await httpClient.setRoute("").setPayload({
             // }).post();
 
             return new Promise(resolve => setTimeout(resolve, 2000));
@@ -28,42 +27,26 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
         <FlexContainer direction={"column"} className={"justify-center items-center"}>
             <DialogHeader className={"justify-center items-center"}>
                 <img src={`${metricool.assets_url}img/onboarding-email-sent.svg`} alt={__("Email sent icon", "metricool")}/>
-                <FlexContainer direction={"column"} className={"w-full justify-center items-center"}>
-                    {resendEmailSuccess && (
-                        <FlexContainer direction={"row"} className={"!gap-2 justify-center items-center rounded-md bg-rsp-success-light px-3 py-2 "}>
-                            <Icon icon={"info"} className={"text-rsp-success-dark"}/>
-                            <div className={"text-md text-center text-rsp-success-dark font-semibold"}
-                                 dangerouslySetInnerHTML={{
-                                     __html:
-                                         DOMPurify.sanitize(
-                                             sprintf(
-                                                 /*! translators: the variable is the email address the user entered */
-                                                 __("We have resent the email to %s", "metricool"),
-                                                 enteredEmail,
-                                             )
-                                         )
-                                 }}
-                            ></div>
-                        </FlexContainer>
-                    )}
-                    <DialogTitle className={"font-bold font-nunito m-0 text-2xl"}>
-                        {__("Thanks for signing up!", "metricool")}
-                    </DialogTitle>
-                </FlexContainer>
+                <DialogTitle className={"font-bold font-nunito m-0 text-2xl"}>
+                    {__("Thanks for signing up!", "metricool")}
+                </DialogTitle>
             </DialogHeader>
-            <div className={"text-base text-center"}
-                 dangerouslySetInnerHTML={{
-                     __html:
-                         DOMPurify.sanitize(
-                             sprintf(
-                                 /*! translators: the variable is the email address the user entered */
-                                 __("We have sent you an email at %s so you can activate your account.", "metricool"),
-                                 enteredEmail,
-                             )
-                         )
-                 }}
-            >
-            </div>
+            <FlexContainer direction={"column"} className={"w-full justify-center items-center text-base text-center"}>
+                {sprintf(
+                    /*! translators: the variable is the email address the user entered */
+                    __("We have sent you an email at %s so you can activate your account.", "metricool"),
+                    enteredEmail,
+                )}
+                {resendEmailSuccess && (
+                    <FeedbackNotice status={"info"}>
+                        {sprintf(
+                            /*! translators: the variable is the email address the user entered */
+                            __("We have resent the email to %s", "metricool"),
+                            enteredEmail,
+                        )}
+                    </FeedbackNotice>
+                )}
+            </FlexContainer>
             <Button
                 variant={"primary-gradient-ghost"}
                 onClick={() => resendEmail()}

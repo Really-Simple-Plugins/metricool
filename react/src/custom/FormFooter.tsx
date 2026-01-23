@@ -3,6 +3,7 @@ import { Button, FlexContainer } from "../components";
 import { useEffect, useState } from "react";
 import ScrollProgressBar from "./ScrollProgressBar.tsx";
 import { __ } from "@wordpress/i18n";
+import { getScrollProgressPercent } from "../functions/utils.tsx";
 
 type FormFooterProps = {
     formHasUnsavedChanges: boolean,
@@ -12,23 +13,31 @@ type FormFooterProps = {
 
 const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = false }: FormFooterProps) => {
     const [scrollProgressPercent, setScrollProgressPercent] = useState<number>(5);
+    const [isFormFooterSticky, setIsFormFooterSticky] = useState<boolean>(false);
     const [isPageScrollable, setIsPageScrollable] = useState<boolean>(document.documentElement.scrollHeight > window.innerHeight);
 
     const updateScrollProgress = () => {
-        const totalScrollableHeightInPixels =
-            document.documentElement.scrollHeight - window.innerHeight;
-        const roundedScrollPercentage =
-            Math.round((window.scrollY / totalScrollableHeightInPixels) * 100);
-        setScrollProgressPercent(roundedScrollPercentage);
+        setScrollProgressPercent(getScrollProgressPercent());
     };
 
     useEffect(() => {
-        const observer = new ResizeObserver(() => {
+        const resizeObserver = new ResizeObserver(() => {
             const isPageScrollableOnResize = document.documentElement.scrollHeight > window.innerHeight;
             setIsPageScrollable(isPageScrollableOnResize);
         });
-        observer.observe(document.documentElement);
-        return () => observer.disconnect();
+        resizeObserver.observe(document.documentElement);
+        return () => resizeObserver.disconnect();
+    }, []);
+
+    useEffect(() => {
+        const roundedCornersObserver = new IntersectionObserver(([entry]) => {
+            setIsFormFooterSticky(entry.intersectionRatio < 1);
+        }, { threshold: [1], rootMargin: "0px 0px -1px 0px" });
+        const form = document.getElementById("form-footer");
+        if (form) {
+            roundedCornersObserver.observe(form);
+        }
+        return () => roundedCornersObserver.disconnect();
     }, []);
 
     useEffect(() => {
@@ -49,13 +58,19 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
     ];
 
     return (
-        <div className={clsx("sticky bottom-0 start-0 z-10 shadow-lg bg-gray-50 w-full transition-all ease-in-out duration-200 rounded-none",
-            (!isPageScrollable || scrollProgressPercent >= 88) && "rounded-b-md",
-        )}>
+        <div
+            id={"form-footer"}
+            className={clsx(
+                "sticky bottom-0 start-0 z-10 shadow-lg bg-gray-50 w-full transition-all ease-in-out duration-200 rounded-none",
+                !isFormFooterSticky && "rounded-b-md",
+            )}
+        >
             {isPageScrollable && <ScrollProgressBar scrollProgress={scrollProgressPercent}/>}
             <FlexContainer direction={"row"} className={"justify-end items-center p-2"}>
                 {settingsStates.find(state => state.condition)?.message}
-                <Button disabled={(!formHasUnsavedChanges || formIsSubmitting)} type={"submit"} variant={"black"}>Save changes</Button>
+                <Button disabled={(!formHasUnsavedChanges || formIsSubmitting)} type={"submit"} variant={"black"}>
+                    {__("Save changes", "metricool")}
+                </Button>
             </FlexContainer>
         </div>
     );

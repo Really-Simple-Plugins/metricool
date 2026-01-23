@@ -16,6 +16,7 @@ import MetricTile from "./MetricTile.tsx";
 import { clsx } from "clsx";
 import Icon from "../components/src/components/Icon.tsx";
 import { queryClient } from "../main.tsx";
+import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 type MetricData = {
     label: string,
@@ -93,8 +94,7 @@ const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activeP
 };
 
 const AnalyticsTab = () => {
-    const { httpClient, metricool, dispatch, dashboardSettings } = useGlobalContext();
-    const metricoolSSOLink = `https://app.metricool.com/user-settings/plan?blogId=${metricool.blogId}&userId=${metricool.userId}`;
+    const { httpClient, metricool, dispatch, dashboardSettings, metricoolDynamicUrl } = useGlobalContext();
     const numberFormatter = Intl.NumberFormat(metricool.locale, {
         notation: "compact",
         minimumFractionDigits: 0,
@@ -130,11 +130,11 @@ const AnalyticsTab = () => {
         },
     });
     const lineChartXAxisDataKey = "label";
-    const [xAxisInterval, setXAxisInterval] = useState(defaultPeriodFilter.xAxisInterval);
+    const [xAxisInterval, setXAxisInterval] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.analytics?.activePeriodFilter).xAxisInterval);
 
-    const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData } = useQuery({
+    const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData, refetch, errorUpdateCount } = useQuery({
         queryKey: ["analytics"],
-        queryFn: () => httpClient?.setRoute("analytics").setFilters({ period: periodFilter.option }).get(),
+        queryFn: () => httpClient.setRoute("analytics").setFilters({ period: periodFilter.option }).get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): { totals: Record<string, MetricData>, timelineData: TimelineData } => data.data,
     });
@@ -150,17 +150,19 @@ const AnalyticsTab = () => {
         mutationFn: async ({ period }: {
             period: string,
         }) => {
-            return httpClient?.setRoute("analytics").setFilters({ period: period }).get();
+            return httpClient.setRoute("analytics").setFilters({ period: period }).get();
         },
         onSuccess: (response) => {
             queryClient.setQueryData(["analytics"], { ...response });
             if (periodFilter === periodFilterOptions.currentMonth) {
                 const maxPossibleDataPointsOnXAxis = 14;
-                const isCurrentMonthTooLongForXAxis = response.data.timelineData.length >= maxPossibleDataPointsOnXAxis;
-                const appropriateXAxisIntervalForCurrentMonth =
-                    isCurrentMonthTooLongForXAxis ?
-                    periodFilterOptions.previousMonth.xAxisInterval :
-                    periodFilterOptions.currentMonth.xAxisInterval;
+                const isCurrentMonthTooLongForXAxis = (response.data.timelineData.length >= maxPossibleDataPointsOnXAxis);
+                let appropriateXAxisIntervalForCurrentMonth = periodFilterOptions.currentMonth.xAxisInterval;
+
+                if (isCurrentMonthTooLongForXAxis) {
+                    appropriateXAxisIntervalForCurrentMonth = periodFilterOptions.previousMonth.xAxisInterval;
+                }
+
                 setXAxisInterval(appropriateXAxisIntervalForCurrentMonth);
             } else {
                 setXAxisInterval(periodFilter.xAxisInterval);
@@ -175,13 +177,11 @@ const AnalyticsTab = () => {
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
             {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
+                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center"}>
-                    {__("There was an error fetching the data", "metricool")}
-                </FlexContainer>
+                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
             ) : hasAnalyticsData && (
                 <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>
@@ -244,13 +244,13 @@ const AnalyticsTab = () => {
                                         <DisabledSelectOption
                                             className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
                                             onClick={() => {
-                                                window.open(metricoolSSOLink);
+                                                window.open(metricoolDynamicUrl.withPath("user-settings/plan"));
                                                 window.focus();
                                             }}
                                         >
-                                    <span className="flex size-3.5 items-center justify-center">
-                                        <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
-                                    </span>
+                                            <span className="flex size-3.5 items-center justify-center">
+                                                <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
+                                            </span>
                                             {filterOption.label}
                                         </DisabledSelectOption>
                                     ) : (
@@ -268,7 +268,7 @@ const AnalyticsTab = () => {
                                 size={"sm"}
                                 icon={"file"}
                                 iconPosition={"left"}
-                                link={`https://app.metricool.com/evolution/reports?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                                link={metricoolDynamicUrl.withPath("evolution/reports")}
                             >
                                 {__("Report", "metricool")}
                             </Button>
@@ -280,7 +280,7 @@ const AnalyticsTab = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={`https://app.metricool.com/evolution/web?blogId=${metricool.blogId}&userId=${metricool.userId}`}
+                    link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
                     {__("View Analytics", "metricool")}
                 </Button>
