@@ -94,7 +94,7 @@ const ConnectedAccounts = () => {
                 ) : connectedAccountsData && (
                     <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
                         {connectedAccountsData.map((account) => (
-                            <AccountTile {...account} link={metricoolDynamicUrl.setPath(account.metricoolWebsitePath).toString()}/>
+                            <AccountTile {...account} link={metricoolDynamicUrl.withPath(account.metricoolWebsitePath)}/>
                         ))}
                     </div>
                 )}
@@ -103,7 +103,7 @@ const ConnectedAccounts = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={metricoolDynamicUrl.setPath("evolution/settings/connections").toString()}>
+                    link={metricoolDynamicUrl.withPath("evolution/settings/connections")}>
                     {__("Connected Accounts", "metricool")}
                 </Button>
             </FlexContainer>

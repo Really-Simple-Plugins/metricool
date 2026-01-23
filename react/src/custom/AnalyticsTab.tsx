@@ -244,7 +244,7 @@ const AnalyticsTab = () => {
                                         <DisabledSelectOption
                                             className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
                                             onClick={() => {
-                                                window.open(metricoolDynamicUrl.setPath("user-settings/plan").toString());
+                                                window.open(metricoolDynamicUrl.withPath("user-settings/plan"));
                                                 window.focus();
                                             }}
                                         >
@@ -268,7 +268,7 @@ const AnalyticsTab = () => {
                                 size={"sm"}
                                 icon={"file"}
                                 iconPosition={"left"}
-                                link={metricoolDynamicUrl.setPath("evolution/reports").toString()}
+                                link={metricoolDynamicUrl.withPath("evolution/reports")}
                             >
                                 {__("Report", "metricool")}
                             </Button>
@@ -280,7 +280,7 @@ const AnalyticsTab = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={metricoolDynamicUrl.setPath("evolution/web").toString()}
+                    link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
                     {__("View Analytics", "metricool")}
                 </Button>

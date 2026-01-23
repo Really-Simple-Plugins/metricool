@@ -18,7 +18,7 @@ const Header = () => {
                     <HeaderTab link={"/settings"}>
                         {__("Settings", "metricool")}
                     </HeaderTab>
-                    <HeaderTab link={metricoolDynamicUrl.setPath("planner/calendar").toString()} external={true}>
+                    <HeaderTab link={metricoolDynamicUrl.withPath("planner/calendar")} external={true}>
                         {__("Planner", "metricool")}
                     </HeaderTab>
                 </div>
@@ -37,7 +37,7 @@ const Header = () => {
                         icon={"sparkle"}
                         iconPosition={"left"}
                         iconClass={"text-secondary"}
-                        link={metricoolDynamicUrl.setPath("user-settings/plan").toString()}
+                        link={metricoolDynamicUrl.withPath("user-settings/plan")}
                     >
                         {__("Upgrade to Premium", "metricool")}
                     </Button>

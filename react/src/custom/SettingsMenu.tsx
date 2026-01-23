@@ -17,13 +17,13 @@ const SettingsMenu = () => {
                 <Link to={"/settings/connections"} className="text-md text-black hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none">
                     {__("Connections", "metricool")}
                 </Link>
-                <ListItem className={"text-md text-black cursor-pointer hover:underline"} icon={"inline-external-link"} iconPosition={"right"} link={metricoolDynamicUrl.setPath("affiliation/general").toString()}>
+                <ListItem className={"text-md text-black cursor-pointer hover:underline"} icon={"inline-external-link"} iconPosition={"right"} link={metricoolDynamicUrl.withPath("affiliation/general")}>
                     {__("Affiliation Program", "metricool")}
                 </ListItem>
-                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"} link={metricoolDynamicUrl.setPath("user-management/users").toString()}>
+                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"} link={metricoolDynamicUrl.withPath("user-management/users")}>
                     {__("User Management", "metricool")}
                 </ListItem>
-                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"} link={metricoolDynamicUrl.setPath("my-tasks/open").toString()}>
+                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"} link={metricoolDynamicUrl.withPath("my-tasks/open")}>
                     {__("My Tasks", "metricool")}
                 </ListItem>
             </FlexContainer>

@@ -86,7 +86,7 @@ const CountriesTab = () => {
                     icon={"external-link"}
                     iconPosition={"right"}
                     iconClass={"svg-gradient"}
-                    link={metricoolDynamicUrl.setPath("evolution/web").toString()}
+                    link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
                     {__("View Analytics", "metricool")}
                 </Button>
