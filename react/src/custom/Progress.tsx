@@ -24,8 +24,10 @@ import { queryClient } from "../main.tsx";
  */
 const Progress = () => {
     const { httpClient } = useGlobalContext();
-    // useQuery uses enabled to ensure this queryFn doesn't run until the data
-    // for connected accounts has been fetched and stored in the queryContext.
+    // The 'enabled' option ensures the connected accounts call, which updates the
+    // first_connection task in the database if a connection is detected, will
+    // always finish first before tasks are actually fetched so users receive
+    // accurate information on first page load
     const { data: taskData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         enabled: queryClient.getQueryData(["connected", "accounts"]) !== undefined,
         queryKey: ["tasks"],
