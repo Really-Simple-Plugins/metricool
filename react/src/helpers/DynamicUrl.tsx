@@ -28,6 +28,7 @@ class DynamicUrl {
 
     /**
      * Sets optional search parameters.
+     * Overwrites an existing search param if the key is the same, otherwise adds it.
      * @param parameters - Object with parameters to be set.
      * @returns The DynamicUrl instance.
      */
@@ -41,7 +42,8 @@ class DynamicUrl {
 
     /**
      * Sets optional pathname.
-     * @param pathname - Object with parameters to be set.
+     * Overwrites any previous pathname.
+     * @param pathname - Pathname to be set.
      * @returns The DynamicUrl instance.
      */
     public setPath(pathname: string) {
