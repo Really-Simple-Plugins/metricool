@@ -1,4 +1,5 @@
-import { Alert, FlexContainer } from "@/components";
+import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
+import { Alert } from "@/components/shared/user-feedback/Alert.tsx";
 import { __, sprintf } from "@wordpress/i18n";
 import DOMPurify from "dompurify";
 
