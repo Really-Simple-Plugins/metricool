@@ -9,7 +9,7 @@ import {
 import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
-import { __, sprintf } from "@wordpress/i18n";
+import { __ } from "@wordpress/i18n";
 import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 type DataTableColumns = { country: string, visitors: number, percentage: number };
@@ -74,9 +74,6 @@ const CountriesTab = () => {
                         columns={columns}
                         data={countryData.tableData}
                         tableSettings={{ pageSize: 3 }}
-                        stringFormatter={(...args: [string, string]) => {
-                            return sprintf(__("Page %s of %s", "metricool"), [...args]);
-                        }}
                     />
                 </FlexContainer>
             )}

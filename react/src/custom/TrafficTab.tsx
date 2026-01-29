@@ -1,5 +1,5 @@
 import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer, Icon } from "../components";
-import { __, sprintf } from "@wordpress/i18n";
+import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "../context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
 import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
@@ -47,9 +47,6 @@ const TrafficTab = () => {
                         data={trafficData.tableData}
                         columns={columns}
                         tableSettings={{ pageSize: 8 }}
-                        stringFormatter={(...args: [string,string]) => {
-                            return sprintf(__("Page %s of %s", "metricool"), [...args]);
-                        }}
                     />
                 </FlexContainer>
             )}
