@@ -9,7 +9,8 @@
     "start-devtools": "concurrently 'tsc -b' 'NODE_ENV=development vite build --mode development --watch'",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "registry:init": "npx shadcn@latest add @RSPDS/base-styles @RSPDS/utils @RSPDS/npmrc-config @RSPDS/index"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
