@@ -35,7 +35,7 @@ const ListItem = ({
 }: React.ComponentProps<"div"> & ListItemProps) => {
     return (
         <FlexContainer direction={"row"} className={"items-center justify-between"}>
-            <FlexContainer direction={"row"} className={clsx("items-center !gap-2", iconPosition === "right" && "flex-row-reverse")}>
+            <FlexContainer direction={iconPosition === "right" ? "row-reverse" : "row"} className={clsx("items-center !gap-2")}>
                 {icon && (
                     <Icon icon={icon} className={clsx(iconClass,
                         icon === "circle" && "h-3 w-3",
