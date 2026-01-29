@@ -24,26 +24,26 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                                 className={"text-rss-blue underline cursor-pointer"}
                                 onClick={() => refetch()}
                             >
-                                {__("Try again", "{{TEXT_DOMAIN}}")}
+                                {__("Try again", "metricool")}
                             </div>
                         ) : (
                             <div
                                 className={"text-rss-blue underline cursor-pointer"}
                                 onClick={() => window.location.reload()}
                             >
-                                {__("Refresh page", "{{TEXT_DOMAIN}}")}
+                                {__("Refresh page", "metricool")}
                             </div>)
                         }
                     </>
                 )}
             >
                 <div>
-                    {__("There was an error fetching this data.", "{{TEXT_DOMAIN}}")}
+                    {__("There was an error fetching this data.", "metricool")}
                 </div>
                 {errorUpdateCount > 1 && (
                     <>
                         <div>
-                            {__("Please try refreshing the page.", "{{TEXT_DOMAIN}}")}
+                            {__("Please try refreshing the page.", "metricool")}
                         </div>
                         <div
                             dangerouslySetInnerHTML={{
@@ -51,7 +51,7 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                                     DOMPurify.sanitize(
                                         sprintf(
                                             /*! translators: the two variables are opening and closing anchor tags */
-                                            __("If the error persists, please contact our %ssupport team%s.", "{{TEXT_DOMAIN}}"),
+                                            __("If the error persists, please contact our %ssupport team%s.", "metricool"),
                                             `<a href=${supportTicketLink} target="_blank">`,
                                             `</a>`),
                                         { ADD_ATTR: ["target"] }

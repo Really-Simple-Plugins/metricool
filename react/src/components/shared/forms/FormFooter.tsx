@@ -70,9 +70,9 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
 
     // Form states for Design page
     const settingsStates = [
-        { condition: formIsSubmitting, message: __("Saving...", "{{TEXT_DOMAIN}}") },
-        { condition: formHasErrors, message: __("Form contains errors", "{{TEXT_DOMAIN}}") },
-        { condition: formHasUnsavedChanges, message: __("You have unsaved changes", "{{TEXT_DOMAIN}}") },
+        { condition: formIsSubmitting, message: __("Saving...", "metricool") },
+        { condition: formHasErrors, message: __("Form contains errors", "metricool") },
+        { condition: formHasUnsavedChanges, message: __("You have unsaved changes", "metricool") },
     ];
 
     return (
@@ -87,7 +87,7 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
             <FlexContainer direction={"row"} className={"justify-end items-center p-2"}>
                 {settingsStates.find(state => state.condition)?.message}
                 <Button disabled={(!formHasUnsavedChanges || formIsSubmitting)} type={"submit"} variant={"black"}>
-                    {__("Save changes", "{{TEXT_DOMAIN}}")}
+                    {__("Save changes", "metricool")}
                 </Button>
             </FlexContainer>
         </div>
