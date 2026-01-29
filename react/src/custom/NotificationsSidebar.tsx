@@ -1,4 +1,4 @@
-import { Alert, Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon } from "@/components";
+import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, Notification } from "@/components";
 import { __ } from "@wordpress/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "@tanstack/react-router";
@@ -53,7 +53,7 @@ const NotificationsSidebar = () => {
                 <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
             ) : noticeData?.visibleNotifications && noticeData?.visibleNotifications?.length > 0 && (
                 noticeData.visibleNotifications.map((notice) => (
-                    <Alert key={notice.id} title={notice.title} variant={notice.type}>
+                    <Notification key={notice.id} title={notice.title} variant={notice.type}>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
                             <div>{notice.text}</div>
                             {notice.action && (
@@ -64,7 +64,7 @@ const NotificationsSidebar = () => {
                                 </div>
                             )}
                         </FlexContainer>
-                    </Alert>
+                    </Notification>
                 ))
             )}
             {isFetched && noticeData?.visibleNotifications?.length === 0 && (
