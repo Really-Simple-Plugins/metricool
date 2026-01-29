@@ -1,15 +1,15 @@
 import { __ } from "@wordpress/i18n";
-import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "../components";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
-import OnboardingHeader from "../custom/Onboarding/OnboardingHeader.tsx";
+import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
+import OnboardingHeader from "@/custom/Onboarding/OnboardingHeader.tsx";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import SignInForm from "../custom/Onboarding/SignInForm.tsx";
-import OnboardingForm from "../custom/Onboarding/OnboardingForm.tsx";
-import ConnectBrandStep from "../custom/Onboarding/OnboardingSteps/ConnectBrandStep.tsx";
-import LoadingStep from "../custom/Onboarding/OnboardingSteps/LoadingStep.tsx";
-import VerifyEmailStep from "../custom/Onboarding/OnboardingSteps/VerifyEmailStep.tsx";
-import OnboardingSchema from "../custom/Onboarding/OnboardingSchema.ts";
+import SignInForm from "@/custom/Onboarding/SignInForm.tsx";
+import OnboardingForm from "@/custom/Onboarding/OnboardingForm.tsx";
+import ConnectBrandStep from "@/custom/Onboarding/OnboardingSteps/ConnectBrandStep.tsx";
+import LoadingStep from "@/custom/Onboarding/OnboardingSteps/LoadingStep.tsx";
+import VerifyEmailStep from "@/custom/Onboarding/OnboardingSteps/VerifyEmailStep.tsx";
+import OnboardingSchema from "@/custom/Onboarding/OnboardingSchema.ts";
 import { z } from "zod";
 
 /**

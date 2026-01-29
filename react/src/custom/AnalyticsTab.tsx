@@ -2,21 +2,21 @@ import {
     Button,
     type ChartConfig,
     DisabledSelectOption,
+    FetchingErrorAlert,
     FlexContainer,
+    Icon,
     LineChart,
     Select,
     SelectOption,
     showToast,
-} from "../components";
+} from "@/components";
 import { __ } from "@wordpress/i18n";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import MetricTile from "./MetricTile.tsx";
 import { clsx } from "clsx";
-import Icon from "../components/src/components/Icon.tsx";
-import { queryClient } from "../main.tsx";
-import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
+import { queryClient } from "@/main.tsx";
 
 type MetricData = {
     label: string,
@@ -181,7 +181,7 @@ const AnalyticsTab = () => {
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
+                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
             ) : hasAnalyticsData && (
                 <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>

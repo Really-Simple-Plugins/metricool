@@ -1,9 +1,8 @@
-import { Alert, Block, BlockHeader, FlexContainer, Icon } from "../components";
+import { Alert, Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon } from "@/components";
 import { __ } from "@wordpress/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "@tanstack/react-router";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
-import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 
 export type Notice = {
     action: {
@@ -22,7 +21,7 @@ export type Notice = {
 };
 
 const NotificationsSidebar = () => {
-    const { httpClient } = useGlobalContext();
+    const { httpClient, metricool } = useGlobalContext();
     const pathname = useLocation({
         select: (location) => location.pathname.split("/").at(-1),
     });
@@ -51,7 +50,7 @@ const NotificationsSidebar = () => {
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
+                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
             ) : noticeData?.visibleNotifications && noticeData?.visibleNotifications?.length > 0 && (
                 noticeData.visibleNotifications.map((notice) => (
                     <Alert key={notice.id} title={notice.title} variant={notice.type}>

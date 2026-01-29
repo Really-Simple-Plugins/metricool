@@ -1,9 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import { Block, BlockHeader } from "../components";
+import { Block, BlockHeader, FlexContainer } from "@/components";
 import { __ } from "@wordpress/i18n";
-import { FlexContainer } from "../components";
 import ListItem from "./ListItem.tsx";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 
 const SettingsMenu = () => {
     const { metricoolDynamicUrl } = useGlobalContext();

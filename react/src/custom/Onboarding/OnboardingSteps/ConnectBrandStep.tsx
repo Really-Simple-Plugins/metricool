@@ -6,9 +6,9 @@ import {
     Select,
     SelectOption,
     FieldWrapper
-} from "../../../components";
+} from "@/components";
 import { __ } from "@wordpress/i18n";
-import { useGlobalContext } from "../../../context/GlobalContext.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { clsx } from "clsx";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";

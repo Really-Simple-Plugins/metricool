@@ -1,5 +1,5 @@
 import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { GlobalContextProvider } from "../context/GlobalContext.tsx";
+import { GlobalContextProvider } from "@/context/GlobalContext.tsx";
 
 /**
  * Tanstack Router's entry into the entire app, from which it generates

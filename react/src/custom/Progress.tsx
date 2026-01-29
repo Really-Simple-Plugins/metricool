@@ -1,12 +1,11 @@
-import { Block, BlockHeader, FlexContainer, Icon, showToast } from "../components";
+import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, showToast } from "@/components";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import { useState } from "react";
 import Task, { type TaskProps } from "./Task.tsx";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
-import { queryClient } from "../main.tsx";
+import { queryClient } from "@/main.tsx";
 
 /**
  * The Progress block used in {@link DashboardLayout}.
@@ -23,7 +22,7 @@ import { queryClient } from "../main.tsx";
  * Displays everything in a {@link Block} with a fixed height (500px)
  */
 const Progress = () => {
-    const { httpClient } = useGlobalContext();
+    const { httpClient, metricool } = useGlobalContext();
     // The 'enabled' option ensures the connected accounts call, which updates the
     // first_connection task in the database if a connection is detected, will
     // always finish first before tasks are actually fetched so users receive
@@ -96,7 +95,7 @@ const Progress = () => {
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
+                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
             ) : taskData && (
                 <FlexContainer direction={"column"}>
                     <div className={"w-full bg-neutral-200 rounded-md h-5"}>

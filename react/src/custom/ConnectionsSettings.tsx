@@ -2,18 +2,18 @@ import {
     Block,
     BlockHeader,
     Button,
+    FetchingErrorAlert,
     FlexContainer,
     Icon,
-} from "../components";
+} from "@/components";
 import { __ } from "@wordpress/i18n";
 import AccountTile from "./AccountTile.tsx";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
 import type { ConnectedAccount } from "./ConnectedAccounts.tsx";
-import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 const ConnectionsSettings = () => {
-    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
+    const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();
     const { data: connectedAccountsData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["connected", "accounts"],
         queryFn: () => httpClient.setRoute("connected_networks").get(),
@@ -198,7 +198,7 @@ const ConnectionsSettings = () => {
                                 <Icon icon={"loading"} className={"size-5"}/>
                             </FlexContainer>
                         ) : error ? (
-                            <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
+                            <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
                         ) : connectedAccountsData && (
                             <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
                                 {connectedAccountsData.map((account) => (

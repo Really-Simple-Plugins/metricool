@@ -1,12 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { Button, FlexContainer, Icon, LineChart } from "../components";
+import { Button, FetchingErrorAlert, FlexContainer, Icon, LineChart } from "@/components";
 import MetricTile from "./MetricTile.tsx";
-import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 const RealtimeTab = () => {
-    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
+    const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();
     const lineChartXAxisDataKey = "label";
 
     const { data: realTimeData, isLoading, error, refetch, errorUpdateCount } = useQuery({
@@ -31,7 +30,7 @@ const RealtimeTab = () => {
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
+                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
             ) : realTimeData && (
                 <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"justify-between"}>

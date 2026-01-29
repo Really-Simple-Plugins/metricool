@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Block, BlockHeader } from "../components";
+import { Block, BlockHeader } from "@/components";
 import { __ } from "@wordpress/i18n";
 import TabNavigation from "./TabNavigation.tsx";
 import CountriesTab from "./CountriesTab.tsx";

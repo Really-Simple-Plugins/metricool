@@ -1,10 +1,9 @@
-import { Block, BlockHeader, FlexContainer, Icon, showToast } from "../components";
+import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, showToast } from "@/components";
 import { __ } from "@wordpress/i18n";
 import ListItem from "./ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
-import { queryClient } from "../main.tsx";
-import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
+import { queryClient } from "@/main.tsx";
 
 const pluginStatuses: Record<string, string> = {
     installed: __("Installed", "metricool"),
@@ -171,7 +170,7 @@ const OtherPlugins = () => {
                         <Icon icon={"loading"} className={"size-5"}/>
                     </FlexContainer>
                 ) : error ? (
-                    <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
+                    <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
                 ) : otherPlugins && (
                     <FlexContainer direction={"column"} className={"!gap-2"}>
                         {Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (

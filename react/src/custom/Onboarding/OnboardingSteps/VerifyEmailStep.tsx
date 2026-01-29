@@ -1,6 +1,6 @@
-import { useGlobalContext } from "../../../context/GlobalContext.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation } from "@tanstack/react-query";
-import { Button, DialogHeader, DialogTitle, FeedbackNotice, FlexContainer } from "../../../components";
+import { Button, DialogHeader, DialogTitle, Alert, FlexContainer } from "@/components";
 import { __, sprintf } from "@wordpress/i18n";
 
 type OnboardingStepsProps = {
@@ -38,13 +38,13 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
                     enteredEmail,
                 )}
                 {resendEmailSuccess && (
-                    <FeedbackNotice status={"info"}>
+                    <Alert variant={"info"}>
                         {sprintf(
                             /*! translators: the variable is the email address the user entered */
                             __("We have resent the email to %s", "metricool"),
                             enteredEmail,
                         )}
-                    </FeedbackNotice>
+                    </Alert>
                 )}
             </FlexContainer>
             <Button

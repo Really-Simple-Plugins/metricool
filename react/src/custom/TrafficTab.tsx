@@ -1,8 +1,7 @@
-import { Button, type Column, DataTable, DataTableColumnHeader, FlexContainer, Icon } from "../components";
+import { Button, type Column, DataTable, DataTableColumnHeader, FetchingErrorAlert, FlexContainer, Icon } from "@/components";
 import { __ } from "@wordpress/i18n";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
-import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 type DataTableColumns = { url: string, pageViews: number, percentage: number };
 
@@ -25,7 +24,7 @@ const columns = [
 ];
 
 const TrafficTab = () => {
-    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
+    const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();
     const { data: trafficData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["analytics", "traffic"],
         queryFn: () => httpClient.setRoute("distribution/referers").get(),
@@ -40,7 +39,7 @@ const TrafficTab = () => {
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
+                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
             ) : trafficData && (
                 <FlexContainer direction={"column"}>
                     <DataTable

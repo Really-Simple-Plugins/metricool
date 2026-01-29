@@ -3,14 +3,14 @@ import {
     type Column,
     DataTable,
     DataTableColumnHeader,
+    FetchingErrorAlert,
     FlexContainer,
     Icon
-} from "../components";
+} from "@/components";
 import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
 
 type DataTableColumns = { country: string, visitors: number, percentage: number };
 
@@ -33,7 +33,7 @@ const columns = [
 ];
 
 const CountriesTab = () => {
-    const { httpClient, metricoolDynamicUrl } = useGlobalContext();
+    const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();
     const { data: countryData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["analytics", "countries"],
         queryFn: () => httpClient.setRoute("distribution/countries").get(),
@@ -56,7 +56,7 @@ const CountriesTab = () => {
                     <Icon icon={"loading"} className={"size-5"}/>
                 </FlexContainer>
             ) : error ? (
-                <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
+                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
             ) : countryData && (
                 <FlexContainer direction={"column"} className={"!gap-2"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>

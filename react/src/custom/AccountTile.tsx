@@ -1,4 +1,4 @@
-import { Button, FlexContainer, Icon, type IconProps } from "../components";
+import { Button, FlexContainer, Icon, type IconProps } from "@/components";
 import { clsx } from "clsx";
 import { __, sprintf } from "@wordpress/i18n";
 

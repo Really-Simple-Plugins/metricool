@@ -1,10 +1,10 @@
-import { Button, FieldWrapper, FlexContainer, Input, Switch } from "../../components";
+import { Button, FieldWrapper, FlexContainer, Input, Switch } from "@/components";
 import { __, sprintf } from "@wordpress/i18n";
 import { Controller, useForm } from "react-hook-form";
 import DOMPurify from "dompurify";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useGlobalContext } from "../../context/GlobalContext.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import OnboardingSchema from "./OnboardingSchema.ts";
 
 const onboardingFormSchema = OnboardingSchema.omit({ brand: true });

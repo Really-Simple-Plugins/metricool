@@ -1,14 +1,12 @@
-import { Block, BlockHeader, FieldWrapper, FlexContainer, Icon, Input, showToast, Switch } from "../components";
+import { Block, BlockHeader, FetchingErrorAlert, FieldWrapper, FlexContainer, FormFooter, Icon, Input, showToast, Switch } from "@/components";
 import { __ } from "@wordpress/i18n";
-import FormFooter from "./FormFooter.tsx";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { queryClient } from "../main.tsx";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
-import FetchingErrorFeedbackNotice from "./FetchingErrorFeedbackNotice.tsx";
+import { queryClient } from "@/main.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 
 const userSettingsFormSchema = z.object({
     sendToAlternativeEmail: z.boolean(),
@@ -37,7 +35,7 @@ const userSettingsFormSchema = z.object({
  *
  */
 const AccountSettings = () => {
-    const { httpClient } = useGlobalContext();
+    const { httpClient, metricool } = useGlobalContext();
     const { data: values, isLoading, error: queryError, errorUpdateCount, refetch } = useQuery({
         queryKey: ["user_settings"],
         queryFn: () => httpClient.setRoute("user_settings").get(),
@@ -121,7 +119,7 @@ const AccountSettings = () => {
                             <Icon icon={"loading"} className={"size-5"}/>
                         </FlexContainer>
                     ) : queryError ? (
-                        <FetchingErrorFeedbackNotice errorUpdateCount={errorUpdateCount} refetch={refetch}/>
+                        <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
                     ) : (
                         <FlexContainer direction={"column"}>
                             <Controller
