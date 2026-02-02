@@ -1,6 +1,6 @@
 import { Block, BlockHeader, Button, FetchingErrorAlert, FlexContainer, Icon, type IconProps } from "@/components";
 import { __ } from "@wordpress/i18n";
-import AccountTile from "./AccountTile.tsx";
+import AccountTile from "@/custom/general/AccountTile.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 

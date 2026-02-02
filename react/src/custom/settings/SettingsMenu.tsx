@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Block, BlockHeader, FlexContainer } from "@/components";
 import { __ } from "@wordpress/i18n";
-import ListItem from "./ListItem.tsx";
+import ListItem from "@/custom/general/ListItem.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 
 const SettingsMenu = () => {

@@ -1,9 +1,9 @@
-import Header from "@/custom/Header.tsx";
+import Header from "@/custom/general/Header.tsx";
 import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components";
-import Progress from "@/custom/Progress.tsx";
-import WebsiteAnalytics from "@/custom/WebsiteAnalytics.tsx";
-import ConnectedAccounts from "@/custom/ConnectedAccounts.tsx";
-import OtherPlugins from "@/custom/OtherPlugins.tsx";
+import Progress from "@/custom/dashboard/Progress.tsx";
+import WebsiteAnalytics from "@/custom/dashboard/analytics/WebsiteAnalytics.tsx";
+import ConnectedAccounts from "@/custom/dashboard/ConnectedAccounts.tsx";
+import OtherPlugins from "@/custom/dashboard/OtherPlugins.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 
