@@ -1,7 +1,7 @@
 import React, { createContext, type Dispatch, useContext, useEffect, useReducer, } from "react";
 import HttpClient from "@/api/HttpClient.tsx";
 import { setLocaleData } from "@wordpress/i18n";
-import type { PeriodFilterOption } from "@/custom/dashboard/analytics/AnalyticsTab.tsx";
+import type { PeriodFilterOption } from "@/custom/dashboard/analytics/tabs/AnalyticsTab.tsx";
 import DynamicUrl from "@/helpers/DynamicUrl.tsx";
 
 // @ts-expect-error the metricool variable is globally set in the DashboardController

@@ -14,7 +14,7 @@ import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import MetricTile from "./MetricTile.tsx";
+import MetricTile from "../MetricTile.tsx";
 import { clsx } from "clsx";
 import { queryClient } from "@/main.tsx";
 

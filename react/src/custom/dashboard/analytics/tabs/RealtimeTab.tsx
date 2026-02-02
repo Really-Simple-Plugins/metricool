@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 import { Button, FetchingErrorAlert, FlexContainer, Icon, LineChart } from "@/components";
-import MetricTile from "./MetricTile.tsx";
+import MetricTile from "../MetricTile.tsx";
 
 const RealtimeTab = () => {
     const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();

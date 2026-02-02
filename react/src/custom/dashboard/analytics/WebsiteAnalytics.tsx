@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Block, BlockHeader } from "@/components";
 import { __ } from "@wordpress/i18n";
 import TabNavigation from "@/custom/general/TabNavigation.tsx";
-import CountriesTab from "./CountriesTab.tsx";
-import RealtimeTab from "./RealtimeTab.tsx";
-import AnalyticsTab from "./AnalyticsTab.tsx";
-import TrafficTab from "./TrafficTab.tsx";
+import CountriesTab from "./tabs/CountriesTab.tsx";
+import RealtimeTab from "./tabs/RealtimeTab.tsx";
+import AnalyticsTab from "./tabs/AnalyticsTab.tsx";
+import TrafficTab from "./tabs/TrafficTab.tsx";
 
 /**
  * The WebsiteAnalytics block used in {@link DashboardLayout}.
