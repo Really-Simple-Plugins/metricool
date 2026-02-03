@@ -17,3 +17,4 @@ export { FieldWrapper } from "@/components/shared/forms/FieldWrapper.tsx";
 export { Alert } from "@/components/shared/user-feedback/Alert.tsx";
 export { FetchingErrorAlert } from "@/components/shared/user-feedback/FetchingErrorAlert.tsx";
 export { FormFooter } from "@/components/shared/forms/FormFooter.tsx";
+export { TabNavigation } from "@/components/shared/general/TabNavigation.tsx";

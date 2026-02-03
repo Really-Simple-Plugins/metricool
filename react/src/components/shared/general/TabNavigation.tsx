@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
-import { FlexContainer } from "@/components";
-import { clsx } from "clsx";
+import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
+import { cn } from "@/functions/utils"
 
 type TabNavigationProps = {
     tabs: { title: string, component?: React.ReactElement }[],
@@ -13,11 +13,11 @@ const TabNavigation = ({ tabs, activeTab, onTabClick, separator = false }: TabNa
     return (
         <FlexContainer direction={"row"} className={"w-auto leading-none text-md !gap-2"}>
             {tabs.map((tab, index) => (<>
-                <span onClick={() => onTabClick(index)} className={clsx("cursor-pointer", activeTab === index ? "font-semibold" : "opacity-45")}>{tab.title}</span>
+                <span onClick={() => onTabClick(index)} className={cn("cursor-pointer", activeTab === index ? "font-semibold" : "opacity-45")}>{tab.title}</span>
                 {separator && index != tabs.length - 1 && <span>|</span>}
             </>))}
         </FlexContainer>
     );
 };
 
-export default TabNavigation;
+export { TabNavigation };

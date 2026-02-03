@@ -1,6 +1,5 @@
-import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, showToast } from "@/components";
+import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, showToast, TabNavigation } from "@/components";
 import { __, _n, sprintf } from "@wordpress/i18n";
-import TabNavigation from "@/custom/general/TabNavigation.tsx";
 import { useState } from "react";
 import Task, { type TaskProps } from "@/custom/general/Task.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
