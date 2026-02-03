@@ -20,5 +20,5 @@ export { OnboardingHeader } from "@/components/custom/onboarding/OnboardingHeade
 export { SignInForm } from "@/components/custom/onboarding/SignInForm.tsx";
 export { AccountSettings } from "@/components/custom/settings/AccountSettings.tsx";
 export { ConnectionsSettings } from "@/components/custom/settings/ConnectionsSettings.tsx";
-export { NotificationsSidebar } from "@/components/custom/settings/NotificationsSidebar.tsx";
+export { NotificationsSidebar, type Notice } from "@/components/custom/settings/NotificationsSidebar.tsx";
 export { SettingsMenu } from "@/components/custom/settings/SettingsMenu.tsx";
