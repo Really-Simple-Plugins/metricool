@@ -10,7 +10,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "registry:init": "npx shadcn@latest add @RSPDS/base-styles @RSPDS/utils @RSPDS/npmrc-config @RSPDS/index"
+    "registry:init": "npx shadcn@latest add @RSPDS/base-styles @RSPDS/utils @RSPDS/npmrc-config @RSPDS/index",
+    "registry:add": "npx shadcn@latest add"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
