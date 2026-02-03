@@ -1,4 +1,4 @@
-import { FlexContainer } from "@/components";
+import { FlexContainer } from "@/components/shared";
 import type { ReactNode } from "react";
 
 type OnboardingHeaderProps = {

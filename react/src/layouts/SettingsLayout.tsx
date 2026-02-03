@@ -1,4 +1,4 @@
-import { FlexContainer } from "@/components";
+import { FlexContainer } from "@/components/shared";
 import Header from "@/components/custom/general/Header.tsx";
 import SettingsMenu from "@/components/custom/settings/SettingsMenu.tsx";
 import NotificationsSidebar from "@/components/custom/settings/NotificationsSidebar.tsx";

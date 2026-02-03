@@ -1,5 +1,5 @@
 import { __ } from "@wordpress/i18n";
-import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components";
+import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import OnboardingHeader from "@/components/custom/onboarding/OnboardingHeader.tsx";
 import { useState } from "react";

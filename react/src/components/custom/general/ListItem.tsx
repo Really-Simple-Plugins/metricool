@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { FlexContainer, Icon, type IconProps } from "@/components";
+import { FlexContainer, Icon, type IconProps } from "@/components/shared";
 
 type ListItemProps = {
     link?: string,

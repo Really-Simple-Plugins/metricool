@@ -1,4 +1,4 @@
-import { Button, FieldWrapper, FlexContainer, Input } from "@/components";
+import { Button, FieldWrapper, FlexContainer, Input } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";

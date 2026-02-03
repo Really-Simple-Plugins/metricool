@@ -1,4 +1,4 @@
-import { Badge, type BadgeVariantsProps, Button, FlexContainer } from "@/components";
+import { Badge, type BadgeVariantsProps, Button, FlexContainer } from "@/components/shared";
 import { clsx } from "clsx";
 
 export type TaskProps = {

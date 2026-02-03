@@ -1,5 +1,5 @@
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import { DialogHeader, DialogTitle, FlexContainer } from "@/components";
+import { DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 
 const LoadingStep = () => {

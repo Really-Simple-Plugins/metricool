@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Block, BlockHeader, TabNavigation } from "@/components";
+import { Block, BlockHeader, TabNavigation } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import CountriesTab from "./tabs/CountriesTab.tsx";
 import RealtimeTab from "./tabs/RealtimeTab.tsx";

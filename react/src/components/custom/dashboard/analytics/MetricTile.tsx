@@ -1,5 +1,5 @@
 import { clsx } from "clsx";
-import { Icon } from "@/components";
+import { Icon } from "@/components/shared";
 
 type MetricTileProps = {
     variant?: string,

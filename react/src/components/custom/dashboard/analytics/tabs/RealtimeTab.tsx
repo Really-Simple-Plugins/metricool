@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { Button, FetchingErrorAlert, FlexContainer, Icon, LineChart } from "@/components";
+import { Button, FetchingErrorAlert, FlexContainer, Icon, LineChart } from "@/components/shared";
 import MetricTile from "../MetricTile.tsx";
 
 const RealtimeTab = () => {

@@ -1,4 +1,4 @@
-import { Block, BlockHeader, FetchingErrorAlert, FieldWrapper, FlexContainer, FormFooter, Icon, Input, showToast, Switch } from "@/components";
+import { Block, BlockHeader, FetchingErrorAlert, FieldWrapper, FlexContainer, FormFooter, Icon, Input, showToast, Switch } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";

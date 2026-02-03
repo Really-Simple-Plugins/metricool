@@ -6,7 +6,7 @@ import {
     FetchingErrorAlert,
     FlexContainer,
     Icon
-} from "@/components";
+} from "@/components/shared";
 import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";

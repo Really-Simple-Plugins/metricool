@@ -5,7 +5,7 @@ import {
     FetchingErrorAlert,
     FlexContainer,
     Icon,
-} from "@/components";
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import AccountTile from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";

@@ -1,6 +1,6 @@
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation } from "@tanstack/react-query";
-import { Button, DialogHeader, DialogTitle, Alert, FlexContainer } from "@/components";
+import { Button, DialogHeader, DialogTitle, Alert, FlexContainer } from "@/components/shared";
 import { __, sprintf } from "@wordpress/i18n";
 
 type OnboardingStepsProps = {

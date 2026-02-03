@@ -1,6 +1,6 @@
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import { Button } from "@/components";
+import { Button } from "@/components/shared";
 import HeaderTab from "./HeaderTab.tsx";
 
 const Header = () => {

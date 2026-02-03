@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Icon } from "@/components";
+import { Icon } from "@/components/shared";
 
 const HeaderTab = ({ link, children, external = false }: {
     link: string,

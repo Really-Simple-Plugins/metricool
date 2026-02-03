@@ -1,4 +1,4 @@
-import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, showToast } from "@/components";
+import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, showToast } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import ListItem from "@/components/custom/general/ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";

@@ -3,7 +3,7 @@ import { DashboardLayout } from "@/layouts/DashboardLayout.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout.tsx";
 import DOMPurify from "dompurify";
-import { ToastContainer } from "@/components";
+import { ToastContainer } from "@/components/shared";
 
 export const Route = createLazyFileRoute("/")({
     component: Index,

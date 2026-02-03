@@ -6,7 +6,7 @@ import {
     Select,
     SelectOption,
     FieldWrapper
-} from "@/components";
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { clsx } from "clsx";

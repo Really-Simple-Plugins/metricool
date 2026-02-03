@@ -1,4 +1,4 @@
-import { Button, FieldWrapper, FlexContainer, Input, Switch } from "@/components";
+import { Button, FieldWrapper, FlexContainer, Input, Switch } from "@/components/shared";
 import { __, sprintf } from "@wordpress/i18n";
 import { Controller, useForm } from "react-hook-form";
 import DOMPurify from "dompurify";

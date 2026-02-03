@@ -9,7 +9,7 @@ import {
     Select,
     SelectOption,
     showToast,
-} from "@/components";
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";

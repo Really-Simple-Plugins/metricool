@@ -1,4 +1,4 @@
-import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, Notification } from "@/components";
+import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, Notification } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "@tanstack/react-router";

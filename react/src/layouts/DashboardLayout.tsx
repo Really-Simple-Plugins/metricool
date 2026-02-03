@@ -1,5 +1,5 @@
 import Header from "@/components/custom/general/Header.tsx";
-import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components";
+import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
 import Progress from "@/components/custom/dashboard/Progress.tsx";
 import WebsiteAnalytics from "@/components/custom/dashboard/analytics/WebsiteAnalytics.tsx";
 import ConnectedAccounts from "@/components/custom/dashboard/ConnectedAccounts.tsx";
