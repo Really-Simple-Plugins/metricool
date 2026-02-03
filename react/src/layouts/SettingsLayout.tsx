@@ -1,7 +1,7 @@
 import { FlexContainer } from "@/components";
-import Header from "@/custom/general/Header.tsx";
-import SettingsMenu from "@/custom/settings/SettingsMenu.tsx";
-import NotificationsSidebar from "@/custom/settings/NotificationsSidebar.tsx";
+import Header from "@/components/custom/general/Header.tsx";
+import SettingsMenu from "@/components/custom/settings/SettingsMenu.tsx";
+import NotificationsSidebar from "@/components/custom/settings/NotificationsSidebar.tsx";
 
 /**
  * The Settings Layout.

@@ -1,6 +1,6 @@
 import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, showToast } from "@/components";
 import { __ } from "@wordpress/i18n";
-import ListItem from "@/custom/general/ListItem.tsx";
+import ListItem from "@/components/custom/general/ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { queryClient } from "@/main.tsx";

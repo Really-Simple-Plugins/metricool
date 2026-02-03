@@ -1,7 +1,7 @@
 import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, showToast, TabNavigation } from "@/components";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import { useState } from "react";
-import Task, { type TaskProps } from "@/custom/general/Task.tsx";
+import Task, { type TaskProps } from "@/components/custom/general/Task.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/main.tsx";

@@ -7,10 +7,10 @@ import {
     Icon,
 } from "@/components";
 import { __ } from "@wordpress/i18n";
-import AccountTile from "@/custom/general/AccountTile.tsx";
+import AccountTile from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
-import type { ConnectedAccount } from "@/custom/dashboard/ConnectedAccounts.tsx";
+import type { ConnectedAccount } from "@/components/custom/dashboard/ConnectedAccounts.tsx";
 
 const ConnectionsSettings = () => {
     const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();
