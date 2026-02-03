@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Metricool\Bootstrap;
 
-use Metricool\Http;
-use Metricool\Providers;
 use Metricool\Controllers;
-use Metricool\Managers\FeatureManager;
-use Metricool\Managers\EndpointManager;
-use Metricool\Managers\ProviderManager;
+use Metricool\Http;
 use Metricool\Managers\ControllerManager;
+use Metricool\Managers\EndpointManager;
+use Metricool\Managers\FeatureManager;
+use Metricool\Managers\ProviderManager;
+use Metricool\Providers;
 
 class Plugin
 {
@@ -142,6 +142,7 @@ class Plugin
     {
         $this->providerManager->register([
             Providers\MetricoolApiProvider::class,
+            Providers\RspalApiProvider::class,
         ]);
     }
 
