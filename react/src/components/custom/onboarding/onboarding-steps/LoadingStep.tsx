@@ -19,4 +19,4 @@ const LoadingStep = () => {
     );
 }
 
-export default LoadingStep;
+export { LoadingStep };

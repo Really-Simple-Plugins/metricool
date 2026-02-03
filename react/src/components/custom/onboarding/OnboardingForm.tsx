@@ -170,4 +170,4 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
     );
 };
 
-export default OnboardingForm;
+export { OnboardingForm };

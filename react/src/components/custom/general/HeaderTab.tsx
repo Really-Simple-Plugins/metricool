@@ -14,4 +14,4 @@ const HeaderTab = ({ link, children, external = false }: {
     );
 };
 
-export default HeaderTab;
+export { HeaderTab };

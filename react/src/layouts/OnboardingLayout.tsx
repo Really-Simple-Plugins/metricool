@@ -1,14 +1,16 @@
 import { __ } from "@wordpress/i18n";
 import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import OnboardingHeader from "@/components/custom/onboarding/OnboardingHeader.tsx";
+import {
+    ConnectBrandStep,
+    LoadingStep,
+    OnboardingForm,
+    OnboardingHeader,
+    SignInForm,
+    VerifyEmailStep
+} from "@/components/custom";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import SignInForm from "@/components/custom/onboarding/SignInForm.tsx";
-import OnboardingForm from "@/components/custom/onboarding/OnboardingForm.tsx";
-import ConnectBrandStep from "@/components/custom/onboarding/onboarding-steps/ConnectBrandStep.tsx";
-import LoadingStep from "@/components/custom/onboarding/onboarding-steps/LoadingStep.tsx";
-import VerifyEmailStep from "@/components/custom/onboarding/onboarding-steps/VerifyEmailStep.tsx";
 import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
 import { z } from "zod";
 
@@ -40,7 +42,7 @@ export const OnboardingLayout = () => {
     ];
 
     const { mutate: onSubmit } = useMutation({
-        mutationFn: async (formValues:  Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
+        mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
             setEnteredEmail(formValues.credentials.email);
             setOnboardingModalOpen(true);
             // const response = await httpClient.setRoute("").setPayload({

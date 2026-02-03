@@ -47,7 +47,7 @@ const AccountTile = ({
                     )}
                 />
             </FlexContainer>
-            <FlexContainer  direction={"row"} className={"justify-between items-center grow"}>
+            <FlexContainer direction={"row"} className={"justify-between items-center grow"}>
                 <FlexContainer direction={"column"} className={clsx("text-sm justify-center !gap-0")}>
                     {isConnected ? (
                         <>
@@ -80,4 +80,4 @@ const AccountTile = ({
     );
 };
 
-export default AccountTile;
+export { AccountTile };

@@ -66,4 +66,4 @@ const ListItem = ({
     );
 };
 
-export default ListItem;
+export { ListItem };

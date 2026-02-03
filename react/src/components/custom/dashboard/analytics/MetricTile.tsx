@@ -29,4 +29,4 @@ const MetricTile = ({ children, className, variant, trend, metric, inactive, dis
     );
 };
 
-export default MetricTile;
+export { MetricTile };

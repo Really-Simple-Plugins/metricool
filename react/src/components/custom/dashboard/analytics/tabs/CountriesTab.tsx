@@ -92,4 +92,4 @@ const CountriesTab = () => {
     );
 };
 
-export default CountriesTab;
+export { CountriesTab };

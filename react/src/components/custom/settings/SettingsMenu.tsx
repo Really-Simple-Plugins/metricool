@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Block, BlockHeader, FlexContainer } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
-import ListItem from "@/components/custom/general/ListItem.tsx";
+import { ListItem } from "@/components/custom/general/ListItem.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 
 const SettingsMenu = () => {
@@ -30,4 +30,4 @@ const SettingsMenu = () => {
     );
 };
 
-export default SettingsMenu;
+export { SettingsMenu };

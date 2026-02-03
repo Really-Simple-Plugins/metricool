@@ -1,6 +1,14 @@
-import { Block, BlockHeader, Button, FetchingErrorAlert, FlexContainer, Icon, type IconProps } from "@/components/shared";
+import {
+    Block,
+    BlockHeader,
+    Button,
+    FetchingErrorAlert,
+    FlexContainer,
+    Icon,
+    type IconProps
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
-import AccountTile from "@/components/custom/general/AccountTile.tsx";
+import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 
@@ -110,4 +118,4 @@ const ConnectedAccounts = () => {
     );
 };
 
-export default ConnectedAccounts;
+export { ConnectedAccounts };

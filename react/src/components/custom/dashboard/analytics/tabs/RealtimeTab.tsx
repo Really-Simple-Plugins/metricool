@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 import { Button, FetchingErrorAlert, FlexContainer, Icon, LineChart } from "@/components/shared";
-import MetricTile from "../MetricTile.tsx";
+import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 
 const RealtimeTab = () => {
     const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();
@@ -44,7 +44,7 @@ const RealtimeTab = () => {
                             </MetricTile>
                         </FlexContainer>
                     </FlexContainer>
-                    <hr  className={"-mx-2"}/>
+                    <hr className={"-mx-2"}/>
                     <LineChart
                         chartSettings={{
                             xAxisKey: lineChartXAxisDataKey,
@@ -70,4 +70,4 @@ const RealtimeTab = () => {
     );
 };
 
-export default RealtimeTab;
+export { RealtimeTab };

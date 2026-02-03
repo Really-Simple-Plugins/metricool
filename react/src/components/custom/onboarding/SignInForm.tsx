@@ -3,7 +3,7 @@ import { __ } from "@wordpress/i18n";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import OnboardingSchema from "./OnboardingSchema.ts";
+import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
 
 const signInSchema = OnboardingSchema.pick({ credentials: true });
 
@@ -89,4 +89,4 @@ const SignInForm = ({ onSubmit }: SignInFormProps) => {
     );
 };
 
-export default SignInForm;
+export { SignInForm };

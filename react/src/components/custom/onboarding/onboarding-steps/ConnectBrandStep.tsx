@@ -13,7 +13,7 @@ import { clsx } from "clsx";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import OnboardingSchema from "../OnboardingSchema.ts";
+import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
 
 const brandSchema = OnboardingSchema.pick({ brand: true });
 
@@ -98,4 +98,4 @@ const ConnectBrandStep = () => {
     );
 }
 
-export default ConnectBrandStep;
+export { ConnectBrandStep };

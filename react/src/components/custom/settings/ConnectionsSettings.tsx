@@ -7,7 +7,7 @@ import {
     Icon,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
-import AccountTile from "@/components/custom/general/AccountTile.tsx";
+import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
 import type { ConnectedAccount } from "@/components/custom/dashboard/ConnectedAccounts.tsx";
@@ -224,4 +224,4 @@ const ConnectionsSettings = () => {
     );
 };
 
-export default ConnectionsSettings;
+export { ConnectionsSettings };

@@ -1,6 +1,6 @@
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation } from "@tanstack/react-query";
-import { Button, DialogHeader, DialogTitle, Alert, FlexContainer } from "@/components/shared";
+import { Alert, Button, DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
 import { __, sprintf } from "@wordpress/i18n";
 
 type OnboardingStepsProps = {
@@ -59,4 +59,4 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
     );
 };
 
-export default VerifyEmailStep;
+export { VerifyEmailStep };

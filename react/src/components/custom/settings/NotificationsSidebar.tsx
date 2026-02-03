@@ -76,4 +76,4 @@ const NotificationsSidebar = () => {
     );
 };
 
-export default NotificationsSidebar;
+export { NotificationsSidebar };

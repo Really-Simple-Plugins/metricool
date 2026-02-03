@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Block, BlockHeader, TabNavigation } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
-import CountriesTab from "./tabs/CountriesTab.tsx";
-import RealtimeTab from "./tabs/RealtimeTab.tsx";
-import AnalyticsTab from "./tabs/AnalyticsTab.tsx";
-import TrafficTab from "./tabs/TrafficTab.tsx";
+import { CountriesTab } from "@/components/custom/dashboard/analytics/tabs/CountriesTab.tsx";
+import { RealtimeTab } from "@/components/custom/dashboard/analytics/tabs/RealtimeTab.tsx";
+import { AnalyticsTab } from "@/components/custom/dashboard/analytics/tabs/AnalyticsTab.tsx";
+import { TrafficTab } from "@/components/custom/dashboard/analytics/tabs/TrafficTab.tsx";
 
 /**
  * The WebsiteAnalytics block used in {@link DashboardLayout}.
@@ -53,4 +53,4 @@ const WebsiteAnalytics = () => {
     );
 };
 
-export default WebsiteAnalytics;
+export { WebsiteAnalytics };

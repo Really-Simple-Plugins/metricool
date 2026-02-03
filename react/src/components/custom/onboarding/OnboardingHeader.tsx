@@ -14,7 +14,7 @@ const OnboardingHeader = ({ logo, children, actions }: React.ComponentProps<"div
             <FlexContainer direction={"row"} className={"text-base font-bold font-nunito items-center"}>
                 <img src={logo.src} alt={logo.alt}/>
                 {children}
-            </FlexContainer>
+            </FlexContainer> 
             <FlexContainer direction={"row"} className={"text-md font-semibold font-nunito items-center"}>
                 {actions}
             </FlexContainer>
@@ -22,4 +22,4 @@ const OnboardingHeader = ({ logo, children, actions }: React.ComponentProps<"div
     );
 };
 
-export default OnboardingHeader;
+export { OnboardingHeader };

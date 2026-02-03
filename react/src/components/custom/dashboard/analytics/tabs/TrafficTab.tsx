@@ -1,4 +1,12 @@
-import { Button, type Column, DataTable, DataTableColumnHeader, FetchingErrorAlert, FlexContainer, Icon } from "@/components/shared";
+import {
+    Button,
+    type Column,
+    DataTable,
+    DataTableColumnHeader,
+    FetchingErrorAlert,
+    FlexContainer,
+    Icon
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
@@ -64,4 +72,4 @@ const TrafficTab = () => {
     );
 };
 
-export default TrafficTab;
+export { TrafficTab };

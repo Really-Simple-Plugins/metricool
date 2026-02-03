@@ -1,7 +1,7 @@
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { Button } from "@/components/shared";
-import HeaderTab from "./HeaderTab.tsx";
+import { HeaderTab } from "@/components/custom/general/HeaderTab.tsx";
 
 const Header = () => {
     const { metricool, metricoolDynamicUrl } = useGlobalContext();
@@ -47,4 +47,4 @@ const Header = () => {
     );
 };
 
-export default Header;
+export { Header };
