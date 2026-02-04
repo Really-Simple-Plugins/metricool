@@ -57,17 +57,21 @@ class OnboardingController implements FeatureInterface
     {
         // Validate username and email
         $username = $request->get_param('username');
-        $newsletters = $request->get_param('newsletters');
+        $password = $request->get_param('password');
+        $newsletters = (bool) $request->get_param('newsletters');
         $captcha = $request->get_param('captcha');
 
         $errors = [];
 
-        if (is_null($username)) {
-            $errors['username'] = __('Username is required.', 'metricool');
+        if (!is_email($username)) {
+            $errors['username'] = __('Email invalid.', 'metricool');
         }
 
-        if (is_null($newsletters)) {
-            $errors['newsletters'] = __('Newsletters is required.', 'metricool');
+        // todo: do we need to check password length and complexity here?
+        // or in the AL?
+        // or let the Metricool API handle this?
+        if (is_null($password)) {
+            $errors['username'] = __('Password is required.', 'metricool');
         }
 
         if (is_null($captcha)) {
@@ -92,6 +96,7 @@ class OnboardingController implements FeatureInterface
                 __('Failed to create account.', 'metricool'),
             );
         }
+
 
         return $this->onboarding->sendHttpResponse(
             $response->getData(),
