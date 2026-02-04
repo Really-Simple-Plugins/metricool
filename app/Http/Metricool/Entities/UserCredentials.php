@@ -15,7 +15,7 @@ class UserCredentials
     public function __construct(MetricoolClient $client)
     {
         $this->client = $client;
-        $this->endpoint = 'v2/settings/users/' . $client->getUserId() . '/credentials?fields=password';
+        $this->endpoint = 'v2/settings/users/' . $client->getUserId() . '/credentials';
     }
 
     /**
@@ -25,7 +25,7 @@ class UserCredentials
      */
     public function updatePassword(string $oldPassword, string $newPassword): array
     {
-        $response = $this->client->patch($this->endpoint, json_encode([
+        $response = $this->client->patch($this->endpoint . '?fields=password', json_encode([
             'oldPassword' => $oldPassword,
             'password' => $newPassword,
         ]));
