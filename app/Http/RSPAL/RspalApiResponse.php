@@ -19,7 +19,7 @@ class RspalApiResponse
     {
         $statusCode = $response->getStatusCode();
         $body = $response->getBody()->getContents();
-        $data = json_decode($body, true);
+        $data = json_decode($body, false);
 
         return new self(
             $statusCode,
