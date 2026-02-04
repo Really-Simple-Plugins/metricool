@@ -74,7 +74,7 @@ class RspalApiClient
         $rspalHeaders = [
             'RSPAL-PluginName' => 'Metricool',
             'RSPAL-PluginVersion' => '1.0.0',
-            'RSPAL-PluginPath' => plugin_dir_path(__FILE__),
+            'RSPAL-PluginPath' => $this->getPluginPathHeader(),
             'RSPAL-Origin' => trailingslashit(site_url()),
             'RSPAL-InstallationId' => get_option('rspal_installation_id', 'unknown'),
         ];
@@ -82,6 +82,17 @@ class RspalApiClient
         $rspalHeaders['RSPAL-Signature'] = $this->getInstallationSignature($rspalHeaders, $rspalHeaders['RSPAL-InstallationId']);
 
         return array_merge($rspalHeaders, $headers, $this->headers);
+    }
+
+    /**
+     * Get the plugin path relative to the WordPress root directory.
+     */
+    private function getPluginPathHeader(): string
+    {
+        $pluginFullPath = wp_normalize_path(realpath($this->env->getString('plugin.path')));
+        $wpRoot = wp_normalize_path(realpath(ABSPATH));
+
+        return str_replace($wpRoot, '', $pluginFullPath);
     }
 
     /**
@@ -114,6 +125,6 @@ class RspalApiClient
     // todo: hide with env and package.sh
     private function baseEndpoint(): string
     {
-        return defined('RSP_AUTH_ENDPOINT') ? constant('RSP_AUTH_ENDPOINT') : 'https://metricool.rsp-auth.com';
+        return $this->env->getUrl('metricool.rsp_auth_url');
     }
 }
