@@ -19,9 +19,11 @@ class UserCredentials
     }
 
     /**
+     * Update the user password
+     *
      * @throws GuzzleException
      */
-    public function patch(string $oldPassword, string $newPassword): array
+    public function updatePassword(string $oldPassword, string $newPassword): array
     {
         $response = $this->client->patch($this->endpoint, json_encode([
             'oldPassword' => $oldPassword,

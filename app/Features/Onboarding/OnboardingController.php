@@ -47,10 +47,8 @@ class OnboardingController implements FeatureInterface
     }
 
     /**
-     * Create a new SimplyBook account. This endpoint handles:
-     * 1. Validating email and terms acceptance
-     * 2. Storing company data
-     * 3. Triggering company registration at SimplyBook.me
+     * Create a new Metricool account. The created user is authenticated
+     * automatically.
      */
     public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
@@ -69,6 +67,7 @@ class OnboardingController implements FeatureInterface
             );
         }
 
+        // Attempt to create the account
         try {
             $this->accounts->createAccount([
                 'email' => $email,
@@ -94,7 +93,8 @@ class OnboardingController implements FeatureInterface
             );
         }
 
-        // Todo check if we need more data for front-end
+        // Account created successfully and the user is authenticated
+        // Todo: check if we need more data for front-end
         return $this->onboarding->sendHttpResponse(
             ['success' => true],
             true,

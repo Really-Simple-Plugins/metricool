@@ -21,7 +21,7 @@ class CreateAccountService
     }
 
     /**
-     * Creates a new Metricool account and authenticates the user.
+     * Creates a new Metricool account and authenticate the MetricoolClient.
      *
      * @param array{
      *     email: string,
@@ -49,7 +49,8 @@ class CreateAccountService
         );
 
         // Update the user password
-        $this->metricoolApi->userCredentials()->patch('', $data['password']);
+        $this->metricoolApi->userCredentials()
+            ->updatePassword('', $data['password']);
 
         // Return true to indicate a successful signup
         return true;
