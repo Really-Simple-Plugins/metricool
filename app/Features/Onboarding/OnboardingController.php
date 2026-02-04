@@ -62,23 +62,22 @@ class OnboardingController implements FeatureInterface
 
         $errors = [];
 
-        if (empty($username)) {
+        if (is_null($username)) {
             $errors['username'] = __('Username is required.', 'metricool');
         }
 
-        if (empty($newsletters)) {
+        if (is_null($newsletters)) {
             $errors['newsletters'] = __('Newsletters is required.', 'metricool');
         }
 
-        if (empty($captcha)) {
+        if (is_null($captcha)) {
             $errors['captcha'] = __('Captcha is required.', 'metricool');
         }
 
         if (!empty($errors)) {
-            return $this->onboarding->sendHttpResponse(
-                ['errors' => $errors],
-                false,
+            return $this->onboarding->sendHttpErrorResponse(
                 __('Validation failed.', 'metricool'),
+                ['errors' => $errors],
                 422
             );
         }
@@ -89,16 +88,17 @@ class OnboardingController implements FeatureInterface
                 'newsletters' => $newsletters
             ], $captcha);
         } catch (GuzzleException $e) {
-            return $this->onboarding->sendHttpResponse(
-                ['error' => $e->getMessage()],
-                false,
-                __('Create account failed.', 'metricool'),
-                503
+            return $this->onboarding->sendHttpErrorResponse(
+                __('Failed to create account.', 'metricool'),
             );
         }
 
-        return $this->onboarding->sendHttpResponse($response->data);
-
+        return $this->onboarding->sendHttpResponse(
+            $response->getData(),
+            false,
+            '',
+            $response->getStatusCode()
+        );
     }
 
     /**
