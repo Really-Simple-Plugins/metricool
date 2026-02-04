@@ -12,6 +12,13 @@ import { GlobalContextProvider } from "@/context/GlobalContext.tsx";
  *
  */
 export const Route = createRootRoute({
+    head: () => ({
+        scripts: [
+            {
+                src: "https://www.google.com/recaptcha/enterprise.js?render=6LflMV4sAAAAAMyPohHfMRVjZQBcu-YuZz_3nTTK",
+            },
+        ],
+    }),
     component: () => {
         return (
             <GlobalContextProvider>
