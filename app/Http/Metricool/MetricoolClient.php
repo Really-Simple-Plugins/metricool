@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Metricool\Http\Metricool;
 
 use GuzzleHttp\Client;
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * @todo Add error handling either with try-catches here, in the resources or
@@ -21,6 +21,7 @@ class MetricoolClient
     private string $stagingApiUrl = 'https://app.metricool.com/api/'; // todo
     private bool $testing = false;
     private string $userToken = '';
+    private string $refreshToken = '';
     private string $blogId = '';
     private string $userId = '';
     protected array $middleWares = [];
@@ -40,6 +41,18 @@ class MetricoolClient
         return !empty($this->userId);
     }
 
+    public function storeUserId(string $userId): void
+    {
+        update_option('metricool_user_id', $userId);
+
+        $this->setUserId($userId);
+    }
+
+    public function getBlogId(): string
+    {
+        return $this->blogId;
+    }
+
     public function setBlogId(string $blogId): void
     {
         $this->blogId = $blogId;
@@ -50,9 +63,9 @@ class MetricoolClient
         return !empty($this->blogId);
     }
 
-    public function getBlogId(): string
+    public function getUserToken(): string
     {
-        return $this->blogId;
+        return $this->userToken;
     }
 
     public function setUserToken(string $userToken): void
@@ -63,6 +76,33 @@ class MetricoolClient
     public function hasUserToken(): bool
     {
         return !empty($this->userToken);
+    }
+
+    public function storeUserToken(string $token): void
+    {
+        update_option('metricool_auth_token', $token);
+    }
+
+    public function getRefreshToken(): string
+    {
+        return $this->refreshToken;
+    }
+
+    public function setRefreshToken(string $refreshToken): void
+    {
+        $this->refreshToken = $refreshToken;
+    }
+
+    public function hasRefreshToken(): bool
+    {
+        return !empty($this->refreshToken);
+    }
+
+    public function storeRefreshToken(string $refreshToken): void
+    {
+        update_option('metricool_refresh_token', $refreshToken);
+
+        $this->setRefreshToken($refreshToken);
     }
 
     public function setTesting(bool $testing): void
@@ -88,6 +128,13 @@ class MetricoolClient
     public function isConnected(): bool
     {
         return ($this->client instanceof Client);
+    }
+
+    public function authenticate(string $userId, string $userToken, string $refreshToken): void
+    {
+        $this->storeUserId($userId);
+        $this->storeRefreshToken($refreshToken);
+        $this->storeUserToken($userToken);
     }
 
     public function hasAuthentication(): bool

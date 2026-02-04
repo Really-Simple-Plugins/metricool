@@ -9,6 +9,11 @@ use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 class RspalApiClient
 {
     /**
+     * The option name for storing the InstallationID.
+     */
+    public const INSTALLATION_ID_OPTION = 'rspal_installation_id';
+
+    /**
      * The Guzzle HTTP client for making API requests
      */
     protected Client $client;
@@ -36,16 +41,8 @@ class RspalApiClient
     }
 
     /**
-     * @throws GuzzleException
-     */
-    public function installation(): RspalApiResponse
-    {
-        return $this->request('installation/create', [
-            'headers' => $this->headers()
-        ], 'post');
-    }
-
-    /**
+     * Sign Up Endpoint
+     *
      * @throws GuzzleException
      */
     public function signUp(array $data, array $headers = []): RspalApiResponse
@@ -57,13 +54,55 @@ class RspalApiClient
     }
 
     /**
+     * Make a request to the RSPAL API.
+     *
      * @throws GuzzleException
      */
     private function request(string $path, array $params = [], string $method = 'get'): RspalApiResponse
     {
+        // Request and store installationId if needed before any request
+        if (!$this->hasInstallationId()) {
+            $this->setInstallationId($this->requestInstallation()->data->uuid);
+        }
+
         $response = $this->client->request(strtoupper($method), $this->uri($path), $params);
 
         return RspalApiResponse::fromResponse($response);
+    }
+
+    /**
+     * Request a new InstallationID from the RSPAL API.
+     *
+     * @throws GuzzleException
+     */
+    private function requestInstallation(): RspalApiResponse
+    {
+        $response = $this->client->request('GET', 'installation/create', [
+            'headers' => $this->headers()
+        ]);
+
+        return RspalApiResponse::fromResponse($response);
+    }
+
+    // todo: hide with env and package.sh
+    private function baseEndpoint(): string
+    {
+        return $this->env->getUrl('metricool.rsp_auth_url');
+    }
+
+    /**
+     * Create a new Guzzle HTTP client instance.
+     */
+    private function client(): Client
+    {
+        return new Client([
+            'http_errors' => true,
+            'verify' => false,
+            'headers' => [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json',
+            ]
+        ]);
     }
 
     /**
@@ -104,17 +143,6 @@ class RspalApiClient
     }
 
     /**
-     * Create a new Guzzle HTTP client instance.
-     */
-    private function client(): Client
-    {
-        return new Client([
-            'http_errors' => false,
-            'verify' => false
-        ]);
-    }
-
-    /**
      * Generate the installation signature.
      */
     private function getInstallationSignature(array $format, string $id): string
@@ -122,9 +150,25 @@ class RspalApiClient
         return hash_hmac('sha256', json_encode($format), $id);
     }
 
-    // todo: hide with env and package.sh
-    private function baseEndpoint(): string
+    /**
+     * Stores the InstallationID in the WordPress options table.
+     */
+    private function setInstallationId(string $installationId): void
     {
-        return $this->env->getUrl('metricool.rsp_auth_url');
+        $installation = update_option(self::INSTALLATION_ID_OPTION, $installationId);
+
+        if (!$installation) {
+            throw new \RuntimeException('Failed to store InstallationID');
+        }
+    }
+
+    private function hasInstallationId(): bool
+    {
+        return self::getInstallationId() !== 'unknown';
+    }
+
+    private function getInstallationId(): string
+    {
+        return get_option(self::INSTALLATION_ID_OPTION, 'unknown');
     }
 }

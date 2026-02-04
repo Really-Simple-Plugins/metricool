@@ -3,58 +3,55 @@
 namespace Metricool\Features\Onboarding\Services;
 
 use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\RSPAL\RspalApiClient;
-use Metricool\Http\RSPAL\RspalApiResponse;
 
 class CreateAccountService
 {
-    public const INSTALLATION_ID_OPTION = 'rspal_installation_id';
+    private RspalApiClient $rspalClient;
+    private MetricoolClient $metricoolClient;
+    private MetricoolApi $metricoolApi;
 
-    private RspalApiClient $apiClient;
-
-    public function __construct(RspalApiClient $apiClient)
+    public function __construct(RspalApiClient $rspalClient, MetricoolClient $metricoolClient, MetricoolApi $metricoolApi)
     {
-        $this->apiClient = $apiClient;
+        $this->rspalClient = $rspalClient;
+        $this->metricoolClient = $metricoolClient;
+        $this->metricoolApi = $metricoolApi;
     }
 
     /**
+     * Creates a new Metricool account and authenticates the user.
+     *
+     * @param array{
+     *     email: string,
+     *     password: string,
+     *     newsletters: bool,
+     *     captcha: string} $data
      * @throws GuzzleException
      */
-    public function createAccount(array $data, string $captcha): RspalApiResponse
+    public function createAccount(array $data): bool
     {
-        if (!$this->hasInstallationId()) {
-            $this->createInstallationId();
-        }
+        $signupData = [
+            'username' => $data['email'],
+            'newsletters' => $data['newsletters'],
+        ];
 
-        return $this->apiClient->signUp($data, ['RSPAL-RecaptchaV3Token' => $captcha]);
-    }
+        $signupResponse = $this->rspalClient->signUp($signupData, [
+            'RSPAL-RecaptchaV3Token' => $data['captcha']
+        ]);
 
-    /**
-     * @throws GuzzleException
-     */
-    private function createInstallationId(): void
-    {
-        $response = $this->apiClient->installation();
+        // Authenticate the user
+        $this->metricoolClient->authenticate(
+            $signupResponse->data->userId,
+            $signupResponse->data->accessToken,
+            $signupResponse->data->refreshToken
+        );
 
-        $this->setInstallationId($response->data->uuid);
-    }
+        // Update the user password
+        $this->metricoolApi->userCredentials()->patch('', $data['password']);
 
-    private function setInstallationId(string $installationId): void
-    {
-        $installation = update_option(self::INSTALLATION_ID_OPTION, $installationId);
-
-        if (!$installation) {
-            throw new \RuntimeException('Failed to store InstallationID');
-        }
-    }
-
-    private function hasInstallationId(): bool
-    {
-        return self::getInstallationId() !== 'unknown';
-    }
-
-    private function getInstallationId(): string
-    {
-        return get_option(self::INSTALLATION_ID_OPTION, 'unknown');
+        // Return true to indicate a successful signup
+        return true;
     }
 }

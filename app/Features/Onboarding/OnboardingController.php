@@ -54,62 +54,51 @@ class OnboardingController implements FeatureInterface
      */
     public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
-        // Validate
-        $email = $request->get_param('email');
-        $password = $request->get_param('password');
+        // todo: storage ?
+        $email = (string) $request->get_param('email');
+        $password = (string) $request->get_param('password');
         $newsletters = (bool) $request->get_param('newsletters');
-        $captcha = $request->get_param('captcha');
+        $captcha = (string) $request->get_param('captcha');
 
-        $errors = [];
-
-        if (!is_email($email)) {
-            $errors['username'] = __('Email invalid.', 'metricool');
-        }
-
-        // todo: do we need to check password length and complexity here?
-        // or in the AL?
-        // or let the Metricool API handle this?
-        if (is_null($password)) {
-            $errors['username'] = __('Password is required.', 'metricool');
-        }
-
-        if (is_null($captcha)) {
-            $errors['captcha'] = __('Captcha is required.', 'metricool');
-        }
-
-        if (!empty($errors)) {
+        // Validate fields
+        if (!is_email($email) || empty($password) || empty($captcha)) {
             return $this->onboarding->sendHttpErrorResponse(
                 __('Validation failed.', 'metricool'),
-                ['errors' => $errors],
+                [],
                 422
             );
         }
 
         try {
-            $response = $this->accounts->createAccount([
-                'username' => $email,
-                'newsletters' => $newsletters
-            ], $captcha);
+            $this->accounts->createAccount([
+                'email' => $email,
+                'newsletters' => $newsletters,
+                'password' => $password,
+                'captcha' => $captcha,
+            ]);
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
             if ($e instanceof \GuzzleHttp\Exception\RequestException) {
+                // If the error is a RequestException it contains a response
                 $response = $e->getResponse();
                 return $this->onboarding->sendHttpErrorResponse(
                     __('Failed to create account.', 'metricool'),
-                    $response->getBody()->getContents(),
+                    ['error' => $response->getBody()->getContents()],
                     $response->getStatusCode()
                 );
             }
+
+            // Return a connection error on every other exception
             return $this->onboarding->sendHttpErrorResponse(
-                __('Failed to create account.', 'metricool'),
+                __('Failed to connect.', 'metricool'),
+                ['error' => $e->getMessage()]
             );
         }
 
-
+        // Todo check if we need more data for front-end
         return $this->onboarding->sendHttpResponse(
-            $response->getData(),
-            false,
-            '',
-            $response->getStatusCode()
+            ['success' => true],
+            true,
+            __('Account created successfully.', 'metricool')
         );
     }
 

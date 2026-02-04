@@ -110,6 +110,14 @@ class MetricoolApi
     }
 
     /**
+     * Easy access to the UpdatePassword entity.
+     */
+    public function userCredentials(): Entities\UserCredentials
+    {
+        return new Entities\UserCredentials($this->client);
+    }
+
+    /**
      * This magic method is called when a method is requested that does not
      * exist on this class. It will try to call the method on the
      * MetricoolClient instance, if not found, it will throw an exception.

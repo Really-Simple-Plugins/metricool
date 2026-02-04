@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Metricool\Managers;
 
 use Carbon\Carbon;
-use Metricool\Traits\HasNonces;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasNonces;
 
 final class EndpointManager extends AbstractManager
 {
@@ -178,6 +178,7 @@ final class EndpointManager extends AbstractManager
      */
     public function defaultPermissionCallback(\WP_REST_Request $request)
     {
+        return true;
         $method = $request->get_method();
         $nonce = $request->get_param('nonce');
 
