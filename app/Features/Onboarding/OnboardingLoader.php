@@ -13,10 +13,7 @@ class OnboardingLoader extends AbstractLoader
      */
     public function isEnabled(): bool
     {
-        // todo
-        // return get_option('metricool_onboarding_completed', false) === false;
-
-        return false;
+        return (bool) get_option('metricool_onboarding_completed', false) === false;
     }
 
     /**
