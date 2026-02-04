@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Interfaces\FeatureInterface;
 
@@ -55,15 +54,15 @@ class OnboardingController implements FeatureInterface
      */
     public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
-        // Validate username and email
-        $username = $request->get_param('username');
+        // Validate
+        $email = $request->get_param('email');
         $password = $request->get_param('password');
         $newsletters = (bool) $request->get_param('newsletters');
         $captcha = $request->get_param('captcha');
 
         $errors = [];
 
-        if (!is_email($username)) {
+        if (!is_email($email)) {
             $errors['username'] = __('Email invalid.', 'metricool');
         }
 
@@ -88,10 +87,18 @@ class OnboardingController implements FeatureInterface
 
         try {
             $response = $this->accounts->createAccount([
-                'username' => $username,
+                'username' => $email,
                 'newsletters' => $newsletters
             ], $captcha);
-        } catch (GuzzleException $e) {
+        } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+            if ($e instanceof \GuzzleHttp\Exception\RequestException) {
+                $response = $e->getResponse();
+                return $this->onboarding->sendHttpErrorResponse(
+                    __('Failed to create account.', 'metricool'),
+                    $response->getBody()->getContents(),
+                    $response->getStatusCode()
+                );
+            }
             return $this->onboarding->sendHttpErrorResponse(
                 __('Failed to create account.', 'metricool'),
             );
