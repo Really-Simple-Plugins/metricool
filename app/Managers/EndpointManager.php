@@ -178,7 +178,6 @@ final class EndpointManager extends AbstractManager
      */
     public function defaultPermissionCallback(\WP_REST_Request $request)
     {
-        return true;
         $method = $request->get_method();
         $nonce = $request->get_param('nonce');
 

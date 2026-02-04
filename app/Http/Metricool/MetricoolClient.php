@@ -81,6 +81,8 @@ class MetricoolClient
     public function storeUserToken(string $token): void
     {
         update_option('metricool_auth_token', $token);
+
+        $this->setUserToken($token);
     }
 
     public function getRefreshToken(): string
@@ -130,11 +132,16 @@ class MetricoolClient
         return ($this->client instanceof Client);
     }
 
-    public function authenticate(string $userId, string $userToken, string $refreshToken): void
+    /**
+     * Set the authentication tokens and userId.
+     */
+    public function authenticate(string $userId, string $userToken, string $refreshToken): self
     {
         $this->storeUserId($userId);
-        $this->storeRefreshToken($refreshToken);
         $this->storeUserToken($userToken);
+        $this->storeRefreshToken($refreshToken);
+
+        return $this;
     }
 
     public function hasAuthentication(): bool
@@ -158,7 +165,6 @@ class MetricoolClient
             'handler' => $handlerStack,
             'expect' => false,
             'headers' => [
-                'X-Mc-Auth' => $this->userToken,
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
             ]
@@ -216,7 +222,7 @@ class MetricoolClient
         $this->validate();
 
         $response = $this->client->send(
-            new Request($method, $this->formatUrl($endpoint), [], $body)
+            new Request($method, $this->formatUrl($endpoint), ['X-Mc-Auth' => $this->userToken], $body)
         );
 
         return $this->parseResponse($response);
