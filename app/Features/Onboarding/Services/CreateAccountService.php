@@ -4,19 +4,16 @@ namespace Metricool\Features\Onboarding\Services;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Http\RSPAL\RspalApiClient;
 
 class CreateAccountService
 {
     private RspalApiClient $rspalClient;
-    private MetricoolClient $metricoolClient;
     private MetricoolApi $metricoolApi;
 
-    public function __construct(RspalApiClient $rspalClient, MetricoolClient $metricoolClient, MetricoolApi $metricoolApi)
+    public function __construct(RspalApiClient $rspalClient, MetricoolApi $metricoolApi)
     {
         $this->rspalClient = $rspalClient;
-        $this->metricoolClient = $metricoolClient;
         $this->metricoolApi = $metricoolApi;
     }
 
@@ -40,9 +37,9 @@ class CreateAccountService
         $signupResponse = $this->rspalClient->signUp($signupData, [
             'RSPAL-RecaptchaV3Token' => $data['captcha']
         ]);
-
+        
         // Authenticate the user
-        $this->metricoolClient->authenticate(
+        $this->metricoolApi->authenticate(
             $signupResponse->data->userId,
             $signupResponse->data->accessToken,
             $signupResponse->data->refreshToken
