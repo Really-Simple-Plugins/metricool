@@ -2,6 +2,9 @@
 
 return [
     'fields' => [
+        'userBlogId' => [
+            'storage' => 'default',
+        ],
         'sendToAlternativeEmail' => [
             'validators' => ['required'],
             'type' => 'boolean',
