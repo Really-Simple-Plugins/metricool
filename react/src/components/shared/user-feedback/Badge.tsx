@@ -6,14 +6,14 @@ const BadgeVariantStyling = {
     "open": "bg-rsp-task-open text-black",
     "special-feature": "bg-rsp-task-special-feature text-white",
     "premium": "bg-rsp-task-premium text-white",
-    "warning": "bg-rsp-task-warning text-black",
+    "warning": "bg-rsp-task-warning text-white",
     "urgent": "bg-rsp-task-urgent text-white",
     "completed": "bg-rsp-task-completed text-white",
-    "dismissed": "bg-gray-100 text-gray-800",
+    "dismissed": "bg-rsp-task-dismissed text-gray-800",
 };
 
 const BadgeVariants = cva(
-    "min-w-27 py-1 min-h-[28px] text-sm font-semibold",
+    "rounded-full p-2 xl:min-w-27 xl:rounded-md xl:justify-center xl:max-h-[28px]",
     {
         variants: {
             variant: BadgeVariantStyling
@@ -52,7 +52,7 @@ const Badge = ({
             )}
             {...props}
         >
-            {children}
+            <span className={"hidden xl:block text-sm font-semibold leading-3"}>{children}</span>
         </PrimitiveBadge>
     );
 };

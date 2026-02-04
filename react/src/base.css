@@ -195,7 +195,7 @@ Base Style Guide
     --color-rsp-task-warning: var(--color-rsp-error);
     --color-rsp-task-urgent: var(--color-rsp-error-dark);
     --color-rsp-task-completed: var(--color-rsp-success);
-    --color-rsp-task-dismissed: var(--color-rsp-success);
+    --color-rsp-task-dismissed: var(--color-gray-100);
 
     /**
     ======================================
