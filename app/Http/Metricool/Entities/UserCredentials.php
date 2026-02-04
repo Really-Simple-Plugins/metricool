@@ -1,0 +1,33 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Metricool\Http\Metricool\Entities;
+
+use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\MetricoolClient;
+
+class UserCredentials
+{
+    protected MetricoolClient $client;
+    protected string $endpoint;
+
+    public function __construct(MetricoolClient $client)
+    {
+        $this->client = $client;
+        $this->endpoint = 'v2/settings/users/' . $client->getUserId() . '/credentials?fields=password';
+    }
+
+    /**
+     * @throws GuzzleException
+     */
+    public function patch(string $oldPassword, string $newPassword): array
+    {
+        $response = $this->client->patch($this->endpoint, json_encode([
+            'oldPassword' => $oldPassword,
+            'password' => $newPassword,
+        ]));
+
+        return ($response['data'] ?? []);
+    }
+}
