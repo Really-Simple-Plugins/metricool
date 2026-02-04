@@ -16,7 +16,7 @@ if (metricoolScriptElement) {
 // setting to undefined so it is no longer accessible in the browser devtools console
 window.metricool = undefined;
 
-interface GlobalContext {
+export interface GlobalContext {
     globalState: GlobalState,
     metricool: typeof defaultMetricoolData,
     httpClient: GlobalState["httpClient"],
