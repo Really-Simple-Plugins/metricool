@@ -72,8 +72,8 @@ class RspalApiClient
     private function headers(array $headers = []): array
     {
         $rspalHeaders = [
-            'RSPAL-PluginName' => 'Metricool',
-            'RSPAL-PluginVersion' => '1.0.0',
+            'RSPAL-PluginName' => $this->env->getString('plugin.name'),
+            'RSPAL-PluginVersion' => $this->env->getString('plugin.version'),
             'RSPAL-PluginPath' => $this->getPluginPathHeader(),
             'RSPAL-Origin' => trailingslashit(site_url()),
             'RSPAL-InstallationId' => get_option('rspal_installation_id', 'unknown'),
