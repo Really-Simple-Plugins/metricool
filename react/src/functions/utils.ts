@@ -16,3 +16,7 @@ export const getScrollProgressPercent = () => {
 export const capitalizeFirstCharacter = (string: string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 };
+
+export const isFirstCharacterAVowel = (string: string) => {
+    return (/^[aeiou]$/i).test(string.charAt(0));
+};
