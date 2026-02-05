@@ -87,6 +87,18 @@ const initialGlobalState: GlobalState = {
     }),
 };
 
+const setTranslations = () => {
+    METRICOOL_DATA.json_translations.forEach((translationString: string) => {
+        const translations = JSON.parse(translationString);
+        const localeData = translations.locale_data?.metricool;
+        if (!localeData) {
+            return;
+        }
+        localeData[""].domain = "metricool";
+        setLocaleData(localeData, "metricool");
+    });
+}
+
 /**
  * The main Global Context Component
  * Gives its children access to all items specified in the GlobalContext interface
@@ -99,7 +111,7 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
     );
 
     useEffect(() => {
-        dispatch({ dispatchType: "setTranslations" });
+        setTranslations();
 
         const metricoolScriptElement = document.querySelector("script[id='metricool-main-script-js-extra']");
         if (metricoolScriptElement) {
@@ -140,21 +152,6 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
         }
         case "setDashboardModalClosed": {
             return { ...state, metricool: { ...state.metricool, was_dashboard_modal_closed: true } };
-        }
-        case "setTranslations": {
-            if (!state.metricool) {
-                throw new Error("No metricool data");
-            }
-            state.metricool.json_translations.forEach((translationString) => {
-                const translations = JSON.parse(translationString);
-                const localeData = translations.locale_data?.metricool;
-                if (!localeData) {
-                    return;
-                }
-                localeData[""].domain = "metricool";
-                setLocaleData(localeData, "metricool");
-            });
-            return { ...state };
         }
         case "setDashboardSetting": {
             if (!action.change) {
