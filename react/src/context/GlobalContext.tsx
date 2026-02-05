@@ -46,9 +46,9 @@ interface GlobalState {
     metricool: MetricoolData;
     httpClient: HttpClient;
     dashboardSettings: {
-        analytics?: {
-            activePeriodFilter?: PeriodFilterOption,
-        }
+        activePeriodFilter?: PeriodFilterOption,
+        activeWebsiteAnalyticsTab?: number,
+        activeProgressTab?: number,
     };
     metricoolDynamicUrl: DynamicUrl,
 }

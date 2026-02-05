@@ -101,7 +101,7 @@ const AnalyticsTab = () => {
         maximumFractionDigits: 2,
     });
     const defaultPeriodFilter = periodFilterOptions.last30Days;
-    const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.analytics?.activePeriodFilter));
+    const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.activePeriodFilter));
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
@@ -130,7 +130,7 @@ const AnalyticsTab = () => {
         },
     });
     const lineChartXAxisDataKey = "label";
-    const [xAxisInterval, setXAxisInterval] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.analytics?.activePeriodFilter).xAxisInterval);
+    const [xAxisInterval, setXAxisInterval] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.activePeriodFilter).xAxisInterval);
 
     const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData, refetch, errorUpdateCount } = useQuery({
         queryKey: ["analytics"],
@@ -233,7 +233,7 @@ const AnalyticsTab = () => {
                                     setPeriodFilter((prevState) => selectedPeriodFilter ?? prevState);
                                     dispatch({
                                         dispatchType: "setDashboardSetting",
-                                        change: { dashboardSettings: { analytics: { activePeriodFilter: selectedPeriodFilter } } }
+                                        change: { dashboardSettings: { activePeriodFilter: selectedPeriodFilter } }
                                     });
                                     updateChartData({ period: value });
                                 }}
