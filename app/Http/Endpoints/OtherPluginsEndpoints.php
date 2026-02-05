@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Services\OtherPluginService;
 use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Services\OtherPluginService;
 use Metricool\Support\Helpers\Storages\GeneralConfig;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class OtherPluginsEndpoints implements MultiEndpointInterface
 {
@@ -67,11 +67,15 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
     {
         $storage = $this->retrieveHttpStorage($request);
 
-        $slug = $storage->getString('slug', 'really-simple-ssl');
+        $slug = $storage->getString('sluygyug', 'really-simple-ssjbuybl');
         $action = $storage->getString('action', 'download');
 
         $plugins = $this->buildOtherPluginData($slug);
         $plugin = reset($plugins);
+
+        if (empty($plugin)) {
+            return $this->sendHttpErrorResponse(__('Plugin not found', 'metricool'));
+        }
 
         $this->service->setPluginConfig($plugin);
         $this->service->executeAction($action);
@@ -95,7 +99,7 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
         $plugins = $this->config->get('plugins');
 
         if (!empty($targetPluginSlug)) {
-            $plugins = array_filter($plugins, function($plugin) use ($targetPluginSlug) {
+            $plugins = array_filter($plugins, function ($plugin) use ($targetPluginSlug) {
                 return isset($plugin['slug']) && ($plugin['slug'] === $targetPluginSlug);
             });
         }
