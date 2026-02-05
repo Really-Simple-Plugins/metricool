@@ -20,11 +20,11 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
                 {__("Uh-oh! We stumbled upon an error.", "metricool")}
             </h3>
             <div className={"mb-6 rounded-sm border bg-gray-50 p-4"}>
-                <p className="mb-2 text-base text-black">
+                <p className={"mb-2 text-base text-black"}>
                     {error.message}
                 </p>
                 {error.stack && (
-                    <p className="max-h-48 overflow-x-scroll text-xs text-black">
+                    <p className={"max-h-48 overflow-x-scroll text-xs text-black"}>
                         Stack trace:
                         {error.stack}
                     </p>
