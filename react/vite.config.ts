@@ -26,6 +26,9 @@ export default defineConfig({
         },
         minify: "terser",
         terserOptions: {
+            format: {
+                comments: /^translators:/
+            },
             compress: {
                 passes: 2,
             },
