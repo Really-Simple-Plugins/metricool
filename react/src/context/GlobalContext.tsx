@@ -99,7 +99,6 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
     );
 
     useEffect(() => {
-        dispatch({ dispatchType: "setMetricoolVariables", change: { metricool: { ...METRICOOL_DATA } } });
         dispatch({ dispatchType: "setTranslations" });
 
         const metricoolScriptElement = document.querySelector("script[id='metricool-main-script-js-extra']");
@@ -136,15 +135,6 @@ interface ReducerAction {
 
 const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalState => {
     switch (action.dispatchType) {
-        case "setMetricoolVariables": {
-            if (!action.change) {
-                throw new Error("No new values provided");
-            }
-            if (!action.change.metricool) {
-                return { ...state };
-            }
-            return { ...state, metricool: { ...action.change.metricool } };
-        }
         case "setOnboardingComplete": {
             return { ...state, metricool: { ...state.metricool, is_onboarding_completed: true } };
         }
