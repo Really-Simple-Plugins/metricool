@@ -1,23 +1,25 @@
-# Copyright (C) 2025 Really Simple Plugins
+# Copyright (C) 2026 Really Simple Plugins
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Metricool 2.0.0-alpha.1\n"
+"Project-Id-Version: Metricool 2.0.0-alpha.3\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/metricool\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-12T09:42:38+00:00\n"
+"POT-Creation-Date: 2026-02-05T18:12:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.11.0\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: metricool\n"
 
 #. Plugin Name of the plugin
 #: metricool.php
-#: app/controllers/DashboardController.php:63
-#: app/controllers/DashboardController.php:64
+#: app/Controllers/DashboardController.php:73
+#: app/Controllers/DashboardController.php:74
+#: app/Controllers/SharePostController.php:127
+#: app/Controllers/SharePostController.php:193
 msgid "Metricool"
 msgstr ""
 
@@ -41,581 +43,872 @@ msgstr ""
 msgid "https://really-simple-plugins.com"
 msgstr ""
 
-#: app/controllers/AdminController.php:33
-#: react/build/assets/ListItem-BUMdK1OI.js:1
-#: react/build/assets/route.lazy-BDarpNSK.js:1
+#: app/Controllers/AdminController.php:41
+#: react/build/assets/AuthorizedLayout-CkE6fp1E.js:1
+#: react/build/assets/route.lazy-CE650rsp.js:1
 msgid "Settings"
 msgstr ""
 
-#: app/controllers/AdminController.php:37
+#: app/Controllers/AdminController.php:45
 msgid "Support"
 msgstr ""
 
-#: app/controllers/ReviewController.php:152
+#: app/Controllers/ReviewController.php:166
 msgid "statistics"
 msgstr ""
 
-#: app/controllers/ReviewController.php:156
+#: app/Controllers/ReviewController.php:170
 msgid "sessions"
 msgstr ""
 
 #. translators: %s is replaced by eiter "x sessions" or "statistics", %2$ and %23$ are replaced with opening and closing a tag containing hyperlink
-#: app/controllers/ReviewController.php:161
+#: app/Controllers/ReviewController.php:175
+#, php-format
 msgid "Hi, Metricool has tracked %s on your site for the last 30 days. If you have a moment, please consider leaving a review on wordpress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %2$smessage%3$s."
 msgstr ""
 
-#: app/features/Notifications/Notices/ExampleConnectionsWarning.php:18
-#: app/features/Notifications/Notices/ExampleConnectionsWarning.php:26
+#: app/Controllers/SharePostController.php:115
+msgid "Invalid nonce."
+msgstr ""
+
+#: app/Controllers/SharePostController.php:208
+msgid "Sharing is only possible for published posts."
+msgstr ""
+
+#: app/Controllers/SharePostController.php:231
+msgid "Share"
+msgstr ""
+
+#: app/Features/Notifications/Notices/ExampleConnectionsWarning.php:27
+#: app/Features/Notifications/Notices/ExampleConnectionsWarning.php:35
 msgid "This notice is a warning."
 msgstr ""
 
-#: app/features/Notifications/Notices/ExampleConnectionsWarning.php:51
-#: app/features/Notifications/Notices/FirstConnectionNotice.php:51
-#: app/features/TaskManagement/Tasks/FirstConnectionTask.php:29
-#: app/features/TaskManagement/Tasks/LinkedInTask.php:36
-#: app/features/TaskManagement/Tasks/TwitterTask.php:36
+#: app/Features/Notifications/Notices/ExampleConnectionsWarning.php:60
+#: app/Features/Notifications/Notices/FirstConnectionNotice.php:60
+#: app/Features/TaskManagement/Tasks/FirstConnectionTask.php:37
+#: app/Features/TaskManagement/Tasks/LinkedInTask.php:45
+#: app/Features/TaskManagement/Tasks/TwitterTask.php:45
 msgid "Connect"
 msgstr ""
 
-#: app/features/Notifications/Notices/ExampleInactiveNotice.php:15
-#: app/features/Notifications/Notices/ExampleInactiveNotice.php:23
+#: app/Features/Notifications/Notices/ExampleInactiveNotice.php:17
+#: app/Features/Notifications/Notices/ExampleInactiveNotice.php:25
 msgid "This is an inactive notice."
 msgstr ""
 
-#: app/features/Notifications/Notices/ExampleNotice.php:15
-#: app/features/Notifications/Notices/ExampleNotice.php:23
+#: app/Features/Notifications/Notices/ExampleNotice.php:17
+#: app/Features/Notifications/Notices/ExampleNotice.php:25
 msgid "This is a notice without a route."
 msgstr ""
 
-#: app/features/Notifications/Notices/ExampleNotice.php:49
-#: app/features/Notifications/Notices/ExamplePremiumNotice.php:50
-#: app/features/Notifications/Notices/ExamplePremiumWarning.php:50
+#: app/Features/Notifications/Notices/ExampleNotice.php:51
+#: app/Features/Notifications/Notices/ExamplePremiumNotice.php:52
+#: app/Features/Notifications/Notices/ExamplePremiumWarning.php:52
 msgid "Example text"
 msgstr ""
 
-#: app/features/Notifications/Notices/ExamplePremiumNotice.php:16
-#: app/features/Notifications/Notices/ExamplePremiumNotice.php:24
+#: app/Features/Notifications/Notices/ExamplePremiumNotice.php:18
+#: app/Features/Notifications/Notices/ExamplePremiumNotice.php:26
 msgid "This is an premium notice."
 msgstr ""
 
-#: app/features/Notifications/Notices/ExamplePremiumWarning.php:16
-#: app/features/Notifications/Notices/ExamplePremiumWarning.php:24
+#: app/Features/Notifications/Notices/ExamplePremiumWarning.php:18
+#: app/Features/Notifications/Notices/ExamplePremiumWarning.php:26
 msgid "This is an premium warning."
 msgstr ""
 
-#: app/features/Notifications/Notices/ExampleWarning.php:15
-#: app/features/Notifications/Notices/ExampleWarning.php:23
+#: app/Features/Notifications/Notices/ExampleWarning.php:17
+#: app/Features/Notifications/Notices/ExampleWarning.php:25
 msgid "This is a warning without a route."
 msgstr ""
 
-#: app/features/Notifications/Notices/FirstConnectionNotice.php:18
+#: app/Features/Notifications/Notices/FirstConnectionNotice.php:27
 msgid "No connections detected"
 msgstr ""
 
-#: app/features/Notifications/Notices/FirstConnectionNotice.php:26
+#: app/Features/Notifications/Notices/FirstConnectionNotice.php:35
 msgid "Connect your first social account to Metricool to start scheduling and tracking your content."
 msgstr ""
 
-#: app/features/Onboarding/OnboardingController.php:51
+#: app/Features/Onboarding/OnboardingController.php:48
 msgid "Successfully finished onboarding!"
 msgstr ""
 
-#: app/features/Onboarding/OnboardingController.php:55
+#: app/Features/Onboarding/OnboardingController.php:52
 msgid "An error occurred while finishing the onboarding process"
 msgstr ""
 
-#: app/features/Onboarding/OnboardingController.php:69
+#: app/Features/Onboarding/OnboardingController.php:67
 msgid "Successfully removed all previous data."
 msgstr ""
 
-#: app/features/Onboarding/OnboardingController.php:72
+#: app/Features/Onboarding/OnboardingController.php:70
 msgid "An error occurred while trying to remove previous data."
 msgstr ""
 
-#: app/features/TaskManagement/TaskManagementEndpoints.php:73
+#: app/Features/TaskManagement/TaskManagementEndpoints.php:75
 msgid "Task not found"
 msgstr ""
 
-#: app/features/TaskManagement/TaskManagementEndpoints.php:80
+#: app/Features/TaskManagement/TaskManagementEndpoints.php:82
 msgid "This task cannot be dismissed because it is required"
 msgstr ""
 
-#: app/features/TaskManagement/TaskManagementEndpoints.php:83
+#: app/Features/TaskManagement/TaskManagementEndpoints.php:85
 msgid "Task dismissed successfully"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/AbstractTask.php:150
+#: app/Features/TaskManagement/Tasks/AbstractTask.php:152
 msgid "Premium"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/AbstractTask.php:154
+#: app/Features/TaskManagement/Tasks/AbstractTask.php:156
 msgid "Special feature"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/AbstractTask.php:157
+#: app/Features/TaskManagement/Tasks/AbstractTask.php:159
 msgid "Open"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/AbstractTask.php:165
+#: app/Features/TaskManagement/Tasks/AbstractTask.php:167
 msgid "Urgent"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/AbstractTask.php:173
+#: app/Features/TaskManagement/Tasks/AbstractTask.php:175
 msgid "Completed"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/AbstractTask.php:181
+#: app/Features/TaskManagement/Tasks/AbstractTask.php:183
 msgid "Dismissed"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/ExampleCompletedTask.php:18
+#: app/Features/TaskManagement/Tasks/ExampleCompletedTask.php:19
 msgid "This is a completed task"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/ExampleCompletedTask.php:27
-#: app/features/TaskManagement/Tasks/ExampleDismissableTask.php:25
-#: app/features/TaskManagement/Tasks/ExampleDismissedTask.php:27
-#: app/features/TaskManagement/Tasks/ExamplePremiumTask.php:27
-#: app/features/TaskManagement/Tasks/ExampleRequiredTask.php:26
-#: app/features/TaskManagement/Tasks/ExampleSpecialFeatureTask.php:26
-#: app/features/TaskManagement/Tasks/ExampleUrgentTask.php:27
+#: app/Features/TaskManagement/Tasks/ExampleCompletedTask.php:28
+#: app/Features/TaskManagement/Tasks/ExampleDismissableTask.php:27
+#: app/Features/TaskManagement/Tasks/ExampleDismissedTask.php:28
+#: app/Features/TaskManagement/Tasks/ExamplePremiumTask.php:28
+#: app/Features/TaskManagement/Tasks/ExampleRequiredTask.php:27
+#: app/Features/TaskManagement/Tasks/ExampleSpecialFeatureTask.php:27
+#: app/Features/TaskManagement/Tasks/ExampleUrgentTask.php:28
 msgid "Example button"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/ExampleDismissableTask.php:16
+#: app/Features/TaskManagement/Tasks/ExampleDismissableTask.php:18
 msgid "This is a dismissable task"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/ExampleDismissedTask.php:18
+#: app/Features/TaskManagement/Tasks/ExampleDismissedTask.php:19
 msgid "This is a dismissed task"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/ExamplePremiumTask.php:18
+#: app/Features/TaskManagement/Tasks/ExamplePremiumTask.php:19
 msgid "This is a premium task"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/ExampleRequiredTask.php:17
+#: app/Features/TaskManagement/Tasks/ExampleRequiredTask.php:18
 msgid "This is a required task"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/ExampleSpecialFeatureTask.php:17
+#: app/Features/TaskManagement/Tasks/ExampleSpecialFeatureTask.php:18
 msgid "This is a Special Feature task"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/ExampleUrgentTask.php:18
+#: app/Features/TaskManagement/Tasks/ExampleUrgentTask.php:19
 msgid "This is an urgent task"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/FirstConnectionTask.php:20
+#: app/Features/TaskManagement/Tasks/FirstConnectionTask.php:28
 msgid "Connect your first social account to Metricool"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/HistoricalDataTask.php:27
+#: app/Features/TaskManagement/Tasks/HistoricalDataTask.php:36
 msgid "Gain access to analytics with unlimited historical data."
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/HistoricalDataTask.php:36
-#: react/build/assets/index.lazy-EScpTR0_.js:22
+#: app/Features/TaskManagement/Tasks/HistoricalDataTask.php:45
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
 msgid "Upgrade"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/LinkedInTask.php:27
+#: app/Features/TaskManagement/Tasks/LinkedInTask.php:36
 msgid "Connect your LinkedIn account"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/SchedulePostTask.php:14
+#: app/Features/TaskManagement/Tasks/SchedulePostTask.php:16
 msgid "Schedule a post to promote your site!"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/SchedulePostTask.php:23
+#: app/Features/TaskManagement/Tasks/SchedulePostTask.php:25
 msgid "Schedule a post"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/TwitterTask.php:27
+#: app/Features/TaskManagement/Tasks/TwitterTask.php:36
 msgid "Connect your Twitter account"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/UnableToTrackTrafficTask.php:25
+#: app/Features/TaskManagement/Tasks/UnableToTrackTrafficTask.php:27
 msgid "Unable to track traffic on your site"
 msgstr ""
 
-#: app/features/TaskManagement/Tasks/UnableToTrackTrafficTask.php:42
+#: app/Features/TaskManagement/Tasks/UnableToTrackTrafficTask.php:44
 msgid "Validate connection"
 msgstr ""
 
-#: app/features/UserSettings/Fields/Field.php:69
-msgid "Please enter a valid boolean"
-msgstr ""
-
-#: app/features/UserSettings/Fields/Field.php:74
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
-msgid "Please enter a valid email address"
-msgstr ""
-
-#: app/features/UserSettings/Fields/Field.php:79
-msgid "Please enter a valid string"
-msgstr ""
-
-#: app/features/UserSettings/Fields/Field.php:85
-msgid "Please enter a valid number"
-msgstr ""
-
-#: app/features/UserSettings/Fields/Field.php:90
-msgid "Please enter a valid array"
-msgstr ""
-
-#: app/features/UserSettings/Fields/Field.php:96
-msgid "Please enter a value"
-msgstr ""
-
-#: app/features/UserSettings/UserSettingsEndpoint.php:68
+#: app/Features/UserSettings/UserSettingsEndpoint.php:78
 msgid "Failed to retrieve settings"
 msgstr ""
 
-#: app/features/UserSettings/UserSettingsEndpoint.php:81
-msgid "Failed to update settings"
-msgstr ""
-
-#: app/features/UserSettings/UserSettingsEndpoint.php:97
+#: app/Features/UserSettings/UserSettingsEndpoint.php:93
 msgid "Validation failed"
 msgstr ""
 
-#: app/http/endpoints/AnalyticsEndpoint.php:64
-#: app/http/endpoints/DistributionEndpoint.php:66
+#: app/Features/UserSettings/UserSettingsEndpoint.php:97
+msgid "An unknown error occurred. Failed to update the settings!"
+msgstr ""
+
+#: app/Features/UserSettings/UserSettingsService.php:134
+msgid "Something went wrong while submitting the settings!"
+msgstr ""
+
+#: app/Features/UserSettings/Validators/EmailValidator.php:18
+msgid "Please enter a valid email"
+msgstr ""
+
+#: app/Features/UserSettings/Validators/FieldTypeValidator.php:27
+msgid "Please enter a valid boolean"
+msgstr ""
+
+#: app/Features/UserSettings/Validators/FieldTypeValidator.php:35
+msgid "Please enter a valid integer"
+msgstr ""
+
+#: app/Features/UserSettings/Validators/FieldTypeValidator.php:43
+msgid "Please enter a valid float"
+msgstr ""
+
+#: app/Features/UserSettings/Validators/FieldTypeValidator.php:51
+msgid "Please enter a valid string"
+msgstr ""
+
+#: app/Features/UserSettings/Validators/FieldTypeValidator.php:59
+msgid "Please enter a valid array"
+msgstr ""
+
+#: app/Features/UserSettings/Validators/FieldTypeValidator.php:67
+msgid "Please enter a valid object"
+msgstr ""
+
+#: app/Features/UserSettings/Validators/FieldTypeValidator.php:70
+msgid "Please enter a valid value"
+msgstr ""
+
+#: app/Features/UserSettings/Validators/RequiredValidator.php:18
+msgid "Please enter a value"
+msgstr ""
+
+#: app/Http/Endpoints/AnalyticsEndpoint.php:69
+#: app/Http/Endpoints/DistributionEndpoint.php:75
 msgid "Failed to load Analytics data"
 msgstr ""
 
-#: app/http/endpoints/AnalyticsEndpoint.php:84
-#: app/http/endpoints/RealtimeEndpoint.php:90
+#: app/Http/Endpoints/AnalyticsEndpoint.php:89
+#: app/Http/Endpoints/RealtimeEndpoint.php:95
 msgid "Page views"
 msgstr ""
 
-#: app/http/endpoints/AnalyticsEndpoint.php:88
-#: react/build/assets/index.lazy-EScpTR0_.js:22
+#: app/Http/Endpoints/AnalyticsEndpoint.php:93
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
 msgid "Visits"
 msgstr ""
 
-#: app/http/endpoints/AnalyticsEndpoint.php:92
-#: app/http/endpoints/RealtimeEndpoint.php:92
-#: app/http/endpoints/Responses/Statistics/CountriesResponse.php:21
-#: react/build/assets/index.lazy-EScpTR0_.js:22
+#: app/Http/Endpoints/AnalyticsEndpoint.php:97
+#: app/Http/Endpoints/RealtimeEndpoint.php:97
+#: app/Http/Endpoints/Responses/Statistics/CountriesResponse.php:23
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
 msgid "Visitors"
 msgstr ""
 
-#: app/http/endpoints/AnalyticsEndpoint.php:96
-#: react/build/assets/index.lazy-EScpTR0_.js:22
+#: app/Http/Endpoints/AnalyticsEndpoint.php:101
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
 msgid "Posts"
 msgstr ""
 
-#: app/http/endpoints/AnalyticsEndpoint.php:100
-#: react/build/assets/index.lazy-EScpTR0_.js:22
+#: app/Http/Endpoints/AnalyticsEndpoint.php:105
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
 msgid "Comments"
 msgstr ""
 
-#: app/http/endpoints/ConnectedNetworksEndpoint.php:54
+#: app/Http/Endpoints/ConnectedNetworksEndpoint.php:63
 msgid "Failed to load brands data"
 msgstr ""
 
-#: app/http/endpoints/RealtimeEndpoint.php:62
+#: app/Http/Endpoints/RealtimeEndpoint.php:67
 msgid "Failed to load Realtime data"
 msgstr ""
 
-#: app/http/endpoints/Responses/Statistics/CountriesResponse.php:20
-#: react/build/assets/index.lazy-EScpTR0_.js:22
+#: app/Http/Endpoints/Responses/Statistics/CountriesResponse.php:22
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
 msgid "Country"
 msgstr ""
 
-#: app/managers/EndpointManager.php:170
+#: app/Managers/EndpointManager.php:189
 msgid "Forbidden."
 msgstr ""
 
-#: app/views/admin/buttons/share-post.php:2
-msgid "Share this post"
-msgstr ""
-
-#: app/views/admin/review-notice.php:75
-msgid "Leave a review"
-msgstr ""
-
-#: app/views/admin/review-notice.php:78
-msgid "Dismiss this notice for 30 days."
-msgstr ""
-
-#: app/views/admin/review-notice.php:79
-msgid "Maybe later"
-msgstr ""
-
-#: app/views/admin/review-notice.php:82
-msgid "Dismiss this notice forever."
-msgstr ""
-
-#: app/views/admin/review-notice.php:83
-msgid "Don't show again"
-msgstr ""
-
-#: config/related.php:16
+#: config/plugins.php:15
 msgid "Lightweight plugin. Heavyweight security features."
 msgstr ""
 
-#: config/related.php:28
+#: config/plugins.php:27
 msgid "Consent Management as it should be"
 msgstr ""
 
-#: config/related.php:39
+#: config/plugins.php:38
 msgid "Terms & Conditions"
 msgstr ""
 
-#: config/related.php:48
+#: config/plugins.php:47
 msgid "Online Booking System"
 msgstr ""
 
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
+#: views/admin/review-notice.php:75
+msgid "Leave a review"
+msgstr ""
+
+#: views/admin/review-notice.php:78
+msgid "Dismiss this notice for 30 days."
+msgstr ""
+
+#: views/admin/review-notice.php:79
+msgid "Maybe later"
+msgstr ""
+
+#: views/admin/review-notice.php:82
+msgid "Dismiss this notice forever."
+msgstr ""
+
+#: views/admin/review-notice.php:83
+msgid "Don't show again"
+msgstr ""
+
+#: react/build/assets/AccountSettings-BhBormiE.js:1
+msgid "Try again"
+msgstr ""
+
+#: react/build/assets/AccountSettings-BhBormiE.js:1
+msgid "Refresh page"
+msgstr ""
+
+#: react/build/assets/AccountSettings-BhBormiE.js:1
+msgid "There was an error fetching this data."
+msgstr ""
+
+#: react/build/assets/AccountSettings-BhBormiE.js:1
+msgid "Please try refreshing the page."
+msgstr ""
+
+#. translators: the two variables are opening and closing anchor tags
+#: react/build/assets/AccountSettings-BhBormiE.js:3
+#, js-format
+msgid "If the error persists, please contact our %1$ssupport team%2$s."
+msgstr ""
+
+#: react/build/assets/AccountSettings-BhBormiE.js:3
 msgid "Saving..."
 msgstr ""
 
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
+#: react/build/assets/AccountSettings-BhBormiE.js:3
 msgid "Form contains errors"
 msgstr ""
 
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
+#: react/build/assets/AccountSettings-BhBormiE.js:3
 msgid "You have unsaved changes"
 msgstr ""
 
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
-msgid "There was an error updating your settings"
+#: react/build/assets/AccountSettings-BhBormiE.js:3
+msgid "Save changes"
 msgstr ""
 
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
+#: react/build/assets/AccountSettings-BhBormiE.js:3
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Please enter a valid email address"
+msgstr ""
+
+#: react/build/assets/AccountSettings-BhBormiE.js:3
 msgid "Settings have been saved"
 msgstr ""
 
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
+#: react/build/assets/AccountSettings-BhBormiE.js:3
+msgid "There was an error updating your settings"
+msgstr ""
+
+#: react/build/assets/AccountSettings-BhBormiE.js:3
 msgid "This page is asking you to confirm that you want to leave — information you’ve entered may not be saved."
 msgstr ""
 
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
+#: react/build/assets/AccountSettings-BhBormiE.js:3
 msgid "Monthly summary"
 msgstr ""
 
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
-msgid "There was an error fetching your monthly summary settings"
-msgstr ""
-
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
+#: react/build/assets/AccountSettings-BhBormiE.js:3
 msgid "Receive monthly summary"
 msgstr ""
 
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
+#: react/build/assets/AccountSettings-BhBormiE.js:3
 msgid "Custom e-mail for the monthly summary"
 msgstr ""
 
-#: react/build/assets/account.lazy-hTzIyeWV.js:1
+#: react/build/assets/AccountSettings-BhBormiE.js:3
 msgid "Placeholder"
 msgstr ""
 
-#: react/build/assets/connections.lazy-C3JctuaA.js:1
-#: react/build/assets/route.lazy-BDarpNSK.js:1
-msgid "Connections"
+#. translators: first variable is either 'a' or 'an', second is the name of a social media
+#: react/build/assets/AccountTile-CaHa3juo.js:3
+#, js-format
+msgid "Connect %1$s %2$s Account"
 msgstr ""
 
-#: react/build/assets/connections.lazy-C3JctuaA.js:1
-msgid "The accounts that are connected to Metricool"
+#: react/build/assets/AuthorizedLayout-CkE6fp1E.js:1
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "Metricool logo"
 msgstr ""
 
-#: react/build/assets/connections.lazy-C3JctuaA.js:1
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "There was an error fetching your connected accounts."
-msgstr ""
-
-#: react/build/assets/connections.lazy-C3JctuaA.js:1
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Connected Accounts"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "All Tasks"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Remaining Tasks"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Progress"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "There was an error fetching your Tasks"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Percent"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "There was an error fetching the data"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "View Analytics"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Page Views"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Last 30 Minutes"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Yesterday"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Last week"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Current month"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Last 30 days"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Previous month"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Last 3 months"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Last 6 months"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Last 12 months"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Report"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "URL"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Real-time"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Analytics"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Traffic"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Countries"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Website Analytics"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Installed"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Install"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Activate"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Activating..."
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Downloading..."
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Related Plugins"
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "There was an error fetching the related plugins."
-msgstr ""
-
-#: react/build/assets/index.lazy-EScpTR0_.js:22
-msgid "Onboarding"
-msgstr ""
-
-#: react/build/assets/ListItem-BUMdK1OI.js:1
+#: react/build/assets/AuthorizedLayout-CkE6fp1E.js:1
 msgid "Dashboard"
 msgstr ""
 
-#: react/build/assets/ListItem-BUMdK1OI.js:1
+#: react/build/assets/AuthorizedLayout-CkE6fp1E.js:1
 msgid "Planner"
 msgstr ""
 
-#: react/build/assets/ListItem-BUMdK1OI.js:1
+#: react/build/assets/AuthorizedLayout-CkE6fp1E.js:1
 msgid "Help Center"
 msgstr ""
 
-#: react/build/assets/ListItem-BUMdK1OI.js:1
+#: react/build/assets/AuthorizedLayout-CkE6fp1E.js:1
 msgid "Upgrade to Premium"
 msgstr ""
 
-#: react/build/assets/main-DK3hglfG.js:11
+#: react/build/assets/connections.lazy-tOfC21RK.js:1
+#: react/build/assets/route.lazy-CE650rsp.js:1
+msgid "Connections"
+msgstr ""
+
+#: react/build/assets/connections.lazy-tOfC21RK.js:1
+msgid "The accounts that are connected to Metricool"
+msgstr ""
+
+#: react/build/assets/connections.lazy-tOfC21RK.js:1
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "Connected Accounts"
+msgstr ""
+
+#. translators: variables are page numbers
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+#, js-format
+msgid "Page %1$s of %2$s"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "Percent"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "View Analytics"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Page Views"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "Last 30 Minutes"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "URL"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "Real-time"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "Analytics"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "Traffic"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "Countries"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "Website Analytics"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "There was an error dismissing your task"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "All Tasks"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "Remaining Tasks"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "Progress"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:3
+msgid "You're all set! Great job!"
+msgstr ""
+
+#. translators: variable is number of tasks
+#: react/build/assets/index.lazy-CAMQ3o8d.js:5
+#, js-format
+msgid "You're on your way. You still have %s task open."
+msgid_plural "You're on your way. You still have %s tasks open."
+msgstr[0] ""
+msgstr[1] ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:5
+msgid "Metricool logo with cog icon"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:5
+msgid "Creating Awesomeness"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:5
+msgid "We’re setting up your Metricool account."
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:5
+msgid "Email sent icon"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:5
+msgid "Thanks for signing up!"
+msgstr ""
+
+#. translators: the variable is the email address the user entered
+#: react/build/assets/index.lazy-CAMQ3o8d.js:7
+#, js-format
+msgid "We have sent you an email at %s so you can activate your account."
+msgstr ""
+
+#. translators: the variable is the email address the user entered
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+#, js-format
+msgid "We have resent the email to %s"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "Resend email"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "Already a Metricooler?"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "Sign in here"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "The digital Swiss Army Knife for social media marketers"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "Join more than 2 million professionals, agencies and brands that use Metricool as their one-stop shop for social media and online ad management."
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "Laptop and phone displaying the Metricool app"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "Sign in with your credentials"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "Checkmark icon"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "You're all set!"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "Welcome to the Metricool Wordpress plugin"
+msgstr ""
+
+#: react/build/assets/index.lazy-CAMQ3o8d.js:9
+msgid "Let's go to your dashboard!"
+msgstr ""
+
+#: react/build/assets/main-BIv3p6Gu.js:2
 msgid "Route is not set"
 msgstr ""
 
-#: react/build/assets/main-DK3hglfG.js:11
+#: react/build/assets/main-BIv3p6Gu.js:2
 msgid "Payload is not set"
 msgstr ""
 
-#: react/build/assets/main-DK3hglfG.js:11
+#: react/build/assets/main-BIv3p6Gu.js:2
 msgid "Route not set. Please use setRoute before using setFilters."
 msgstr ""
 
-#: react/build/assets/main-DK3hglfG.js:11
+#: react/build/assets/main-BIv3p6Gu.js:2
 msgid "An error occurred"
 msgstr ""
 
-#: react/build/assets/route.lazy-BDarpNSK.js:1
-msgid "Account Settings"
+#: react/build/assets/main-BIv3p6Gu.js:2
+msgid "Uh-oh! We stumbled upon an error."
 msgstr ""
 
-#: react/build/assets/route.lazy-BDarpNSK.js:1
-msgid "Affiliation Program"
+#: react/build/assets/main-BIv3p6Gu.js:2
+msgid "Error was copied"
 msgstr ""
 
-#: react/build/assets/route.lazy-BDarpNSK.js:1
-msgid "User Management"
+#: react/build/assets/main-BIv3p6Gu.js:2
+#: react/build/assets/main-BIv3p6Gu.js:4
+msgid "Copy Error"
 msgstr ""
 
-#: react/build/assets/route.lazy-BDarpNSK.js:1
-msgid "My Tasks"
+#: react/build/assets/main-BIv3p6Gu.js:2
+msgid "We're sorry for the trouble. Please take a moment to report this issue on the WordPress forums so we can work on fixing it. Here’s how you can report the issue:"
 msgstr ""
 
-#: react/build/assets/route.lazy-BDarpNSK.js:1
+#. translators: variable is translated string of `Copy Error`
+#: react/build/assets/main-BIv3p6Gu.js:4
+#, js-format
+msgid "Copy the error details by clicking the %s button above."
+msgstr ""
+
+#: react/build/assets/main-BIv3p6Gu.js:4
+msgid "Navigate to the Support Forum."
+msgstr ""
+
+#: react/build/assets/main-BIv3p6Gu.js:4
+msgid "If you haven’t already, log in to your WordPress.org account or create a new account."
+msgstr ""
+
+#. translators: variable is a string that should not be translated
+#: react/build/assets/main-BIv3p6Gu.js:6
+#, js-format
+msgid "Once logged in, click on %s."
+msgstr ""
+
+#. translators: variable is a string that should not be translated
+#: react/build/assets/main-BIv3p6Gu.js:8
+#, js-format
+msgid "Title: Mention %s along with a brief hint of the error."
+msgstr ""
+
+#: react/build/assets/main-BIv3p6Gu.js:8
+msgid "Description: Paste the copied error details and explain what you were doing when the error occurred."
+msgstr ""
+
+#. translators: variable is a string that should not be translated
+#: react/build/assets/main-BIv3p6Gu.js:10
+#, js-format
+msgid "Click %s to post your topic. Our team will look into the issue and provide assistance."
+msgstr ""
+
+#: react/build/assets/route.lazy-CE650rsp.js:1
 msgid "Notifications"
 msgstr ""
 
-#: react/build/assets/route.lazy-BDarpNSK.js:1
-msgid "There was an error fetching your Notifications"
+#: react/build/assets/route.lazy-CE650rsp.js:1
+msgid "You currently have no notifications."
 msgstr ""
 
-#: react/build/assets/route.lazy-BDarpNSK.js:1
-msgid "You currently have no notifications."
+#: react/build/assets/route.lazy-CE650rsp.js:1
+msgid "Account Settings"
+msgstr ""
+
+#: react/build/assets/route.lazy-CE650rsp.js:1
+msgid "Affiliation Program"
+msgstr ""
+
+#: react/build/assets/route.lazy-CE650rsp.js:1
+msgid "User Management"
+msgstr ""
+
+#: react/build/assets/route.lazy-CE650rsp.js:1
+msgid "My Tasks"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Last week"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Current month"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Last 30 days"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Previous month"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Last 3 months"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Last 6 months"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Last 12 months"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "There was an fetching the chart data"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Report"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Installed"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Install"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Activate"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Activating..."
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Downloading..."
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "There was an unexpected error executing the action for the selected plugin"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Other Plugins"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Really Simple Plugins logo"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Password must be at least 8 characters"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Please read and accept the Legal Terms"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Link icon"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Connect your brand"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Choose the brand that you want to connect to this website"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Choose your brand"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Select a brand"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Brand one"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Brand two"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Finish"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+#: react/build/assets/SignInForm-CSpOZJh5.js:5
+msgid "Email"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+#: react/build/assets/SignInForm-CSpOZJh5.js:5
+msgid "Enter your email"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+#: react/build/assets/SignInForm-CSpOZJh5.js:5
+msgid "Password"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+#: react/build/assets/SignInForm-CSpOZJh5.js:5
+msgid "Write your password here"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:1
+msgid "Create your free account"
+msgstr ""
+
+#. translators: the two variables are links to Google's Privacy Policy and Terms of Service
+#: react/build/assets/SignInForm-CSpOZJh5.js:3
+#, js-format
+msgid "This page is protected by reCAPTCHA and the Google %1$s and %2$s apply."
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:3
+msgid "Privacy Policy"
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:3
+msgid "Terms of Service"
+msgstr ""
+
+#. translators: the two variables are opening and closing anchor tags
+#: react/build/assets/SignInForm-CSpOZJh5.js:5
+#, js-format
+msgid "I have read and accept the %1$sLegal Terms%2$s by Metricool."
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:5
+msgid "I wish to receive communications about news and/or promotions from Metricool Software."
+msgstr ""
+
+#: react/build/assets/SignInForm-CSpOZJh5.js:5
+msgid "Sign in"
 msgstr ""
