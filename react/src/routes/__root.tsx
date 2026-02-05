@@ -1,5 +1,6 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { GlobalContextProvider } from "@/context/GlobalContext.tsx";
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import { type GlobalContext } from "@/context/GlobalContext.tsx";
+import type { QueryClient } from "@tanstack/react-query";
 
 /**
  * Tanstack Router's entry into the entire app, from which it generates
@@ -11,7 +12,7 @@ import { GlobalContextProvider } from "@/context/GlobalContext.tsx";
  * as {@link Index} needs to immediately access the context data.
  *
  */
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<GlobalContext & { queryClient: QueryClient }>()({
     head: () => ({
         scripts: [
             {
@@ -21,9 +22,7 @@ export const Route = createRootRoute({
     }),
     component: () => {
         return (
-            <GlobalContextProvider>
-                <Outlet/>
-            </GlobalContextProvider>
+            <Outlet/>
         )
     },
 });

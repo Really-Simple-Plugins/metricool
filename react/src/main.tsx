@@ -5,6 +5,7 @@ import { createHashHistory, createRouter, RouterProvider } from "@tanstack/react
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { GlobalContextProvider, useGlobalContext } from "@/context/GlobalContext.tsx";
 import "./tailwind.css";
 
 // Import the generated route tree
@@ -23,9 +24,36 @@ const router = createRouter({
     routeTree,
     history: hashHistory,
     context: {
+        metricool: undefined!,
+        httpClient: undefined!,
+        globalState: undefined!,
+        metricoolDynamicUrl: undefined!,
+        dispatch: undefined!,
+        dashboardSettings: undefined!,
         queryClient,
     },
 });
+
+const InnerApp = () => {
+    const globalContext = useGlobalContext();
+    return (
+        <>
+            <RouterProvider router={router} context={globalContext}/>
+            <TanStackDevtools
+                plugins={[
+                    {
+                        name: "TanStack Query",
+                        render: <ReactQueryDevtoolsPanel/>,
+                    },
+                    {
+                        name: "TanStack Router",
+                        render: <TanStackRouterDevtoolsPanel router={router}/>,
+                    },
+                ]}
+            />
+        </>
+    );
+};
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {
@@ -48,17 +76,9 @@ document.addEventListener("DOMContentLoaded", () => {
         createRoot(container).render(
             <StrictMode>
                 <QueryClientProvider client={queryClient}>
-                    <RouterProvider router={router}/>
-                    <TanStackDevtools plugins={[
-                        {
-                            name: "TanStack Query",
-                            render: <ReactQueryDevtoolsPanel/>,
-                        },
-                        {
-                            name: "TanStack Router",
-                            render: <TanStackRouterDevtoolsPanel router={router}/>,
-                        },
-                    ]}/>
+                    <GlobalContextProvider>
+                        <InnerApp/>
+                    </GlobalContextProvider>
                 </QueryClientProvider>
             </StrictMode>,
         );

@@ -7,7 +7,10 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
  * /settings/account is the default child route.
  */
 export const Route = createFileRoute("/_authorized/settings/")({
-    beforeLoad: () => {
+    beforeLoad: ({ context }) => {
+        if (!context.metricool.is_onboarding_completed) {
+            throw redirect({ to: "/", replace: true });
+        }
         throw redirect({ to: "/settings/account", replace: true });
     },
     component: () => null,
