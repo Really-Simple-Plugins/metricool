@@ -37,8 +37,6 @@ class Plugin
      */
     public function boot(): void
     {
-        $this->registerEnvironment();
-
         $pluginBaseFile = (plugin_basename(dirname(__DIR__)) . DIRECTORY_SEPARATOR . plugin_basename(dirname(__DIR__)) . '.php');
         register_activation_hook($pluginBaseFile, [$this, 'activation']);
         register_deactivation_hook($pluginBaseFile, [$this, 'deactivation']);
@@ -50,19 +48,6 @@ class Plugin
         add_action('metricool_features_loaded', [$this, 'registerControllers']); // Control the functionality of the plugin
         add_action('rest_api_init', [$this, 'registerEndpoints']);
         add_action('admin_init', [$this, 'fireActivationHook']);
-    }
-
-    /**
-     * Register the plugin environment. The value of the environment will
-     * determine which domain and app_key are used for the API calls. The
-     * default value is production and can be [production|development].
-     * See {@see config/environment.php} for the actual values.
-     */
-    public function registerEnvironment(): void
-    {
-        if (!defined('METRICOOL_ENV')) {
-            define('METRICOOL_ENV', 'development');
-        }
     }
 
     /**

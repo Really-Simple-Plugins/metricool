@@ -8,6 +8,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -17,14 +18,17 @@ use Psr\Http\Message\ResponseInterface;
 class MetricoolClient
 {
     private ?Client $client = null;
-    private string $apiUrl = 'https://app.metricool.com/api/';
-    private string $stagingApiUrl = 'https://app.metricool.com/api/'; // todo
-    private bool $testing = false;
+    private string $apiUrl;
     private string $userToken = '';
     private string $refreshToken = '';
     private string $blogId = '';
     private string $userId = '';
     protected array $middleWares = [];
+
+    public function __construct(EnvironmentConfig $env)
+    {
+        $this->apiUrl = $env->get('metricool.base_api_domain');
+    }
 
     public function setUserId(string $userId): void
     {
@@ -105,16 +109,6 @@ class MetricoolClient
         update_option('metricool_refresh_token', $refreshToken);
 
         $this->setRefreshToken($refreshToken);
-    }
-
-    public function setTesting(bool $testing): void
-    {
-        $this->testing = $testing;
-    }
-
-    public function isTesting(): bool
-    {
-        return $this->testing;
     }
 
     public function insertMiddleWare(callable $middleWare): void
@@ -242,8 +236,6 @@ class MetricoolClient
      */
     private function formatUrl(string $url): string
     {
-        $baseUri = $this->isTesting() ? $this->stagingApiUrl : $this->apiUrl;
-
         $query = http_build_query(array_filter([
             'userId' => $this->userId,
             'blogId' => $this->blogId,
@@ -256,7 +248,7 @@ class MetricoolClient
             ? $url . '?' . $query
             : $url . '&' . $query;
 
-        return trailingslashit($baseUri) . $url;
+        return trailingslashit($this->apiUrl) . $url;
     }
 
     /**
