@@ -119,7 +119,7 @@ const Progress = () => {
                         <span className={"font-bold text-2xl w-min"}>
                             {taskData.completionPercentage}%
                         </span>
-                        <span className="text-xl font-medium">
+                        <span className={"text-xl font-medium"}>
                             {taskData.remainingTasks.length === 0 && __("You're all set! Great job!", "metricool")}
                             {taskData.remainingTasks.length > 0 && sprintf(
                                 /*translators: variable is number of tasks*/
@@ -128,7 +128,7 @@ const Progress = () => {
                         </span>
                     </div>
                     {/* Task List */}
-                    <div className="max-h-[300px] flex flex-col overflow-y-auto gap-4 pr-3">
+                    <div className={"max-h-[300px] flex flex-col overflow-y-auto gap-4 pr-3"}>
                         {/* using spread operators, the array of tasks to display is built dynamically
                             if All Tasks is selected (activeTab === 0), the completed tasks are added on.
                             This way, no extra filtering needs to be done.
