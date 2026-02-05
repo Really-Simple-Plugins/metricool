@@ -29,7 +29,7 @@ import { queryClient } from "@/main.tsx";
  * Displays everything in a {@link Block} with a fixed height (500px)
  */
 const Progress = () => {
-    const { httpClient, metricool } = useGlobalContext();
+    const { httpClient, metricool, dispatch, dashboardSettings } = useGlobalContext();
     // The 'enabled' option ensures the connected accounts call, which updates the
     // first_connection task in the database if a connection is detected, will
     // always finish first before tasks are actually fetched so users receive
@@ -79,7 +79,7 @@ const Progress = () => {
 
     // This state saves the activeTab's index in the tabs array.
     // Initiated as 1 for the Remaining Tasks.
-    const [activeTab, setActiveTab] = useState(1);
+    const [activeTab, setActiveTab] = useState(dashboardSettings.activeProgressTab ?? 1);
     const tabs = [{
         title: `${__("All Tasks", "metricool")} (${taskData?.tasks.length})`,
     }, {
@@ -87,6 +87,10 @@ const Progress = () => {
     }];
     const onTabChange = (tabIndex: number) => {
         setActiveTab(tabIndex);
+        dispatch({
+            dispatchType: "setDashboardSetting",
+            change: { dashboardSettings: { activeProgressTab: tabIndex } }
+        });
     };
 
     return (
