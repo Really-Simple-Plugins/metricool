@@ -43,11 +43,25 @@ export const OnboardingLayout = () => {
     ];
 
     const { mutate: onSubmit } = useMutation({
-        mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
+        onMutate: (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
             setEnteredEmail(formValues.credentials.email);
             setOnboardingModalOpen(true);
-            // const response = await httpClient.setRoute("").setPayload({
-            // }).post();
+        },
+        mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
+            // @ts-expect-error grecaptcha globally defined though script
+            await grecaptcha.enterprise.ready(async () => {
+                // @ts-expect-error grecaptcha globally defined though script
+                const token = await grecaptcha.enterprise.execute('6LflMV4sAAAAAMyPohHfMRVjZQBcu-YuZz_3nTTK', {action: 'signup'});
+                console.log("Post this token to the server: ");
+                console.log(token);
+                // const response = await httpClient.setRoute("create_account").setPayload({
+                //   email: formValues.credentials.email,
+                //   password: formValues.credentials.password,
+                //   newsletters: formValues.terms,
+                //   captcha: token,
+                // }).post();
+            });
+
             const timer = new Promise(resolve => setTimeout(resolve, 8000));
             await timer;
 
