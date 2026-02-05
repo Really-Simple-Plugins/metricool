@@ -4,7 +4,7 @@ export { Notification } from "@/components/shared/user-feedback/Notification.tsx
 export { Badge, type BadgeVariantsProps } from "@/components/shared/user-feedback/Badge.tsx";
 export { Input } from "@/components/shared/forms/Input.tsx";
 export { Dialog, DialogTitle, DialogHeader } from "@/components/shared/user-feedback/Dialog.tsx";
-export { ToastContainer, toast as showToast } from "@/components/shared/user-feedback/Toast.tsx";
+export { ToastContainer, showToast } from "@/components/shared/user-feedback/Toast.tsx";
 export { Icon, type IconProps } from "@/components/shared/user-feedback/Icon.tsx";
 export { Label } from "@/components/shared/forms/Label.tsx";
 export { Select, SelectOption, DisabledSelectOption } from "@/components/shared/forms/Select.tsx";
