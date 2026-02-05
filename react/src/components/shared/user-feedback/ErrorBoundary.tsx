@@ -45,11 +45,12 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
             <ol className={"list-inside list-decimal space-y-2 text-black"}>
                 <li>
                     {sprintf(
+                        /*translators: variable is translated string of `Copy Error` */
                         __(
                             "Copy the error details by clicking the %s button above.",
                             "metricool",
                         ),
-                        "\"Copy Error\"",
+                        __("Copy Error", "metricool"),
                     )}
                 </li>
                 <li>
@@ -69,15 +70,17 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
                 </li>
                 <li>
                     {sprintf(
+                        /*translators: variable is a string that should not be translated */
                         __(
                             "Once logged in, click on %s.",
                             "metricool",
                         ),
-                        "\"Create Topic\"",
+                        "'Create Topic'",
                     )}
                 </li>
                 <li>
                     {sprintf(
+                        /*translators: variable is a string that should not be translated */
                         __(
                             "Title: Mention %s along with a brief hint of the error.",
                             "metricool",
@@ -93,11 +96,12 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
                 </li>
                 <li>
                     {sprintf(
+                        /*translators: variable is a string that should not be translated */
                         __(
                             "Click %s to post your topic. Our team will look into the issue and provide assistance.",
                             "metricool",
                         ),
-                        "\"Submit\"",
+                        "'Submit'",
                     )}
                 </li>
             </ol>
