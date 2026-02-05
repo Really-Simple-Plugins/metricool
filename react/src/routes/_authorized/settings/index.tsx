@@ -6,7 +6,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
  * layout route, so it has to have a child route as an outlet to show anything.
  * /settings/account is the default child route.
  */
-export const Route = createFileRoute("/settings/")({
+export const Route = createFileRoute("/_authorized/settings/")({
     beforeLoad: () => {
         throw redirect({ to: "/settings/account", replace: true });
     },

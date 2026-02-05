@@ -1,7 +1,7 @@
 import { createLazyFileRoute, Outlet } from "@tanstack/react-router";
 import { SettingsLayout } from "@/layouts/SettingsLayout.tsx";
 
-export const Route = createLazyFileRoute("/settings")({
+export const Route = createLazyFileRoute("/_authorized/settings")({
     component: Settings,
 });
 

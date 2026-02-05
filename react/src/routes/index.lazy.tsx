@@ -1,9 +1,10 @@
 import { createLazyFileRoute } from "@tanstack/react-router";
-import { DashboardLayout } from "@/layouts/DashboardLayout.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { OnboardingLayout } from "@/layouts/OnboardingLayout.tsx";
 import DOMPurify from "dompurify";
 import { ToastContainer } from "@/components/shared";
+import AuthorizedLayout from "@/layouts/AuthorizedLayout.tsx";
+import { DashboardLayout } from "@/layouts/DashboardLayout.tsx";
 
 export const Route = createLazyFileRoute("/")({
     component: Index,
@@ -44,7 +45,9 @@ function Index() {
     return (
         <>
             {metricool.is_onboarding_completed ? (
-                <DashboardLayout />
+                <AuthorizedLayout>
+                    <DashboardLayout/>
+                </AuthorizedLayout>
             ) : (
                 <OnboardingLayout />
             )}
