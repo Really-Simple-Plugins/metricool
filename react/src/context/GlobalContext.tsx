@@ -8,13 +8,6 @@ import DynamicUrl from "@/helpers/DynamicUrl.tsx";
 // but the tsc complains it can't find it
 const METRICOOL_DATA = window.metricool.values;
 const METRICOOL_API_URL = METRICOOL_DATA.rest_url + METRICOOL_DATA.rest_namespace + "/" + METRICOOL_DATA.rest_version + "/";
-const metricoolScriptElement = document.querySelector("script[id='metricool-main-script-js-extra']");
-if (metricoolScriptElement) {
-    metricoolScriptElement.remove();
-}
-// @ts-expect-error same as above
-// setting to undefined so it is no longer accessible in the browser devtools console
-window.metricool = undefined;
 
 export interface GlobalContext {
     globalState: GlobalState,
@@ -108,6 +101,14 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
     useEffect(() => {
         dispatch({ dispatchType: "setMetricoolVariables", change: { metricool: { ...METRICOOL_DATA } } });
         dispatch({ dispatchType: "setTranslations" });
+
+        const metricoolScriptElement = document.querySelector("script[id='metricool-main-script-js-extra']");
+        if (metricoolScriptElement) {
+            metricoolScriptElement.remove();
+        }
+        // @ts-expect-error same as above
+        // setting to undefined so it is no longer accessible in the browser devtools console
+        window.metricool = undefined;
     }, []);
 
     return (
