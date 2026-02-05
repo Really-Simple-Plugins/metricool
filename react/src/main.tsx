@@ -7,6 +7,7 @@ import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { GlobalContextProvider, useGlobalContext } from "@/context/GlobalContext.tsx";
 import { ErrorBoundary } from "@/components/shared/user-feedback/ErrorBoundary.tsx";
+import { ToastContainer } from "@/components/shared/user-feedback/Toast.tsx";
 import "./tailwind.css";
 
 // Import the generated route tree
@@ -32,10 +33,13 @@ const router = createRouter({
     defaultNotFoundComponent: () => <Navigate to={"/"} replace={true}/>,
     defaultErrorComponent: ({ error }: { error: Error }) => {
         return (
-            <ErrorBoundary
-                error={error}
-                supportTicketLink={METRICOOL_SUPPORT_TICKET_LINK}
-            />)
+            <>
+                <ErrorBoundary
+                    error={error}
+                    supportTicketLink={METRICOOL_SUPPORT_TICKET_LINK}
+                />
+                <ToastContainer/>
+            </>)
     },
     history: hashHistory,
     context: {
