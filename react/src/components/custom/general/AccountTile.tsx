@@ -1,6 +1,7 @@
 import { Button, FlexContainer, Icon, type IconProps } from "@/components/shared";
 import { clsx } from "clsx";
 import { __, sprintf } from "@wordpress/i18n";
+import { isFirstCharacterAVowel } from "@/functions/utils.ts";
 
 type AccountTileProps = {
     label: string,
@@ -55,7 +56,10 @@ const AccountTile = ({
                             <div className={"font-semibold"}>{userName}</div>
                         </>
                     ) : (
-                        <span data-content className={"text-white transition-all duration-300 ease-in-out"}>{sprintf(__("Connect a %s Account"), label)}</span>
+                        <span data-content className={"text-white transition-all duration-300 ease-in-out"}>
+                            {/*! translators: first variable is either 'a' or 'an', second is the name of a social media  */}
+                            {sprintf(__("Connect %1$s %2$s Account"), [(isFirstCharacterAVowel(label) ? "an" : "a"), label])}
+                        </span>
                     )}
                 </FlexContainer>
                 <FlexContainer direction={"row"}>
