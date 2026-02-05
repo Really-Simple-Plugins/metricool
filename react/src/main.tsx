@@ -49,6 +49,9 @@ const router = createRouter({
     },
 });
 
+// Creating a separate React component so useGlobalContext can be called as a hook
+// and the value can be passed to the RouterProvider so routes have access to the
+// context values. InnerApp name taken from Tanstack docks
 const InnerApp = () => {
     const globalContext = useGlobalContext();
     return (
