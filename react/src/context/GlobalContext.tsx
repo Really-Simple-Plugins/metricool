@@ -11,39 +11,39 @@ const METRICOOL_API_URL = METRICOOL_DATA.rest_url + METRICOOL_DATA.rest_namespac
 
 export interface GlobalContext {
     globalState: GlobalState,
-    metricool: typeof defaultMetricoolData,
+    metricool: MetricoolData,
     httpClient: GlobalState["httpClient"],
     dispatch: Dispatch<ReducerAction>,
     dashboardSettings: GlobalState["dashboardSettings"],
     metricoolDynamicUrl: GlobalState["metricoolDynamicUrl"],
 }
 
-const defaultMetricoolData = {
-    nonce: "",
-    x_wp_nonce: "",
-    ajax_url: "",
-    rest_url: "",
-    rest_namespace: "",
-    rest_version: "",
-    site_url: "",
-    assets_url: "",
-    json_translations: [],
+type MetricoolData = {
+    nonce: string,
+    x_wp_nonce: string,
+    ajax_url: string,
+    rest_url: string,
+    rest_namespace: string,
+    rest_version: string,
+    site_url: string,
+    assets_url: string,
+    json_translations: string[],
     trusted_urls: {
-        legal_terms: "",
-        new_support_ticket: "",
+        legal_terms: string,
+        new_support_ticket: string,
     },
-    is_onboarding_completed: false,
-    was_dashboard_modal_closed: false,
-    support: "",
-    metricool_base_url: "",
-    metricool_help_url: "",
-    locale: "",
-    blogId: "",
-    userId: "",
+    is_onboarding_completed: boolean,
+    was_dashboard_modal_closed: boolean,
+    support: string,
+    metricool_base_url: string,
+    metricool_help_url: string,
+    locale: string,
+    blogId: string,
+    userId: string,
 };
 
 interface GlobalState {
-    metricool: typeof defaultMetricoolData;
+    metricool: MetricoolData;
     httpClient: HttpClient;
     dashboardSettings: {
         analytics?: {
@@ -72,7 +72,7 @@ export const useGlobalContext = () => {
 };
 
 const initialGlobalState: GlobalState = {
-    metricool: defaultMetricoolData,
+    metricool: METRICOOL_DATA,
     httpClient: new HttpClient({
         NONCE: METRICOOL_DATA.nonce,
         X_WP_NONCE: METRICOOL_DATA.x_wp_nonce,
