@@ -9,10 +9,11 @@ import {
     SignInForm,
     VerifyEmailStep
 } from "@/components/custom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
 import { z } from "zod";
+import { HeadContent } from "@tanstack/react-router";
 
 /**
  * The Onboarding Layout.
@@ -64,8 +65,21 @@ export const OnboardingLayout = () => {
         }
     });
 
+    useEffect(()=> {
+        return () => {
+            const leftoverRecaptchaScript = document.querySelector("script[src*='recaptcha']");
+            if (leftoverRecaptchaScript){
+                leftoverRecaptchaScript.remove();
+            }
+            // @ts-expect-error grecaptcha globally defined by script
+            delete window.grecaptcha;
+        }
+    }, []);
+
     return (
         <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 !gap-0"}>
+            {/* HeadContent adds the scripts defined in head in __root.tsx to the document's <head>. Only for recaptcha script, so only implemented here. */}
+            <HeadContent/>
             <OnboardingHeader
                 logo={{ src: `${metricool.assets_url}img/mc-logo.svg`, alt: "Metricool Logo" }}
                 actions={[
