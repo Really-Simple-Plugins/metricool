@@ -6,6 +6,7 @@ import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { GlobalContextProvider, useGlobalContext } from "@/context/GlobalContext.tsx";
+import { ErrorBoundary } from "@/components/shared/user-feedback/ErrorBoundary.tsx";
 import "./tailwind.css";
 
 // Import the generated route tree
@@ -18,10 +19,23 @@ const hashHistory = createHashHistory();
 // Create default queryClient
 export const queryClient = new QueryClient();
 
+// @ts-expect-error the metricool variable is globally set in the DashboardController
+// but the tsc complains it can't find it
+// Saving as a const as we have no access to the context before initializing it,
+// but we need it for the ErrorBoundary
+const METRICOOL_SUPPORT_TICKET_LINK = window.metricool.values.trusted_urls.new_support_ticket;
+
 // Create a new router instance
 // Use hashHistory to make routes relative to the WP route for the plugin
 const router = createRouter({
     routeTree,
+    defaultErrorComponent: ({ error }: { error: Error }) => {
+        return (
+            <ErrorBoundary
+                error={error}
+                supportTicketLink={METRICOOL_SUPPORT_TICKET_LINK}
+            />)
+    },
     history: hashHistory,
     context: {
         metricool: undefined!,
