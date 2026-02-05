@@ -67,3 +67,7 @@ Metricool Brand Style Guide
 
     --gradient-brand-secondary: linear-gradient(90deg,#589CBC 0%,#EE5B91 53.02%,#F5CA32 100%);
 }
+
+.grecaptcha-badge {
+    visibility: hidden;
+}
