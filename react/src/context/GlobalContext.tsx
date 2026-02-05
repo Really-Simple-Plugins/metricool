@@ -31,6 +31,8 @@ type MetricoolData = {
     trusted_urls: {
         legal_terms: string,
         new_support_ticket: string,
+        google_privacy_policy_url: string,
+        google_terms_url: string,
     },
     is_onboarding_completed: boolean,
     was_dashboard_modal_closed: boolean,
