@@ -57,8 +57,10 @@ const AccountTile = ({
                         </>
                     ) : (
                         <span data-content className={"text-white transition-all duration-300 ease-in-out"}>
-                            {/*! translators: first variable is either 'a' or 'an', second is the name of a social media  */}
-                            {sprintf(__("Connect %1$s %2$s Account"), [(isFirstCharacterAVowel(label) ? "an" : "a"), label])}
+                            {sprintf(
+                                /*translators: first variable is either 'a' or 'an', second is the name of a social media*/
+                                __("Connect %1$s %2$s Account", "metricool"), [(isFirstCharacterAVowel(label) ? "an" : "a"), label]
+                            )}
                         </span>
                     )}
                 </FlexContainer>

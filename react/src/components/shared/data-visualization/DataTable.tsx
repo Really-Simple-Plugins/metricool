@@ -141,7 +141,10 @@ const DataTable = <TData, TValue>({ data, columns, tableSettings }: DataTablePro
             </div>
             <div className={"flex items-center justify-end gap-2"}>
                 <div className={"flex items-center justify-center text-sm font-semibold"}>
-                    {sprintf(__("Page %s of %s", "metricool"), [String(table.getState().pagination.pageIndex === 0 ? 0 : table.getState().pagination.pageIndex + 1), String(table.getPageCount())])}
+                    {sprintf(
+                        /*translators: variables are page numbers*/
+                        __("Page %1$s of %2$s", "metricool"), [String(table.getState().pagination.pageIndex === 0 ? 0 : table.getState().pagination.pageIndex + 1), String(table.getPageCount())]
+                    )}
                 </div>
                 <div className={"flex gap-1"}>
                     <Button

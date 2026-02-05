@@ -51,8 +51,8 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                                 __html:
                                     DOMPurify.sanitize(
                                         sprintf(
-                                            /*! translators: the two variables are opening and closing anchor tags */
-                                            __("If the error persists, please contact our %ssupport team%s.", "metricool"),
+                                            /*translators: the two variables are opening and closing anchor tags */
+                                            __("If the error persists, please contact our %1$ssupport team%2$s.", "metricool"),
                                             `<a href=${supportTicketLink} target="_blank">`,
                                             `</a>`),
                                         { ADD_ATTR: ["target"] }

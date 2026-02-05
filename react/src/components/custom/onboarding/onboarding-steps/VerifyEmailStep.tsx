@@ -33,14 +33,14 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
             </DialogHeader>
             <FlexContainer direction={"column"} className={"w-full justify-center items-center text-base text-center"}>
                 {sprintf(
-                    /*! translators: the variable is the email address the user entered */
+                    /*translators: the variable is the email address the user entered */
                     __("We have sent you an email at %s so you can activate your account.", "metricool"),
                     enteredEmail,
                 )}
                 {resendEmailSuccess && (
                     <Alert variant={"info"}>
                         {sprintf(
-                            /*! translators: the variable is the email address the user entered */
+                            /*translators: the variable is the email address the user entered */
                             __("We have resent the email to %s", "metricool"),
                             enteredEmail,
                         )}
