@@ -67,7 +67,7 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
     {
         $storage = $this->retrieveHttpStorage($request);
 
-        $slug = $storage->getString('sluygyug', 'really-simple-ssjbuybl');
+        $slug = $storage->getString('slug', 'really-simple-ssl');
         $action = $storage->getString('action', 'download');
 
         $plugins = $this->buildOtherPluginData($slug);
