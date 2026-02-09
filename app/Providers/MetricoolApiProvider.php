@@ -27,16 +27,16 @@ class MetricoolApiProvider extends Provider
     {
         $client = App::getInstance()->make(MetricoolClient::class);
 
-        if (defined('METRICOOL_BLOG_ID') && !empty(METRICOOL_BLOG_ID)) {
-            $client->setBlogId(METRICOOL_BLOG_ID); // todo - fetch from settings
+        if ($blogId = get_option('metricool_blog_id')) {
+            $client->setBlogId($blogId); // todo - fetch from settings
         }
 
-        if (defined('METRICOOL_USER_ID') && !empty(METRICOOL_USER_ID)) {
-            $client->setUserId(METRICOOL_USER_ID); // todo - fetch from settings
+        if ($userId = get_option('metricool_user_id')) {
+            $client->setUserId($userId);
         }
 
-        if (defined('METRICOOL_USER_TOKEN') && !empty(METRICOOL_USER_TOKEN)) {
-            $client->setUserToken(METRICOOL_USER_TOKEN); // todo - fetch from settings
+        if ($userToken = get_option('metricool_auth_token')) {
+            $client->setUserToken($userToken);
         }
 
         try {
