@@ -3,8 +3,7 @@ import { FlexContainer, Icon, type IconProps } from "@/components/shared";
 
 type ListItemProps = {
     link?: string,
-    action?: () => void,
-    actionText?: string,
+    action?: React.ReactNode,
 } & ({
     icon?: never,
     iconColor?: never,
@@ -29,7 +28,6 @@ const ListItem = ({
     iconClass,
     link,
     action,
-    actionText,
     children,
     className,
 }: React.ComponentProps<"div"> & ListItemProps) => {
@@ -57,11 +55,7 @@ const ListItem = ({
                     </div>
                 )}
             </FlexContainer>
-            {actionText && (
-                <span onClick={action} className={clsx("text-sm", action && "underline cursor-pointer")}>
-                    {actionText}
-                </span>
-            )}
+            {action && action}
         </FlexContainer>
     );
 };
