@@ -1,4 +1,4 @@
-import { Button, FieldWrapper, FlexContainer, Input } from "@/components/shared";
+import { Button, FieldWrapper, FlexContainer, Icon, Input } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -78,12 +78,14 @@ const SignInForm = ({ onSubmit }: SignInFormProps) => {
             </FlexContainer>
             <Button
                 variant={"black"}
-                icon={"arrow-right"}
-                iconPosition={"right"}
                 type={"submit"}
                 disabled={!(dirtyFields.credentials?.email && dirtyFields.credentials?.password)}
             >
-                {__("Sign in", "metricool")}
+                <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                    {__("Sign in", "metricool")}
+                    <Icon icon={"arrow-right"}/>
+                </FlexContainer>
+
             </Button>
         </form>
     );

@@ -1,6 +1,6 @@
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation } from "@tanstack/react-query";
-import { Alert, Button, DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
+import { Alert, Button, DialogHeader, DialogTitle, FlexContainer, Icon } from "@/components/shared";
 import { __, sprintf } from "@wordpress/i18n";
 
 type OnboardingStepsProps = {
@@ -50,10 +50,11 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
             <Button
                 variant={"primary-gradient-ghost"}
                 onClick={() => resendEmail()}
-                icon={resendEmailPending ? "loading" : "arrow-right"}
-                iconClass={"svg-gradient"}
-                iconPosition={"right"}>
-                {__("Resend email", "metricool")}
+            >
+                <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                    {__("Resend email", "metricool")}
+                    <Icon icon={resendEmailPending ? "loading" : "arrow-right"} className={"svg-gradient"}/>
+                </FlexContainer>
             </Button>
         </FlexContainer>
     );

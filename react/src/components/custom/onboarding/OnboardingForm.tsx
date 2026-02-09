@@ -1,4 +1,4 @@
-import { Button, FieldWrapper, FlexContainer, Input, Switch } from "@/components/shared";
+import { Button, FieldWrapper, FlexContainer, Icon, Input, Switch } from "@/components/shared";
 import { __, sprintf } from "@wordpress/i18n";
 import { Controller, useForm } from "react-hook-form";
 import DOMPurify from "dompurify";
@@ -95,12 +95,13 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
             <FlexContainer direction={"column"} className={"!gap-1"}>
                 <Button
                     variant={"primary-gradient"}
-                    icon={"arrow-right"}
-                    iconPosition={"right"}
                     type={"submit"}
                     disabled={!(dirtyFields.credentials?.email && dirtyFields.credentials?.password)}
                 >
-                    {__("Create your free account", "metricool")}
+                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                        {__("Create your free account", "metricool")}
+                        <Icon icon={"arrow-right"}/>
+                    </FlexContainer>
                 </Button>
                 <span className={"text-xs text-gray-400"}
                       dangerouslySetInnerHTML={{

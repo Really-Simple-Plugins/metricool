@@ -243,15 +243,19 @@ const AnalyticsTab = () => {
                                     filterOption.isUpsell ? (
                                         <DisabledSelectOption
                                             className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
-                                            onClick={() => {
-                                                window.open(metricoolDynamicUrl.withPath("user-settings/plan"));
-                                                window.focus();
-                                            }}
                                         >
-                                            <span className={"flex size-3.5 items-center justify-center"}>
-                                                <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
-                                            </span>
-                                            {filterOption.label}
+                                            <Button
+                                                variant={"link"}
+                                                link={metricoolDynamicUrl.withPath("user-settings/plan")}
+                                                className={"!no-underline font-semibold hover:text-black"}
+                                            >
+                                                <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                                                    <span className={"flex size-3.5 items-center justify-center"}>
+                                                        <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
+                                                    </span>
+                                                    {filterOption.label}
+                                                </FlexContainer>
+                                            </Button>
                                         </DisabledSelectOption>
                                     ) : (
                                         <SelectOption
@@ -266,23 +270,24 @@ const AnalyticsTab = () => {
                             <Button
                                 variant={"upsell"}
                                 size={"sm"}
-                                icon={"file"}
-                                iconPosition={"left"}
                                 link={metricoolDynamicUrl.withPath("evolution/reports")}
                             >
-                                {__("Report", "metricool")}
+                                <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                                    <Icon icon={"file"}/>
+                                    {__("Report", "metricool")}
+                                </FlexContainer>
                             </Button>
                         </>
                     )}
                 </FlexContainer>
                 <Button
                     variant={"primary-gradient-ghost"}
-                    icon={"external-link"}
-                    iconPosition={"right"}
-                    iconClass={"svg-gradient"}
                     link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
-                    {__("View Analytics", "metricool")}
+                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                        {__("View Analytics", "metricool")}
+                        <Icon icon={"external-link"} className={"svg-gradient"}/>
+                    </FlexContainer>
                 </Button>
             </FlexContainer>
         </FlexContainer>

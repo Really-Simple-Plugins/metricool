@@ -5,7 +5,8 @@ import {
     FlexContainer,
     Select,
     SelectOption,
-    FieldWrapper
+    FieldWrapper,
+    Icon,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -87,11 +88,12 @@ const ConnectBrandStep = () => {
                 <Button
                     variant={"black"}
                     type={"submit"}
-                    icon={"arrow-right"}
-                    iconPosition={"right"}
                     disabled={!dirtyFields.brand}
                 >
-                    {__("Finish", "metricool")}
+                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                        {__("Finish", "metricool")}
+                        <Icon icon={"arrow-right"}/>
+                    </FlexContainer>
                 </Button>
             </form>
         </FlexContainer>

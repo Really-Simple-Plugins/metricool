@@ -99,7 +99,11 @@ export const OnboardingLayout = () => {
                 actions={[
                     (__("Already a Metricooler?", "metricool")),
                     (
-                        <Button variant={"primary-gradient-ghost"} className={"p-0 after:!bg-white after:!border-none !border-none"} onClick={() => setSignInModalOpen(true)}>
+                        <Button
+                            variant={"primary-gradient-ghost"}
+                            className={"p-0 after:!bg-white after:!border-none !border-none"}
+                            onClick={() => setSignInModalOpen(true)}
+                        >
                             {__("Sign in here", "metricool")}
                         </Button>
                     )

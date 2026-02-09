@@ -1,4 +1,4 @@
-import { Badge, type BadgeVariantsProps, Button, FlexContainer } from "@/components/shared";
+import { Badge, type BadgeVariantsProps, Button, FlexContainer, Icon } from "@/components/shared";
 import { clsx } from "clsx";
 
 export type TaskProps = {
@@ -76,18 +76,21 @@ const Task = ({
             </FlexContainer>
             <FlexContainer direction={"row"} className={"items-center"}>
                 {action && (
-                    <div className={"underline cursor-pointer"} onClick={() => {
-                        window.open(action?.link, action?.target);
-                        window.focus();
-                    }}>
+                    <Button variant={"link"} link={action.link ? action.link : ""}>
                         <span className={"text-nowrap"}>
                             {action.text}
                         </span>
-                    </div>
+                    </Button>
                 )}
                 <div className={"w-4 h-4"}>
                     {taskIsDismissable && (
-                        <Button variant={"icon"} size={"icon"} icon={"close"} iconPosition={"right"} onClick={onDismiss}/>
+                        <Button
+                            variant={"icon"}
+                            size={"icon"}
+                            onClick={onDismiss}
+                        >
+                            <Icon icon={"close"}/>
+                        </Button>
                     )}
                 </div>
             </FlexContainer>

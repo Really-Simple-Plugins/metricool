@@ -80,12 +80,12 @@ const CountriesTab = () => {
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>
                 <Button
                     variant={"primary-gradient-ghost"}
-                    icon={"external-link"}
-                    iconPosition={"right"}
-                    iconClass={"svg-gradient"}
                     link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
-                    {__("View Analytics", "metricool")}
+                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                        {__("View Analytics", "metricool")}
+                        <Icon icon={"external-link"} className={"svg-gradient"}/>
+                    </FlexContainer>
                 </Button>
             </FlexContainer>
         </FlexContainer>

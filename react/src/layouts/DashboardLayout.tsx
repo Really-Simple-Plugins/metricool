@@ -1,5 +1,5 @@
 import { ConnectedAccounts, OtherPlugins, Progress, WebsiteAnalytics, } from "@/components/custom";
-import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
+import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer, Icon } from "@/components/shared";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 
@@ -48,9 +48,11 @@ export const DashboardLayout = () => {
                     <Button
                         variant={"black"}
                         onClick={() => dispatch({ dispatchType: "setDashboardModalClosed" })}
-                        icon={"arrow-right"}
-                        iconPosition={"right"}>
-                        {__("Let's go to your dashboard!", "metricool")}
+                    >
+                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                            {__("Let's go to your dashboard!", "metricool")}
+                            <Icon icon={"arrow-right"}/>
+                        </FlexContainer>
                     </Button>
                 </FlexContainer>
             </Dialog>
