@@ -253,10 +253,11 @@ Base Style Guide
 
     /**
     ======================================
-    Related Plugin Colors
+    Wordpress Colors
     ======================================
     **/
     --color-wordpress-blue: #2271B1;
+    --color-wordpress-link-hover: #135e96;
 
     /**
     ======================================
