@@ -82,7 +82,18 @@ class OnboardingController implements FeatureInterface
         }
 
         // Attempt to set the blogId based on the brands returned from the API
-        $brands = $this->api->brands()->get();
+        // Todo: remove mock-up
+        if (true) {
+            // Return a mock-up of the brands
+            $brands = [
+                ['id' => 2221200],
+                ['id' => 3331300],
+            ];
+
+        } else {
+            $brands = $this->api->brands()->get();
+        }
+
         $blogIdSet = $this->onboarding->processBrands($brands);
 
         if (!$blogIdSet) {
@@ -147,10 +158,11 @@ class OnboardingController implements FeatureInterface
         }
 
         // Todo: remove mock-up
-        if (true) {
+        if (false) {
             // Return a mock-up of the brands
             $brands = [
-                ['id' => 2221200]
+                ['id' => 2221200],
+                ['id' => 3331300],
             ];
 
         } else {
@@ -182,7 +194,8 @@ class OnboardingController implements FeatureInterface
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
         // Store the blogId if it was provided by the client, to finish the authentication
-        $blogId = (int) $request->get_param('blog_id');
+        $blogId = (string) $request->get_param('blog_id');
+        
         if (!empty($blogId)) {
             $this->api->storeBlogId($blogId);
         }
