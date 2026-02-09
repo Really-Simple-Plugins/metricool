@@ -31,6 +31,11 @@ class OnboardingController implements FeatureInterface
      */
     public function addRoutes(array $routes): array
     {
+        $routes['onboarding/login'] = [
+            'methods' => 'POST',
+            'callback' => [$this, 'login'],
+        ];
+
         $routes['onboarding/create_account'] = [
             'methods' => 'POST',
             'callback' => [$this, 'createAccount'],
@@ -47,6 +52,53 @@ class OnboardingController implements FeatureInterface
         ];
 
         return $routes;
+    }
+
+    public function login(\WP_REST_Request $request): \WP_REST_Response
+    {
+        // todo: storage ?
+        $email = (string) $request->get_param('email');
+        $password = (string) $request->get_param('password');
+
+        // Validate fields
+        if (!is_email($email) || empty($password)) {
+            return $this->onboarding->sendHttpErrorResponse(
+                __('Validation failed.', 'metricool'),
+                [],
+                422
+            );
+        }
+
+        if (true) {
+            // Todo: remove mock-up
+            $this->api->authenticate(
+                '3864308',
+                'RCGXYAHRFQXWRXODYNGCBUMHKTSQRDJQSWWLXDCCBIKHHDEAOLQJAGEDQBPIZINX',
+                'test_refresh_token'
+            );
+        } else {
+            // Todo implement login flow oAuth2
+            // $this->api->login($username, $password);
+        }
+
+        // Attempt to set the blogId based on the brands returned from the API
+        $brands = $this->api->brands()->get();
+        $blogIdSet = $this->onboarding->processBrands($brands);
+
+        if (!$blogIdSet) {
+            // User needs to select BlogId
+            return $this->onboarding->sendHttpResponse([
+                'onboarding_finished' => false,
+                'connected_brands' => $brands,
+            ]);
+        }
+
+        // Finish onboarding
+        $this->onboarding->setOnboardingCompleted();
+
+        return $this->onboarding->sendHttpResponse([
+            'onboarding_finished' => true,
+        ]);
     }
 
     /**
@@ -70,30 +122,19 @@ class OnboardingController implements FeatureInterface
             );
         }
 
-        // Attempt to create the account
         try {
-            $createAccount = $this->accounts->createAccount([
-                'email' => $email,
-                'newsletters' => $newsletters,
-                'password' => $password,
-                'captcha' => $captcha,
-            ]);
+            // Attempt to create the account
+            $this->accounts->createAccount($captcha, $email, $password, $newsletters);
 
-            // Account created successfully and the user is authenticated
-            return $this->onboarding->sendHttpResponse(
-                $createAccount,
-                true,
-                __('Account created successfully.', 'metricool')
-            );
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
             if ($e instanceof \GuzzleHttp\Exception\RequestException) {
-
                 // If the error contains a response, return it
                 $response = $e->getResponse();
+                $message = $response->getStatusCode() == 400 ? 'E-mail already exists' : 'Unknown Error. Please try again later.';
 
                 return $this->onboarding->sendHttpErrorResponse(
-                    __('Failed to create account.', 'metricool'),
-                    ['error' => $response->getBody()->getContents()],
+                    __($message, 'metricool'),
+                    [],
                     $response->getStatusCode()
                 );
             }
@@ -104,6 +145,34 @@ class OnboardingController implements FeatureInterface
                 ['error' => $e->getMessage()]
             );
         }
+
+        // Todo: remove mock-up
+        if (true) {
+            // Return a mock-up of the brands
+            $brands = [
+                ['id' => 2221200]
+            ];
+
+        } else {
+            $brands = $this->api->brands()->get();
+        }
+
+        // Attempt to set the blogId based on the brands returned from the API
+        $blogIdSet = $this->onboarding->processBrands($brands);
+
+        if (!$blogIdSet) {
+            // Return the brands that were found when blogId could not be automatically set, so the user can select one
+            return $this->onboarding->sendHttpResponse([
+                'message' => __('Please select a blog to connect to Metricool.', 'metricool'),
+                'finish_onboarding' => false,
+                'connected_brands' => $brands,
+            ]);
+        }
+
+        return $this->onboarding->sendHttpResponse([
+            'message' => __('Account created successfully.', 'metricool'),
+            'finish_onboarding' => true,
+        ]);
     }
 
     /**
@@ -112,6 +181,12 @@ class OnboardingController implements FeatureInterface
      */
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
+        // Store the blogId if it was provided by the client, to finish the authentication
+        $blogId = (int) $request->get_param('blog_id');
+        if (!empty($blogId)) {
+            $this->api->storeBlogId($blogId);
+        }
+
         if (!$this->api->hasAuthentication()) {
             return $this->onboarding->sendHttpErrorResponse('Onboarding failed. User is not authenticated.');
         }

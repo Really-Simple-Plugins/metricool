@@ -77,4 +77,26 @@ class OnboardingService
     {
         delete_option('metricool_temporary_onboarding_data');
     }
+
+    /**
+     * Check if there is only one brand connected to the blog and store it.
+     * Doesn't succeed when there are multiple brands connected to the blog.
+     *
+     * @return array<{success: bool, connected_brands: array}> { success: true, connected_brands: []}
+     */
+    public function processBrands($brands): bool
+    {
+        if (empty($brands)) {
+            throw new \RuntimeException('Something went wrong. No blogs found.');
+        }
+
+        if (count($brands) > 1) {
+            return false;
+        }
+
+        $brand = reset($brands);
+        $this->api->storeBlogId((string) $brand['id']);
+
+        return true;
+    }
 }
