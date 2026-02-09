@@ -150,23 +150,21 @@ const DataTable = <TData, TValue>({ data, columns, tableSettings }: DataTablePro
                     <Button
                         variant={"icon"}
                         size={"icon"}
-                        icon={"left"}
-                        iconPosition={"left"}
-                        className={"bg-primary-light text-primary p-1.5"}
-                        iconClass={"size-3"}
+                        className={"bg-primary-light text-primary !p-1.5"}
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
-                    />
+                    >
+                        <Icon icon={"left"} className={"size-3"}/>
+                    </Button>
                     <Button
                         variant={"icon"}
                         size={"icon"}
-                        icon={"right"}
-                        iconPosition={"right"}
-                        className={"bg-primary-light text-primary p-1.5"}
-                        iconClass={"size-3"}
+                        className={"bg-primary-light text-primary !p-1.5"}
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
-                    />
+                    >
+                        <Icon icon={"right"} className={"size-3"}/>
+                    </Button>
                 </div>
             </div>
         </div>

@@ -10,7 +10,7 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
 
     const copyError = () => {
         navigator.clipboard.writeText(
-            `${error.message && error.message.toString()}\n${error.stack && "Stack trace:" + error.stack}`,
+            `${error.message && error.message.toString()}\n${error.stack && "Stack trace: " + error.stack}`,
         ).then(() => showToast.success(__("Error was copied", "metricool")));
     }
 
@@ -24,13 +24,18 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
                     {error.message}
                 </p>
                 {error.stack && (
-                    <p className={"max-h-48 overflow-x-scroll text-xs text-black"}>
-                        Stack trace:
-                        {error.stack}
-                    </p>
+                    <>
+                        <p className={"max-h-48 overflow-x-scroll text-xs text-black"}>
+                            Stack trace:
+                        </p>
+                        <p className={"max-h-48 overflow-x-scroll text-xs text-black"}>
+                            {error.stack}
+                        </p>
+                    </>
                 )}
                 <Button
-                    className={"mt-4 rounded-md px-4 py-2 font-medium text-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 bg-blue-500 hover:bg-blue-600 active:bg-green-500"}
+                    variant={"primary"}
+                    className={"mt-4 active:bg-rsp-success active:text-rsp-success-dark active:border-rsp-success-dark transition-colors duration-400 ease-in-out"}
                     onClick={copyError}
                 >
                     {__("Copy Error", "metricool")}
