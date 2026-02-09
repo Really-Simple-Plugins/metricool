@@ -5,17 +5,20 @@ declare(strict_types=1);
 namespace Metricool\Features\Onboarding;
 
 use Metricool\Features\Onboarding\Services\CreateAccountService;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\FeatureInterface;
 
 class OnboardingController implements FeatureInterface
 {
     private OnboardingService $onboarding;
     private CreateAccountService $accounts;
+    private MetricoolApi $api;
 
-    public function __construct(OnboardingService $onboarding, CreateAccountService $accounts)
+    public function __construct(OnboardingService $onboarding, CreateAccountService $accounts, MetricoolApi $api)
     {
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
+        $this->api = $api;
     }
 
     public function register(): void
@@ -69,16 +72,25 @@ class OnboardingController implements FeatureInterface
 
         // Attempt to create the account
         try {
-            $this->accounts->createAccount([
+            $createAccount = $this->accounts->createAccount([
                 'email' => $email,
                 'newsletters' => $newsletters,
                 'password' => $password,
                 'captcha' => $captcha,
             ]);
+
+            // Account created successfully and the user is authenticated
+            return $this->onboarding->sendHttpResponse(
+                $createAccount,
+                true,
+                __('Account created successfully.', 'metricool')
+            );
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
             if ($e instanceof \GuzzleHttp\Exception\RequestException) {
-                // If the error is a RequestException it contains a response
+
+                // If the error contains a response, return it
                 $response = $e->getResponse();
+
                 return $this->onboarding->sendHttpErrorResponse(
                     __('Failed to create account.', 'metricool'),
                     ['error' => $response->getBody()->getContents()],
@@ -92,14 +104,6 @@ class OnboardingController implements FeatureInterface
                 ['error' => $e->getMessage()]
             );
         }
-
-        // Account created successfully and the user is authenticated
-        // Todo: check if we need more data for front-end
-        return $this->onboarding->sendHttpResponse(
-            ['success' => true],
-            true,
-            __('Account created successfully.', 'metricool')
-        );
     }
 
     /**
@@ -108,6 +112,10 @@ class OnboardingController implements FeatureInterface
      */
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
+        if (!$this->api->hasAuthentication()) {
+            return $this->onboarding->sendHttpErrorResponse('Onboarding failed. User is not authenticated.');
+        }
+
         $code = 200;
         $message = __('Successfully finished onboarding!', 'metricool');
 

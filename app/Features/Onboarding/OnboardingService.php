@@ -4,12 +4,25 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Support\Helpers\Storage;
 use Metricool\Traits\HasRestAccess;
 
 class OnboardingService
 {
     use HasRestAccess;
+
+    private MetricoolApi $api;
+
+    public function __construct(MetricoolApi $api)
+    {
+        $this->api = $api;
+    }
+
+    public function isOnboardingCompleted(): bool
+    {
+        return get_option('metricool_onboarding_completed', false);
+    }
 
     /**
      * Store the onboarding step in the general options without autoload

@@ -27,29 +27,57 @@ class CreateAccountService
      *     captcha: string} $data
      * @throws GuzzleException
      */
-    public function createAccount(array $data): bool
+    public function createAccount(array $data): array
     {
         $signupData = [
             'username' => $data['email'],
             'newsletters' => $data['newsletters'],
         ];
 
-        $signupResponse = $this->rspalClient->signUp($signupData, [
-            'RSPAL-RecaptchaV3Token' => $data['captcha']
-        ]);
-        
+        // todo: implement sign-up endpoint when API is ready
+        // $signupResponse = $this->rspalClient->signUp($signupData, [
+        //     'RSPAL-RecaptchaV3Token' => $data['captcha']
+        // ]);
+
         // Authenticate the user
+        // Todo: Implement API Authentication when oAuth2 is implemented
+        // $this->metricoolApi->authenticate(
+        //     $signupResponse->data->userId,
+        //     $signupResponse->data->accessToken,
+        //     $signupResponse->data->refreshToken
+        // );
+
+        // Store mock-up
         $this->metricoolApi->authenticate(
-            $signupResponse->data->userId,
-            $signupResponse->data->accessToken,
-            $signupResponse->data->refreshToken
+            '3864308',
+            'RCGXYAHRFQXWRXODYNGCBUMHKTSQRDJQSWWLXDCCBIKHHDEAOLQJAGEDQBPIZINX',
+            'test_refresh_token'
         );
 
         // Update the user password
-        $this->metricoolApi->userCredentials()
-            ->updatePassword('', $data['password']);
+        // Todo: Implement password change when API Authentication works
+        // $this->metricoolApi->userCredentials()
+        //    ->updatePassword('', $data['password']);
 
-        // Return true to indicate a successful signup
-        return true;
+        $blogs = $this->metricoolApi->brands()->get();
+
+        if (empty($blogs)) {
+            throw new \RuntimeException('Something went wrong. No blogs found.');
+        }
+
+        if (count($blogs) == 1) {
+            $this->metricoolApi->storeBlogId($blogs[0]->id);
+
+            return [
+                'success' => true,
+                'ask_for_blog_id' => false,
+            ];
+        } else {
+            return [
+                'success' => false,
+                'ask_for_blog_id' => true,
+                'connected_brand' => $blogs,
+            ];
+        }
     }
 }

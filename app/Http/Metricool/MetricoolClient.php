@@ -62,6 +62,13 @@ class MetricoolClient
         $this->blogId = $blogId;
     }
 
+    public function storeBlogId(string $blogId): void
+    {
+        update_option('metricool_blog_id', $blogId);
+
+        $this->setBlogId($blogId);
+    }
+
     public function hasBlogId(): bool
     {
         return !empty($this->blogId);

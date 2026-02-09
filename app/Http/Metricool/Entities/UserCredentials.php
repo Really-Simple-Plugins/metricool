@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool\Entities;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolClient;
 
 class UserCredentials
@@ -21,15 +20,15 @@ class UserCredentials
     /**
      * Update the user password
      *
-     * @throws GuzzleException
      */
     public function updatePassword(string $oldPassword, string $newPassword): array
     {
-        $response = $this->client->patch($this->endpoint . '?fields=password', json_encode([
-            'oldPassword' => $oldPassword,
-            'password' => $newPassword,
-        ]));
+        // todo: implement oAuth authentication to aquire access token
+        // $response = $this->client->patch($this->endpoint . '?fields=password', json_encode([
+        //     'oldPassword' => $oldPassword,
+        //     'password' => $newPassword,
+        // ]));
 
-        return ($response['data'] ?? []);
+        return ['success' => true];
     }
 }
