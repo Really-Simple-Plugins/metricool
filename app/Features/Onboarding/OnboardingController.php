@@ -85,6 +85,7 @@ class OnboardingController implements FeatureInterface
         // Todo: remove mock-up
         if (true) {
             // Return a mock-up of the brands
+            // Multiple because this is login
             $brands = [
                 ['id' => 2221200],
                 ['id' => 3331300],
@@ -121,11 +122,12 @@ class OnboardingController implements FeatureInterface
         // todo: storage ?
         $email = (string) $request->get_param('email');
         $password = (string) $request->get_param('password');
-        $newsletters = (bool) $request->get_param('newsletters');
+        $marketing = (bool) $request->get_param('marketing');
         $captcha = (string) $request->get_param('captcha');
+        $terms = (bool) $request->get_param('terms');
 
         // Validate fields
-        if (!is_email($email) || empty($password) || empty($captcha)) {
+        if (!is_email($email) || empty($password) || empty($captcha) || !$terms) {
             return $this->onboarding->sendHttpErrorResponse(
                 __('Validation failed.', 'metricool'),
                 [],
@@ -135,16 +137,16 @@ class OnboardingController implements FeatureInterface
 
         try {
             // Attempt to create the account
-            $this->accounts->createAccount($captcha, $email, $password, $newsletters);
+            $this->accounts->createAccount($captcha, $email, $password, $marketing);
 
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
             if ($e instanceof \GuzzleHttp\Exception\RequestException) {
                 // If the error contains a response, return it
                 $response = $e->getResponse();
-                $message = $response->getStatusCode() == 400 ? 'E-mail already exists' : 'Unknown Error. Please try again later.';
+                $message = $response->getStatusCode() == 400 ? __('E-mail already exists', 'metricool') : __('Unknown Error. Please try again later.', 'metricool');
 
                 return $this->onboarding->sendHttpErrorResponse(
-                    __($message, 'metricool'),
+                    $message,
                     [],
                     $response->getStatusCode()
                 );
@@ -158,11 +160,12 @@ class OnboardingController implements FeatureInterface
         }
 
         // Todo: remove mock-up
-        if (false) {
+        if (true) {
             // Return a mock-up of the brands
+            // Just one because this is create account
             $brands = [
                 ['id' => 2221200],
-                ['id' => 3331300],
+                ['id' => 2221201]
             ];
 
         } else {
@@ -193,9 +196,10 @@ class OnboardingController implements FeatureInterface
      */
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
+
         // Store the blogId if it was provided by the client, to finish the authentication
         $blogId = (string) $request->get_param('blog_id');
-        
+
         if (!empty($blogId)) {
             $this->api->storeBlogId($blogId);
         }
