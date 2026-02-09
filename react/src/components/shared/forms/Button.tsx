@@ -14,11 +14,11 @@ const ButtonVariantStyling = {
     "secondary-ghost": "bg-transparent text-secondary border-solid border-secondary hover:text-accent-foreground hover:bg-secondary-light hover:border-secondary-light hover:text-secondary-dark",
     "tertiary": "bg-tertiary border-tertiary hover:bg-tertiary-light hover:text-tertiary hover:border-tertiary-light",
     "tertiary-ghost": "bg-transparent text-tertiary border-solid border-tertiary hover:text-accent-foreground hover:bg-tertiary-light hover:border-tertiary-light hover:text-tertiary-dark",
-    "icon": "rounded-full border-none p-0 has-[>svg]:p-0 m-0 bg-transparent hover:bg-transparent text-gray-600 border-none",
+    "icon": "rounded-full border-none p-0 has-[>svg]:p-0 m-0 bg-transparent hover:bg-transparent text-gray-600",
     "upsell": "bg-upsell border-upsell text-black hover:bg-upsell hover:text-black",
     "upsell-ghost": "bg-white border-neutral-200 text-black hover:bg-white hover:text-black",
     "black": "bg-black border-black text-white hover:bg-black hover:text-white hover:invert",
-    "link": "p-0 border-none text-black font-normal underline !h-[fit-content]",
+    "link": "p-0 border-none text-black hover:text-wordpress-link-hover bg-transparent hover:bg-transparent font-normal underline !h-[fit-content]",
 };
 
 const ButtonVariants = cva(
@@ -80,7 +80,7 @@ const Button = ({
     type = "button",
 }: React.ComponentProps<"button"> & Required<Pick<ButtonVariantsProps, "variant">> & ButtonVariantsProps & ActionProps) => {
     //@ts-expect-error tsc can't verify type narrowing on variant
-    const classes = cn(variant && variant in ButtonVariantStyling ? ButtonVariants({ variant, size }) : PrimitiveButtonVariants({ variant, size }), className);
+    const classes = cn(variant in ButtonVariantStyling ? ButtonVariants({ variant, size }) : PrimitiveButtonVariants({ variant, size }), className);
 
     const StyledButton = () => (
         <PrimitiveButton
@@ -106,7 +106,7 @@ const Button = ({
 
     if (type === "button" && link) {
         return (
-            <a href={link} target={"_blank"}>
+            <a href={link} target={"_blank"} className={"flex max-w-[fit-content]"}>
                 <StyledButton/>
             </a>
         );
