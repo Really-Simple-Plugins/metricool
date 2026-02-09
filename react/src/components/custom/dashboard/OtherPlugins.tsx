@@ -1,4 +1,4 @@
-import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, showToast } from "@/components/shared";
+import { Block, BlockHeader, Button, FetchingErrorAlert, FlexContainer, Icon, showToast } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { ListItem } from "@/components/custom/general/ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -131,22 +131,35 @@ const OtherPlugins = () => {
     const getOtherPluginAction = (plugin: OtherPlugin, pluginKey: string) => {
         switch (plugin.action) {
             case "upgrade-to-premium": {
-                return () => {
-                    window.open(plugin.upgrade_url, "_blank");
-                    window.focus();
-                };
+                return (
+                    <Button
+                        className={"text-sm"}
+                        variant={"link"}
+                        link={plugin.upgrade_url}
+                    >
+                        {pluginStatuses[plugin.action]}
+                    </Button>
+                );
             }
             case "installed":
             case "downloading":
             case "activating": {
-                return undefined;
+                return (<span className={"text-sm"}>{pluginStatuses[plugin.action]}</span>);
             }
             default: {
-                return () => runPluginAction({
-                    slug: plugin.slug,
-                    action: plugin.action,
-                    key: pluginKey,
-                });
+                return (
+                    <Button
+                        className={"text-sm"}
+                        variant={"link"}
+                        onClick={() => runPluginAction({
+                            slug: plugin.slug,
+                            action: plugin.action,
+                            key: pluginKey,
+                        })}
+                    >
+                        {pluginStatuses[plugin.action]}
+                    </Button>
+                );
             }
 
         }
@@ -179,7 +192,6 @@ const OtherPlugins = () => {
                                 iconColor={pluginData.options_prefix.split("_")[0]}
                                 iconPosition={"left"}
                                 action={getOtherPluginAction(pluginData, pluginKey)}
-                                actionText={pluginStatuses[pluginData.action]}
                                 className={"font-semibold"}
                             >
                                 {pluginData.title}
