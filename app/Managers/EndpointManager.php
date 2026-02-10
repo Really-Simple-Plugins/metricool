@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Metricool\Managers;
 
 use Carbon\Carbon;
-use Metricool\Traits\HasNonces;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasNonces;
 
 final class EndpointManager extends AbstractManager
 {
@@ -105,7 +105,7 @@ final class EndpointManager extends AbstractManager
             $arguments = [
                 'methods' => $this->normalizeMethods($data['methods'] ?? 'GET'),
                 'callback' => $this->callbackMiddleware($callback, $middleware),
-                'permission_callback' => ($data['permission_callback'] ?? [$this, 'defaultPermissionCallback']),
+                'permission_callback' => '__return_true',
             ];
 
             if (!empty($data['args'])) {

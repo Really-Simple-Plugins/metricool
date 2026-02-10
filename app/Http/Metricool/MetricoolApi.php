@@ -14,6 +14,8 @@ namespace Metricool\Http\Metricool;
  * @method bool hasBlogId()
  * @method bool isTesting()
  * @method bool isConnected()
+ * @method bool storeBlogId(string $blogId)
+ * @method bool authenticate(string $userId, string $userToken, string $refreshToken)
  */
 class MetricoolApi
 {
@@ -107,6 +109,22 @@ class MetricoolApi
         wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
 
         return $entity;
+    }
+
+    /**
+     * Easy access to the UpdatePassword entity.
+     */
+    public function userCredentials(): Entities\UserCredentials
+    {
+        return new Entities\UserCredentials($this->client);
+    }
+
+    /**
+     * Easy access to the ConnectedBrands entity.
+     */
+    public function brands(bool $useCache = true): Entities\Brands
+    {
+        return new Entities\Brands($this->client);
     }
 
     /**
