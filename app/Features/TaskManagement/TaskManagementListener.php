@@ -42,10 +42,10 @@ class TaskManagementListener
         $this->handleTasksForNetworks($socialNetworks);
 
         // Complete or open the FirstConnectionTask based on social network count
-        if (count($socialNetworks)) {
-            $this->service->openTask(Tasks\FirstConnectionTask::IDENTIFIER);
-        } else {
+        if (count($socialNetworks) > 0) {
             $this->service->completeTask(Tasks\FirstConnectionTask::IDENTIFIER);
+        } else {
+            $this->service->openTask(Tasks\FirstConnectionTask::IDENTIFIER);
         }
     }
 
