@@ -90,7 +90,6 @@ class OnboardingController implements FeatureInterface
                 ['id' => 2221200],
                 ['id' => 3331300],
             ];
-
         } else {
             $brands = $this->api->brands()->get();
         }
@@ -138,7 +137,6 @@ class OnboardingController implements FeatureInterface
         try {
             // Attempt to create the account
             $this->accounts->createAccount($captcha, $email, $password, $marketing);
-
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
             if ($e instanceof \GuzzleHttp\Exception\RequestException) {
                 // If the error contains a response, return it
@@ -167,7 +165,6 @@ class OnboardingController implements FeatureInterface
                 ['id' => 2221200],
                 ['id' => 2221201]
             ];
-
         } else {
             $brands = $this->api->brands()->get();
         }
@@ -196,7 +193,6 @@ class OnboardingController implements FeatureInterface
      */
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
-
         // Store the blogId if it was provided by the client, to finish the authentication
         $blogId = (string) $request->get_param('blog_id');
 

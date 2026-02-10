@@ -8,7 +8,6 @@ use Metricool\Bootstrap\App;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Http\Metricool\MetricoolClient;
 
-
 class MetricoolApiProvider extends Provider
 {
     /**

@@ -40,7 +40,6 @@ class CreateAccountService
                 'RCGXYAHRFQXWRXODYNGCBUMHKTSQRDJQSWWLXDCCBIKHHDEAOLQJAGEDQBPIZINX',
                 'test_refresh_token'
             );
-
         } else {
             // Authenticate and set the password
             $this->metricoolApi->authenticate(
