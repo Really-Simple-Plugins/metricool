@@ -105,12 +105,12 @@ class OnboardingController implements FeatureInterface
 
         // Attempt to automatically set the blog information
         try {
-            $blogInfoSet = $this->onboarding->findBlogAndStore($brands);
+            $this->onboarding->findBlogAndStore($brands);
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
-            $blogInfoSet = false;
         }
 
-        if (!$blogInfoSet) {
+        // Check if the necessary authentication data is present
+        if (!$this->api->hasAuthentication()) {
             // Return the brands that were found when blogId could not be automatically set, so the user can select one
             return $this->onboarding->sendHttpResponse([
                 'onboarding_finished' => false,
@@ -192,13 +192,13 @@ class OnboardingController implements FeatureInterface
             ]
         ];
 
+        // Attempt to automatically set the blog information from the v2/settings/brands response
         try {
-            $blogInfoSet = $this->onboarding->findBlogAndStore($brands);
+            $this->onboarding->findBlogAndStore($brands);
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
-            $blogInfoSet = false;
         }
 
-        if (!$blogInfoSet) {
+        if (!$this->api->hasAuthentication()) {
             // Return the brands that were found when blogId could not be automatically set, so the user can select one
             return $this->onboarding->sendHttpResponse([
                 'message' => __('Please select a blog to connect to Metricool.', 'metricool'),
