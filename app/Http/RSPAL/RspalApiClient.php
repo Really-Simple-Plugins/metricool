@@ -60,9 +60,12 @@ class RspalApiClient
      */
     private function request(string $path, array $params = [], string $method = 'get'): RspalApiResponse
     {
+
         // Request and store installationId if needed before any request
         if (!$this->hasInstallationId()) {
-            $this->setInstallationId($this->requestInstallation()->data->uuid);
+            $installation = $this->requestInstallation();
+
+            $this->setInstallationId($installation->data->uuid);
         }
 
         $response = $this->client->request(strtoupper($method), $this->uri($path), $params);
@@ -77,7 +80,7 @@ class RspalApiClient
      */
     private function requestInstallation(): RspalApiResponse
     {
-        $response = $this->client->request('GET', 'installation/create', [
+        $response = $this->client->request('POST', $this->uri('installation/create'), [
             'headers' => $this->headers()
         ]);
 
