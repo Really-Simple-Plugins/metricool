@@ -88,7 +88,7 @@ class OnboardingService
             throw new \RuntimeException('Something went wrong. No blogs found.');
         }
 
-        $canStoreBlogId = count($brands) > 1;
+        $canStoreBlogId = count($brands) == 1;
         if (!$canStoreBlogId) {
             return false;
         }

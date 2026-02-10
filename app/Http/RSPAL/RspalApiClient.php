@@ -84,7 +84,9 @@ class RspalApiClient
         return RspalApiResponse::fromResponse($response);
     }
 
-    // todo: hide with env and package.sh
+    /**
+     * Get the base endpoint URL for the brand API.
+     */
     private function baseEndpoint(): string
     {
         return $this->env->getUrl('metricool.rsp_auth_url');
@@ -98,10 +100,6 @@ class RspalApiClient
         return new Client([
             'http_errors' => true,
             'verify' => false,
-            'headers' => [
-                'Accept' => 'application/json',
-                'Content-Type' => 'application/json',
-            ]
         ]);
     }
 
@@ -151,7 +149,7 @@ class RspalApiClient
     }
 
     /**
-     * Stores the InstallationID in the WordPress options table.
+     * Stores the InstallationID in wp_options
      */
     private function setInstallationId(string $installationId): void
     {
@@ -162,11 +160,17 @@ class RspalApiClient
         }
     }
 
+    /**
+     * Check if the InstallationID has already been stored
+     */
     private function hasInstallationId(): bool
     {
         return self::getInstallationId() !== 'unknown';
     }
 
+    /**
+     * Return the installationId from wp_options
+     */
     private function getInstallationId(): string
     {
         return get_option(self::INSTALLATION_ID_OPTION, 'unknown');

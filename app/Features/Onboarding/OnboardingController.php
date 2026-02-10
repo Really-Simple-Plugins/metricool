@@ -4,21 +4,24 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
+use Metricool\Features\Onboarding\Services\AuthService;
 use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\FeatureInterface;
 
 class OnboardingController implements FeatureInterface
 {
+    private MetricoolApi $api;
     private OnboardingService $onboarding;
     private CreateAccountService $accounts;
-    private MetricoolApi $api;
+    private AuthService $auth;
 
-    public function __construct(OnboardingService $onboarding, CreateAccountService $accounts, MetricoolApi $api)
+    public function __construct(MetricoolApi $api, OnboardingService $onboarding, CreateAccountService $accounts, AuthService $auth)
     {
+        $this->api = $api;
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
-        $this->api = $api;
+        $this->auth = $auth;
     }
 
     public function register(): void
@@ -69,33 +72,29 @@ class OnboardingController implements FeatureInterface
             );
         }
 
-        if (true) {
-            // Todo: remove mock-up
-            $this->api->authenticate(
-                '3864308',
-                'RCGXYAHRFQXWRXODYNGCBUMHKTSQRDJQSWWLXDCCBIKHHDEAOLQJAGEDQBPIZINX',
-                'test_refresh_token'
-            );
-        } else {
-            // Todo implement login flow oAuth2
-            // $this->api->login($username, $password);
-        }
+        // Attempt to login
+        $this->auth->login($email, $password);
 
         // Attempt to set the blogId based on the brands returned from the API
         // Todo: remove mock-up
-        if (true) {
-            // Return a mock-up of the brands
-            // Multiple because this is login
-            $brands = [
-                ['id' => 2221200],
-                ['id' => 3331300],
-            ];
-        } else {
-            $brands = $this->api->brands()->get();
-        }
+        $brands = [
+            [
+                'id' => 4962983,
+                'label' => 'Really Simple Plugins',
+                'title' => 'https://wimenbente.nl',
+                'image' => 'https://static.metricool.com/brand-logo/202507/4962983-file-4477890870715557446.png'
+            ],
+            [
+                'id' => 2221200,
+                'label' => 'TestingMetri-Business',
+                'title' => 'Metricool',
+                'image' => 'https://static.metricool.com/brand-logo/202511/2221200-file-6884100583778344266.jpeg'
+            ]
+        ];
 
-        $blogIdSet = $this->onboarding->processBrands($brands);
+        // $brands = $this->api->brands()->get();
 
+        $blogIdSet = $this->onboarding->attemptToStoreBlogId($brands);
         if (!$blogIdSet) {
             // User needs to select BlogId
             return $this->onboarding->sendHttpResponse([
@@ -134,22 +133,21 @@ class OnboardingController implements FeatureInterface
             );
         }
 
+        // Attempt to create the account
         try {
-            // Attempt to create the account
             $this->accounts->createAccount($captcha, $email, $password, $marketing);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $response = $e->getResponse();
+            $message = $response->getStatusCode() == 400
+                ? __('E-mail already exists', 'metricool')
+                : __('Unknown Error. Please try again later.', 'metricool');
+
+            return $this->onboarding->sendHttpErrorResponse(
+                $message,
+                [],
+                $response->getStatusCode()
+            );
         } catch (\GuzzleHttp\Exception\GuzzleException $e) {
-            if ($e instanceof \GuzzleHttp\Exception\RequestException) {
-                // If the error contains a response, return it
-                $response = $e->getResponse();
-                $message = $response->getStatusCode() == 400 ? __('E-mail already exists', 'metricool') : __('Unknown Error. Please try again later.', 'metricool');
-
-                return $this->onboarding->sendHttpErrorResponse(
-                    $message,
-                    [],
-                    $response->getStatusCode()
-                );
-            }
-
             // Return a connection error on every other exception
             return $this->onboarding->sendHttpErrorResponse(
                 __('Failed to connect.', 'metricool'),
@@ -157,21 +155,26 @@ class OnboardingController implements FeatureInterface
             );
         }
 
-        // Todo: remove mock-up
-        if (true) {
-            // Return a mock-up of the brands
-            // Just one because this is create account
-            $brands = [
-                ['id' => 2221200],
-                ['id' => 2221201]
-            ];
-        } else {
-            $brands = $this->api->brands()->get();
-        }
+        // Return a mock-up of the brands
+        $brands = [
+            [
+                'id' => 4962983,
+                'label' => 'Really Simple Plugins',
+                'title' => 'https://wimenbente.nl',
+                'image' => 'https://static.metricool.com/brand-logo/202507/4962983-file-4477890870715557446.png'
+            ],
+            [
+                'id' => 2221200,
+                'label' => 'TestingMetri-Business',
+                'title' => 'Metricool',
+                'image' => 'https://static.metricool.com/brand-logo/202511/2221200-file-6884100583778344266.jpeg'
+            ]
+        ];
+
+        // $brands = $this->api->brands()->get();
 
         // Attempt to set the blogId based on the brands returned from the API
-        $blogIdSet = $this->onboarding->processBrands($brands);
-
+        $blogIdSet = $this->onboarding->attemptToStoreBlogId($brands);
         if (!$blogIdSet) {
             // Return the brands that were found when blogId could not be automatically set, so the user can select one
             return $this->onboarding->sendHttpResponse([

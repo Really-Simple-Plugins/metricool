@@ -50,7 +50,6 @@ class CreateAccountService
         // $this->metricoolApi->userCredentials()
         //     ->updatePassword('', $password);
 
-
         return true;
     }
 }
