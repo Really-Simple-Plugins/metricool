@@ -17,10 +17,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
 import { useMutation } from "@tanstack/react-query";
 
-const brandSchema = OnboardingSchema.pick({ brand: true });
+const brandSchema = OnboardingSchema.shape.brand;
 
 type ConnectBrandStepProps = {
-    connectedBrands: z.infer<typeof brandSchema.shape.brand>[],
+    connectedBrands: z.infer<typeof brandSchema>[],
 };
 
 const ConnectBrandStep = ({ connectedBrands } : ConnectBrandStepProps) => {
@@ -33,7 +33,7 @@ const ConnectBrandStep = ({ connectedBrands } : ConnectBrandStepProps) => {
     } = useForm<z.infer<typeof brandSchema>>({
         resolver: zodResolver(brandSchema),
         defaultValues: {
-            brand: {},
+            id: undefined,
         },
     });
 
@@ -41,7 +41,7 @@ const ConnectBrandStep = ({ connectedBrands } : ConnectBrandStepProps) => {
         mutationFn: async (formValues: z.infer<typeof brandSchema>) => {
             console.log(formValues);
             return await httpClient.setRoute("onboarding/finish_onboarding").setPayload({
-                blogId: formValues.brand.id,
+                blogId: formValues.id,
             }).post();
         },
         onSuccess: async () => {
@@ -65,7 +65,7 @@ const ConnectBrandStep = ({ connectedBrands } : ConnectBrandStepProps) => {
             <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
                 <Controller
                     control={control}
-                    name={"brand"}
+                    name={"id"}
                     render={({ field, fieldState }) => (
                         <FieldWrapper
                             htmlFor={"select-brand"}
@@ -96,7 +96,7 @@ const ConnectBrandStep = ({ connectedBrands } : ConnectBrandStepProps) => {
                 <Button
                     variant={"black"}
                     type={"submit"}
-                    disabled={!dirtyFields.brand}
+                    disabled={!dirtyFields.id}
                 >
                     <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
                         {__("Finish", "metricool")}
