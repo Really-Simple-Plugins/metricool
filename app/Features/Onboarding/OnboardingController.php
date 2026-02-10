@@ -8,6 +8,7 @@ use Metricool\Features\Onboarding\Services\AuthService;
 use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\FeatureInterface;
+use Metricool\Services\TrackingScriptService;
 
 class OnboardingController implements FeatureInterface
 {
@@ -16,12 +17,13 @@ class OnboardingController implements FeatureInterface
     private CreateAccountService $accounts;
     private AuthService $auth;
 
-    public function __construct(MetricoolApi $api, OnboardingService $onboarding, CreateAccountService $accounts, AuthService $auth)
+    public function __construct(MetricoolApi $api, OnboardingService $onboarding, CreateAccountService $accounts, AuthService $auth, TrackingScriptService $tracking)
     {
         $this->api = $api;
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
         $this->auth = $auth;
+        $this->tracking = $tracking;
     }
 
     public function register(): void
@@ -92,10 +94,10 @@ class OnboardingController implements FeatureInterface
             ]
         ];
 
-        // $brands = $this->api->brands()->get();
+        // $brands = $this->api->brands()->all();
 
-        $blogIdSet = $this->onboarding->attemptToStoreBlogId($brands);
-        if (!$blogIdSet) {
+        $blogInfoSet = $this->onboarding->attemptToStoreBlogInfo($brands);
+        if (!$blogInfoSet) {
             // User needs to select BlogId
             return $this->onboarding->sendHttpResponse([
                 'onboarding_finished' => false,
@@ -138,6 +140,9 @@ class OnboardingController implements FeatureInterface
             $this->accounts->createAccount($captcha, $email, $password, $marketing);
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             $response = $e->getResponse();
+
+            // Metricool return a 400 response with the same body on validation errors and existing e-mail addresses
+            // Because we already did the validation, we can assume that the e-mail address already exists
             $message = $response->getStatusCode() == 400
                 ? __('E-mail already exists', 'metricool')
                 : __('Unknown Error. Please try again later.', 'metricool');
@@ -156,26 +161,27 @@ class OnboardingController implements FeatureInterface
         }
 
         // Return a mock-up of the brands
+        // Todo: remove mock-up
         $brands = [
             [
                 'id' => 4962983,
                 'label' => 'Really Simple Plugins',
                 'title' => 'https://wimenbente.nl',
-                'image' => 'https://static.metricool.com/brand-logo/202507/4962983-file-4477890870715557446.png'
+                'image' => 'https://static.metricool.com/brand-logo/202507/4962983-file-4477890870715557446.png',
+                'hash' => '3ea6c275fdc13308a612fe1b4330261b',
             ],
             [
                 'id' => 2221200,
                 'label' => 'TestingMetri-Business',
                 'title' => 'Metricool',
-                'image' => 'https://static.metricool.com/brand-logo/202511/2221200-file-6884100583778344266.jpeg'
+                'image' => 'https://static.metricool.com/brand-logo/202511/2221200-file-6884100583778344266.jpeg',
+                'hash' => 'b004950c87f5ffe7de25161216a4c8e4',
             ]
         ];
 
-        // $brands = $this->api->brands()->get();
-
         // Attempt to set the blogId based on the brands returned from the API
-        $blogIdSet = $this->onboarding->attemptToStoreBlogId($brands);
-        if (!$blogIdSet) {
+        $blogInfoSet = $this->onboarding->attemptToStoreBlogInfo($brands);
+        if (!$blogInfoSet) {
             // Return the brands that were found when blogId could not be automatically set, so the user can select one
             return $this->onboarding->sendHttpResponse([
                 'message' => __('Please select a blog to connect to Metricool.', 'metricool'),
@@ -196,13 +202,21 @@ class OnboardingController implements FeatureInterface
      */
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
-        // Store the blogId if it was provided by the client, to finish the authentication
         $blogId = (string) $request->get_param('blog_id');
 
+        // Store the blogId if it was provided by the client, to store the necessary blog information
         if (!empty($blogId)) {
-            $this->api->storeBlogId($blogId);
+            try {
+                $brand = $this->api->brands()->get($blogId);
+            } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+                return $this->onboarding->sendHttpErrorResponse('Onboarding failed. Failed to retrieve brand information.', [], 502);
+            }
+
+            // Store Blog information to finish onboarding
+            $this->onboarding->storeBlogInfo($brand);
         }
 
+        // Check if the necessary authentication data is present
         if (!$this->api->hasAuthentication()) {
             return $this->onboarding->sendHttpErrorResponse('Onboarding failed. User is not authenticated.');
         }

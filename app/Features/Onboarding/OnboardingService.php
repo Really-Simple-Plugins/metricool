@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Features\Onboarding;
 
 use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Services\TrackingScriptService;
 use Metricool\Support\Helpers\Storage;
 use Metricool\Traits\HasRestAccess;
 
@@ -13,10 +14,12 @@ class OnboardingService
     use HasRestAccess;
 
     private MetricoolApi $api;
+    private TrackingScriptService $tracking;
 
-    public function __construct(MetricoolApi $api)
+    public function __construct(MetricoolApi $api, TrackingScriptService $tracking)
     {
         $this->api = $api;
+        $this->tracking = $tracking;
     }
 
     public function isOnboardingCompleted(): bool
@@ -79,24 +82,46 @@ class OnboardingService
     }
 
     /**
-     * Check if there is only one brand connected to the blog and store it.
-     * Doesn't succeed when there are multiple brands connected to the blog.
+     * Check if there is only one brand connected to the blog, store it.
+     * Returns false when it could not store the necessary information.
      */
-    public function attemptToStoreBlogId(array $brands): bool
+    public function attemptToStoreBlogInfo(array $brands): bool
     {
         if (empty($brands)) {
             throw new \RuntimeException('Something went wrong. No blogs found.');
         }
 
-        $canStoreBlogId = count($brands) == 1;
-        if (!$canStoreBlogId) {
+        // Can't store brand information if there are more than one brand
+        if (count($brands) !== 1) {
             return false;
         }
 
-        // Pick the only brand and store it's BlogId
-        $brand = reset($brands);
-        $this->api->storeBlogId((string) $brand['id']);
+        // Attempt to get the brand information from the API, return false if it fails
+        try {
+            $brand = $this->api->brands()->get((string) $brands[0]['id']);
+        } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+            return false;
+        }
+
+        $this->storeBlogInfo($brand);
 
         return true;
+    }
+
+
+    /**
+     * Store the necessary onboarding information from the brand in the database
+     */
+    public function storeBlogInfo(array $brand): void
+    {
+        // Store the blog id
+        if (isset($brand['id'])) {
+            $this->api->storeBlogId((string) $brand['id']);
+        }
+
+        // Store the tracking hash
+        if (isset($brand['hash'])) {
+            $this->tracking->storeTrackingHash((string) $brand['hash']);
+        }
     }
 }

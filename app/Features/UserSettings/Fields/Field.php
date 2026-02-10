@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Metricool\Features\UserSettings\Fields;
 
-use Metricool\Features\UserSettings\Storage\AbstractStorage;
+use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 use Metricool\Features\UserSettings\Factories\ValidatorFactory;
+use Metricool\Features\UserSettings\Storage\AbstractStorage;
 use Metricool\Features\UserSettings\Validators\AbstractValidator;
 use Metricool\Features\UserSettings\Validators\FieldTypeValidator;
-use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 
 class Field
 {
@@ -253,6 +253,11 @@ class Field
         }
 
         return $this;
+    }
+
+    public function make($slug)
+    {
+
     }
 
     public function isBoolean(): bool

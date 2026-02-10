@@ -18,8 +18,8 @@ class AuthService
         // Authenticate with mock-up credentials
         // Todo: remove mock-up
         $this->metricoolApi->authenticate(
-            '3864308',
-            'RCGXYAHRFQXWRXODYNGCBUMHKTSQRDJQSWWLXDCCBIKHHDEAOLQJAGEDQBPIZINX',
+            METRICOOL_USER_ID,
+            METRICOOL_USER_TOKEN,
             'test_refresh_token'
         );
 
