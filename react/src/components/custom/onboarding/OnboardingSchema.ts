@@ -4,14 +4,9 @@ import { __ } from "@wordpress/i18n";
 const OnboardingSchema = z.object({
     brand: z.object({
         id: z.number(),
-        userId: z.number(),
-        ownerUserId: z.number(),
         label: z.string(),
         title: z.string(),
-        description: z.string(),
         image: z.string(),
-        ownerUsername: z.string(),
-        hash: z.string(),
     }),
     credentials: z.object({
         email: z.email({
