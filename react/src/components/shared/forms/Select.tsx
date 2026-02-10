@@ -34,10 +34,9 @@ const SelectOption = ({ children, value, className, }: React.ComponentProps<"opt
  *
  * @version 1.0.0
  */
-const DisabledSelectOption = ({ children, className, onClick }: React.ComponentProps<"div">) => {
+const DisabledSelectOption = ({ children, className }: React.ComponentProps<"div">) => {
     return (
         <FlexContainer
-            onClick={onClick}
             direction={"row"}
             className={cn(className, defaultSelectOptionClasses)}
         >
