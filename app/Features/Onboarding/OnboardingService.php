@@ -81,19 +81,19 @@ class OnboardingService
     /**
      * Check if there is only one brand connected to the blog and store it.
      * Doesn't succeed when there are multiple brands connected to the blog.
-     *
-     * @return array<{success: bool, connected_brands: array}> { success: true, connected_brands: []}
      */
-    public function processBrands($brands): bool
+    public function attemptToStoreBlogId(array $brands): bool
     {
         if (empty($brands)) {
             throw new \RuntimeException('Something went wrong. No blogs found.');
         }
 
-        if (count($brands) > 1) {
+        $canStoreBlogId = count($brands) > 1;
+        if (!$canStoreBlogId) {
             return false;
         }
 
+        // Pick the only brand and store it's BlogId
         $brand = reset($brands);
         $this->api->storeBlogId((string) $brand['id']);
 
