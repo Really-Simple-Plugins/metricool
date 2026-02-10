@@ -45,7 +45,13 @@ const DataTableColumnHeader = <TData, TValue>({
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
             {title}
-            <Icon icon={"sort"}/>
+            <Button
+                variant={"icon"}
+                size={"icon"}
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                <Icon icon={"sort"}/>
+            </Button>
         </div>
     );
 };
