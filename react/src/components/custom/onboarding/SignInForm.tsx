@@ -4,13 +4,20 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
+import { type UseMutateFunction, useMutation } from "@tanstack/react-query";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
+import type { Dispatch, SetStateAction } from "react";
 
 const signInSchema = OnboardingSchema.pick({ credentials: true });
 
 type SignInFormProps = {
-    onSubmit: (values: z.infer<typeof signInSchema>) => void,
+    setActiveSignInStep: Dispatch<SetStateAction<number>>,
+    finishOnboarding: UseMutateFunction
 };
-const SignInForm = ({ onSubmit }: SignInFormProps) => {
+
+const SignInForm = ({ setActiveSignInStep, finishOnboarding }: SignInFormProps) => {
+    const { httpClient } = useGlobalContext();
+
     const {
         handleSubmit,
         formState: { dirtyFields },
@@ -24,6 +31,27 @@ const SignInForm = ({ onSubmit }: SignInFormProps) => {
             },
         },
     });
+
+    const { mutate: onSubmit } = useMutation({
+        mutationFn: async (formValues: z.infer<typeof signInSchema>) => {
+            return await httpClient.setRoute("onboarding/login").setPayload({
+                email: formValues.credentials.email,
+                password: formValues.credentials.password,
+            }).post();
+        },
+        onSuccess: async (response) => {
+            console.log(response);
+            if (response.data.finish_onboarding === false) {
+                setActiveSignInStep(1);
+            } else {
+                finishOnboarding();
+            }
+
+        },
+        onError: (error) => {
+            console.error(error);
+        }
+    })
 
     return (
         <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6"}>
