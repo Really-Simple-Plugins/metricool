@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Metricool\Http\Metricool\Entities;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Metricool\Support\Helpers\Event;
 use Metricool\Http\Metricool\MetricoolClient;
+use Metricool\Support\Helpers\Event;
 
 class ConnectedBrands
 {
@@ -53,9 +53,9 @@ class ConnectedBrands
         // get just the connection names
         $connectionNames = array_keys($networksData);
 
-        // filter out networks that are not social media (webData, googleAds, etc)
+        // filter out the webData connection, since this is one is automatically connected, don't count it
         $connectedSocialNetworks = array_filter($connectionNames, function ($connectionName) {
-            return !str_contains('webData', $connectionName) && !str_contains('Ads', $connectionName);
+            return !str_contains('webData', $connectionName);
         });
 
         Event::dispatch(Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, $connectedSocialNetworks);
