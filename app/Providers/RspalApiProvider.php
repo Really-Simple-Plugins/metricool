@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Metricool\Providers;
 
+use Metricool\Bootstrap\App;
 use Metricool\Http\RSPAL\RspalApiClient;
-use SimplyBook\Bootstrap\App;
 
 class RspalApiProvider extends Provider
 {
