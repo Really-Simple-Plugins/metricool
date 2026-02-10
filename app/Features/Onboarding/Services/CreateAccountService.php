@@ -31,7 +31,6 @@ class CreateAccountService
             'RSPAL-RecaptchaV3Token' => $captcha
         ]);
 
-
         // Authenticate with mock-up credentials
         // Todo: remove mock-up
         $this->metricoolApi->authenticate(

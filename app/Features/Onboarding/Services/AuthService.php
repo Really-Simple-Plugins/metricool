@@ -13,7 +13,7 @@ class AuthService
         $this->metricoolApi = $metricoolApi;
     }
 
-    public function login(string $email, string $password)
+    public function login(string $email, string $password): bool
     {
         // Authenticate with mock-up credentials
         // Todo: remove mock-up
