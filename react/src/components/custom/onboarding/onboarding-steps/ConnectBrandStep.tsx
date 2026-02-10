@@ -15,11 +15,16 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
+import { useMutation } from "@tanstack/react-query";
 
 const brandSchema = OnboardingSchema.pick({ brand: true });
 
-const ConnectBrandStep = () => {
-    const { dispatch, metricool } = useGlobalContext();
+type ConnectBrandStepProps = {
+    connectedBrands: z.infer<typeof brandSchema.shape.brand>[],
+};
+
+const ConnectBrandStep = ({ connectedBrands } : ConnectBrandStepProps) => {
+    const { httpClient, dispatch, metricool } = useGlobalContext();
 
     const {
         handleSubmit,
@@ -28,14 +33,21 @@ const ConnectBrandStep = () => {
     } = useForm<z.infer<typeof brandSchema>>({
         resolver: zodResolver(brandSchema),
         defaultValues: {
-            brand: "",
+            brand: {},
         },
     });
 
-    const onSubmit = (values: z.infer<typeof brandSchema>) => {
-        console.log(values);
-        dispatch({dispatchType: "setOnboardingComplete"});
-    }
+    const { mutate: onSubmit } = useMutation({
+        mutationFn: async (formValues: z.infer<typeof brandSchema>) => {
+            console.log(formValues);
+            return await httpClient.setRoute("onboarding/finish_onboarding").setPayload({
+                blogId: formValues.brand.id,
+            }).post();
+        },
+        onSuccess: async () => {
+            dispatch({dispatchType: "setOnboardingComplete"});
+        }
+    })
 
     return (
         <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center"}>
@@ -69,18 +81,14 @@ const ConnectBrandStep = () => {
                                 className={"border-neutral-200 font-semibold !text-black"}
                                 placeholder={__("Select a brand", "metricool")}
                             >
-                                <SelectOption
-                                    value={"1"}
-                                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
-                                >
-                                    {__("Brand one", "metricool")}
-                                </SelectOption>
-                                <SelectOption
-                                    value={"2"}
-                                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
-                                >
-                                    {__("Brand two", "metricool")}
-                                </SelectOption>
+                                {connectedBrands.map((brand) => (
+                                    <SelectOption
+                                        value={brand.id}
+                                        className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
+                                    >
+                                        {brand.label}
+                                    </SelectOption>
+                                ))}
                             </Select>
                         </FieldWrapper>
                     )}
