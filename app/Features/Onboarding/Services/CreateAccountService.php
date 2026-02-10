@@ -3,7 +3,6 @@
 namespace Metricool\Features\Onboarding\Services;
 
 use GuzzleHttp\Exception\GuzzleException;
-use Metricool\Features\Onboarding\OnboardingService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Http\RSPAL\RspalApiClient;
 
@@ -12,7 +11,7 @@ class CreateAccountService
     private RspalApiClient $rspalClient;
     private MetricoolApi $metricoolApi;
 
-    public function __construct(RspalApiClient $rspalClient, MetricoolApi $metricoolApi, OnboardingService $service)
+    public function __construct(RspalApiClient $rspalClient, MetricoolApi $metricoolApi)
     {
         $this->rspalClient = $rspalClient;
         $this->metricoolApi = $metricoolApi;
@@ -32,25 +31,25 @@ class CreateAccountService
             'RSPAL-RecaptchaV3Token' => $captcha
         ]);
 
-        // Todo: remove mock-up
-        if (true) {
-            // Authenticate with test credentials
-            $this->metricoolApi->authenticate(
-                '3864308',
-                'RCGXYAHRFQXWRXODYNGCBUMHKTSQRDJQSWWLXDCCBIKHHDEAOLQJAGEDQBPIZINX',
-                'test_refresh_token'
-            );
-        } else {
-            // Authenticate and set the password
-            $this->metricoolApi->authenticate(
-                $signupResponse->data->userId,
-                $signupResponse->data->accessToken,
-                $signupResponse->data->refreshToken
-            );
 
-            $this->metricoolApi->userCredentials()
-                ->updatePassword('', $password);
-        }
+        // Authenticate with mock-up credentials
+        // Todo: remove mock-up
+        $this->metricoolApi->authenticate(
+            '3864308',
+            'RCGXYAHRFQXWRXODYNGCBUMHKTSQRDJQSWWLXDCCBIKHHDEAOLQJAGEDQBPIZINX',
+            'test_refresh_token'
+        );
+
+        // Authenticate and set the password
+        // $this->metricoolApi->authenticate(
+        //     $signupResponse->data->userId,
+        //     $signupResponse->data->accessToken,
+        //     $signupResponse->data->refreshToken
+        // );
+
+        // $this->metricoolApi->userCredentials()
+        //     ->updatePassword('', $password);
+
 
         return true;
     }
