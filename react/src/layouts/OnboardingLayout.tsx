@@ -48,9 +48,9 @@ export const OnboardingLayout = () => {
             setOnboardingModalOpen(true);
         },
         mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
-            // @ts-expect-error grecaptcha globally defined though script
+            // @ts-expect-error grecaptcha globally defined through script
             await grecaptcha.enterprise.ready(async () => {
-                // @ts-expect-error grecaptcha globally defined though script
+                // @ts-expect-error grecaptcha globally defined through script
                 const token = await grecaptcha.enterprise.execute('6LflMV4sAAAAAMyPohHfMRVjZQBcu-YuZz_3nTTK', {action: 'signup'});
                 console.log("Post this token to the server: ");
                 console.log(token);
@@ -83,6 +83,7 @@ export const OnboardingLayout = () => {
         return () => {
             const leftoverRecaptchaScript = document.querySelector("script[src*='recaptcha']");
             if (leftoverRecaptchaScript){
+                console.log(leftoverRecaptchaScript);
                 leftoverRecaptchaScript.remove();
             }
             // @ts-expect-error grecaptcha globally defined by script
