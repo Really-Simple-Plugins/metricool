@@ -137,7 +137,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                                                 sprintf(
                                                     /*translators: the two variables are opening and closing anchor tags */
                                                     __("I have read and accept the %1$sLegal Terms%2$s by Metricool.", "metricool"),
-                                                    `<a href=${metricool.trusted_urls.legal_terms} target="_blank">`,
+                                                    `<a href=${metricool.trusted_urls.legal_terms} target="_blank" class="underline">`,
                                                     `</a>`),
                                                 { ADD_ATTR: ["target"] }
                                             )
