@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\TrackingScriptService;
-use Metricool\Support\Helpers\Storage;
 use Metricool\Traits\HasRestAccess;
 
 class OnboardingService
@@ -22,27 +22,11 @@ class OnboardingService
         $this->tracking = $tracking;
     }
 
-    public function isOnboardingCompleted(): bool
-    {
-        return get_option('metricool_onboarding_completed', false);
-    }
-
-    /**
-     * Store the onboarding step in the general options without autoload
-     */
-    public function setCompletedStep(int $step): void
-    {
-        update_option('metricool_completed_step', $step, false);
-    }
-
     /**
      * Set the onboarding as completed in the general options without autoload
      */
     public function setOnboardingCompleted(): bool
     {
-        $this->setCompletedStep(5); // todo
-        $this->clearTemporaryData();
-
         $completedPreviously = get_option('metricool_onboarding_completed', false);
         if ($completedPreviously) {
             return true;
@@ -52,40 +36,13 @@ class OnboardingService
         return update_option('metricool_onboarding_completed', true, false);
     }
 
-    /**
-     * Method can be used to set temporary data for the onboarding process.
-     */
-    public function setTemporaryData(array $data): void
-    {
-        $options = get_option('metricool_temporary_onboarding_data', []);
-        $options = array_merge($options, $data);
-        update_option('metricool_temporary_onboarding_data', $options, false);
-    }
-
-    /**
-     * Method can be used to retrieve temporary data for the onboarding process.
-     * Returns the array of data as a Storage object for easier access.
-     */
-    public function getTemporaryDataStorage(): Storage
-    {
-        return new Storage(
-            get_option('metricool_temporary_onboarding_data', [])
-        );
-    }
-
-    /**
-     * Method should be used to clear the temporary data for the onboarding.
-     */
-    public function clearTemporaryData(): void
-    {
-        delete_option('metricool_temporary_onboarding_data');
-    }
 
     /**
      * Check if there is only one brand connected to the blog, store it.
      * Returns false when it could not store the necessary information.
+     * @throws GuzzleException when user has no access to the brand
      */
-    public function attemptToStoreBlogInfo(array $brands): bool
+    public function findBlogAndStore(array $brands): bool
     {
         if (empty($brands)) {
             throw new \RuntimeException('Something went wrong. No blogs found.');
@@ -96,32 +53,27 @@ class OnboardingService
             return false;
         }
 
-        // Attempt to get the brand information from the API, return false if it fails
-        try {
-            $brand = $this->api->brands()->get((string) $brands[0]['id']);
-        } catch (\GuzzleHttp\Exception\GuzzleException $e) {
-            return false;
-        }
-
-        $this->storeBlogInfo($brand);
-
-        return true;
+        return $this->storeBlogInfo($brands[0]['id']);
     }
 
 
     /**
      * Store the necessary onboarding information from the brand in the database
+     * @throws GuzzleException when user has no access to the brand
      */
-    public function storeBlogInfo(array $brand): void
+    public function storeBlogInfo(string $blogId): bool
     {
+        // Attempt to get the brand information from the API, checks if the user can access it
+        $brand = $this->api->brands()->get($blogId);
+
         // Store the blog id
-        if (isset($brand['id'])) {
-            $this->api->storeBlogId((string) $brand['id']);
-        }
+        $this->api->storeBlogId((string) $brand['id']);
 
         // Store the tracking hash
-        if (isset($brand['hash'])) {
+        if (!empty($brand['hash'])) {
             $this->tracking->storeTrackingHash((string) $brand['hash']);
         }
+
+        return true;
     }
 }

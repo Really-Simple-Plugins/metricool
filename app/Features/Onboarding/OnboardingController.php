@@ -75,9 +75,16 @@ class OnboardingController implements FeatureInterface
         }
 
         // Attempt to login
-        $this->auth->login($email, $password);
+        try {
+            $this->auth->login($email, $password);
+        } catch (\Exception $e) {
+            return $this->onboarding->sendHttpErrorResponse(
+                __('The combination of username and password was incorrect.', 'metricool'),
+                [],
+                401
+            );
+        }
 
-        // Attempt to set the blogId based on the brands returned from the API
         // Todo: remove mock-up
         $brands = [
             [
@@ -96,9 +103,15 @@ class OnboardingController implements FeatureInterface
 
         // $brands = $this->api->brands()->all();
 
-        $blogInfoSet = $this->onboarding->attemptToStoreBlogInfo($brands);
+        // Attempt to automatically set the blog information
+        try {
+            $blogInfoSet = $this->onboarding->findBlogAndStore($brands);
+        } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+            $blogInfoSet = false;
+        }
+
         if (!$blogInfoSet) {
-            // User needs to select BlogId
+            // Return the brands that were found when blogId could not be automatically set, so the user can select one
             return $this->onboarding->sendHttpResponse([
                 'onboarding_finished' => false,
                 'connected_brands' => $brands,
@@ -142,7 +155,7 @@ class OnboardingController implements FeatureInterface
             $response = $e->getResponse();
 
             // Metricool return a 400 response with the same body on validation errors and existing e-mail addresses
-            // Because we already did the validation, we can assume that the e-mail address already exists
+            // Because we already did the validation, we can assume that it's an e-mail address already exists error
             $message = $response->getStatusCode() == 400
                 ? __('E-mail already exists', 'metricool')
                 : __('Unknown Error. Please try again later.', 'metricool');
@@ -179,8 +192,12 @@ class OnboardingController implements FeatureInterface
             ]
         ];
 
-        // Attempt to set the blogId based on the brands returned from the API
-        $blogInfoSet = $this->onboarding->attemptToStoreBlogInfo($brands);
+        try {
+            $blogInfoSet = $this->onboarding->findBlogAndStore($brands);
+        } catch (\GuzzleHttp\Exception\GuzzleException $e) {
+            $blogInfoSet = false;
+        }
+
         if (!$blogInfoSet) {
             // Return the brands that were found when blogId could not be automatically set, so the user can select one
             return $this->onboarding->sendHttpResponse([
@@ -207,13 +224,10 @@ class OnboardingController implements FeatureInterface
         // Store the blogId if it was provided by the client, to store the necessary blog information
         if (!empty($blogId)) {
             try {
-                $brand = $this->api->brands()->get($blogId);
+                $this->onboarding->storeBlogInfo($blogId);
             } catch (\GuzzleHttp\Exception\GuzzleException $e) {
                 return $this->onboarding->sendHttpErrorResponse('Onboarding failed. Failed to retrieve brand information.', [], 502);
             }
-
-            // Store Blog information to finish onboarding
-            $this->onboarding->storeBlogInfo($brand);
         }
 
         // Check if the necessary authentication data is present
