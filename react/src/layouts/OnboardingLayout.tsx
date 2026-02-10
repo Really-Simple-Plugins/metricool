@@ -1,14 +1,7 @@
 import { __ } from "@wordpress/i18n";
 import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import {
-    ConnectBrandStep,
-    LoadingStep,
-    OnboardingForm,
-    OnboardingHeader,
-    SignInForm,
-    VerifyEmailStep
-} from "@/components/custom";
+import { ConnectBrandStep, LoadingStep, OnboardingForm, OnboardingHeader, SignInForm, } from "@/components/custom";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
@@ -31,64 +24,80 @@ import { HeadContent } from "@tanstack/react-router";
  *
  */
 export const OnboardingLayout = () => {
-    const { metricool, dispatch } = useGlobalContext();
+    const { metricool, httpClient, dispatch } = useGlobalContext();
     const [signInModalOpen, setSignInModalOpen] = useState<boolean>(false);
     const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
-    const [enteredEmail, setEnteredEmail] = useState<string>("");
-    const [activeStep, setActiveStep] = useState<number>(0);
-    const onboardingSteps = [
-        (<VerifyEmailStep enteredEmail={enteredEmail}/>),
-        (<LoadingStep/>),
-        (<ConnectBrandStep/>),
-    ];
+    // const [enteredEmail, setEnteredEmail] = useState<string>("");
+    const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
+    const [activeSignInStep, setActiveSignInStep] = useState<number>(0);
+    const [connectedBrands, setConnectedBrands] = useState<z.infer<typeof OnboardingSchema.shape.brand>[]>([]);
 
-    const { mutate: onSubmit } = useMutation({
-        onMutate: (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
-            setEnteredEmail(formValues.credentials.email);
+    const { mutate: onSignUp } = useMutation({
+        onMutate: () => {
+            // setEnteredEmail(formValues.credentials.email);
+            setActiveOnboardingStep(0);
             setOnboardingModalOpen(true);
         },
         mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
             // @ts-expect-error grecaptcha globally defined through script
-            await grecaptcha.enterprise.ready(async () => {
+            return await grecaptcha.enterprise.ready(async () => {
                 // @ts-expect-error grecaptcha globally defined through script
-                const token = await grecaptcha.enterprise.execute('6LflMV4sAAAAAMyPohHfMRVjZQBcu-YuZz_3nTTK', {action: 'signup'});
-                console.log("Post this token to the server: ");
-                console.log(token);
-                // const response = await httpClient.setRoute("create_account").setPayload({
-                //   email: formValues.credentials.email,
-                //   password: formValues.credentials.password,
-                //   newsletters: formValues.terms,
-                //   captcha: token,
-                // }).post();
+                const token = await grecaptcha.enterprise.execute("6LflMV4sAAAAAMyPohHfMRVjZQBcu-YuZz_3nTTK", { action: "signup" });
+                return await httpClient.setRoute("onboarding/create_account").setPayload({
+                    email: formValues.credentials.email,
+                    password: formValues.credentials.password,
+                    marketing: formValues.marketing,
+                    captcha: token,
+                    terms: formValues.terms,
+                }).post();
             });
-
-            const timer = new Promise(resolve => setTimeout(resolve, 8000));
-            await timer;
-
-            return formValues;
         },
         onSuccess: async (response) => {
             console.log(response);
-            setActiveStep(1);
-            const timer = new Promise(resolve => setTimeout(resolve, 8000));
-            await timer;
-            setActiveStep(2);
+            if (response.data.finish_onboarding === false) {
+                setConnectedBrands(response.data.connected_brands);
+                setActiveOnboardingStep(1);
+            } else {
+                finishOnboarding();
+            }
         },
         onError: (error) => {
             console.error(error);
         }
     });
 
-    useEffect(()=> {
+    const { mutate: finishOnboarding } = useMutation({
+        mutationFn: async () => {
+            return await httpClient.setRoute("onboarding/finish_onboarding").setPayload({
+
+            }).post();
+        },
+        onSuccess: () => {
+            dispatch({ dispatchType: "setOnboardingComplete" });
+        },
+        onError: (error) => {
+            console.error(error);
+        }
+    });
+
+    const onboardingSteps = [
+        (<LoadingStep/>),
+        (<ConnectBrandStep connectedBrands={connectedBrands}/>),
+    ];
+    const signInsteps = [
+        (<SignInForm setActiveSignInStep={setActiveSignInStep} finishOnboarding={finishOnboarding}/>),
+        (<ConnectBrandStep connectedBrands={connectedBrands}/>),
+    ];
+
+    useEffect(() => {
         return () => {
             const leftoverRecaptchaScript = document.querySelector("script[src*='recaptcha']");
-            if (leftoverRecaptchaScript){
-                console.log(leftoverRecaptchaScript);
+            if (leftoverRecaptchaScript) {
                 leftoverRecaptchaScript.remove();
             }
             // @ts-expect-error grecaptcha globally defined by script
             delete window.grecaptcha;
-        }
+        };
     }, []);
 
     return (
@@ -117,7 +126,7 @@ export const OnboardingLayout = () => {
             <FlexContainer direction={"row"} className={"w-full !gap-0"}>
                 <FlexContainer direction={"column"} className={"min-w-[45%] max-w-[45%]"}>
                     <h1 className={"font-bold font-nunito text-[1.75rem] leading-8"}>{__("Join more than 2 million professionals, agencies and brands that use Metricool as their one-stop shop for social media and online ad management.", "metricool")}</h1>
-                    <OnboardingForm onSubmit={(values) => onSubmit(values)}/>
+                    <OnboardingForm onSubmit={(values) => onSignUp(values)}/>
                 </FlexContainer>
                 <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={__("Laptop and phone displaying the Metricool app", "metricool")}/>
             </FlexContainer>
@@ -134,10 +143,7 @@ export const OnboardingLayout = () => {
                         {__("Sign in with your credentials", "metricool")}
                     </DialogTitle>
                 </DialogHeader>
-                <SignInForm onSubmit={(values) => {
-                    console.log(values);
-                    dispatch({ dispatchType: "setOnboardingComplete" });
-                }}/>
+                {signInsteps[activeSignInStep]}
             </Dialog>
             <Dialog
                 id={"onboarding-modal"}
@@ -145,7 +151,7 @@ export const OnboardingLayout = () => {
                 showCloseButton={false}
                 className={"flex flex-col justify-center items-center"}
             >
-                {onboardingSteps[activeStep]}
+                {onboardingSteps[activeOnboardingStep]}
             </Dialog>
         </FlexContainer>
     );
