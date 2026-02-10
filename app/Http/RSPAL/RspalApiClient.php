@@ -11,7 +11,7 @@ class RspalApiClient
     /**
      * The option name for storing the InstallationID.
      */
-    public const INSTALLATION_ID_OPTION = 'rspal_installation_id';
+    public const INSTALLATION_ID_OPTION = '_metricool_rspal_installation_id';
 
     /**
      * The Guzzle HTTP client for making API requests
