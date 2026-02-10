@@ -2,17 +2,19 @@ import { clsx } from "clsx";
 import { Button, FlexContainer, Icon } from "@/components/shared";
 import { cva, type VariantProps } from "class-variance-authority";
 
+const MetricTileVariantStyling = {
+    "primary": "bg-primary",
+    "primary-dark": "bg-primary-dark",
+    "secondary": "bg-secondary",
+    "tertiary": "bg-tertiary",
+    "light-green": "bg-light-green"
+};
+
 const MetricTileVariants = cva(
     "flex flex-col px-3 py-2 rounded-sm",
     {
         variants: {
-            variant: {
-                "primary": "bg-primary",
-                "primary-dark": "bg-primary-dark",
-                "secondary": "bg-secondary",
-                "tertiary": "bg-tertiary",
-                "light-green": "bg-light-green"
-            },
+            variant: MetricTileVariantStyling,
         },
         defaultVariants: {
             variant: "primary",
@@ -40,7 +42,7 @@ const MetricTile = ({
     return (
         <Button
              className={clsx(
-                 MetricTileVariants({ variant }),
+                 variant && variant in MetricTileVariantStyling && MetricTileVariants({ variant }),
                  className,
                  (onClick && !disabled) && "hover:cursor-pointer",
                  (inactive || disabled) && "opacity-35 transition-all ease-in-out duration-300",

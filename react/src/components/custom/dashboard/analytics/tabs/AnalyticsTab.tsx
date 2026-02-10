@@ -190,6 +190,7 @@ const AnalyticsTab = () => {
                                 onClick={() => toggleMetric(metricKey)}
                                 metric={numberFormatter.format(metricData.totalAmount)}
                                 trend={metricData.trend}
+                                // @ts-expect-error tsc can't verify color is a valid variant
                                 variant={chartConfig[metricKey].color}
                                 inactive={chartConfig[metricKey].hidden}
                                 disabled={metricData.totalAmount === 0}
