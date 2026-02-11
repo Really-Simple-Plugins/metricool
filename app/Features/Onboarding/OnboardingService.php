@@ -5,14 +5,13 @@ declare(strict_types=1);
 namespace Metricool\Features\Onboarding;
 
 use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
+use Metricool\Features\Onboarding\Exceptions\TooManyBrandsException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\TrackingScriptService;
-use Metricool\Traits\HasRestAccess;
 
 class OnboardingService
 {
-    use HasRestAccess;
-
     private MetricoolApi $api;
     private TrackingScriptService $tracking;
 
@@ -38,11 +37,13 @@ class OnboardingService
 
 
     /**
-     * Check if there is only one brand connected to the blog, store it.
-     * Returns false when it could not store the necessary information.
-     * @throws GuzzleException when user has no access to the brand
+     * Automatically find the blog from the connected brand and try to retrieve
+     * the necessary onboarding information
+     *
+     * @throws TooManyBrandsException when there are more than one brand connected to the blog
+     * @throws BrandAccessDeniedException when the user does not have access to the picked brand
      */
-    public function findBlogAndStore(array $brands): bool
+    public function findAndRetrieveBlogInfo(array $brands): bool
     {
         if (empty($brands)) {
             throw new \RuntimeException('Something went wrong. No blogs found.');
@@ -50,24 +51,41 @@ class OnboardingService
 
         // Can't store brand information if there are more than one brand
         if (count($brands) !== 1) {
+            throw new TooManyBrandsException($brands);
+        }
+
+        try {
+            $this->storeBlogInfo($brands[0]['id']);
+        } catch (GuzzleException $e) {
             return false;
         }
 
-        return $this->storeBlogInfo($brands[0]['id']);
+        return true;
     }
 
-
     /**
-     * Store the necessary onboarding information from the brand in the database
-     * @throws GuzzleException when user has no access to the brand
+     * Store the necessary onboarding information from the Metricool brand
+     *
+     * @throws BrandAccessDeniedException when the current user has no access to the brand
+     * @throws GuzzleException when the Metricool API request fails
      */
     public function storeBlogInfo(string $blogId): bool
     {
         // Attempt to get the brand information from the API, checks if the user can access it
-        $brand = $this->api->brands()->get($blogId);
+        try {
+            $brand = $this->api->brands()->get($blogId);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            if ($e->getResponse()->getStatusCode() === 403) {
+                throw new BrandAccessDeniedException;
+            }
+        }
 
         // Store the blog id
-        $this->api->storeBlogId((string) $brand['id']);
+        if (isset($brand['id'])) {
+            $this->api->storeBlogId((string) $brand['id']);
+        } else {
+            throw new \RuntimeException('Something went wrong. No brand id found.');
+        }
 
         // Store the tracking hash
         if (!empty($brand['hash'])) {
@@ -75,5 +93,25 @@ class OnboardingService
         }
 
         return true;
+    }
+
+    public function mockUpBrands(): array
+    {
+        return [
+            [
+                'id' => 4962983,
+                'label' => 'Really Simple Plugins',
+                'title' => 'https://wimenbente.nl',
+                'image' => 'https://static.metricool.com/brand-logo/202507/4962983-file-4477890870715557446.png',
+                'hash' => '3ea6c275fdc13308a612fe1b4330261b',
+            ],
+            [
+                'id' => 2221200,
+                'label' => 'TestingMetri-Business',
+                'title' => 'Metricool',
+                'image' => 'https://static.metricool.com/brand-logo/202511/2221200-file-6884100583778344266.jpeg',
+                'hash' => 'b004950c87f5ffe7de25161216a4c8e4',
+            ]
+        ];
     }
 }
