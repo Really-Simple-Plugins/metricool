@@ -255,11 +255,6 @@ class Field
         return $this;
     }
 
-    public function make($slug)
-    {
-
-    }
-
     public function isBoolean(): bool
     {
         return $this->type === 'boolean';
