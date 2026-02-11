@@ -1,0 +1,18 @@
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+    return twMerge(clsx(inputs));
+}
+
+export const getScrollProgressPercent = () => {
+    const totalScrollableHeightInPixels =
+        document.documentElement.scrollHeight - window.innerHeight;
+    const roundedScrollPercentage =
+        Math.round((Math.ceil(window.scrollY) / totalScrollableHeightInPixels) * 100);
+    return roundedScrollPercentage;
+};
+
+export const capitalizeFirstCharacter = (string: string) => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};

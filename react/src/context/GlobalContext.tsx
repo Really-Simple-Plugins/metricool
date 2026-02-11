@@ -1,8 +1,8 @@
 import React, { createContext, type Dispatch, useContext, useEffect, useReducer, } from "react";
-import HttpClient from "../api/HttpClient.tsx";
+import HttpClient from "@/api/HttpClient.tsx";
 import { setLocaleData } from "@wordpress/i18n";
-import type { PeriodFilterOption } from "../custom/AnalyticsTab.tsx";
-import DynamicUrl from "../helpers/DynamicUrl.tsx";
+import type { PeriodFilterOption } from "@/components/custom";
+import DynamicUrl from "@/helpers/DynamicUrl.tsx";
 
 // @ts-expect-error the metricool variable is globally set in the DashboardController
 // but the tsc complains it can't find it
