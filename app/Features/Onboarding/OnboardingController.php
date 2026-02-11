@@ -91,13 +91,15 @@ class OnboardingController implements FeatureInterface
                 'id' => 4962983,
                 'label' => 'Really Simple Plugins',
                 'title' => 'https://wimenbente.nl',
-                'image' => 'https://static.metricool.com/brand-logo/202507/4962983-file-4477890870715557446.png'
+                'image' => 'https://static.metricool.com/brand-logo/202507/4962983-file-4477890870715557446.png',
+                'hash' => '3ea6c275fdc13308a612fe1b4330261b',
             ],
             [
                 'id' => 2221200,
                 'label' => 'TestingMetri-Business',
                 'title' => 'Metricool',
-                'image' => 'https://static.metricool.com/brand-logo/202511/2221200-file-6884100583778344266.jpeg'
+                'image' => 'https://static.metricool.com/brand-logo/202511/2221200-file-6884100583778344266.jpeg',
+                'hash' => 'b004950c87f5ffe7de25161216a4c8e4',
             ]
         ];
 

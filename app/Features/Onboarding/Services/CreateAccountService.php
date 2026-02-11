@@ -24,12 +24,12 @@ class CreateAccountService
     public function createAccount(string $captcha, string $email, string $password, bool $newsletters): bool
     {
         // Attempt to sign up the user through RSPAL
-//        $this->rspalClient->signUp([
-//            'username' => $email,
-//            'newsletters' => $newsletters,
-//        ], [
-//            'RSPAL-RecaptchaV3Token' => $captcha
-//        ]);
+        $this->rspalClient->signUp([
+            'username' => $email,
+            'newsletters' => $newsletters,
+        ], [
+            'RSPAL-RecaptchaV3Token' => $captcha
+        ]);
 
         // Authenticate with mock-up credentials
         // Todo: remove mock-up
