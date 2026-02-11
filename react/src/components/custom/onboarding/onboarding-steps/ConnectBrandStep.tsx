@@ -76,7 +76,9 @@ const ConnectBrandStep = ({ connectedBrands }: ConnectBrandStepProps) => {
                             }}
                         >
                             <Select
-                                onValueChange={field.onChange}
+                                onValueChange={(value) => {
+                                    field.onChange(Number(value));
+                                }}
                                 id={"select-brand"}
                                 className={"border-neutral-200 font-semibold !text-black"}
                                 placeholder={__("Select a brand", "metricool")}
