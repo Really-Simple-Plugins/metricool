@@ -112,6 +112,7 @@ const AccountSettings = () => {
             }
 
             const shouldLeave = window.confirm(
+                /*translators: this text is taken directly from FireFox's native pop-up for unsaved changes. Please use that text for your language.*/
                 __("This page is asking you to confirm that you want to leave — information you’ve entered may not be saved.", "metricool"),
             );
 
