@@ -7,7 +7,7 @@ const OnboardingSchema = z.object({
         label: z.string(),
         title: z.string(),
         image: z.string(),
-    }),
+    }).partial(),
     credentials: z.object({
         email: z.email({
             error: () => __("Please enter a valid email address", "metricool"),
