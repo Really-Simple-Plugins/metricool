@@ -40,12 +40,15 @@ const ConnectBrandStep = ({ connectedBrands }: ConnectBrandStepProps) => {
     const { mutate: onSubmit } = useMutation({
         mutationFn: async (formValues: z.infer<typeof brandSchema>) => {
             console.log(formValues);
-            return await httpClient.setRoute("onboarding/finish_onboarding").setPayload({
+            return httpClient.setRoute("onboarding/finish_onboarding").setPayload({
                 blogId: formValues.id,
             }).post();
         },
-        onSuccess: async () => {
-            dispatch({dispatchType: "setOnboardingComplete"});
+        onSuccess: () => {
+            dispatch({ dispatchType: "setOnboardingComplete" });
+        },
+        onError: (error) => {
+            console.error(error);
         }
     });
 
