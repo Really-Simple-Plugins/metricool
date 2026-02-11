@@ -285,9 +285,9 @@ Not overwriting for all imgs as Tailwind might rely on it under the hood. */
     display: initial;
 }
 
-/* Wordpress has default styling on all headings
-Overwriting this for all h1 within our app */
-.rsp-plugin-root h1 {
+/* Wordpress has default styling on all headings. This class sets all WP
+defined styles to inherit, to be used for h1 in Block Header Titles */
+.block-header-title {
     font-size: inherit !important;
     font-weight: inherit !important;
     margin: inherit !important;

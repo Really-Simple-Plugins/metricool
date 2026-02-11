@@ -19,7 +19,7 @@ import { cn } from "@/functions/utils.ts";
 const BlockHeaderTitle = ({ className, children }: React.ComponentProps<"div">) => {
     return (
         <PrimitiveCardTitle className={cn(className, "text-base font-bold leading-none")}>
-            <h1>
+            <h1 className={"block-header-title"}>
                 {children}
             </h1>
         </PrimitiveCardTitle>
