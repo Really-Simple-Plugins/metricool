@@ -76,7 +76,7 @@ class OnboardingService
             $brand = $this->api->brands()->get($blogId);
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             if ($e->getResponse()->getStatusCode() === 403) {
-                throw new BrandAccessDeniedException;
+                throw new BrandAccessDeniedException();
             }
         }
 
