@@ -2,11 +2,11 @@ import {
     Button,
     DialogHeader,
     DialogTitle,
+    FieldWrapper,
     FlexContainer,
+    Icon,
     Select,
     SelectOption,
-    FieldWrapper,
-    Icon,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -23,7 +23,7 @@ type ConnectBrandStepProps = {
     connectedBrands: z.infer<typeof brandSchema>[],
 };
 
-const ConnectBrandStep = ({ connectedBrands } : ConnectBrandStepProps) => {
+const ConnectBrandStep = ({ connectedBrands }: ConnectBrandStepProps) => {
     const { httpClient, dispatch, metricool } = useGlobalContext();
 
     const {
@@ -47,7 +47,7 @@ const ConnectBrandStep = ({ connectedBrands } : ConnectBrandStepProps) => {
         onSuccess: async () => {
             dispatch({dispatchType: "setOnboardingComplete"});
         }
-    })
+    });
 
     return (
         <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center"}>
@@ -106,6 +106,6 @@ const ConnectBrandStep = ({ connectedBrands } : ConnectBrandStepProps) => {
             </form>
         </FlexContainer>
     );
-}
+};
 
 export { ConnectBrandStep };
