@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 use Metricool\Features\Onboarding\Exceptions\TooManyBrandsException;
 use Metricool\Features\Onboarding\Services\AuthService;
@@ -98,7 +99,7 @@ class OnboardingController implements FeatureInterface
             // Return the brands that were found when blogId could not be automatically set, so the user can select one
             return $this->sendHttpResponse([
                 'onboarding_finished' => false,
-                'message' => __('Please select a brand.', 'metricool'), // todo: better message
+                'message' => __('Please select a brand.', 'metricool'),
                 'connected_brands' => $brands,
             ]);
         }
@@ -169,7 +170,7 @@ class OnboardingController implements FeatureInterface
             // Return the brands that were found when blogId could not be automatically set, so the user can select one
             return $this->sendHttpResponse([
                 'onboarding_finished' => false,
-                'message' => __('Please select a brand.', 'metricool'), // todo: better message
+                'message' => __('Please select a brand.', 'metricool'),
                 'connected_brands' => $brands,
             ]);
         }
@@ -191,6 +192,8 @@ class OnboardingController implements FeatureInterface
     /**
      * Method is used to finish the onboarding process. It is called when the
      * user has completed the onboarding process and wants to finish it.
+     *
+     * @throws GuzzleException
      */
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
