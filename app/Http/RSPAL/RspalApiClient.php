@@ -11,7 +11,12 @@ class RspalApiClient
     /**
      * The option name for storing the InstallationID.
      */
-    public const INSTALLATION_ID_OPTION = '_metricool_rspal_installation_id';
+    private const INSTALLATION_ID_OPTION = '_metricool_rspal_installation_id';
+
+    /**
+     * The default value for the InstallationID when it is not set.
+     */
+    private const UNKNOWN_INSTALLATION_ID = 'unknown';
 
     /**
      * The Guzzle HTTP client for making API requests
@@ -36,7 +41,7 @@ class RspalApiClient
     public function __construct(EnvironmentConfig $env)
     {
         $this->env = $env;
-        $this->baseEndpoint = $this->baseEndpoint();
+        $this->baseEndpoint = $this->env->getUrl('metricool.rsp_auth_url');
         $this->client = $this->client();
     }
 
@@ -60,7 +65,6 @@ class RspalApiClient
      */
     private function request(string $path, array $params = [], string $method = 'get'): RspalApiResponse
     {
-
         // Request and store installationId if needed before any request
         if (!$this->hasInstallationId()) {
             $installation = $this->requestInstallation();
@@ -88,14 +92,6 @@ class RspalApiClient
     }
 
     /**
-     * Get the base endpoint URL for the brand API.
-     */
-    private function baseEndpoint(): string
-    {
-        return $this->env->getUrl('metricool.rsp_auth_url');
-    }
-
-    /**
      * Create a new Guzzle HTTP client instance.
      */
     private function client(): Client
@@ -116,7 +112,7 @@ class RspalApiClient
             'RSPAL-PluginVersion' => $this->env->getString('plugin.version'),
             'RSPAL-PluginPath' => $this->getPluginPathHeader(),
             'RSPAL-Origin' => trailingslashit(site_url()),
-            'RSPAL-InstallationId' => get_option('rspal_installation_id', 'unknown'),
+            'RSPAL-InstallationId' => $this->getInstallationId(),
         ];
 
         $rspalHeaders['RSPAL-Signature'] = $this->getInstallationSignature($rspalHeaders, $rspalHeaders['RSPAL-InstallationId']);
@@ -168,7 +164,7 @@ class RspalApiClient
      */
     private function hasInstallationId(): bool
     {
-        return self::getInstallationId() !== 'unknown';
+        return $this->getInstallationId() !== self::UNKNOWN_INSTALLATION_ID;
     }
 
     /**
@@ -176,6 +172,6 @@ class RspalApiClient
      */
     private function getInstallationId(): string
     {
-        return get_option(self::INSTALLATION_ID_OPTION, 'unknown');
+        return get_option(self::INSTALLATION_ID_OPTION, self::UNKNOWN_INSTALLATION_ID);
     }
 }
