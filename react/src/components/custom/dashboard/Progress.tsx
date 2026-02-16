@@ -123,7 +123,7 @@ const Progress = () => {
                             {taskData.remainingTasks.length === 0 && __("You're all set! Great job!", "metricool")}
                             {taskData.remainingTasks.length > 0 && sprintf(
                                 /*translators: variable is number of tasks*/
-                                _n("You're on your way. You still have %s task open.", "You're on your way. You still have %s tasks open.", taskData.remainingTasks.length, "metricool"), String(taskData.remainingTasks.length)
+                                _n("You're on your way. You still have %1$s task open.", "You're on your way. You still have %1$s tasks open.", taskData.remainingTasks.length, "metricool"), String(taskData.remainingTasks.length)
                             )}
                         </span>
                     </div>
