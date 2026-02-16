@@ -52,7 +52,7 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
                     {sprintf(
                         /*translators: variable is translated string of `Copy Error` */
                         __(
-                            "Copy the error details by clicking the %s button above.",
+                            "Copy the error details by clicking the %1$s button above.",
                             "metricool",
                         ),
                         __("Copy Error", "metricool"),
@@ -77,7 +77,7 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
                     {sprintf(
                         /*translators: variable is a string that should not be translated */
                         __(
-                            "Once logged in, click on %s.",
+                            "Once logged in, click on %1$s.",
                             "metricool",
                         ),
                         "'Create Topic'",
@@ -87,7 +87,7 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
                     {sprintf(
                         /*translators: variable is a string that should not be translated */
                         __(
-                            "Title: Mention %s along with a brief hint of the error.",
+                            "Title: Mention %1$s along with a brief hint of the error.",
                             "metricool",
                         ),
                         "'Error Encountered'",
@@ -103,7 +103,7 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
                     {sprintf(
                         /*translators: variable is a string that should not be translated */
                         __(
-                            "Click %s to post your topic. Our team will look into the issue and provide assistance.",
+                            "Click %1$s to post your topic. Our team will look into the issue and provide assistance.",
                             "metricool",
                         ),
                         "'Submit'",
