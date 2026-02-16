@@ -157,7 +157,7 @@ Base Style Guide
      Default font overwrite
      ======================================
      **/
-    --font-sans: Inter;
+    --font-sans: Inter, sans-serif;
     --font-weight-semibold: 500;
 
     /**
