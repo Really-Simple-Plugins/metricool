@@ -70,6 +70,7 @@ class OtherPluginService
 
     /**
      * Execute action for another plugin
+     * @throws \Exception If the plugin info could not be retrieved
      */
     public function executeAction(string $action): void
     {
@@ -96,6 +97,7 @@ class OtherPluginService
     /**
      * Download the other plugin currently stored in the plugin config
      * property.
+     * @throws \Exception If the plugin info could not be retrieved
      */
     protected function downloadCurrentPlugin(): bool
     {
@@ -110,12 +112,7 @@ class OtherPluginService
 
         set_transient($transientName, $this->pluginConfig->getString('slug'), MINUTE_IN_SECONDS);
 
-        try {
-            $pluginInfo = $this->getCurrentPluginInfo();
-        } catch (\Exception $e) {
-            return false;
-        }
-
+        $pluginInfo = $this->getCurrentPluginInfo();
         $downloadLink = esc_url_raw($pluginInfo->versions['trunk']);
 
         require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
@@ -172,7 +169,9 @@ class OtherPluginService
      */
     protected function premiumPluginIsInstalled(): bool
     {
-        return $this->pluginConfig->has('constant_premium') && defined($this->pluginConfig->getString('constant_premium'));
+        return $this->pluginConfig->has('constant_premium') && defined(
+                $this->pluginConfig->getString('constant_premium')
+            );
     }
 
     /**
@@ -197,7 +196,9 @@ class OtherPluginService
      */
     protected function pluginCanBeUpgraded(): bool
     {
-        return $this->pluginConfig->has('constant_premium') && !defined($this->pluginConfig->getString('constant_premium'));
+        return $this->pluginConfig->has('constant_premium') && !defined(
+                $this->pluginConfig->getString('constant_premium')
+            );
     }
 
     /**
