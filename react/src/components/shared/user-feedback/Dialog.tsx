@@ -71,6 +71,11 @@ const Dialog = ({
             appContainer?.classList.remove("pointer-events-none");
             wpFooter?.classList.remove("pointer-events-none");
         }
+
+        return () => {
+            appContainer?.classList.remove("pointer-events-none");
+            wpFooter?.classList.remove("pointer-events-none");
+        }
     }, [appContainer, wpFooter, open]);
 
     return (
