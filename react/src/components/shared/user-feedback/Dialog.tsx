@@ -60,7 +60,7 @@ const Dialog = ({
 }) => {
     const RENDER_DIALOG_OVERLAY = renderRadixDialogOverlayForce ?? false;
     const container = document.getElementById("wpbody") ?? undefined;
-    const appContainer = document.getElementById("metricool_app") ?? undefined;
+    const appContainer = document.getElementById("rsp-app-root") ?? undefined;
     const wpFooter = document.getElementById("wpfooter") ?? undefined;
 
     useEffect(() => {

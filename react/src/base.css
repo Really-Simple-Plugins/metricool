@@ -172,11 +172,13 @@ Base Style Guide
     --text-lg: 1.125rem;    /* 18px */
     --text-xl: 1.25rem;     /* 20px */
     --text-2xl: 1.5rem;     /* 24px */
+
     /**
     ======================================
     Feedback Colors
     ======================================
     **/
+
     /* Success colors */
     --color-rsp-success-dark: var(--color-green-700);
     --color-rsp-success: var(--color-green-500);
@@ -202,6 +204,7 @@ Base Style Guide
     Task Status Colors
     ======================================
     **/
+
     --color-rsp-task-premium: var(--color-primary);
     --color-rsp-task-special-feature: var(--color-primary);
     --color-rsp-task-open: var(--color-rsp-warning);
@@ -215,6 +218,7 @@ Base Style Guide
     Base Brand Colors
     ======================================
     **/
+
     /* Primary colors */
     --color-primary: #3C88DA;
     --color-primary-light: #DDEDFE;
@@ -235,6 +239,7 @@ Base Style Guide
     Social Media Colors
     ======================================
     **/
+    
     --color-bluesky: #1185fe;
     --color-facebook: #2074ff;
     --color-gbp: #4b8bf4;
@@ -286,13 +291,13 @@ App Root global overwrites
 **/
 
 /* Applies a WP style focus to everything within our root */
-.rsp-plugin-root *:focus-visible {
+#rsp-app-root *:focus-visible[aria-invalid="false"] {
     box-shadow: 0 0 0 2px var(--color-wordpress-blue) !important;
     outline: 2px solid transparent !important;
 }
 
 /* Applies the sans serif font (set to Inter) to our root */
-.rsp-plugin-root {
+#rsp-app-root {
     @apply font-sans
 }
 
