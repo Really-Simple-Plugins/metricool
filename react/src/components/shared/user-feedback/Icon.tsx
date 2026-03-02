@@ -13,9 +13,12 @@ import {
     faDownload,
     faFilePdf,
     faMessagesQuestion,
+    faRocketLaunch,
     faRss,
     faSparkles,
     faSquareArrowUpRight,
+    faTable,
+    faMagnifyingGlass,
 } from "@fortawesome/pro-solid-svg-icons";
 import {
     faChevronDown,
@@ -90,6 +93,9 @@ const iconMap = {
     "warning": faTriangleExclamation,
     "error": faOctagonExclamation,
     "loading": faSpinnerThird,
+    "rocket": faRocketLaunch,
+    "table": faTable,
+    "search": faMagnifyingGlass,
 };
 
 const Gbp = ({ className, ...props }: React.ComponentProps<"svg">) => (
