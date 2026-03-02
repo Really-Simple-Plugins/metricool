@@ -95,7 +95,8 @@ export const OnboardingLayout = () => {
         (<LoadingStep/>),
         (<ConnectBrandStep connectedBrands={connectedBrands}/>),
     ];
-    const signInsteps = [
+
+    const signInSteps = [
         (<SignInForm setActiveSignInStep={setActiveSignInStep} finishOnboarding={finishOnboarding}/>),
         (<ConnectBrandStep connectedBrands={connectedBrands}/>),
     ];
@@ -154,7 +155,7 @@ export const OnboardingLayout = () => {
                         {__("Sign in with your credentials", "metricool")}
                     </DialogTitle>
                 </DialogHeader>
-                {signInsteps[activeSignInStep]}
+                {signInSteps[activeSignInStep]}
             </Dialog>
             <Dialog
                 id={"onboarding-modal"}
