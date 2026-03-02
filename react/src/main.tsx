@@ -93,7 +93,7 @@ window.addEventListener("scroll", () => {
 // Wait for DOMContentLoaded to render the app
 // to allow WordPress to load properly first
 document.addEventListener("DOMContentLoaded", () => {
-    const container = document.getElementById("metricool_app");
+    const container = document.getElementById("rsp-app-root");
     if (container) {
         createRoot(container).render(
             <StrictMode>
