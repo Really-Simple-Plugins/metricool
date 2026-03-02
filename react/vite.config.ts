@@ -20,6 +20,11 @@ export default defineConfig({
         sourcemap: false,
         rollupOptions: {
             input: "./src/main.tsx",
+            output: {
+                assetFileNames: 'assets/[hash][extname]',
+                chunkFileNames: 'assets/[hash].js',
+                entryFileNames: 'assets/[hash].js'
+            },
         },
         modulePreload: {
             polyfill: false,
