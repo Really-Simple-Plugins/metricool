@@ -113,7 +113,7 @@ export const OnboardingLayout = () => {
     }, []);
 
     return (
-        <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 !gap-0"}>
+        <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 !gap-0 max-w-[125rem] mx-auto"}>
             {/* HeadContent adds the scripts defined in head in __root.tsx to the document's <head>. Only for recaptcha script, so only implemented here. */}
             <HeadContent/>
             <OnboardingHeader
@@ -135,7 +135,7 @@ export const OnboardingLayout = () => {
                 {__("The digital Swiss Army Knife for social media marketers", "metricool")}
             </OnboardingHeader>
             <div className={"w-full h-[2px] bg-[image:var(--gradient-brand-secondary)]"}></div>
-            <FlexContainer direction={"row"} className={"w-full !gap-0"}>
+            <FlexContainer direction={"row"} className={"w-full !gap-0 justify-between"}>
                 <FlexContainer direction={"column"} className={"min-w-[45%] max-w-[45%]"}>
                     <h1 className={"font-bold font-nunito text-[1.75rem] leading-8"}>{__("Join more than 2 million professionals, agencies and brands that use Metricool as their one-stop shop for social media and online ad management.", "metricool")}</h1>
                     <OnboardingForm onSubmit={(values) => onSignUp(values)}/>
