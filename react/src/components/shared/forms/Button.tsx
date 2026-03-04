@@ -47,7 +47,7 @@ type ButtonVariantsProps =
     | VariantProps<typeof ButtonVariants>;
 
 type ActionProps = ({
-    type: "submit",
+    type: "submit" | "trigger",
     link?: never,
     onClick?: never,
 } | {
@@ -79,7 +79,8 @@ const Button = ({
     link,
     onClick,
     type = "button",
-}: React.ComponentProps<"button"> & Required<Pick<ButtonVariantsProps, "variant">> & ButtonVariantsProps & ActionProps) => {
+    ...props
+}: Omit<React.ComponentProps<"button">, "type"> & Required<Pick<ButtonVariantsProps, "variant">> & ButtonVariantsProps & ActionProps) => {
     //@ts-expect-error tsc can't verify type narrowing on variant
     const classes = cn(variant in ButtonVariantStyling ? ButtonVariants({ variant, size }) : PrimitiveButtonVariants({ variant, size }), className);
 
@@ -87,10 +88,12 @@ const Button = ({
         <PrimitiveButton
             className={classes}
             {...(onClick && { onClick: onClick })}
+            type={type != "trigger" ? type : "button"}
+            {...props}
         >
             {/*span required for gradient text color to work*/}
             {variant === "primary-gradient-ghost" ?
-                <span>{children}</span>
+                <span className={"inline-flex items-center justify-center gap-2 whitespace-nowrap"}>{children}</span>
             :
                 children
             }
@@ -99,7 +102,12 @@ const Button = ({
 
     if (variant === "link" && link) {
         return (
-            <a href={link} target={"_blank"} className={classes}>
+            <a
+                href={link}
+                target={"_blank"}
+                className={classes}
+                rel={"noopener noreferrer"}
+            >
                 {children}
             </a>
         );
@@ -107,7 +115,12 @@ const Button = ({
 
     if (type === "button" && link) {
         return (
-            <a href={link} target={"_blank"} className={"flex max-w-[fit-content]"}>
+            <a
+                href={link}
+                target={"_blank"}
+                className={"flex max-w-[fit-content]"}
+                rel={"noopener noreferrer"}
+            >
                 <StyledButton/>
             </a>
         );
