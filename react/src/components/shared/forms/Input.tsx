@@ -9,7 +9,7 @@ const Input = ({ className, type, children, ...props }: React.ComponentProps<"in
     return (
         <PrimitiveInput
             className={cn(
-                "data-[slot=input]:rounded-xs px-2 shadow-none flex bg-white font-semibold text-black",
+                "data-[slot=input]:rounded-xs px-2 shadow-none flex bg-white text-md font-semibold text-black data-[slot=input]:!min-h-9",
                 "data-[slot=input]:aria-invalid:focus-visible:ring-rsp-error-dark/20 data-[slot=input]:focus-visible:aria-invalid:ring-3 data-[slot=input]:aria-invalid:border-rsp-error-dark",
                 className,
             )}
