@@ -63,6 +63,7 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
                         href={supportTicketLink}
                         className={"text-blue-600 underline hover:text-blue-800"}
                         target={"_blank"}
+                        rel={"noopener noreferrer"}
                     >
                         {__("Navigate to the Support Forum.", "metricool")}
                     </a>
