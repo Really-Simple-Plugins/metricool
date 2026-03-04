@@ -19,4 +19,5 @@ export { FetchingErrorAlert } from "@/components/shared/user-feedback/FetchingEr
 export { FormFooter } from "@/components/shared/forms/FormFooter.tsx";
 export { TabNavigation } from "@/components/shared/general/TabNavigation.tsx";
 export { ErrorBoundary } from "@/components/shared/user-feedback/ErrorBoundary.tsx";
+export { Header, HeaderTab } from "@/components/shared/general/Header.tsx";
 export { Task, type TaskProps } from "@/components/shared/dashboard/Task.tsx";

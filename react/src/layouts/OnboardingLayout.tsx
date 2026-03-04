@@ -1,7 +1,7 @@
 import { __ } from "@wordpress/i18n";
-import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
+import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer, Header } from "@/components/shared";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import { ConnectBrandStep, LoadingStep, OnboardingForm, OnboardingHeader, SignInForm, } from "@/components/custom";
+import { ConnectBrandStep, LoadingStep, OnboardingForm, SignInForm, } from "@/components/custom";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
@@ -79,9 +79,7 @@ export const OnboardingLayout = () => {
 
     const { mutate: finishOnboarding } = useMutation({
         mutationFn: async () => {
-            return await httpClient.setRoute("onboarding/finish_onboarding").setPayload({
-
-            }).post();
+            return await httpClient.setRoute("onboarding/finish_onboarding").setPayload({}).post();
         },
         onSuccess: () => {
             dispatch({ dispatchType: "setOnboardingComplete" });
@@ -116,24 +114,31 @@ export const OnboardingLayout = () => {
         <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 !gap-0 max-w-[125rem] mx-auto"}>
             {/* HeadContent adds the scripts defined in head in __root.tsx to the document's <head>. Only for recaptcha script, so only implemented here. */}
             <HeadContent/>
-            <OnboardingHeader
-                logo={{ src: `${metricool.assets_url}img/mc-logo.svg`, alt: "Metricool Logo" }}
+            <Header
+                variant={"transparent"}
+                logo={(
+                    <FlexContainer direction={"row"} className={"text-base font-bold font-nunito items-center"}>
+                        <img src={`${metricool.assets_url}img/mc-logo.svg`} alt={__("Metricool logo icon", "metricool")}/>
+                        <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={__("Metricool logo", "metricool")}/>
+                        {__("The digital Swiss Army Knife for social media marketers", "metricool")}
+                    </FlexContainer>
+                )}
                 actions={[
-                    (__("Already a Metricooler?", "metricool")),
+                    (
+                        <div className={"text-md font-[600]"}>
+                            {__("Already a Metricooler?", "metricool")}
+                        </div>),
                     (
                         <Button
                             variant={"primary-gradient-ghost"}
-                            className={"p-0 after:!bg-white after:!border-none !border-none"}
+                            className={"p-0 after:!bg-white after:!border-none !border-none font-[600]"}
                             onClick={() => setSignInModalOpen(true)}
                         >
                             {__("Sign in here", "metricool")}
                         </Button>
                     )
                 ]}
-            >
-                <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={__("Metricool logo", "metricool")}/>
-                {__("The digital Swiss Army Knife for social media marketers", "metricool")}
-            </OnboardingHeader>
+            />
             <div className={"w-full h-[2px] bg-[image:var(--gradient-brand-secondary)]"}></div>
             <FlexContainer direction={"row"} className={"w-full !gap-0 justify-between"}>
                 <FlexContainer direction={"column"} className={"min-w-[45%] max-w-[45%]"}>

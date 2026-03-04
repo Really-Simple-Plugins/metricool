@@ -8,14 +8,11 @@ export { ConnectedAccounts } from "@/components/custom/dashboard/ConnectedAccoun
 export { OtherPlugins } from "@/components/custom/dashboard/OtherPlugins.tsx";
 export { Progress } from "@/components/custom/dashboard/Progress.tsx";
 export { AccountTile } from "@/components/custom/general/AccountTile.tsx";
-export { Header } from "@/components/custom/general/Header.tsx";
-export { HeaderTab } from "@/components/custom/general/HeaderTab.tsx";
 export { ListItem } from "@/components/custom/general/ListItem.tsx";
 export { ConnectBrandStep } from "@/components/custom/onboarding/onboarding-steps/ConnectBrandStep.tsx";
 export { LoadingStep } from "@/components/custom/onboarding/onboarding-steps/LoadingStep.tsx";
 export { VerifyEmailStep } from "@/components/custom/onboarding/onboarding-steps/VerifyEmailStep.tsx";
 export { OnboardingForm } from "@/components/custom/onboarding/OnboardingForm.tsx";
-export { OnboardingHeader } from "@/components/custom/onboarding/OnboardingHeader.tsx";
 export { SignInForm } from "@/components/custom/onboarding/SignInForm.tsx";
 export { AccountSettings } from "@/components/custom/settings/AccountSettings.tsx";
 export { ConnectionsSettings } from "@/components/custom/settings/ConnectionsSettings.tsx";
