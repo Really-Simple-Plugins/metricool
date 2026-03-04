@@ -56,16 +56,13 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                                         sprintf(
                                             /*translators: the two variables are opening and closing anchor tags */
                                             __("If the error persists, please contact our %1$ssupport team%2$s.", "metricool"),
-                                            `<a href=${supportTicketLink} target="_blank">`,
+                                            `<a href=${supportTicketLink} target="_blank" rel="noopener noreferrer">`,
                                             `</a>`),
                                         { ADD_ATTR: ["target"] }
                                     )
                             }}
-                        >
-
-                        </div>
+                        />
                     </>
-
                 )}
             </Alert>
         </FlexContainer>
