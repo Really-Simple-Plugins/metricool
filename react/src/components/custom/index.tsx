@@ -11,7 +11,6 @@ export { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 export { Header } from "@/components/custom/general/Header.tsx";
 export { HeaderTab } from "@/components/custom/general/HeaderTab.tsx";
 export { ListItem } from "@/components/custom/general/ListItem.tsx";
-export { Task, type TaskProps } from "@/components/custom/general/Task.tsx";
 export { ConnectBrandStep } from "@/components/custom/onboarding/onboarding-steps/ConnectBrandStep.tsx";
 export { LoadingStep } from "@/components/custom/onboarding/onboarding-steps/LoadingStep.tsx";
 export { VerifyEmailStep } from "@/components/custom/onboarding/onboarding-steps/VerifyEmailStep.tsx";

@@ -5,11 +5,12 @@ import {
     FlexContainer,
     Icon,
     showToast,
-    TabNavigation
+    TabNavigation,
+    Task,
+    type TaskProps,
 } from "@/components/shared";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import { useState } from "react";
-import { Task, type TaskProps } from "@/components/custom/general/Task.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/main.tsx";

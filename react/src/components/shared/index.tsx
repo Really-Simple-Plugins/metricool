@@ -18,4 +18,5 @@ export { Alert } from "@/components/shared/user-feedback/Alert.tsx";
 export { FetchingErrorAlert } from "@/components/shared/user-feedback/FetchingErrorAlert.tsx";
 export { FormFooter } from "@/components/shared/forms/FormFooter.tsx";
 export { TabNavigation } from "@/components/shared/general/TabNavigation.tsx";
-export { ErrorBoundary } from "@/components/shared/user-feedback/ErrorBoundary.tsx"
+export { ErrorBoundary } from "@/components/shared/user-feedback/ErrorBoundary.tsx";
+export { Task, type TaskProps } from "@/components/shared/dashboard/Task.tsx";

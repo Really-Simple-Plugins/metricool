@@ -1,5 +1,8 @@
-import { Badge, type BadgeVariantsProps, Button, FlexContainer, Icon } from "@/components/shared";
-import { clsx } from "clsx";
+import { Badge, type BadgeVariantsProps } from "@/components/shared/user-feedback/Badge.tsx";
+import { Button } from "@/components/shared/forms/Button.tsx";
+import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
+import { Icon } from "@/components/shared/user-feedback/Icon.tsx";
+import { cn } from "@/functions/utils.ts";
 
 export type TaskProps = {
     id: string,
@@ -67,7 +70,7 @@ const Task = ({
                 >
                     {label}
                 </Badge>
-                <div className={clsx(
+                <div className={cn(
                     "font-semibold",
                     status === "dismissed" && "text-gray-400 line-through",
                 )}>
