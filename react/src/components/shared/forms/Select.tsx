@@ -16,7 +16,7 @@ type SelectProps = {
     icon?: IconProps,
 }
 
-const defaultSelectOptionClasses = "!gap-2 items-center rounded-xs py-1.5 px-2 text-sm outline-hidden select-none font-semibold cursor-pointer";
+const defaultSelectOptionClasses = "!gap-2 items-center rounded-xs py-1.5 px-2 text-md outline-hidden select-none font-semibold cursor-pointer";
 
 /**
  *
@@ -57,11 +57,21 @@ const Select = ({
     onValueChange,
     inputSize,
     icon,
+    'aria-invalid': ariaInvalid,
     ...props
 }: React.ComponentProps<typeof PrimitiveSelect> & React.ComponentProps<"select"> & SelectProps) => {
     return (
         <PrimitiveSelect onValueChange={onValueChange} {...props}>
-            <PrimitiveSelectTrigger size={inputSize} id={id} className={cn(className, "w-full shadow-none rounded-xs px-2 cursor-pointer *:data-[slot=select-value]:grow")}>
+            <PrimitiveSelectTrigger
+                size={inputSize}
+                id={id}
+                aria-invalid={ariaInvalid}
+                className={cn(
+                    className,
+                        "w-full shadow-none data-[size=default]:text-md data-[size=sm]:text-sm rounded-xs px-2 cursor-pointer *:data-[slot=select-value]:grow",
+                    "focus-visible:aria-invalid:ring-rsp-error-dark/20 focus-visible:aria-invalid:ring-3 aria-invalid:border-rsp-error-dark",
+                )}
+            >
                 {icon && <Icon icon={icon.icon} className={icon.className}/>}
                 <PrimitiveSelectValue placeholder={placeholder}/>
             </PrimitiveSelectTrigger>
