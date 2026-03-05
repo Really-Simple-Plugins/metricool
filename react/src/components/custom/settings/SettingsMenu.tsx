@@ -1,7 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Block, BlockHeader, FlexContainer } from "@/components/shared";
+import { Block, BlockHeader, FlexContainer, ListItem } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
-import { ListItem } from "@/components/custom/general/ListItem.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 
 const SettingsMenu = () => {
@@ -19,10 +18,10 @@ const SettingsMenu = () => {
                 <ListItem className={"text-md text-black cursor-pointer hover:underline"} icon={"inline-external-link"} iconPosition={"right"} link={metricoolDynamicUrl.withPath("affiliation/general")}>
                     {__("Affiliation Program", "metricool")}
                 </ListItem>
-                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"} link={metricoolDynamicUrl.withPath("user-management/users")}>
+                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5 text-black"} iconPosition={"right"} link={metricoolDynamicUrl.withPath("user-management/users")}>
                     {__("User Management", "metricool")}
                 </ListItem>
-                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5"} iconPosition={"right"} link={metricoolDynamicUrl.withPath("my-tasks/open")}>
+                <ListItem className={"text-md text-upsell font-semibold cursor-pointer hover:underline"} icon={"upsell"} iconClass={"rounded-full bg-upsell size-2.5 p-0.5 text-black"} iconPosition={"right"} link={metricoolDynamicUrl.withPath("my-tasks/open")}>
                     {__("My Tasks", "metricool")}
                 </ListItem>
             </FlexContainer>

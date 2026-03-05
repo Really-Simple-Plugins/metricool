@@ -1,5 +1,6 @@
-import { clsx } from "clsx";
-import { FlexContainer, Icon, type IconProps } from "@/components/shared";
+import { cn } from "@/functions/utils.ts";
+import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
+import { Icon, type IconProps } from "@/components/shared/user-feedback/Icon.tsx"
 
 type ListItemProps = {
     link?: string,
@@ -32,10 +33,10 @@ const ListItem = ({
     className,
 }: React.ComponentProps<"div"> & ListItemProps) => {
     return (
-        <FlexContainer direction={"row"} className={"items-center justify-between"}>
-            <FlexContainer direction={iconPosition === "right" ? "row-reverse" : "row"} className={clsx("items-center !gap-2")}>
+        <FlexContainer direction={"row"} className={cn(className, "items-center justify-between group text-md")}>
+            <FlexContainer direction={iconPosition === "right" ? "row-reverse" : "row"} className={cn("items-center !gap-2")}>
                 {icon && (
-                    <Icon icon={icon} className={clsx(iconClass,
+                    <Icon icon={icon} className={cn(iconClass,
                         icon === "circle" && "h-3 w-3",
                         iconColor === "warning" && "text-rsp-warning",
                         iconColor === "success" && "text-rsp-success",
@@ -46,11 +47,11 @@ const ListItem = ({
                     )}/>
                 )}
                 {link ? (
-                    <a href={link} target={"_blank"} className={clsx(className, "text-md")}>
+                    <a href={link} target={"_blank"} className={cn(className, "text-md")}>
                         {children}
                     </a>
                 ) : (
-                    <div className={clsx(className, "text-md")}>
+                    <div className={cn(className, "text-md")}>
                         {children}
                     </div>
                 )}

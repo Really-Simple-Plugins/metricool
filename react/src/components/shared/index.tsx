@@ -21,3 +21,4 @@ export { TabNavigation } from "@/components/shared/general/TabNavigation.tsx";
 export { ErrorBoundary } from "@/components/shared/user-feedback/ErrorBoundary.tsx";
 export { Header, HeaderTab } from "@/components/shared/general/Header.tsx";
 export { Task, type TaskProps } from "@/components/shared/dashboard/Task.tsx";
+export { ListItem } from "@/components/shared/data-visualization/ListItem.tsx";

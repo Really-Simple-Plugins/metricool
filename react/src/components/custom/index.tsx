@@ -8,7 +8,6 @@ export { ConnectedAccounts } from "@/components/custom/dashboard/ConnectedAccoun
 export { OtherPlugins } from "@/components/custom/dashboard/OtherPlugins.tsx";
 export { Progress } from "@/components/custom/dashboard/Progress.tsx";
 export { AccountTile } from "@/components/custom/general/AccountTile.tsx";
-export { ListItem } from "@/components/custom/general/ListItem.tsx";
 export { ConnectBrandStep } from "@/components/custom/onboarding/onboarding-steps/ConnectBrandStep.tsx";
 export { LoadingStep } from "@/components/custom/onboarding/onboarding-steps/LoadingStep.tsx";
 export { VerifyEmailStep } from "@/components/custom/onboarding/onboarding-steps/VerifyEmailStep.tsx";

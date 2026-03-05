@@ -1,6 +1,5 @@
-import { Block, BlockHeader, Button, FetchingErrorAlert, FlexContainer, Icon, showToast } from "@/components/shared";
+import { Block, BlockHeader, Button, FetchingErrorAlert, FlexContainer, Icon, ListItem, showToast } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
-import { ListItem } from "@/components/custom/general/ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { queryClient } from "@/main.tsx";
@@ -144,7 +143,7 @@ const OtherPlugins = () => {
             case "installed":
             case "downloading":
             case "activating": {
-                return (<span className={"text-sm"}>{pluginStatuses[plugin.action]}</span>);
+                return (<span className={"text-sm font-normal"}>{pluginStatuses[plugin.action]}</span>);
             }
             default: {
                 return (
