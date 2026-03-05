@@ -2,10 +2,10 @@ import {
     Block,
     BlockHeader,
     Button,
-    FetchingErrorAlert,
     FlexContainer,
     Icon,
-    type IconProps
+    type IconProps,
+    LoadingAndErrorState,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
@@ -92,13 +92,15 @@ const ConnectedAccounts = () => {
         <Block className={"xl:min-h-58 xl:max-h-58"}>
             <BlockHeader title={__("Connected Accounts", "metricool")}/>
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
-                {isLoading ? (
-                    <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                        <Icon icon={"loading"} className={"size-5"}/>
-                    </FlexContainer>
-                ) : error ? (
-                    <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-                ) : connectedAccountsData && (
+                {!connectedAccountsData ? (
+                    <LoadingAndErrorState
+                        error={error}
+                        isLoading={isLoading}
+                        errorUpdateCount={errorUpdateCount}
+                        refetch={refetch}
+                        supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    />
+                ) : (
                     <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
                         {connectedAccountsData.map((account) => (
                             <AccountTile {...account} link={metricoolDynamicUrl.withPath(account.metricoolWebsitePath)}/>

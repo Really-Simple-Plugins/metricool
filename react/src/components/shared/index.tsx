@@ -22,3 +22,4 @@ export { ErrorBoundary } from "@/components/shared/user-feedback/ErrorBoundary.t
 export { Header, HeaderTab } from "@/components/shared/general/Header.tsx";
 export { Task, type TaskProps } from "@/components/shared/dashboard/Task.tsx";
 export { ListItem } from "@/components/shared/data-visualization/ListItem.tsx";
+export { LoadingAndErrorState } from "@/components/shared/general/LoadingAndErrorState.tsx";

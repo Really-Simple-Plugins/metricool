@@ -1,4 +1,5 @@
 import { Block, BlockHeader, Button, FetchingErrorAlert, FlexContainer, Icon, ListItem, showToast } from "@/components/shared";
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -177,13 +178,15 @@ const OtherPlugins = () => {
                 )}
             />
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
-                {isLoading ? (
-                    <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                        <Icon icon={"loading"} className={"size-5"}/>
-                    </FlexContainer>
-                ) : error ? (
-                    <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-                ) : otherPlugins && (
+                {!otherPlugins ? (
+                    <LoadingAndErrorState
+                        error={error}
+                        isLoading={isLoading}
+                        errorUpdateCount={errorUpdateCount}
+                        refetch={refetch}
+                        supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    />
+                ) : (
                     <FlexContainer direction={"column"} className={"!gap-2"}>
                         {Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (
                             <ListItem

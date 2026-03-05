@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { Button, FetchingErrorAlert, FlexContainer, Icon, LineChart } from "@/components/shared";
+import { Button, FlexContainer, Icon, LineChart, LoadingAndErrorState } from "@/components/shared";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 
 const RealtimeTab = () => {
@@ -25,13 +25,15 @@ const RealtimeTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                    <Icon icon={"loading"} className={"size-5"}/>
-                </FlexContainer>
-            ) : error ? (
-                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-            ) : realTimeData && (
+            {!realTimeData ? (
+                <LoadingAndErrorState
+                    error={error}
+                    isLoading={isLoading}
+                    errorUpdateCount={errorUpdateCount}
+                    refetch={refetch}
+                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                />
+            ) : (
                 <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"justify-between"}>
                         <div className={"text-md font-semibold"}>{__("Last 30 Minutes", "metricool")}</div>

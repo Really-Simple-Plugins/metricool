@@ -2,10 +2,10 @@ import {
     Button,
     type ChartConfig,
     DisabledSelectOption,
-    FetchingErrorAlert,
     FlexContainer,
     Icon,
     LineChart,
+    LoadingAndErrorState,
     Select,
     SelectOption,
     showToast,
@@ -176,13 +176,15 @@ const AnalyticsTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                    <Icon icon={"loading"} className={"size-5"}/>
-                </FlexContainer>
-            ) : error ? (
-                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-            ) : hasAnalyticsData && (
+            {!hasAnalyticsData ? (
+                <LoadingAndErrorState
+                    error={error}
+                    isLoading={isLoading}
+                    errorUpdateCount={errorUpdateCount}
+                    refetch={refetch}
+                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                />
+            ) : (
                 <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>
                         {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (

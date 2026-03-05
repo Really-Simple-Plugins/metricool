@@ -3,9 +3,9 @@ import {
     type Column,
     DataTable,
     DataTableColumnHeader,
-    FetchingErrorAlert,
     FlexContainer,
-    Icon
+    Icon,
+    LoadingAndErrorState,
 } from "@/components/shared";
 import { Chart } from "react-google-charts";
 import { useQuery } from "@tanstack/react-query";
@@ -51,13 +51,15 @@ const CountriesTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow !gap-2"}>
-            {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                    <Icon icon={"loading"} className={"size-5"}/>
-                </FlexContainer>
-            ) : error ? (
-                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-            ) : countryData && (
+            {!countryData ? (
+                <LoadingAndErrorState
+                    error={error}
+                    isLoading={isLoading}
+                    errorUpdateCount={errorUpdateCount}
+                    refetch={refetch}
+                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                />
+            ) : (
                 <FlexContainer direction={"column"} className={"!gap-2"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>
                         <div className={"min-h-[185px]"}>

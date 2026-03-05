@@ -1,12 +1,11 @@
 import {
     Block,
     BlockHeader,
-    FetchingErrorAlert,
     FieldWrapper,
     FlexContainer,
     FormFooter,
-    Icon,
     Input,
+    LoadingAndErrorState,
     showToast,
     Switch
 } from "@/components/shared";
@@ -126,12 +125,14 @@ const AccountSettings = () => {
             <FlexContainer direction={"column"}>
                 <Block className={"rounded-t-md rounded-b-none"}>
                     <BlockHeader title={__("Monthly summary", "metricool")}/>
-                    {isLoading ? (
-                        <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                            <Icon icon={"loading"} className={"size-5"}/>
-                        </FlexContainer>
-                    ) : queryError ? (
-                        <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
+                    {!values ? (
+                        <LoadingAndErrorState
+                            error={queryError}
+                            isLoading={isLoading}
+                            errorUpdateCount={errorUpdateCount}
+                            refetch={refetch}
+                            supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                        />
                     ) : (
                         <FlexContainer direction={"column"}>
                             <Controller

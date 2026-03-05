@@ -1,9 +1,8 @@
 import {
     Block,
     BlockHeader,
-    FetchingErrorAlert,
     FlexContainer,
-    Icon,
+    LoadingAndErrorState,
     showToast,
     TabNavigation,
     Task,
@@ -102,13 +101,15 @@ const Progress = () => {
                     <TabNavigation activeTab={activeTab} onTabClick={onTabChange} separator={true} tabs={tabs}/>
                 )}
             />
-            {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                    <Icon icon={"loading"} className={"size-5"}/>
-                </FlexContainer>
-            ) : error ? (
-                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-            ) : taskData && (
+            {!taskData ? (
+                <LoadingAndErrorState
+                    error={error}
+                    isLoading={isLoading}
+                    errorUpdateCount={errorUpdateCount}
+                    refetch={refetch}
+                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                />
+            ) : (
                 <FlexContainer direction={"column"}>
                     <div className={"w-full bg-neutral-200 rounded-md h-5"}>
                         <div
