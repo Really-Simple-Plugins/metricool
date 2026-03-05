@@ -1,4 +1,11 @@
-import { Block, BlockHeader, Button, FetchingErrorAlert, FlexContainer, Icon, ListItem, showToast } from "@/components/shared";
+import {
+    Block,
+    BlockHeader,
+    Button,
+    FlexContainer,
+    ListItem,
+    LoadingAndErrorState,
+    showToast
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -25,6 +32,12 @@ type OtherPlugin = {
     title: string,
     upgrade_url: string,
     url: string,
+}
+
+type PluginActionArguments = {
+    slug: string,
+    action: string,
+    key: string,
 }
 
 /**
@@ -69,10 +82,7 @@ const OtherPlugins = () => {
      * todo: NL14RSP4-135 (onError, undo `action` string change from onMutate)
      */
     const { mutate: runPluginAction } = useMutation({
-        onMutate: ({ action, key }: {
-            action: string,
-            key: string,
-        }) => {
+        onMutate: ({ action, key }: PluginActionArguments) => {
             if (action === "download" || action === "activate") {
                 const currentOtherPluginsData: {
                     data: { plugins: Record<string, OtherPlugin> },
@@ -91,11 +101,7 @@ const OtherPlugins = () => {
                 queryClient.setQueryData(["other_plugins_data"], { ...currentOtherPluginsData });
             }
         },
-        mutationFn: async ({ slug, action }: {
-            slug: string,
-            action: string,
-            key: string,
-        }) => {
+        mutationFn: async ({ slug, action }: PluginActionArguments) => {
             return httpClient.setRoute("do_plugin_action").setPayload({
                 "slug": slug,
                 "action": action,
