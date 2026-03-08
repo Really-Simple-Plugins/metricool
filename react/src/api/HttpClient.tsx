@@ -220,7 +220,7 @@ class HttpClient {
             error = errorData;
         }
 
-        if (typeof errorData === 'object') {
+        if (typeof errorData === "object") {
             if (errorData.message && typeof errorData.message === "string") {
                 error = errorData.message;
             }
