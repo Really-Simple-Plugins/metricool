@@ -223,7 +223,7 @@ class HttpClient {
                 error = errorData.error;
             }
 
-            if (typeof errorData.data === "object" && errorData.data.errors) {
+            if (errorData.data && typeof errorData.data === "object" && errorData.data.errors) {
                 fields = errorData.data.errors;
             }
         }
