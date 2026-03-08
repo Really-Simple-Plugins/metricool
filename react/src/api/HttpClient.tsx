@@ -15,6 +15,8 @@ class HttpClient {
 
     private httpClientSettings: HttpClientSettings;
 
+    private headers: Record<string, string>;
+
     private getMethodHeaders: Record<string, string>;
 
     private postMethodHeaders: Record<string, string>;
@@ -42,6 +44,8 @@ class HttpClient {
             "Accept": "application/json",
             "X-WP-NONCE": settings.X_WP_NONCE,
         };
+
+        this.headers = this.getMethodHeaders;
 
         this.payload = {
             "nonce": settings.NONCE,
@@ -97,9 +101,11 @@ class HttpClient {
         this.resetRoute();
         this.resetPayload();
 
+        this.setHeaders({}, method);
+
         const response = await fetch(route, {
             method: method,
-            headers: this.postMethodHeaders,
+            headers: this.headers,
             ...(payload && {
                 body: JSON.stringify({
                     ...payload,
@@ -131,17 +137,17 @@ class HttpClient {
      * @param method - The HTTP method ('get' or 'post').
      * @returns The HttpClient instance.
      */
-    public setHeaders(headers: Record<string, string>, method: "get" | "post") {
-        if (method === "get") {
-            this.getMethodHeaders = {
+    public setHeaders(headers: Record<string, string>, method: "GET" | "PUT" | "POST" | "DELETE") {
+        if (method === "GET") {
+            this.headers = {
                 ...this.getMethodHeaders,
                 ...headers,
             };
             return this;
         }
 
-        if (method === "post") {
-            this.postMethodHeaders = {
+        if (method === "POST") {
+            this.headers = {
                 ...this.postMethodHeaders,
                 ...headers,
             };
