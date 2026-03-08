@@ -11,7 +11,7 @@ import {
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { clsx } from "clsx";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
@@ -66,36 +66,29 @@ const ConnectBrandStep = ({ connectedBrands }: ConnectBrandStepProps) => {
                 </div>
             </FlexContainer>
             <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
-                <Controller
+                <FieldWrapper
+                    label={__("Choose your brand", "metricool")}
                     control={control}
                     name={"id"}
-                    render={({ field, fieldState }) => (
-                        <FieldWrapper
-                            htmlFor={"select-brand"}
-                            label={__("Choose your brand", "metricool")}
-                            fieldState={{
-                                invalid: fieldState.invalid,
-                                error: { message: fieldState.error?.message }
+                    uniqueIdSuffix={"connected-brand"}
+                    FieldComponent={(props) => (
+                        <Select
+                            {...props}
+                            onValueChange={(value) => {
+                                props.onChange(Number(value));
                             }}
+                            className={"border-neutral-200 font-semibold !text-black"}
+                            placeholder={__("Select a brand", "metricool")}
                         >
-                            <Select
-                                onValueChange={(value) => {
-                                    field.onChange(Number(value));
-                                }}
-                                id={"select-brand"}
-                                className={"border-neutral-200 font-semibold !text-black"}
-                                placeholder={__("Select a brand", "metricool")}
-                            >
-                                {connectedBrands.map((brand) => (
-                                    <SelectOption
-                                        value={brand.id}
-                                        className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
-                                    >
-                                        {brand.label}
-                                    </SelectOption>
-                                ))}
-                            </Select>
-                        </FieldWrapper>
+                            {connectedBrands.map((brand) => (
+                                <SelectOption
+                                    value={brand.id}
+                                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
+                                >
+                                    {brand.label}
+                                </SelectOption>
+                            ))}
+                        </Select>
                     )}
                 />
                 <Button

@@ -1,6 +1,6 @@
 import { Button, FieldWrapper, FlexContainer, Icon, Input } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
@@ -56,51 +56,33 @@ const SignInForm = ({ setActiveSignInStep, finishOnboarding }: SignInFormProps) 
     return (
         <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6"}>
             <FlexContainer direction={"column"}>
-                <Controller
+                <FieldWrapper
+                    required
+                    label={__("Email", "metricool")}
                     control={control}
                     name={"credentials.email"}
-                    render={({ field, fieldState }) => (
-                        <FieldWrapper
-                            required
-                            label={__("Email", "metricool")}
-                            htmlFor={"sign-in-email"}
-                            fieldState={{
-                                invalid: fieldState.invalid,
-                                error: { message: fieldState.error?.message }
-                            }}
-                        >
-                            <Input
-                                {...field}
-                                aria-invalid={fieldState.invalid}
-                                id={"sign-in-email"}
-                                placeholder={__("Enter your email", "metricool")}
-                                className={"min-w-76 max-w-80"}
-                            />
-                        </FieldWrapper>
+                    uniqueIdSuffix={"sign-up"}
+                    FieldComponent={(props) => (
+                        <Input
+                            {...props}
+                            placeholder={__("Enter your email", "metricool")}
+                            className={"min-w-76 max-w-80"}
+                        />
                     )}
                 />
-                <Controller
+                <FieldWrapper
+                    required
+                    label={__("Password", "metricool")}
                     control={control}
                     name={"credentials.password"}
-                    render={({ field, fieldState }) => (
-                        <FieldWrapper
-                            required
-                            label={__("Password", "metricool")}
-                            htmlFor={"sign-in-password"}
-                            fieldState={{
-                                invalid: fieldState.invalid,
-                                error: { message: fieldState.error?.message }
-                            }}
-                        >
-                            <Input
-                                {...field}
-                                aria-invalid={fieldState.invalid}
-                                id={"sign-in-password"}
-                                placeholder={__("Write your password here", "metricool")}
-                                className={"min-w-76 max-w-80"}
-                                type={"password"}
-                            />
-                        </FieldWrapper>
+                    uniqueIdSuffix={"sign-up"}
+                    FieldComponent={(props) => (
+                        <Input
+                            {...props}
+                            placeholder={__("Write your password here", "metricool")}
+                            className={"min-w-76 max-w-80"}
+                            type={"password"}
+                        />
                     )}
                 />
             </FlexContainer>

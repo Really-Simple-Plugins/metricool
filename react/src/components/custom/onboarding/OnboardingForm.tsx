@@ -1,6 +1,6 @@
 import { Button, FieldWrapper, FlexContainer, Icon, Input, Switch } from "@/components/shared";
 import { __, sprintf } from "@wordpress/i18n";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import DOMPurify from "dompurify";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -42,53 +42,35 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
     return (
         <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col gap-4"}>
             <FlexContainer direction={"column"}>
-                <Controller
+                <FieldWrapper
+                    required
+                    label={__("Email", "metricool")}
                     control={control}
                     name={"credentials.email"}
-                    render={({ field, fieldState }) => (
-                        <FieldWrapper
-                            required
-                            label={__("Email", "metricool")}
-                            htmlFor={"sign-up-email"}
-                            fieldState={{
-                                invalid: fieldState.invalid,
-                                error: { message: fieldState.error?.message }
-                            }}
-                        >
-                            <Input
-                                {...field}
-                                aria-required
-                                aria-invalid={fieldState.invalid}
-                                id={"sign-up-email"}
-                                placeholder={__("Enter your email", "metricool")}
-                                className={"max-w-5/6"}
-                            />
-                        </FieldWrapper>
+                    uniqueIdSuffix={"sign-up"}
+                    FieldComponent={(props) => (
+                        <Input
+                            {...props}
+                            aria-required
+                            placeholder={__("Enter your email", "metricool")}
+                            className={"sm:max-w-5/6"}
+                        />
                     )}
                 />
-                <Controller
+                <FieldWrapper
+                    required
+                    label={__("Password", "metricool")}
                     control={control}
                     name={"credentials.password"}
-                    render={({ field, fieldState }) => (
-                        <FieldWrapper
-                            required
-                            label={__("Password", "metricool")}
-                            htmlFor={"sign-up-password"}
-                            fieldState={{
-                                invalid: fieldState.invalid,
-                                error: { message: fieldState.error?.message }
-                            }}
-                        >
-                            <Input
-                                {...field}
-                                aria-required
-                                aria-invalid={fieldState.invalid}
-                                id={"sign-up-password"}
-                                placeholder={__("Write your password here", "metricool")}
-                                className={"max-w-5/6"}
-                                type={"password"}
-                            />
-                        </FieldWrapper>
+                    uniqueIdSuffix={"sign-up"}
+                    FieldComponent={(props) => (
+                        <Input
+                            {...props}
+                            aria-required
+                            placeholder={__("Write your password here", "metricool")}
+                            className={"sm:max-w-5/6"}
+                            type={"password"}
+                        />
                     )}
                 />
             </FlexContainer>
@@ -103,83 +85,67 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                         <Icon icon={"arrow-right"}/>
                     </FlexContainer>
                 </Button>
-                <span className={"text-xs text-gray-400"}
-                      dangerouslySetInnerHTML={{
-                          __html:
-                              DOMPurify.sanitize(
-                                  sprintf(
-                                      /*translators: the two variables are links to Google's Privacy Policy and Terms of Service */
-                                      __("This page is protected by reCAPTCHA and the Google %1$s and %2$s apply.", "metricool"),
-                                      `<a href="${metricool.trusted_urls.google_privacy_policy_url}" target="_blank" rel="noopener noreferrer" class="underline">${__("Privacy Policy", "metricool")}</a>`,
-                                      `<a href="${metricool.trusted_urls.google_terms_url}" target="_blank" rel="noopener noreferrer" class="underline">${__("Terms of Service", "metricool")}</a>`
-                                  ),
-                                  { ADD_ATTR: ["target"] }
-                              )
-                      }}
+                <span
+                    className={"text-xs text-gray-400"}
+                    dangerouslySetInnerHTML={{
+                        __html:
+                            DOMPurify.sanitize(
+                                sprintf(
+                                    /*translators: the two variables are links to Google's Privacy Policy and Terms of Service */
+                                    __("This page is protected by reCAPTCHA and the Google %1$s and %2$s apply.", "metricool"),
+                                    `<a href="${metricool.trusted_urls.google_privacy_policy_url}" target="_blank" rel="noopener noreferrer" class="underline">${__("Privacy Policy", "metricool")}</a>`,
+                                    `<a href="${metricool.trusted_urls.google_terms_url}" target="_blank" rel="noopener noreferrer" class="underline">${__("Terms of Service", "metricool")}</a>`
+                                ),
+                                { ADD_ATTR: ["target"] }
+                            )
+                    }}
                 />
             </FlexContainer>
             <FlexContainer direction={"column"}>
-                <Controller
+                <FieldWrapper
                     control={control}
                     name={"terms"}
-                    render={({ field, fieldState }) => (
-                        <FieldWrapper
-                            flexDirection={"row-reverse"}
-                            className={"!gap-3 justify-end"}
-                            label={(
-                                // When links need to be displayed within translatable text, our only option is to use dangerouslySetInnerHTML.
-                                // DOMPurify is used to sanitize, with a custom hook to remove any element containing an href not specified in trusted_urls
-                                <span
-                                    className={"required-asterisk"}
-                                    dangerouslySetInnerHTML={{
-                                        __html:
-                                            DOMPurify.sanitize(
-                                                sprintf(
-                                                    /*translators: the two variables are opening and closing anchor tags */
-                                                    __("I have read and accept the %1$sLegal Terms%2$s by Metricool.", "metricool"),
-                                                    `<a href=${metricool.trusted_urls.legal_terms} target="_blank" class="underline">`,
-                                                    `</a>`),
-                                                { ADD_ATTR: ["target"] }
-                                            )
-                                    }}
-                                />
-                            )}
-                            htmlFor={"terms"}
-                            fieldState={{
-                                invalid: fieldState.invalid,
-                                error: { message: fieldState.error?.message }
+                    flexDirection={"row-reverse"}
+                    className={"!gap-3 justify-end"}
+                    FieldComponent={(props) => (
+                        <Switch
+                            {...props}
+                            aria-required
+                            checked={props.value}
+                            onCheckedChange={props.onChange}
+                        />
+                    )}
+                    label={(
+                        // When links need to be displayed within translatable text, our only option is to use dangerouslySetInnerHTML.
+                        // DOMPurify is used to sanitize, with a custom hook to remove any element containing an href not specified in trusted_urls
+                        <span
+                            className={"required-asterisk"}
+                            dangerouslySetInnerHTML={{
+                                __html:
+                                    DOMPurify.sanitize(
+                                        sprintf(
+                                            /*translators: the two variables are opening and closing anchor tags */
+                                            __("I have read and accept the %1$sLegal Terms%2$s by Metricool.", "metricool"),
+                                            `<a href=${metricool.trusted_urls.legal_terms} target="_blank" class="underline">`,
+                                            `</a>`),
+                                        { ADD_ATTR: ["target"] }
+                                    )
                             }}
-                        >
-                            <Switch
-                                aria-required
-                                id={"terms"}
-                                aria-invalid={fieldState.invalid}
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                            />
-                        </FieldWrapper>
+                        />
                     )}
                 />
-                <Controller
+                <FieldWrapper
+                    flexDirection={"row-reverse"}
+                    className={"!gap-3 justify-end"}
+                    label={__("I wish to receive communications about news and/or promotions from Metricool Software.", "metricool")}
                     control={control}
                     name={"marketing"}
-                    render={({ field, fieldState }) => (
-                        <FieldWrapper
-                            flexDirection={"row-reverse"}
-                            className={"!gap-3 justify-end"}
-                            label={__("I wish to receive communications about news and/or promotions from Metricool Software.", "metricool")}
-                            htmlFor={"marketing"}
-                            fieldState={{
-                                invalid: fieldState.invalid,
-                                error: { message: fieldState.error?.message }
-                            }}
-                        >
-                            <Switch
-                                id={"marketing"}
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                            />
-                        </FieldWrapper>
+                    FieldComponent={(props) => (
+                        <Switch
+                            {...props}
+                            checked={props.value}
+                            onCheckedChange={props.onChange}
+                        />
                     )}
                 />
             </FlexContainer>

@@ -11,7 +11,7 @@ import {
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -135,58 +135,42 @@ const AccountSettings = () => {
                         />
                     ) : (
                         <FlexContainer direction={"column"}>
-                            <Controller
+
+                            <FieldWrapper
+                                flexDirection={"row"}
+                                className={"justify-between"}
+                                label={__("Receive monthly summary", "metricool")}
                                 control={control}
                                 name={"sendToAlternativeEmail"}
-                                render={({ field, fieldState }) => (
-                                    <FieldWrapper
-                                        flexDirection={"row"}
-                                        className={"justify-between"}
-                                        label={__("Receive monthly summary", "metricool")}
-                                        htmlFor={"send-to-alternative-email"}
-                                        fieldState={{
-                                            invalid: fieldState.invalid,
-                                            error: { message: fieldState.error?.message }
-                                        }}
-                                    >
-                                        <Switch
-                                            id={"send-to-alternative-email"}
-                                            checked={field.value}
-                                            onCheckedChange={
-                                                (checked) => {
-                                                    field.onChange(checked);
-                                                    // If the switch is set to false, the alternativeEmail field is
-                                                    // reset so the form doesn't think there are unsaved changes on
-                                                    // this field or send these changes to be saved
-                                                    if (!checked) {
-                                                        resetField("alternativeEmail");
-                                                    }
+                                FieldComponent={(props) => (
+                                    <Switch
+                                        {...props}
+                                        checked={props.value}
+                                        onCheckedChange={
+                                            (checked) => {
+                                                props.onChange(checked);
+                                                // If the switch is set to false, the alternativeEmail field is
+                                                // reset so the form doesn't think there are unsaved changes on
+                                                // this field or send these changes to be saved
+                                                if (!checked) {
+                                                    resetField("alternativeEmail");
                                                 }
                                             }
-                                        />
-                                    </FieldWrapper>
+                                        }
+                                    />
                                 )}
                             />
                             {/* Render the email input field only if the value of sendToAlternativeEmail is true */}
                             {getValues().sendToAlternativeEmail && (
-                                <Controller
+                                <FieldWrapper
+                                    label={__("Custom e-mail for the monthly summary", "metricool")}
                                     control={control}
                                     name={"alternativeEmail"}
-                                    render={({ field, fieldState }) => (
-                                        <FieldWrapper
-                                            label={__("Custom e-mail for the monthly summary", "metricool")}
-                                            htmlFor={"alternative-email"}
-                                            fieldState={{
-                                                invalid: fieldState.invalid,
-                                                error: { message: fieldState.error?.message }
-                                            }}
-                                        >
-                                            <Input
-                                                {...field}
-                                                id={"alternative-email"}
-                                                placeholder={__("Placeholder", "metricool")}
-                                            />
-                                        </FieldWrapper>
+                                    FieldComponent={(props) => (
+                                        <Input
+                                            {...props}
+                                            placeholder={__("Placeholder", "metricool")}
+                                        />
                                     )}
                                 />
                             )}
