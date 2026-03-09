@@ -143,7 +143,7 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 type PartialGlobalState = Partial<GlobalState>;
 
 interface ReducerAction {
-    dispatchType: string,
+    dispatchType: "setOnboardingComplete" | "setDashboardModalClosed" | "setDashboardSetting",
     change?: PartialGlobalState,
 }
 
