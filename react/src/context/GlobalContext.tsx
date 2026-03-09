@@ -91,13 +91,17 @@ const initialGlobalState: GlobalState = {
 
 const setTranslations = () => {
     METRICOOL_DATA.json_translations.forEach((translationString: string) => {
-        const translations = JSON.parse(translationString);
-        const localeData = translations.locale_data?.metricool;
-        if (!localeData) {
-            return;
+        try {
+            const translations = JSON.parse(translationString);
+            const localeData = translations.locale_data?.metricool;
+            if (!localeData) {
+                return;
+            }
+            localeData[""].domain = "metricool";
+            setLocaleData(localeData, "metricool");
+        } catch (error) {
+            console.error(error);
         }
-        localeData[""].domain = "metricool";
-        setLocaleData(localeData, "metricool");
     });
 }
 
