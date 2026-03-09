@@ -4,7 +4,7 @@ import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { ConnectBrandStep, LoadingStep, OnboardingForm, SignInForm, } from "@/components/custom";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
+import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import { z } from "zod";
 import { HeadContent } from "@tanstack/react-router";
 

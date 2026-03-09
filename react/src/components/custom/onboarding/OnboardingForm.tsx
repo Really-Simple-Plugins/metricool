@@ -5,7 +5,7 @@ import DOMPurify from "dompurify";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import OnboardingSchema from "./OnboardingSchema.ts";
+import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 
 const onboardingFormSchema = OnboardingSchema.omit({ brand: true });
 

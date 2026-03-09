@@ -3,7 +3,7 @@ import { __ } from "@wordpress/i18n";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
+import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import { type UseMutateFunction, useMutation } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import type { Dispatch, SetStateAction } from "react";

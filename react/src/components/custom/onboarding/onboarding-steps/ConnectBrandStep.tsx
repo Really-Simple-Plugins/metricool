@@ -14,7 +14,7 @@ import { clsx } from "clsx";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
+import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import { useMutation } from "@tanstack/react-query";
 
 const brandSchema = OnboardingSchema.shape.brand;
