@@ -15,11 +15,9 @@ class HttpClient {
 
     private httpClientSettings: HttpClientSettings;
 
-    private headers: Record<string, string>;
+    private headers: Record<string, Record<string, string>>;
 
-    private getMethodHeaders: Record<string, string>;
-
-    private postMethodHeaders: Record<string, string>;
+    private originalHeaders: Record<string, Record<string, string>>;
 
     private payload: Record<string, unknown>;
 
@@ -35,17 +33,18 @@ class HttpClient {
             X_WP_NONCE: settings.X_WP_NONCE
         };
 
-        this.getMethodHeaders = {
-            "X-WP-NONCE": settings.X_WP_NONCE,
+        this.headers = {
+            get: {
+                "X-WP-NONCE": settings.X_WP_NONCE,
+            },
+            post: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-WP-NONCE": settings.X_WP_NONCE,
+            },
         };
 
-        this.postMethodHeaders = {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "X-WP-NONCE": settings.X_WP_NONCE,
-        };
-
-        this.headers = this.getMethodHeaders;
+        this.originalHeaders = this.headers;
 
         this.payload = {
             "nonce": settings.NONCE,
@@ -101,11 +100,12 @@ class HttpClient {
         this.resetRoute();
         this.resetPayload();
 
-        this.setHeaders({}, method);
+        const headers = this.getHeaders(method);
+        this.resetHeaders();
 
         const response = await fetch(route, {
             method: method,
-            headers: this.headers,
+            headers: headers,
             ...(payload && {
                 body: JSON.stringify({
                     ...payload,
@@ -132,29 +132,37 @@ class HttpClient {
     }
 
     /**
-     * Sets custom headers for GET or POST requests.
+     * Sets custom headers for requests.
      * @param headers - The headers to be set.
-     * @param method - The HTTP method ('get' or 'post').
+     * @param method - The HTTP method ("GET", "PUT", "POST", "DELETE").
      * @returns The HttpClient instance.
      */
     public setHeaders(headers: Record<string, string>, method: "GET" | "PUT" | "POST" | "DELETE") {
         if (method === "GET") {
-            this.headers = {
-                ...this.getMethodHeaders,
+            this.headers.get = {
+                ...this.headers.get,
                 ...headers,
             };
             return this;
         }
 
-        if (method === "POST") {
-            this.headers = {
-                ...this.postMethodHeaders,
-                ...headers,
-            };
-            return this;
-        }
-
+        this.headers.post = {
+            ...this.headers.post,
+            ...headers,
+        };
         return this;
+    }
+
+    /**
+     * Retrieves the right headers based on the method passed.
+     * @param method - The HTTP method, "GET" | "PUT" | "POST" | "DELETE"
+     * @private
+     */
+    private getHeaders(method: "GET" | "PUT" | "POST" | "DELETE") {
+        if (method === "GET") {
+            return this.headers.get;
+        }
+        return this.headers.post;
     }
 
     /**
@@ -205,6 +213,15 @@ class HttpClient {
      */
     private resetRoute() {
         this.route = null;
+    }
+
+    /**
+     * Reset headers back to {@link this.originalHeaders}.
+     * Needs to be called after every request, as one client instance can
+     * be used for multiple different endpoints.
+     */
+    private resetHeaders() {
+        this.headers = this.originalHeaders;
     }
 
     /**
