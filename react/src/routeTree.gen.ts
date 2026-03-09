@@ -120,7 +120,7 @@ declare module '@tanstack/react-router' {
     '/_authorized': {
       id: '/_authorized'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthorizedRouteImport
       parentRoute: typeof rootRouteImport
     }
