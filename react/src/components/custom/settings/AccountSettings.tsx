@@ -135,14 +135,13 @@ const AccountSettings = () => {
                         />
                     ) : (
                         <FlexContainer direction={"column"}>
-
                             <FieldWrapper
                                 flexDirection={"row"}
                                 className={"justify-between"}
                                 label={__("Receive monthly summary", "metricool")}
                                 control={control}
                                 name={"sendToAlternativeEmail"}
-                                FieldComponent={(props) => (
+                                render={(props) => (
                                     <Switch
                                         {...props}
                                         checked={props.value}
@@ -166,7 +165,7 @@ const AccountSettings = () => {
                                     label={__("Custom e-mail for the monthly summary", "metricool")}
                                     control={control}
                                     name={"alternativeEmail"}
-                                    FieldComponent={(props) => (
+                                    render={(props) => (
                                         <Input
                                             {...props}
                                             placeholder={__("Placeholder", "metricool")}

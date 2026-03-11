@@ -62,7 +62,7 @@ const SignInForm = ({ setActiveSignInStep, finishOnboarding }: SignInFormProps) 
                     control={control}
                     name={"credentials.email"}
                     uniqueIdSuffix={"sign-up"}
-                    FieldComponent={(props) => (
+                    render={(props) => (
                         <Input
                             {...props}
                             placeholder={__("Enter your email", "metricool")}
@@ -76,7 +76,7 @@ const SignInForm = ({ setActiveSignInStep, finishOnboarding }: SignInFormProps) 
                     control={control}
                     name={"credentials.password"}
                     uniqueIdSuffix={"sign-up"}
-                    FieldComponent={(props) => (
+                    render={(props) => (
                         <Input
                             {...props}
                             placeholder={__("Write your password here", "metricool")}

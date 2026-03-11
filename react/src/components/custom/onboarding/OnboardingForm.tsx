@@ -48,7 +48,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                     control={control}
                     name={"credentials.email"}
                     uniqueIdSuffix={"sign-up"}
-                    FieldComponent={(props) => (
+                    render={(props) => (
                         <Input
                             {...props}
                             aria-required
@@ -63,7 +63,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                     control={control}
                     name={"credentials.password"}
                     uniqueIdSuffix={"sign-up"}
-                    FieldComponent={(props) => (
+                    render={(props) => (
                         <Input
                             {...props}
                             aria-required
@@ -107,7 +107,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                     name={"terms"}
                     flexDirection={"row-reverse"}
                     className={"!gap-3 justify-end"}
-                    FieldComponent={(props) => (
+                    render={(props) => (
                         <Switch
                             {...props}
                             aria-required
@@ -140,7 +140,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                     label={__("I wish to receive communications about news and/or promotions from Metricool Software.", "metricool")}
                     control={control}
                     name={"marketing"}
-                    FieldComponent={(props) => (
+                    render={(props) => (
                         <Switch
                             {...props}
                             checked={props.value}

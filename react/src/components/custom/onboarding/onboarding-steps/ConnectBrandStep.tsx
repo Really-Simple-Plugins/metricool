@@ -71,7 +71,7 @@ const ConnectBrandStep = ({ connectedBrands }: ConnectBrandStepProps) => {
                     control={control}
                     name={"id"}
                     uniqueIdSuffix={"connected-brand"}
-                    FieldComponent={(props) => (
+                    render={(props) => (
                         <Select
                             {...props}
                             onValueChange={(value) => {

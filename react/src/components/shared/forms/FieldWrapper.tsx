@@ -3,13 +3,12 @@ import {
     FieldError as PrimitiveFieldError,
     FieldLabel as PrimitiveFieldLabel,
 } from "@/components/shared/primitives/field.tsx";
-import { type ComponentProps, type ComponentType, type ReactNode, useCallback, useState } from "react";
-import { camelCaseToHyphenated, cn } from "@/functions/utils.ts";
+import { type ComponentProps, type ReactNode, useState } from "react";
+import { camelCaseToHyphenated, cn } from "@/support/functions/utils.ts";
 import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
 import {
     type Control,
     Controller,
-    type ControllerFieldState,
     type ControllerRenderProps,
     type FieldValues,
     type Path
@@ -55,7 +54,7 @@ type FieldWrapperProps<T extends FieldValues> = {
     control: Control<T>,
     name: Path<T>,
     uniqueIdSuffix?: string,
-    FieldComponent: ComponentType<FieldComponentProps>,
+    render: (args: FieldComponentProps) => ReactNode,
 };
 
 /**
@@ -70,24 +69,9 @@ const FieldWrapper = <T extends FieldValues>({
     label,
     control,
     uniqueIdSuffix = "",
-    FieldComponent,
+    render,
 }: ComponentProps<"input"> & ComponentProps<"label"> & FieldWrapperProps<T>) => {
     const fieldId = camelCaseToHyphenated(name + uniqueIdSuffix);
-
-    const ComponentToRender = useCallback(
-        ({ field, fieldState }: {
-                field: ControllerRenderProps<T, (string & Path<T>) | (undefined & Path<T>)>,
-                fieldState: ControllerFieldState
-            }
-        ) => (
-            <FieldComponent
-                aria-invalid={fieldState.invalid}
-                id={fieldId}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-                value={field.value}
-            />
-        ), []);
 
     return (
         <Controller
@@ -100,10 +84,13 @@ const FieldWrapper = <T extends FieldValues>({
                             <PrimitiveFieldLabel htmlFor={fieldId} className={cn("!gap-1 font-semibold text-md text-black", required && "required-asterisk")}>
                                 {label}
                             </PrimitiveFieldLabel>
-                            <ComponentToRender
-                                field={field}
-                                fieldState={fieldState}
-                            />
+                            {render({
+                                'aria-invalid': fieldState.invalid,
+                                id:fieldId,
+                                onChange: field.onChange,
+                                onBlur:field.onBlur,
+                                value: field.value
+                            })}
                         </FlexContainer>
                         <FieldError fieldState={fieldState}/>
                     </PrimitiveField>
