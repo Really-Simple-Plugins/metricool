@@ -46,10 +46,7 @@ const FieldError = ({ fieldState }: FieldErrorProps) => {
 type FieldComponentProps = {
     "aria-invalid": boolean,
     id: string,
-    onChange: ControllerRenderProps["onChange"],
-    onBlur: ControllerRenderProps["onBlur"],
-    value: ControllerRenderProps["value"],
-};
+} & Pick<ControllerRenderProps, "onChange" | "onBlur" | "value">;
 
 
 type FieldWrapperProps<T extends FieldValues> = {
