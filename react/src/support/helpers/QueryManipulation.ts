@@ -1,5 +1,5 @@
 import type { Notice } from "@/components/custom";
-import { queryClient } from "../main.tsx";
+import { queryClient } from "../../main.tsx";
 
 export const setNoticeToVisible = (noticeId: string) => {
     const noticeData: { data: Notice[] } | undefined = queryClient.getQueryData(["notices"]);
