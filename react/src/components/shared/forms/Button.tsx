@@ -46,6 +46,17 @@ type ButtonVariantsProps =
     | VariantProps<typeof PrimitiveButtonVariants>
     | VariantProps<typeof ButtonVariants>;
 
+/**
+ * A 'discriminating union type' which ensures that if the type is "button" (default)
+ * a Button component can only have either a link or an onClick prop, not both,
+ * and with type "submit" or "trigger" it can have neither.
+ *
+ * Type "trigger" was added as several shadcn components use buttons as triggers
+ * for certain interactivity. These are given an action by the component itself
+ * so they should not be given either a link or an onClick prop, which this
+ * union type only allowed with type "submit", which was not right for the
+ * behaviour.
+ */
 type ActionProps = ({
     type: "submit" | "trigger",
     link?: never,
@@ -88,7 +99,8 @@ const Button = ({
         <PrimitiveButton
             className={classes}
             {...(onClick && { onClick: onClick })}
-            type={type != "trigger" ? type : "button"}
+            // we need to pass "button" if the type prop has "trigger" as value because "trigger" isn't a valid type for the base HTML button element
+            type={type !== "trigger" ? type : "button"}
             {...props}
         >
             {/*span required for gradient text color to work*/}
