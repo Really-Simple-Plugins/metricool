@@ -1,6 +1,6 @@
 import { Badge as PrimitiveBadge, badgeVariants as PrimitiveBadgeVariants } from "@/components/shared/primitives/badge.tsx";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 const BadgeVariantStyling = {
     "open": "bg-rsp-task-open text-black",

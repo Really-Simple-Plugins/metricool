@@ -1,7 +1,7 @@
 import { Button, FlexContainer, Icon, type IconProps } from "@/components/shared";
 import { clsx } from "clsx";
 import { __, sprintf } from "@wordpress/i18n";
-import { isFirstCharacterAVowel } from "@/functions/utils.ts";
+import { isFirstCharacterAVowel } from "@/support/functions/utils.ts";
 
 type AccountTileProps = {
     label: string,

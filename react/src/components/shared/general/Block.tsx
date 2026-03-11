@@ -5,7 +5,7 @@ import {
     CardTitle as PrimitiveCardTitle
 } from "@/components/shared/primitives/card.tsx";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 /**
  * Custom extension of shadcn's {@link PrimitiveCardTitle} component.

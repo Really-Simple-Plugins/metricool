@@ -4,7 +4,7 @@ import {
     AccordionItem as PrimitiveAccordionItem,
     AccordionTrigger as PrimitiveAccordionTrigger,
 } from "@/components/shared/primitives/accordion.tsx";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 type AccordionProps = {
     title: string,

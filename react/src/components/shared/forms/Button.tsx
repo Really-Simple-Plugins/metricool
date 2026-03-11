@@ -3,7 +3,7 @@ import {
     buttonVariants as PrimitiveButtonVariants
 } from "@/components/shared/primitives/button.tsx";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 const ButtonVariantStyling = {
     "primary": "bg-primary border-primary hover:bg-primary-light hover:text-primary hover:border-primary-light",

@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from "react";
 import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
-import { cn } from "@/functions/utils"
+import { cn } from "@/support/functions/utils"
 import { Button } from "@/components/shared/forms/Button.tsx";
 
 type TabNavigationProps = {

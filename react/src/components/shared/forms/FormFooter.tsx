@@ -2,7 +2,7 @@ import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
 import { Button } from "@/components/shared/forms/Button.tsx";
 import { useEffect, useState } from "react";
 import { __ } from "@wordpress/i18n";
-import { cn, getScrollProgressPercent } from "@/functions/utils";
+import { cn, getScrollProgressPercent } from "@/support/functions/utils";
 
 /**
  *

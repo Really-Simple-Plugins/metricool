@@ -1,5 +1,5 @@
 import { Input as PrimitiveInput } from "@/components/shared/primitives/input.tsx";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 /**
  *

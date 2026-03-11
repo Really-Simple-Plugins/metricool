@@ -12,9 +12,9 @@
   },
   "aliases": {
     "components": "@/components/shared/general",
-    "utils": "@/functions/utils",
+    "utils": "@/support/functions/utils",
     "ui": "@/components/shared/general",
-    "lib": "@/functions",
+    "lib": "@/support/functions",
     "hooks": "@/hooks"
   },
   "registries": {

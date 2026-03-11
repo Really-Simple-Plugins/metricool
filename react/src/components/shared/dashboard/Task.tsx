@@ -2,7 +2,7 @@ import { Badge, type BadgeVariantsProps } from "@/components/shared/user-feedbac
 import { Button } from "@/components/shared/forms/Button.tsx";
 import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
 import { Icon } from "@/components/shared/user-feedback/Icon.tsx";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 export type TaskProps = {
     id: string,

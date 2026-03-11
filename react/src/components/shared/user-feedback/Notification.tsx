@@ -1,7 +1,7 @@
 import { Alert as PrimitiveAlert, alertVariants as PrimitiveAlertVariants } from "@/components/shared/primitives/alert.tsx";
 import { cva, type VariantProps } from "class-variance-authority";
 import { SingleAccordion } from "@/components/shared/user-feedback/Accordion.tsx";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 const NotificationVariantStyling = {
     "info": "border-rsp-info-light bg-rsp-info-light",

@@ -5,7 +5,7 @@ import {
     SelectTrigger as PrimitiveSelectTrigger,
     SelectValue as PrimitiveSelectValue,
 } from "@/components/shared/primitives/select.tsx";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 import * as React from "react";
 import { Icon, type IconProps } from "@/components/shared/user-feedback/Icon.tsx";
 import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";

@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { cn } from "@/functions/utils.ts"
+import { cn } from "@/support/functions/utils.ts"
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (

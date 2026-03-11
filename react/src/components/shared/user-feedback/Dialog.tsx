@@ -8,7 +8,7 @@ import {
     DialogTrigger as PrimitiveDialogTrigger,
 } from "@/components/shared/primitives/dialog.tsx";
 import { RemoveScroll } from "react-remove-scroll";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 import * as React from "react";
 import { useEffect } from "react";
 import { Close as RadixDialogClose, Content as RadixDialogContent } from "@radix-ui/react-dialog";

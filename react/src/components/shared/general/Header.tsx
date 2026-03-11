@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { Icon } from "@/components/shared/user-feedback/Icon.tsx";
 import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const HeaderTab = ({ link, children, className, external = false, badge }: React.ComponentProps<"div"> & {

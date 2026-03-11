@@ -5,7 +5,7 @@ import {
     alertVariants as PrimitiveAlertVariants
 } from "@/components/shared/primitives/alert.tsx";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 const AlertVariantStyling = {
     success: "bg-rsp-success-light text-rsp-success-dark *:data-[slot=alert-description]:text-rsp-success-dark",

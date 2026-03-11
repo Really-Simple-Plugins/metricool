@@ -1,4 +1,4 @@
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
 import { Icon, type IconProps } from "@/components/shared/user-feedback/Icon.tsx"
 
