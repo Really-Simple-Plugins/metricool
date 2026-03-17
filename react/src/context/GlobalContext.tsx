@@ -43,7 +43,6 @@ type MetricoolData = {
     blogId: string,
     userId: string,
     from_legacy_upgrade: boolean,
-
 };
 
 interface GlobalState {
