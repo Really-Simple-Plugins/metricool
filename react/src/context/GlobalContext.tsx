@@ -43,6 +43,7 @@ const defaultMetricoolData = {
     locale: "",
     blogId: "",
     userId: "",
+    from_legacy_upgrade: false,
 };
 
 interface GlobalState {

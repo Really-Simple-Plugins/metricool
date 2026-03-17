@@ -273,6 +273,7 @@ class DashboardController implements ControllerInterface
                 'locale' => str_replace("_", "-", get_user_locale()),
                 'blogId' => (defined('METRICOOL_BLOG_ID') && !empty(METRICOOL_BLOG_ID) ? METRICOOL_BLOG_ID : ""),
                 'userId' => (defined('METRICOOL_USER_ID') && !empty(METRICOOL_USER_ID) ? METRICOOL_USER_ID : ""),
+                'from_legacy_upgrade' => true,
             ]
         );
     }
