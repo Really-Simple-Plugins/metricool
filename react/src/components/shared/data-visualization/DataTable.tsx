@@ -45,7 +45,13 @@ const DataTableColumnHeader = <TData, TValue>({
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
             {title}
-            <Icon icon={"sort"}/>
+            <Button
+                variant={"icon"}
+                size={"icon"}
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+            >
+                <Icon icon={"sort"}/>
+            </Button>
         </div>
     );
 };
@@ -141,29 +147,30 @@ const DataTable = <TData, TValue>({ data, columns, tableSettings }: DataTablePro
             </div>
             <div className={"flex items-center justify-end gap-2"}>
                 <div className={"flex items-center justify-center text-sm font-semibold"}>
-                    {sprintf(__("Page %s of %s", "metricool"), [String(table.getState().pagination.pageIndex === 0 ? 0 : table.getState().pagination.pageIndex + 1), String(table.getPageCount())])}
+                    {sprintf(
+                        /*translators: variables are page numbers*/
+                        __("Page %1$s of %2$s", "metricool"), [String(table.getState().pagination.pageIndex === 0 ? 0 : table.getState().pagination.pageIndex + 1), String(table.getPageCount())]
+                    )}
                 </div>
                 <div className={"flex gap-1"}>
                     <Button
                         variant={"icon"}
                         size={"icon"}
-                        icon={"left"}
-                        iconPosition={"left"}
-                        className={"bg-primary-light text-primary p-1.5"}
-                        iconClass={"size-3"}
+                        className={"bg-primary-light text-primary !p-1.5"}
                         onClick={() => table.previousPage()}
                         disabled={!table.getCanPreviousPage()}
-                    />
+                    >
+                        <Icon icon={"left"} className={"size-3"}/>
+                    </Button>
                     <Button
                         variant={"icon"}
                         size={"icon"}
-                        icon={"right"}
-                        iconPosition={"right"}
-                        className={"bg-primary-light text-primary p-1.5"}
-                        iconClass={"size-3"}
+                        className={"bg-primary-light text-primary !p-1.5"}
                         onClick={() => table.nextPage()}
                         disabled={!table.getCanNextPage()}
-                    />
+                    >
+                        <Icon icon={"right"} className={"size-3"}/>
+                    </Button>
                 </div>
             </div>
         </div>

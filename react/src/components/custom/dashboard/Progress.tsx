@@ -1,15 +1,15 @@
 import {
     Block,
     BlockHeader,
-    FetchingErrorAlert,
     FlexContainer,
-    Icon,
+    LoadingAndErrorState,
     showToast,
-    TabNavigation
+    TabNavigation,
+    Task,
+    type TaskProps,
 } from "@/components/shared";
 import { __, _n, sprintf } from "@wordpress/i18n";
 import { useState } from "react";
-import { Task, type TaskProps } from "@/components/custom/general/Task.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/main.tsx";
@@ -29,7 +29,7 @@ import { queryClient } from "@/main.tsx";
  * Displays everything in a {@link Block} with a fixed height (500px)
  */
 const Progress = () => {
-    const { httpClient, metricool } = useGlobalContext();
+    const { httpClient, metricool, dispatch, dashboardSettings } = useGlobalContext();
     // The 'enabled' option ensures the connected accounts call, which updates the
     // first_connection task in the database if a connection is detected, will
     // always finish first before tasks are actually fetched so users receive
@@ -79,7 +79,7 @@ const Progress = () => {
 
     // This state saves the activeTab's index in the tabs array.
     // Initiated as 1 for the Remaining Tasks.
-    const [activeTab, setActiveTab] = useState(1);
+    const [activeTab, setActiveTab] = useState(dashboardSettings.activeProgressTab ?? 1);
     const tabs = [{
         title: `${__("All Tasks", "metricool")} (${taskData?.tasks.length})`,
     }, {
@@ -87,6 +87,10 @@ const Progress = () => {
     }];
     const onTabChange = (tabIndex: number) => {
         setActiveTab(tabIndex);
+        dispatch({
+            dispatchType: "setDashboardSetting",
+            change: { dashboardSettings: { activeProgressTab: tabIndex } }
+        });
     };
 
     return (
@@ -97,13 +101,15 @@ const Progress = () => {
                     <TabNavigation activeTab={activeTab} onTabClick={onTabChange} separator={true} tabs={tabs}/>
                 )}
             />
-            {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                    <Icon icon={"loading"} className={"size-5"}/>
-                </FlexContainer>
-            ) : error ? (
-                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-            ) : taskData && (
+            {!taskData ? (
+                <LoadingAndErrorState
+                    error={error}
+                    isLoading={isLoading}
+                    errorUpdateCount={errorUpdateCount}
+                    refetch={refetch}
+                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                />
+            ) : (
                 <FlexContainer direction={"column"}>
                     <div className={"w-full bg-neutral-200 rounded-md h-5"}>
                         <div
@@ -115,13 +121,16 @@ const Progress = () => {
                         <span className={"font-bold text-2xl w-min"}>
                             {taskData.completionPercentage}%
                         </span>
-                        <span className="text-xl font-medium">
+                        <span className={"text-xl font-medium"}>
                             {taskData.remainingTasks.length === 0 && __("You're all set! Great job!", "metricool")}
-                            {taskData.remainingTasks.length > 0 && sprintf(_n("You're on your way. You still have %s task open.", "You're on your way. You still have %s tasks open.", taskData.remainingTasks.length, "metricool"), String(taskData.remainingTasks.length))}
+                            {taskData.remainingTasks.length > 0 && sprintf(
+                                /*translators: variable is number of tasks*/
+                                _n("You're on your way. You still have %1$s task open.", "You're on your way. You still have %1$s tasks open.", taskData.remainingTasks.length, "metricool"), String(taskData.remainingTasks.length)
+                            )}
                         </span>
                     </div>
                     {/* Task List */}
-                    <div className="max-h-[300px] flex flex-col overflow-y-auto gap-4 pr-3">
+                    <div className={"max-h-[300px] flex flex-col overflow-y-auto gap-4 pr-3"}>
                         {/* using spread operators, the array of tasks to display is built dynamically
                             if All Tasks is selected (activeTab === 0), the completed tasks are added on.
                             This way, no extra filtering needs to be done.

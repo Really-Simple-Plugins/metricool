@@ -2,9 +2,8 @@ import {
     Block,
     BlockHeader,
     Button,
-    FetchingErrorAlert,
     FlexContainer,
-    Icon,
+    Icon, LoadingAndErrorState,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
@@ -193,13 +192,15 @@ const ConnectionsSettings = () => {
                         description={__("The accounts that are connected to Metricool", "metricool")}
                     />
                     <FlexContainer direction={"column"}>
-                        {isLoading ? (
-                            <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                                <Icon icon={"loading"} className={"size-5"}/>
-                            </FlexContainer>
-                        ) : error ? (
-                            <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-                        ) : connectedAccountsData && (
+                        {!connectedAccountsData ? (
+                            <LoadingAndErrorState
+                                error={error}
+                                isLoading={isLoading}
+                                errorUpdateCount={errorUpdateCount}
+                                refetch={refetch}
+                                supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                            />
+                        ) : (
                             <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
                                 {connectedAccountsData.map((account) => (
                                     <AccountTile {...account} link={metricoolDynamicUrl.withPath(account.metricoolWebsitePath)}/>
@@ -210,12 +211,13 @@ const ConnectionsSettings = () => {
                     <FlexContainer direction={"row"} className={"justify-end"}>
                         <Button
                             variant={"primary-gradient-ghost"}
-                            icon={"external-link"}
-                            iconPosition={"right"}
-                            iconClass={"svg-gradient"}
                             link={metricoolDynamicUrl.withPath("evolution/settings/connections")}
                         >
-                            {__("Connected Accounts", "metricool")}
+                            <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                                {__("Connected Accounts", "metricool")}
+                                <Icon icon={"external-link"} className={"svg-gradient"}/>
+                            </FlexContainer>
+
                         </Button>
                     </FlexContainer>
                 </Block>

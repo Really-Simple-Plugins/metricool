@@ -23,4 +23,4 @@ const ToastContainer = ({ ...props }: React.ComponentProps<typeof PrimitiveToast
     );
 };
 
-export { ToastContainer, toast };
+export { ToastContainer, toast as showToast };

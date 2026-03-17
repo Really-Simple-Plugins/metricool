@@ -2,23 +2,29 @@ import {
     Button,
     DialogHeader,
     DialogTitle,
+    FieldWrapper,
     FlexContainer,
+    Icon,
     Select,
     SelectOption,
-    FieldWrapper
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { clsx } from "clsx";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
+import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
+import { useMutation } from "@tanstack/react-query";
 
-const brandSchema = OnboardingSchema.pick({ brand: true });
+const brandSchema = OnboardingSchema.shape.brand;
 
-const ConnectBrandStep = () => {
-    const { dispatch, metricool } = useGlobalContext();
+type ConnectBrandStepProps = {
+    connectedBrands: z.infer<typeof brandSchema>[],
+};
+
+const ConnectBrandStep = ({ connectedBrands }: ConnectBrandStepProps) => {
+    const { httpClient, dispatch, metricool } = useGlobalContext();
 
     const {
         handleSubmit,
@@ -27,14 +33,24 @@ const ConnectBrandStep = () => {
     } = useForm<z.infer<typeof brandSchema>>({
         resolver: zodResolver(brandSchema),
         defaultValues: {
-            brand: "",
+            id: undefined,
         },
     });
 
-    const onSubmit = (values: z.infer<typeof brandSchema>) => {
-        console.log(values);
-        dispatch({dispatchType: "setOnboardingComplete"});
-    }
+    const { mutate: onSubmit } = useMutation({
+        mutationFn: async (formValues: z.infer<typeof brandSchema>) => {
+            console.log(formValues);
+            return httpClient.setRoute("onboarding/finish_onboarding").setPayload({
+                blogId: formValues.id,
+            }).post();
+        },
+        onSuccess: () => {
+            dispatch({ dispatchType: "setOnboardingComplete" });
+        },
+        onError: (error) => {
+            console.error(error);
+        }
+    });
 
     return (
         <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center"}>
@@ -50,52 +66,44 @@ const ConnectBrandStep = () => {
                 </div>
             </FlexContainer>
             <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
-                <Controller
+                <FieldWrapper
+                    label={__("Choose your brand", "metricool")}
                     control={control}
-                    name={"brand"}
-                    render={({ field, fieldState }) => (
-                        <FieldWrapper
-                            htmlFor={"select-brand"}
-                            label={__("Choose your brand", "metricool")}
-                            fieldState={{
-                                invalid: fieldState.invalid,
-                                error: { message: fieldState.error?.message }
+                    name={"id"}
+                    uniqueIdSuffix={"connected-brand"}
+                    render={(props) => (
+                        <Select
+                            {...props}
+                            onValueChange={(value) => {
+                                props.onChange(Number(value));
                             }}
+                            className={"border-neutral-200 font-semibold !text-black"}
+                            placeholder={__("Select a brand", "metricool")}
                         >
-                            <Select
-                                onValueChange={field.onChange}
-                                id={"select-brand"}
-                                className={"border-neutral-200 font-semibold !text-black"}
-                                placeholder={__("Select a brand", "metricool")}
-                            >
+                            {connectedBrands.map((brand) => (
                                 <SelectOption
-                                    value={"1"}
+                                    value={brand.id}
                                     className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
                                 >
-                                    {__("Brand one", "metricool")}
+                                    {brand.label}
                                 </SelectOption>
-                                <SelectOption
-                                    value={"2"}
-                                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
-                                >
-                                    {__("Brand two", "metricool")}
-                                </SelectOption>
-                            </Select>
-                        </FieldWrapper>
+                            ))}
+                        </Select>
                     )}
                 />
                 <Button
                     variant={"black"}
                     type={"submit"}
-                    icon={"arrow-right"}
-                    iconPosition={"right"}
-                    disabled={!dirtyFields.brand}
+                    disabled={!dirtyFields.id}
                 >
-                    {__("Finish", "metricool")}
+                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                        {__("Finish", "metricool")}
+                        <Icon icon={"arrow-right"}/>
+                    </FlexContainer>
                 </Button>
             </form>
         </FlexContainer>
     );
-}
+};
 
 export { ConnectBrandStep };

@@ -8,7 +8,7 @@ import {
     DialogTrigger as PrimitiveDialogTrigger,
 } from "@/components/shared/primitives/dialog.tsx";
 import { RemoveScroll } from "react-remove-scroll";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 import * as React from "react";
 import { useEffect } from "react";
 import { Close as RadixDialogClose, Content as RadixDialogContent } from "@radix-ui/react-dialog";
@@ -60,7 +60,7 @@ const Dialog = ({
 }) => {
     const RENDER_DIALOG_OVERLAY = renderRadixDialogOverlayForce ?? false;
     const container = document.getElementById("wpbody") ?? undefined;
-    const appContainer = document.getElementById("metricool_app") ?? undefined;
+    const appContainer = document.getElementById("rsp-app-root") ?? undefined;
     const wpFooter = document.getElementById("wpfooter") ?? undefined;
 
     useEffect(() => {
@@ -68,6 +68,11 @@ const Dialog = ({
             appContainer?.classList.add("pointer-events-none");
             wpFooter?.classList.add("pointer-events-none");
         } else {
+            appContainer?.classList.remove("pointer-events-none");
+            wpFooter?.classList.remove("pointer-events-none");
+        }
+
+        return () => {
             appContainer?.classList.remove("pointer-events-none");
             wpFooter?.classList.remove("pointer-events-none");
         }
@@ -81,7 +86,7 @@ const Dialog = ({
                     <RadixDialogContent
                         data-slot={"dialog-content"}
                         className={cn(
-                            "selection:bg-primary selection:text-primary-foreground",
+                            "font-sans selection:bg-primary selection:text-primary-foreground",
                             "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 absolute top-[calc(50vh+var(--scroll-progress-in-pixels))] left-[50%] z-50 grid w-full max-sm:max-w-[calc(100%-2rem)] sm:min-w-[600px] sm:max-w-[600px] min-h-[400px] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-xs border p-6 shadow-lg duration-200",
                             className
                         )}

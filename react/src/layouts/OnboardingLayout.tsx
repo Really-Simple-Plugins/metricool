@@ -1,18 +1,26 @@
 import { __ } from "@wordpress/i18n";
-import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
+import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer, Header } from "@/components/shared";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import {
-    ConnectBrandStep,
-    LoadingStep,
-    OnboardingForm,
-    OnboardingHeader,
-    SignInForm,
-    VerifyEmailStep
-} from "@/components/custom";
-import { useState } from "react";
+import { ConnectBrandStep, LoadingStep, OnboardingForm, SignInForm, } from "@/components/custom";
+import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import OnboardingSchema from "@/components/custom/onboarding/OnboardingSchema.ts";
+import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import { z } from "zod";
+import { HeadContent } from "@tanstack/react-router";
+
+const generateRecaptchaToken = async (): Promise<string> => (
+    new Promise((resolve) => {
+        // @ts-expect-error grecaptcha globally defined through script
+        grecaptcha.enterprise.ready(
+            () =>
+                void (async () => {
+                    // @ts-expect-error grecaptcha globally defined through script
+                    const token = await grecaptcha.enterprise.execute("6LflMV4sAAAAAMyPohHfMRVjZQBcu-YuZz_3nTTK", { action: "signup" });
+                    resolve(token);
+                })(),
+        );
+    })
+);
 
 /**
  * The Onboarding Layout.
@@ -20,7 +28,7 @@ import { z } from "zod";
  * Used in {@link Index}, conditionally rendered based on the user's
  * subscriptions data.
  *
- * Contains a {@link OnboardingHeader}
+ * Contains a {@link Header}
  *
  * Contains a {@link useMutation} to make the sign-up request.
  *
@@ -30,15 +38,65 @@ import { z } from "zod";
  *
  */
 export const OnboardingLayout = () => {
-    const { metricool, dispatch } = useGlobalContext();
+    const { metricool, httpClient, dispatch } = useGlobalContext();
     const [signInModalOpen, setSignInModalOpen] = useState<boolean>(false);
     const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
-    const [enteredEmail, setEnteredEmail] = useState<string>("");
-    const [activeStep, setActiveStep] = useState<number>(0);
+    // const [enteredEmail, setEnteredEmail] = useState<string>("");
+    const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
+    const [activeSignInStep, setActiveSignInStep] = useState<number>(0);
+    const [connectedBrands, setConnectedBrands] = useState<z.infer<typeof OnboardingSchema.shape.brand>[]>([]);
+
+    const { mutate: onSignUp } = useMutation({
+        onMutate: () => {
+            // setEnteredEmail(formValues.credentials.email);
+            setActiveOnboardingStep(0);
+            setOnboardingModalOpen(true);
+        },
+        mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
+            const token = await generateRecaptchaToken();
+
+            return await httpClient.setRoute("onboarding/create_account").setPayload({
+                email: formValues.credentials.email,
+                password: formValues.credentials.password,
+                marketing: formValues.marketing,
+                captcha: token,
+                terms: formValues.terms,
+            }).post();
+        },
+        onSuccess: async (response) => {
+            console.log(response);
+            if (response.data.finish_onboarding === false) {
+                setConnectedBrands(response.data.connected_brands);
+                setActiveOnboardingStep(1);
+            } else {
+                finishOnboarding();
+            }
+        },
+        onError: (error) => {
+            console.error(error);
+        }
+    });
+
+    const { mutate: finishOnboarding } = useMutation({
+        mutationFn: async () => {
+            return await httpClient.setRoute("onboarding/finish_onboarding").setPayload({}).post();
+        },
+        onSuccess: () => {
+            dispatch({ dispatchType: "setOnboardingComplete" });
+        },
+        onError: (error) => {
+            console.error(error);
+        }
+    });
+
     const onboardingSteps = [
-        (<VerifyEmailStep enteredEmail={enteredEmail}/>),
         (<LoadingStep/>),
-        (<ConnectBrandStep/>),
+        (<ConnectBrandStep connectedBrands={connectedBrands}/>),
+    ];
+
+    const signInSteps = [
+        (<SignInForm setActiveSignInStep={setActiveSignInStep} finishOnboarding={finishOnboarding}/>),
+        (<ConnectBrandStep connectedBrands={connectedBrands}/>),
     ];
 
     // const legacyUpgradeSteps = [
@@ -56,50 +114,51 @@ export const OnboardingLayout = () => {
     //     ),
     // ];
 
-    const { mutate: onSubmit } = useMutation({
-        mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
-            setEnteredEmail(formValues.credentials.email);
-            setOnboardingModalOpen(true);
-            // const response = await httpClient.setRoute("").setPayload({
-            // }).post();
-            const timer = new Promise(resolve => setTimeout(resolve, 8000));
-            await timer;
-
-            return formValues;
-        },
-        onSuccess: async (response) => {
-            console.log(response);
-            setActiveStep(1);
-            const timer = new Promise(resolve => setTimeout(resolve, 8000));
-            await timer;
-            setActiveStep(2);
-        },
-        onError: (error) => {
-            console.error(error);
-        }
-    });
+    useEffect(() => {
+        return () => {
+            const leftoverRecaptchaScript = document.querySelector("script[src*='recaptcha']");
+            if (leftoverRecaptchaScript) {
+                leftoverRecaptchaScript.remove();
+            }
+            // @ts-expect-error grecaptcha globally defined by script
+            delete window.grecaptcha;
+        };
+    }, []);
 
     return (
-        <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 !gap-0"}>
-            <OnboardingHeader
-                logo={{ src: `${metricool.assets_url}img/mc-logo.svg`, alt: "Metricool Logo" }}
+        <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 !gap-0 max-w-[125rem] mx-auto"}>
+            {/* HeadContent adds the scripts defined in head in __root.tsx to the document's <head>. Only for recaptcha script, so only implemented here. */}
+            <HeadContent/>
+            <Header
+                variant={"transparent"}
+                logo={(
+                    <FlexContainer direction={"row"} className={"text-base font-bold font-nunito items-center"}>
+                        <img src={`${metricool.assets_url}img/mc-logo.svg`} alt={__("Metricool logo icon", "metricool")}/>
+                        <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={__("Metricool logo", "metricool")}/>
+                        {__("The digital Swiss Army Knife for social media marketers", "metricool")}
+                    </FlexContainer>
+                )}
                 actions={[
-                    (__("Already a Metricooler?", "metricool")),
                     (
-                        <Button variant={"primary-gradient-ghost"} className={"p-0 after:!bg-white after:!border-none !border-none"} onClick={() => setSignInModalOpen(true)}>
+                        <div className={"text-md font-[600]"}>
+                            {__("Already a Metricooler?", "metricool")}
+                        </div>),
+                    (
+                        <Button
+                            variant={"primary-gradient-ghost"}
+                            className={"p-0 after:!bg-white after:!border-none !border-none font-[600]"}
+                            onClick={() => setSignInModalOpen(true)}
+                        >
                             {__("Sign in here", "metricool")}
                         </Button>
                     )
                 ]}
-            >
-                <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={__("Metricool logo", "metricool")}/>
-                {__("The digital Swiss Army Knife for social media marketers", "metricool")}
-            </OnboardingHeader>
+            />
             <div className={"w-full h-[2px] bg-[image:var(--gradient-brand-secondary)]"}></div>
-            <FlexContainer direction={"row"} className={"w-full !gap-0"}>
+            <FlexContainer direction={"row"} className={"w-full !gap-0 justify-between"}>
                 <FlexContainer direction={"column"} className={"min-w-[45%] max-w-[45%]"}>
                     <h1 className={"font-bold font-nunito text-[1.75rem] leading-8"}>{__("Join more than 2 million professionals, agencies and brands that use Metricool as their one-stop shop for social media and online ad management.", "metricool")}</h1>
-                    <OnboardingForm onSubmit={(values) => onSubmit(values)}/>
+                    <OnboardingForm onSubmit={(values) => onSignUp(values)}/>
                 </FlexContainer>
                 <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={__("Laptop and phone displaying the Metricool app", "metricool")}/>
             </FlexContainer>
@@ -116,10 +175,7 @@ export const OnboardingLayout = () => {
                         {__("Sign in with your credentials", "metricool")}
                     </DialogTitle>
                 </DialogHeader>
-                <SignInForm onSubmit={(values) => {
-                    console.log(values);
-                    dispatch({ dispatchType: "setOnboardingComplete" });
-                }}/>
+                {signInSteps[activeSignInStep]}
             </Dialog>
             <Dialog
                 id={"onboarding-modal"}
@@ -127,7 +183,7 @@ export const OnboardingLayout = () => {
                 showCloseButton={false}
                 className={"flex flex-col justify-center items-center"}
             >
-                {onboardingSteps[activeStep]}
+                {onboardingSteps[activeOnboardingStep]}
             </Dialog>
         </FlexContainer>
     );

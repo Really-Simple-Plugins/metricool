@@ -11,67 +11,84 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as SettingsIndexRouteImport } from './routes/settings/index'
+import { Route as AuthorizedRouteImport } from './routes/_authorized'
+import { Route as AuthorizedSettingsIndexRouteImport } from './routes/_authorized/settings/index'
 
-const SettingsRouteLazyRouteImport = createFileRoute('/settings')()
 const IndexLazyRouteImport = createFileRoute('/')()
-const SettingsConnectionsLazyRouteImport = createFileRoute(
-  '/settings/connections',
+const AuthorizedSettingsRouteLazyRouteImport = createFileRoute(
+  '/_authorized/settings',
 )()
-const SettingsAccountLazyRouteImport = createFileRoute('/settings/account')()
+const AuthorizedSettingsConnectionsLazyRouteImport = createFileRoute(
+  '/_authorized/settings/connections',
+)()
+const AuthorizedSettingsAccountLazyRouteImport = createFileRoute(
+  '/_authorized/settings/account',
+)()
 
-const SettingsRouteLazyRoute = SettingsRouteLazyRouteImport.update({
-  id: '/settings',
-  path: '/settings',
+const AuthorizedRoute = AuthorizedRouteImport.update({
+  id: '/_authorized',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() =>
-  import('./routes/settings/route.lazy').then((d) => d.Route),
+  import('./routes/_authorized/route.lazy').then((d) => d.Route),
 )
 const IndexLazyRoute = IndexLazyRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
-const SettingsIndexRoute = SettingsIndexRouteImport.update({
+const AuthorizedSettingsRouteLazyRoute =
+  AuthorizedSettingsRouteLazyRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthorizedRoute,
+  } as any).lazy(() =>
+    import('./routes/_authorized/settings/route.lazy').then((d) => d.Route),
+  )
+const AuthorizedSettingsIndexRoute = AuthorizedSettingsIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => SettingsRouteLazyRoute,
+  getParentRoute: () => AuthorizedSettingsRouteLazyRoute,
 } as any)
-const SettingsConnectionsLazyRoute = SettingsConnectionsLazyRouteImport.update({
-  id: '/connections',
-  path: '/connections',
-  getParentRoute: () => SettingsRouteLazyRoute,
-} as any).lazy(() =>
-  import('./routes/settings/connections.lazy').then((d) => d.Route),
-)
-const SettingsAccountLazyRoute = SettingsAccountLazyRouteImport.update({
-  id: '/account',
-  path: '/account',
-  getParentRoute: () => SettingsRouteLazyRoute,
-} as any).lazy(() =>
-  import('./routes/settings/account.lazy').then((d) => d.Route),
-)
+const AuthorizedSettingsConnectionsLazyRoute =
+  AuthorizedSettingsConnectionsLazyRouteImport.update({
+    id: '/connections',
+    path: '/connections',
+    getParentRoute: () => AuthorizedSettingsRouteLazyRoute,
+  } as any).lazy(() =>
+    import('./routes/_authorized/settings/connections.lazy').then(
+      (d) => d.Route,
+    ),
+  )
+const AuthorizedSettingsAccountLazyRoute =
+  AuthorizedSettingsAccountLazyRouteImport.update({
+    id: '/account',
+    path: '/account',
+    getParentRoute: () => AuthorizedSettingsRouteLazyRoute,
+  } as any).lazy(() =>
+    import('./routes/_authorized/settings/account.lazy').then((d) => d.Route),
+  )
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexLazyRoute
-  '/settings': typeof SettingsRouteLazyRouteWithChildren
-  '/settings/account': typeof SettingsAccountLazyRoute
-  '/settings/connections': typeof SettingsConnectionsLazyRoute
-  '/settings/': typeof SettingsIndexRoute
+  '/settings': typeof AuthorizedSettingsRouteLazyRouteWithChildren
+  '/settings/account': typeof AuthorizedSettingsAccountLazyRoute
+  '/settings/connections': typeof AuthorizedSettingsConnectionsLazyRoute
+  '/settings/': typeof AuthorizedSettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexLazyRoute
-  '/settings/account': typeof SettingsAccountLazyRoute
-  '/settings/connections': typeof SettingsConnectionsLazyRoute
-  '/settings': typeof SettingsIndexRoute
+  '/settings/account': typeof AuthorizedSettingsAccountLazyRoute
+  '/settings/connections': typeof AuthorizedSettingsConnectionsLazyRoute
+  '/settings': typeof AuthorizedSettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexLazyRoute
-  '/settings': typeof SettingsRouteLazyRouteWithChildren
-  '/settings/account': typeof SettingsAccountLazyRoute
-  '/settings/connections': typeof SettingsConnectionsLazyRoute
-  '/settings/': typeof SettingsIndexRoute
+  '/_authorized': typeof AuthorizedRouteWithChildren
+  '/_authorized/settings': typeof AuthorizedSettingsRouteLazyRouteWithChildren
+  '/_authorized/settings/account': typeof AuthorizedSettingsAccountLazyRoute
+  '/_authorized/settings/connections': typeof AuthorizedSettingsConnectionsLazyRoute
+  '/_authorized/settings/': typeof AuthorizedSettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -86,24 +103,25 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/settings'
-    | '/settings/account'
-    | '/settings/connections'
-    | '/settings/'
+    | '/_authorized'
+    | '/_authorized/settings'
+    | '/_authorized/settings/account'
+    | '/_authorized/settings/connections'
+    | '/_authorized/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexLazyRoute: typeof IndexLazyRoute
-  SettingsRouteLazyRoute: typeof SettingsRouteLazyRouteWithChildren
+  AuthorizedRoute: typeof AuthorizedRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteLazyRouteImport
+    '/_authorized': {
+      id: '/_authorized'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthorizedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -113,48 +131,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexLazyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/settings/': {
-      id: '/settings/'
+    '/_authorized/settings': {
+      id: '/_authorized/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthorizedSettingsRouteLazyRouteImport
+      parentRoute: typeof AuthorizedRoute
+    }
+    '/_authorized/settings/': {
+      id: '/_authorized/settings/'
       path: '/'
       fullPath: '/settings/'
-      preLoaderRoute: typeof SettingsIndexRouteImport
-      parentRoute: typeof SettingsRouteLazyRoute
+      preLoaderRoute: typeof AuthorizedSettingsIndexRouteImport
+      parentRoute: typeof AuthorizedSettingsRouteLazyRoute
     }
-    '/settings/connections': {
-      id: '/settings/connections'
+    '/_authorized/settings/connections': {
+      id: '/_authorized/settings/connections'
       path: '/connections'
       fullPath: '/settings/connections'
-      preLoaderRoute: typeof SettingsConnectionsLazyRouteImport
-      parentRoute: typeof SettingsRouteLazyRoute
+      preLoaderRoute: typeof AuthorizedSettingsConnectionsLazyRouteImport
+      parentRoute: typeof AuthorizedSettingsRouteLazyRoute
     }
-    '/settings/account': {
-      id: '/settings/account'
+    '/_authorized/settings/account': {
+      id: '/_authorized/settings/account'
       path: '/account'
       fullPath: '/settings/account'
-      preLoaderRoute: typeof SettingsAccountLazyRouteImport
-      parentRoute: typeof SettingsRouteLazyRoute
+      preLoaderRoute: typeof AuthorizedSettingsAccountLazyRouteImport
+      parentRoute: typeof AuthorizedSettingsRouteLazyRoute
     }
   }
 }
 
-interface SettingsRouteLazyRouteChildren {
-  SettingsAccountLazyRoute: typeof SettingsAccountLazyRoute
-  SettingsConnectionsLazyRoute: typeof SettingsConnectionsLazyRoute
-  SettingsIndexRoute: typeof SettingsIndexRoute
+interface AuthorizedSettingsRouteLazyRouteChildren {
+  AuthorizedSettingsAccountLazyRoute: typeof AuthorizedSettingsAccountLazyRoute
+  AuthorizedSettingsConnectionsLazyRoute: typeof AuthorizedSettingsConnectionsLazyRoute
+  AuthorizedSettingsIndexRoute: typeof AuthorizedSettingsIndexRoute
 }
 
-const SettingsRouteLazyRouteChildren: SettingsRouteLazyRouteChildren = {
-  SettingsAccountLazyRoute: SettingsAccountLazyRoute,
-  SettingsConnectionsLazyRoute: SettingsConnectionsLazyRoute,
-  SettingsIndexRoute: SettingsIndexRoute,
+const AuthorizedSettingsRouteLazyRouteChildren: AuthorizedSettingsRouteLazyRouteChildren =
+  {
+    AuthorizedSettingsAccountLazyRoute: AuthorizedSettingsAccountLazyRoute,
+    AuthorizedSettingsConnectionsLazyRoute:
+      AuthorizedSettingsConnectionsLazyRoute,
+    AuthorizedSettingsIndexRoute: AuthorizedSettingsIndexRoute,
+  }
+
+const AuthorizedSettingsRouteLazyRouteWithChildren =
+  AuthorizedSettingsRouteLazyRoute._addFileChildren(
+    AuthorizedSettingsRouteLazyRouteChildren,
+  )
+
+interface AuthorizedRouteChildren {
+  AuthorizedSettingsRouteLazyRoute: typeof AuthorizedSettingsRouteLazyRouteWithChildren
 }
 
-const SettingsRouteLazyRouteWithChildren =
-  SettingsRouteLazyRoute._addFileChildren(SettingsRouteLazyRouteChildren)
+const AuthorizedRouteChildren: AuthorizedRouteChildren = {
+  AuthorizedSettingsRouteLazyRoute:
+    AuthorizedSettingsRouteLazyRouteWithChildren,
+}
+
+const AuthorizedRouteWithChildren = AuthorizedRoute._addFileChildren(
+  AuthorizedRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexLazyRoute: IndexLazyRoute,
-  SettingsRouteLazyRoute: SettingsRouteLazyRouteWithChildren,
+  AuthorizedRoute: AuthorizedRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

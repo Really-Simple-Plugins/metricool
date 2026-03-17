@@ -2,57 +2,57 @@ import React, { createContext, type Dispatch, useContext, useEffect, useReducer,
 import HttpClient from "@/api/HttpClient.tsx";
 import { setLocaleData } from "@wordpress/i18n";
 import type { PeriodFilterOption } from "@/components/custom";
-import DynamicUrl from "@/helpers/DynamicUrl.tsx";
+import DynamicUrl from "@/support/helpers/DynamicUrl.tsx";
 
 // @ts-expect-error the metricool variable is globally set in the DashboardController
 // but the tsc complains it can't find it
 const METRICOOL_DATA = window.metricool.values;
 const METRICOOL_API_URL = METRICOOL_DATA.rest_url + METRICOOL_DATA.rest_namespace + "/" + METRICOOL_DATA.rest_version + "/";
-// @ts-expect-error same as above
-// setting to undefined so it is no longer accessible in the browser devtools console
-window.metricool = undefined;
 
-interface GlobalContext {
+export interface GlobalContext {
     globalState: GlobalState,
-    metricool: typeof defaultMetricoolData,
+    metricool: MetricoolData,
     httpClient: GlobalState["httpClient"],
     dispatch: Dispatch<ReducerAction>,
     dashboardSettings: GlobalState["dashboardSettings"],
     metricoolDynamicUrl: GlobalState["metricoolDynamicUrl"],
 }
 
-const defaultMetricoolData = {
-    nonce: "",
-    x_wp_nonce: "",
-    ajax_url: "",
-    rest_url: "",
-    rest_namespace: "",
-    rest_version: "",
-    site_url: "",
-    assets_url: "",
-    json_translations: [],
+type MetricoolData = {
+    nonce: string,
+    x_wp_nonce: string,
+    ajax_url: string,
+    rest_url: string,
+    rest_namespace: string,
+    rest_version: string,
+    site_url: string,
+    assets_url: string,
+    json_translations: string[],
     trusted_urls: {
-        legal_terms: "",
-        new_support_ticket: "",
+        legal_terms: string,
+        new_support_ticket: string,
+        google_privacy_policy_url: string,
+        google_terms_url: string,
     },
-    is_onboarding_completed: false,
-    was_dashboard_modal_closed: false,
-    support: "",
-    metricool_base_url: "",
-    metricool_help_url: "",
-    locale: "",
-    blogId: "",
-    userId: "",
-    from_legacy_upgrade: false,
+    is_onboarding_completed: boolean,
+    was_dashboard_modal_closed: boolean,
+    support: string,
+    metricool_base_url: string,
+    metricool_help_url: string,
+    locale: string,
+    blogId: string,
+    userId: string,
+    from_legacy_upgrade: boolean,
+
 };
 
 interface GlobalState {
-    metricool: typeof defaultMetricoolData;
+    metricool: MetricoolData;
     httpClient: HttpClient;
     dashboardSettings: {
-        analytics?: {
-            activePeriodFilter?: PeriodFilterOption,
-        }
+        activePeriodFilter?: PeriodFilterOption,
+        activeWebsiteAnalyticsTab?: number,
+        activeProgressTab?: number,
     };
     metricoolDynamicUrl: DynamicUrl,
 }
@@ -76,7 +76,7 @@ export const useGlobalContext = () => {
 };
 
 const initialGlobalState: GlobalState = {
-    metricool: defaultMetricoolData,
+    metricool: METRICOOL_DATA,
     httpClient: new HttpClient({
         NONCE: METRICOOL_DATA.nonce,
         X_WP_NONCE: METRICOOL_DATA.x_wp_nonce,
@@ -91,6 +91,22 @@ const initialGlobalState: GlobalState = {
     }),
 };
 
+const setTranslations = () => {
+    METRICOOL_DATA.json_translations.forEach((translationString: string) => {
+        try {
+            const translations = JSON.parse(translationString);
+            const localeData = translations.locale_data?.metricool;
+            if (!localeData) {
+                return;
+            }
+            localeData[""].domain = "metricool";
+            setLocaleData(localeData, "metricool");
+        } catch (error) {
+            console.error(error);
+        }
+    });
+}
+
 /**
  * The main Global Context Component
  * Gives its children access to all items specified in the GlobalContext interface
@@ -103,8 +119,15 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
     );
 
     useEffect(() => {
-        dispatch({ dispatchType: "setMetricoolVariables", change: { metricool: { ...METRICOOL_DATA } } });
-        dispatch({ dispatchType: "setTranslations" });
+        setTranslations();
+
+        const metricoolScriptElement = document.querySelector("script[id='metricool-main-script-js-extra']");
+        if (metricoolScriptElement) {
+            metricoolScriptElement.remove();
+        }
+        // @ts-expect-error same as above
+        // setting to undefined so it is no longer accessible in the browser devtools console
+        window.metricool = undefined;
     }, []);
 
     return (
@@ -126,41 +149,17 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 type PartialGlobalState = Partial<GlobalState>;
 
 interface ReducerAction {
-    dispatchType: string,
+    dispatchType: "setOnboardingComplete" | "setDashboardModalClosed" | "setDashboardSetting",
     change?: PartialGlobalState,
 }
 
 const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalState => {
     switch (action.dispatchType) {
-        case "setMetricoolVariables": {
-            if (!action.change) {
-                throw new Error("No new values provided");
-            }
-            if (!action.change.metricool) {
-                return { ...state };
-            }
-            return { ...state, metricool: { ...action.change.metricool } };
-        }
         case "setOnboardingComplete": {
             return { ...state, metricool: { ...state.metricool, is_onboarding_completed: true } };
         }
         case "setDashboardModalClosed": {
             return { ...state, metricool: { ...state.metricool, was_dashboard_modal_closed: true } };
-        }
-        case "setTranslations": {
-            if (!state.metricool) {
-                throw new Error("No metricool data");
-            }
-            state.metricool.json_translations.forEach((translationString) => {
-                const translations = JSON.parse(translationString);
-                const localeData = translations.locale_data?.metricool;
-                if (!localeData) {
-                    return;
-                }
-                localeData[""].domain = "metricool";
-                setLocaleData(localeData, "metricool");
-            });
-            return { ...state };
         }
         case "setDashboardSetting": {
             if (!action.change) {

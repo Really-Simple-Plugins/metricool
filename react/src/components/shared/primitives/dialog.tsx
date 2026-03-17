@@ -2,7 +2,7 @@ import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { Icon } from "@/components/shared/user-feedback/Icon.tsx"
 
-import { cn } from "@/functions/utils.ts"
+import { cn } from "@/support/functions/utils.ts"
 
 function Dialog({
   ...props

@@ -1,6 +1,13 @@
-import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, showToast } from "@/components/shared";
+import {
+    Block,
+    BlockHeader,
+    Button,
+    FlexContainer,
+    ListItem,
+    LoadingAndErrorState,
+    showToast
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
-import { ListItem } from "@/components/custom/general/ListItem.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { queryClient } from "@/main.tsx";
@@ -25,6 +32,12 @@ type OtherPlugin = {
     title: string,
     upgrade_url: string,
     url: string,
+}
+
+type PluginActionArguments = {
+    slug: string,
+    action: string,
+    key: string,
 }
 
 /**
@@ -69,10 +82,7 @@ const OtherPlugins = () => {
      * todo: NL14RSP4-135 (onError, undo `action` string change from onMutate)
      */
     const { mutate: runPluginAction } = useMutation({
-        onMutate: ({ action, key }: {
-            action: string,
-            key: string,
-        }) => {
+        onMutate: ({ action, key }: PluginActionArguments) => {
             if (action === "download" || action === "activate") {
                 const currentOtherPluginsData: {
                     data: { plugins: Record<string, OtherPlugin> },
@@ -91,11 +101,7 @@ const OtherPlugins = () => {
                 queryClient.setQueryData(["other_plugins_data"], { ...currentOtherPluginsData });
             }
         },
-        mutationFn: async ({ slug, action }: {
-            slug: string,
-            action: string,
-            key: string,
-        }) => {
+        mutationFn: async ({ slug, action }: PluginActionArguments) => {
             return httpClient.setRoute("do_plugin_action").setPayload({
                 "slug": slug,
                 "action": action,
@@ -131,22 +137,35 @@ const OtherPlugins = () => {
     const getOtherPluginAction = (plugin: OtherPlugin, pluginKey: string) => {
         switch (plugin.action) {
             case "upgrade-to-premium": {
-                return () => {
-                    window.open(plugin.upgrade_url, "_blank");
-                    window.focus();
-                };
+                return (
+                    <Button
+                        className={"text-sm"}
+                        variant={"link"}
+                        link={plugin.upgrade_url}
+                    >
+                        {pluginStatuses[plugin.action]}
+                    </Button>
+                );
             }
             case "installed":
             case "downloading":
             case "activating": {
-                return undefined;
+                return (<span className={"text-sm font-normal"}>{pluginStatuses[plugin.action]}</span>);
             }
             default: {
-                return () => runPluginAction({
-                    slug: plugin.slug,
-                    action: plugin.action,
-                    key: pluginKey,
-                });
+                return (
+                    <Button
+                        className={"text-sm"}
+                        variant={"link"}
+                        onClick={() => runPluginAction({
+                            slug: plugin.slug,
+                            action: plugin.action,
+                            key: pluginKey,
+                        })}
+                    >
+                        {pluginStatuses[plugin.action]}
+                    </Button>
+                );
             }
 
         }
@@ -165,13 +184,15 @@ const OtherPlugins = () => {
                 )}
             />
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
-                {isLoading ? (
-                    <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                        <Icon icon={"loading"} className={"size-5"}/>
-                    </FlexContainer>
-                ) : error ? (
-                    <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-                ) : otherPlugins && (
+                {!otherPlugins ? (
+                    <LoadingAndErrorState
+                        error={error}
+                        isLoading={isLoading}
+                        errorUpdateCount={errorUpdateCount}
+                        refetch={refetch}
+                        supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    />
+                ) : (
                     <FlexContainer direction={"column"} className={"!gap-2"}>
                         {Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (
                             <ListItem
@@ -179,7 +200,6 @@ const OtherPlugins = () => {
                                 iconColor={pluginData.options_prefix.split("_")[0]}
                                 iconPosition={"left"}
                                 action={getOtherPluginAction(pluginData, pluginKey)}
-                                actionText={pluginStatuses[pluginData.action]}
                                 className={"font-semibold"}
                             >
                                 {pluginData.title}

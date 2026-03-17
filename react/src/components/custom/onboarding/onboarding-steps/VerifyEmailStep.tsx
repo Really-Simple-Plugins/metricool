@@ -1,6 +1,6 @@
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation } from "@tanstack/react-query";
-import { Alert, Button, DialogHeader, DialogTitle, FlexContainer } from "@/components/shared";
+import { Alert, Button, DialogHeader, DialogTitle, FlexContainer, Icon } from "@/components/shared";
 import { __, sprintf } from "@wordpress/i18n";
 
 type OnboardingStepsProps = {
@@ -33,15 +33,15 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
             </DialogHeader>
             <FlexContainer direction={"column"} className={"w-full justify-center items-center text-base text-center"}>
                 {sprintf(
-                    /*! translators: the variable is the email address the user entered */
-                    __("We have sent you an email at %s so you can activate your account.", "metricool"),
+                    /*translators: the variable is the email address the user entered */
+                    __("We have sent you an email at %1$s so you can activate your account.", "metricool"),
                     enteredEmail,
                 )}
                 {resendEmailSuccess && (
                     <Alert variant={"info"}>
                         {sprintf(
-                            /*! translators: the variable is the email address the user entered */
-                            __("We have resent the email to %s", "metricool"),
+                            /*translators: the variable is the email address the user entered */
+                            __("We have resent the email to %1$s", "metricool"),
                             enteredEmail,
                         )}
                     </Alert>
@@ -50,10 +50,11 @@ const VerifyEmailStep = ({ enteredEmail }: OnboardingStepsProps) => {
             <Button
                 variant={"primary-gradient-ghost"}
                 onClick={() => resendEmail()}
-                icon={resendEmailPending ? "loading" : "arrow-right"}
-                iconClass={"svg-gradient"}
-                iconPosition={"right"}>
-                {__("Resend email", "metricool")}
+            >
+                <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                    {__("Resend email", "metricool")}
+                    <Icon icon={resendEmailPending ? "loading" : "arrow-right"} className={"svg-gradient"}/>
+                </FlexContainer>
             </Button>
         </FlexContainer>
     );

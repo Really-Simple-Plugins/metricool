@@ -2,7 +2,7 @@ import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Icon } from "@/components/shared/user-feedback/Icon.tsx"
 
-import { cn } from "@/functions/utils.ts"
+import { cn } from "@/support/functions/utils.ts"
 
 function Select({
   ...props

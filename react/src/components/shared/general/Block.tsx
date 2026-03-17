@@ -5,7 +5,7 @@ import {
     CardTitle as PrimitiveCardTitle
 } from "@/components/shared/primitives/card.tsx";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 /**
  * Custom extension of shadcn's {@link PrimitiveCardTitle} component.
@@ -18,7 +18,11 @@ import { cn } from "@/functions/utils.ts";
  */
 const BlockHeaderTitle = ({ className, children }: React.ComponentProps<"div">) => {
     return (
-        <PrimitiveCardTitle className={cn(className, "text-base font-bold leading-none")}>{children}</PrimitiveCardTitle>
+        <PrimitiveCardTitle className={cn(className, "text-base font-bold leading-none")}>
+            <h1 className={"block-header-title"}>
+                {children}
+            </h1>
+        </PrimitiveCardTitle>
     );
 };
 

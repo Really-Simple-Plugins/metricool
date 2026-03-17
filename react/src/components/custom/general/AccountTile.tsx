@@ -1,6 +1,7 @@
 import { Button, FlexContainer, Icon, type IconProps } from "@/components/shared";
 import { clsx } from "clsx";
 import { __, sprintf } from "@wordpress/i18n";
+import { isFirstCharacterAVowel } from "@/support/functions/utils.ts";
 
 type AccountTileProps = {
     label: string,
@@ -9,7 +10,7 @@ type AccountTileProps = {
     unconnectedClasses: string,
     upsell: boolean,
     userName?: string,
-    link?: string,
+    link: string,
     isConnected: boolean,
 }
 
@@ -23,19 +24,18 @@ const AccountTile = ({
     link,
     isConnected,
 }: AccountTileProps) => {
+    const wrapperClasses = clsx(
+        "flex flex-row rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2",
+        isConnected ? "border-neutral-200" : `${unconnectedClasses} cursor-pointer transition-all duration-300 ease-in-out`,
+    );
+
+    // depending on the isConnected status, the top element will either be a div or an anchor
+    const WrapperComponent = !isConnected ? "a" : "div";
     return (
-        <FlexContainer
-            direction={"row"}
-            {...(!isConnected && {
-                onClick: () => {
-                    window.open(link, "_blank");
-                    window.focus();
-                }
-            })}
-            className={clsx(
-                "flex rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2",
-                isConnected ? "border-neutral-200" : `${unconnectedClasses} cursor-pointer transition-all duration-300 ease-in-out`,
-            )}
+        <WrapperComponent
+            className={wrapperClasses}
+            href={link}
+            target={"_blank"}
         >
             <FlexContainer direction={"row"} className={"min-w-[25px] items-center justify-center"}>
                 <Icon
@@ -55,7 +55,12 @@ const AccountTile = ({
                             <div className={"font-semibold"}>{userName}</div>
                         </>
                     ) : (
-                        <span data-content className={"text-white transition-all duration-300 ease-in-out"}>{sprintf(__("Connect a %s Account"), label)}</span>
+                        <span data-content className={"text-white transition-all duration-300 ease-in-out"}>
+                            {sprintf(
+                                /*translators: first variable is either 'a' or 'an', second is the name of a social media*/
+                                __("Connect %1$s %2$s Account", "metricool"), [(isFirstCharacterAVowel(label) ? "an" : "a"), label]
+                            )}
+                        </span>
                     )}
                 </FlexContainer>
                 <FlexContainer direction={"row"}>
@@ -63,20 +68,17 @@ const AccountTile = ({
                         <Button
                             size={"icon"}
                             variant={"icon"}
-                            icon={"settings"}
-                            iconPosition={"left"}
-                            onClick={() => {
-                                window.open(link, "_blank");
-                                window.focus();
-                            }}
-                        />
+                            link={link}
+                        >
+                            <Icon icon={"settings"}/>
+                        </Button>
                     )}
                     {upsell && (
                         <Icon icon={"upsell"} className={"size-2.5 p-0.5 bg-upsell rounded-full text-black"}/>
                     )}
                 </FlexContainer>
             </FlexContainer>
-        </FlexContainer>
+        </WrapperComponent>
     );
 };
 

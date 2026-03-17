@@ -4,12 +4,25 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Support\Helpers\Storage;
 use Metricool\Traits\HasRestAccess;
 
 class OnboardingService
 {
     use HasRestAccess;
+
+    private MetricoolApi $api;
+
+    public function __construct(MetricoolApi $api)
+    {
+        $this->api = $api;
+    }
+
+    public function isOnboardingCompleted(): bool
+    {
+        return get_option('metricool_onboarding_completed', false);
+    }
 
     /**
      * Store the onboarding step in the general options without autoload
@@ -63,5 +76,27 @@ class OnboardingService
     public function clearTemporaryData(): void
     {
         delete_option('metricool_temporary_onboarding_data');
+    }
+
+    /**
+     * Check if there is only one brand connected to the blog and store it.
+     * Doesn't succeed when there are multiple brands connected to the blog.
+     */
+    public function attemptToStoreBlogId(array $brands): bool
+    {
+        if (empty($brands)) {
+            throw new \RuntimeException('Something went wrong. No blogs found.');
+        }
+
+        $canStoreBlogId = count($brands) == 1;
+        if (!$canStoreBlogId) {
+            return false;
+        }
+
+        // Pick the only brand and store it's BlogId
+        $brand = reset($brands);
+        $this->api->storeBlogId((string) $brand['id']);
+
+        return true;
     }
 }

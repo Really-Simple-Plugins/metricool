@@ -2,6 +2,7 @@ import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
 import { Alert } from "@/components/shared/user-feedback/Alert.tsx";
 import { __, sprintf } from "@wordpress/i18n";
 import DOMPurify from "dompurify";
+import { Button } from "@/components/shared/forms/Button.tsx";
 
 type FetchingErrorFeedbackNoticeProps = {
     errorUpdateCount: number,
@@ -21,19 +22,21 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                 action={(
                     <>
                         {errorUpdateCount <= 1 ? (
-                            <div
-                                className={"text-rss-blue underline cursor-pointer"}
+                            <Button
+                                variant={"link"}
+                                className={"text-rss-blue font-semibold"}
                                 onClick={() => refetch()}
                             >
                                 {__("Try again", "metricool")}
-                            </div>
+                            </Button>
                         ) : (
-                            <div
-                                className={"text-rss-blue underline cursor-pointer"}
+                            <Button
+                                variant={"link"}
+                                className={"text-rss-blue font-semibold"}
                                 onClick={() => window.location.reload()}
                             >
                                 {__("Refresh page", "metricool")}
-                            </div>)
+                            </Button>)
                         }
                     </>
                 )}
@@ -51,18 +54,15 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                                 __html:
                                     DOMPurify.sanitize(
                                         sprintf(
-                                            /*! translators: the two variables are opening and closing anchor tags */
-                                            __("If the error persists, please contact our %ssupport team%s.", "metricool"),
-                                            `<a href=${supportTicketLink} target="_blank">`,
+                                            /*translators: the two variables are opening and closing anchor tags */
+                                            __("If the error persists, please contact our %1$ssupport team%2$s.", "metricool"),
+                                            `<a href=${supportTicketLink} target="_blank" rel="noopener noreferrer">`,
                                             `</a>`),
                                         { ADD_ATTR: ["target"] }
                                     )
                             }}
-                        >
-
-                        </div>
+                        />
                     </>
-
                 )}
             </Alert>
         </FlexContainer>

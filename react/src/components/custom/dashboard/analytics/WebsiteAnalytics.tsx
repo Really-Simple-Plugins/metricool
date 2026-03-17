@@ -5,6 +5,7 @@ import { CountriesTab } from "@/components/custom/dashboard/analytics/tabs/Count
 import { RealtimeTab } from "@/components/custom/dashboard/analytics/tabs/RealtimeTab.tsx";
 import { AnalyticsTab } from "@/components/custom/dashboard/analytics/tabs/AnalyticsTab.tsx";
 import { TrafficTab } from "@/components/custom/dashboard/analytics/tabs/TrafficTab.tsx";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 
 /**
  * The WebsiteAnalytics block used in {@link DashboardLayout}.
@@ -22,10 +23,12 @@ import { TrafficTab } from "@/components/custom/dashboard/analytics/tabs/Traffic
  * Displays everything in a {@link Block} with a fixed height (500px)
  */
 const WebsiteAnalytics = () => {
+    const { dispatch, dashboardSettings } = useGlobalContext();
+
     // This state saves the activeTab's index in the tabs array, so it can be
     // easily rendered with {tabs[activeTab].component} below.
     // Initiated as 1 for the AnalyticsTab.
-    const [activeTab, setActiveTab] = useState(1);
+    const [activeTab, setActiveTab] = useState(dashboardSettings.activeWebsiteAnalyticsTab ?? 1);
     const tabs = [{
         title: __("Real-time", "metricool"),
         component: <RealtimeTab />
@@ -40,12 +43,20 @@ const WebsiteAnalytics = () => {
         component: <CountriesTab />
     }];
 
+    const onTabChange = (tabIndex: number) => {
+        setActiveTab(tabIndex);
+        dispatch({
+            dispatchType: "setDashboardSetting",
+            change: { dashboardSettings: { activeWebsiteAnalyticsTab: tabIndex } }
+        });
+    };
+
     return (
         <Block className={"min-h-[500px] max-h-[500px] xl:max-w-[calc(50%-(--spacing(2)))]"}>
             <BlockHeader
                 title={__("Website Analytics", "metricool")}
                 action={(
-                    <TabNavigation activeTab={activeTab} onTabClick={setActiveTab} tabs={tabs}/>
+                    <TabNavigation activeTab={activeTab} onTabClick={onTabChange} tabs={tabs}/>
                 )}
             />
             {tabs[activeTab].component}

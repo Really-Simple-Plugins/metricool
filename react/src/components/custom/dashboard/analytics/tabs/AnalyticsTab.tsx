@@ -2,10 +2,10 @@ import {
     Button,
     type ChartConfig,
     DisabledSelectOption,
-    FetchingErrorAlert,
     FlexContainer,
     Icon,
     LineChart,
+    LoadingAndErrorState,
     Select,
     SelectOption,
     showToast,
@@ -101,7 +101,7 @@ const AnalyticsTab = () => {
         maximumFractionDigits: 2,
     });
     const defaultPeriodFilter = periodFilterOptions.last30Days;
-    const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.analytics?.activePeriodFilter));
+    const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.activePeriodFilter));
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
@@ -130,7 +130,7 @@ const AnalyticsTab = () => {
         },
     });
     const lineChartXAxisDataKey = "label";
-    const [xAxisInterval, setXAxisInterval] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.analytics?.activePeriodFilter).xAxisInterval);
+    const [xAxisInterval, setXAxisInterval] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.activePeriodFilter).xAxisInterval);
 
     const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData, refetch, errorUpdateCount } = useQuery({
         queryKey: ["analytics"],
@@ -176,13 +176,15 @@ const AnalyticsTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                    <Icon icon={"loading"} className={"size-5"}/>
-                </FlexContainer>
-            ) : error ? (
-                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-            ) : hasAnalyticsData && (
+            {!hasAnalyticsData ? (
+                <LoadingAndErrorState
+                    error={error}
+                    isLoading={isLoading}
+                    errorUpdateCount={errorUpdateCount}
+                    refetch={refetch}
+                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                />
+            ) : (
                 <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
                     <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>
                         {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
@@ -190,6 +192,7 @@ const AnalyticsTab = () => {
                                 onClick={() => toggleMetric(metricKey)}
                                 metric={numberFormatter.format(metricData.totalAmount)}
                                 trend={metricData.trend}
+                                // @ts-expect-error tsc can't verify color is a valid variant
                                 variant={chartConfig[metricKey].color}
                                 inactive={chartConfig[metricKey].hidden}
                                 disabled={metricData.totalAmount === 0}
@@ -233,7 +236,7 @@ const AnalyticsTab = () => {
                                     setPeriodFilter((prevState) => selectedPeriodFilter ?? prevState);
                                     dispatch({
                                         dispatchType: "setDashboardSetting",
-                                        change: { dashboardSettings: { analytics: { activePeriodFilter: selectedPeriodFilter } } }
+                                        change: { dashboardSettings: { activePeriodFilter: selectedPeriodFilter } }
                                     });
                                     updateChartData({ period: value });
                                 }}
@@ -243,15 +246,19 @@ const AnalyticsTab = () => {
                                     filterOption.isUpsell ? (
                                         <DisabledSelectOption
                                             className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
-                                            onClick={() => {
-                                                window.open(metricoolDynamicUrl.withPath("user-settings/plan"));
-                                                window.focus();
-                                            }}
                                         >
-                                            <span className="flex size-3.5 items-center justify-center">
-                                                <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
-                                            </span>
-                                            {filterOption.label}
+                                            <Button
+                                                variant={"link"}
+                                                link={metricoolDynamicUrl.withPath("user-settings/plan")}
+                                                className={"!no-underline font-semibold hover:text-black"}
+                                            >
+                                                <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                                                    <span className={"flex size-3.5 items-center justify-center"}>
+                                                        <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
+                                                    </span>
+                                                    {filterOption.label}
+                                                </FlexContainer>
+                                            </Button>
                                         </DisabledSelectOption>
                                     ) : (
                                         <SelectOption
@@ -266,23 +273,24 @@ const AnalyticsTab = () => {
                             <Button
                                 variant={"upsell"}
                                 size={"sm"}
-                                icon={"file"}
-                                iconPosition={"left"}
                                 link={metricoolDynamicUrl.withPath("evolution/reports")}
                             >
-                                {__("Report", "metricool")}
+                                <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                                    <Icon icon={"file"}/>
+                                    {__("Report", "metricool")}
+                                </FlexContainer>
                             </Button>
                         </>
                     )}
                 </FlexContainer>
                 <Button
                     variant={"primary-gradient-ghost"}
-                    icon={"external-link"}
-                    iconPosition={"right"}
-                    iconClass={"svg-gradient"}
                     link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
-                    {__("View Analytics", "metricool")}
+                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                        {__("View Analytics", "metricool")}
+                        <Icon icon={"external-link"} className={"svg-gradient"}/>
+                    </FlexContainer>
                 </Button>
             </FlexContainer>
         </FlexContainer>
