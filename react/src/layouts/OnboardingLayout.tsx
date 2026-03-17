@@ -41,6 +41,21 @@ export const OnboardingLayout = () => {
         (<ConnectBrandStep/>),
     ];
 
+    // const legacyUpgradeSteps = [
+    //     (
+    //         <LegacyUpgradeSignIn
+    //             finishOnboarding={finishOnboarding}
+    //             setActiveStep={setActiveLegacyUpgradeStep}
+    //         />
+    //     ),
+    //     (
+    //         <TwoFaStep
+    //             setActiveStep={setActiveLegacyUpgradeStep}
+    //             finishOnboarding={finishOnboarding}
+    //         />
+    //     ),
+    // ];
+
     const { mutate: onSubmit } = useMutation({
         mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
             setEnteredEmail(formValues.credentials.email);
