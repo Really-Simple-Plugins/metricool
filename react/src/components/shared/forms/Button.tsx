@@ -60,14 +60,17 @@ type ButtonVariantsProps =
 type ActionProps = ({
     type: "submit" | "trigger",
     link?: never,
+    target?: never,
     onClick?: never,
 } | {
     type?: "button",
     link?: never,
+    target?: never,
     onClick: React.ComponentProps<"button">["onClick"],
 } | {
     type?: "button",
     link: string,
+    target?: React.ComponentProps<"a">["target"],
     onClick?: never,
 });
 
@@ -89,6 +92,7 @@ const Button = ({
     size,
     link,
     onClick,
+    target = "_blank",
     type = "button",
     ...props
 }: Omit<React.ComponentProps<"button">, "type"> & Required<Pick<ButtonVariantsProps, "variant">> & ButtonVariantsProps & ActionProps) => {
@@ -116,7 +120,7 @@ const Button = ({
         return (
             <a
                 href={link}
-                target={"_blank"}
+                target={target}
                 className={classes}
                 rel={"noopener noreferrer"}
             >
@@ -129,7 +133,7 @@ const Button = ({
         return (
             <a
                 href={link}
-                target={"_blank"}
+                target={target}
                 className={"flex max-w-[fit-content]"}
                 rel={"noopener noreferrer"}
             >
