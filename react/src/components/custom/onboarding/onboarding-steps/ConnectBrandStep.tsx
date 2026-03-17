@@ -5,6 +5,7 @@ import {
     FieldWrapper,
     FlexContainer,
     Icon,
+    LoadingAndErrorState,
     Select,
     SelectOption,
 } from "@/components/shared";
@@ -15,16 +16,19 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const brandSchema = OnboardingSchema.shape.brand;
 
-type ConnectBrandStepProps = {
-    connectedBrands: z.infer<typeof brandSchema>[],
-};
-
-const ConnectBrandStep = ({ connectedBrands }: ConnectBrandStepProps) => {
+const ConnectBrandStep = () => {
     const { httpClient, dispatch, metricool } = useGlobalContext();
+
+    const { data: connectedBrands, isLoading, errorUpdateCount, error, refetch } = useQuery({
+        queryKey: ["connected_brands"],
+        queryFn: () => httpClient.setRoute("connected_brands").get(),
+        staleTime: Infinity,
+        select: (data): z.infer<typeof brandSchema>[] => data.data,
+    });
 
     const {
         handleSubmit,
@@ -80,14 +84,22 @@ const ConnectBrandStep = ({ connectedBrands }: ConnectBrandStepProps) => {
                             className={"border-neutral-200 font-semibold !text-black"}
                             placeholder={__("Select a brand", "metricool")}
                         >
-                            {connectedBrands.map((brand) => (
+                            {!connectedBrands ? (
+                                <LoadingAndErrorState
+                                    error={error}
+                                    isLoading={isLoading}
+                                    errorUpdateCount={errorUpdateCount}
+                                    refetch={refetch}
+                                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                                />
+                            ) : (connectedBrands.map((brand) => (
                                 <SelectOption
                                     value={brand.id}
                                     className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
                                 >
                                     {brand.label}
                                 </SelectOption>
-                            ))}
+                            )))}
                         </Select>
                     )}
                 />
