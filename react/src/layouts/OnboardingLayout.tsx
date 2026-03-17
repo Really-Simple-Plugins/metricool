@@ -1,7 +1,7 @@
 import { __ } from "@wordpress/i18n";
-import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer, Header } from "@/components/shared";
+import { Button, Dialog, FlexContainer, Header } from "@/components/shared";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import { ConnectBrandStep, LoadingStep, OnboardingForm, SignInForm, } from "@/components/custom";
+import { ConnectBrandStep, LoadingStep, OnboardingForm, SignInStep } from "@/components/custom";
 import { useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
@@ -39,12 +39,11 @@ const generateRecaptchaToken = async (): Promise<string> => (
  */
 export const OnboardingLayout = () => {
     const { metricool, httpClient, dispatch } = useGlobalContext();
-    const [signInModalOpen, setSignInModalOpen] = useState<boolean>(false);
+    const [signInModalOpen, setSignInModalOpen] = useState<boolean>(metricool.from_legacy_upgrade);
     const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
-    // const [enteredEmail, setEnteredEmail] = useState<string>("");
+
     const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
-    const [activeSignInStep, setActiveSignInStep] = useState<number>(0);
-    const [connectedBrands, setConnectedBrands] = useState<z.infer<typeof OnboardingSchema.shape.brand>[]>([]);
+
 
     const { mutate: onSignUp } = useMutation({
         onMutate: () => {
@@ -66,7 +65,6 @@ export const OnboardingLayout = () => {
         onSuccess: async (response) => {
             console.log(response);
             if (response.data.finish_onboarding === false) {
-                setConnectedBrands(response.data.connected_brands);
                 setActiveOnboardingStep(1);
             } else {
                 finishOnboarding();
@@ -90,29 +88,13 @@ export const OnboardingLayout = () => {
     });
 
     const onboardingSteps = [
-        (<LoadingStep/>),
-        (<ConnectBrandStep connectedBrands={connectedBrands}/>),
+        (
+            <LoadingStep/>
+        ),
+        (
+            <ConnectBrandStep/>
+        ),
     ];
-
-    const signInSteps = [
-        (<SignInForm setActiveSignInStep={setActiveSignInStep} finishOnboarding={finishOnboarding}/>),
-        (<ConnectBrandStep connectedBrands={connectedBrands}/>),
-    ];
-
-    // const legacyUpgradeSteps = [
-    //     (
-    //         <LegacyUpgradeSignIn
-    //             finishOnboarding={finishOnboarding}
-    //             setActiveStep={setActiveLegacyUpgradeStep}
-    //         />
-    //     ),
-    //     (
-    //         <TwoFaStep
-    //             setActiveStep={setActiveLegacyUpgradeStep}
-    //             finishOnboarding={finishOnboarding}
-    //         />
-    //     ),
-    // ];
 
     useEffect(() => {
         return () => {
@@ -165,17 +147,19 @@ export const OnboardingLayout = () => {
             <Dialog
                 id={"sign-in-modal"}
                 open={signInModalOpen}
-                onOpenChange={setSignInModalOpen}
-                showCloseButton={true}
+                onOpenChange={(metricool.from_legacy_upgrade) ? undefined : setSignInModalOpen}
+                showCloseButton={!(metricool.from_legacy_upgrade)}
                 className={"flex flex-col gap-6 justify-center items-center"}
             >
-                <DialogHeader className={"!gap-0 mt-8 justify-center items-center"}>
-                    <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[37px] w-auto"} alt={__("Metricool logo", "metricool")}/>
-                    <DialogTitle className={"font-bold font-nunito m-0 text-2xl leading-6"}>
-                        {__("Sign in with your credentials", "metricool")}
-                    </DialogTitle>
-                </DialogHeader>
-                {signInSteps[activeSignInStep]}
+                <SignInStep/>
+            </Dialog>
+            <Dialog
+                id={"connect-brand-modal"}
+                open={!metricool.blogId}
+                showCloseButton={false}
+                className={"flex flex-col gap-6 justify-center items-center"}
+            >
+                <ConnectBrandStep/>
             </Dialog>
             <Dialog
                 id={"onboarding-modal"}
