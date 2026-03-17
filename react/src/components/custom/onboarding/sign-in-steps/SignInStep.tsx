@@ -26,6 +26,7 @@ const SignInStep = () => {
                 <Button
                     variant={"black"}
                     link={metricool.metricool_base_url}
+                    target={"_self"}
                 >
                     <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
                         {__("Sign in on Metricool", "metricool")}
