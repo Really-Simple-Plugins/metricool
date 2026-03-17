@@ -15,3 +15,4 @@ export { AccountSettings } from "@/components/custom/settings/AccountSettings.ts
 export { ConnectionsSettings } from "@/components/custom/settings/ConnectionsSettings.tsx";
 export { NotificationsSidebar, type Notice } from "@/components/custom/settings/NotificationsSidebar.tsx";
 export { SettingsMenu } from "@/components/custom/settings/SettingsMenu.tsx";
+export { SignInStep } from "@/components/custom/onboarding/sign-in-steps/SignInStep.tsx";
