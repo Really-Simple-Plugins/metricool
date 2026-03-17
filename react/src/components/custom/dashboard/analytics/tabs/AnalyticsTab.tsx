@@ -135,7 +135,7 @@ const AnalyticsTab = () => {
     const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData, refetch, errorUpdateCount } = useQuery({
         queryKey: ["analytics"],
         queryFn: () => httpClient.setRoute("analytics").setFilters({ period: periodFilter.option }).get(),
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        staleTime: 1000 * 60 * 60 * 12, // 12 hours
         select: (data): { totals: Record<string, MetricData>, timelineData: TimelineData } => data.data,
     });
 

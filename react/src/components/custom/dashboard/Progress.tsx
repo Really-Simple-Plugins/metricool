@@ -38,7 +38,7 @@ const Progress = () => {
         enabled: queryClient.getQueryData(["connected", "accounts"]) !== undefined,
         queryKey: ["tasks"],
         queryFn: () => httpClient.setRoute("get_tasks").get(),
-        staleTime: 1000 * 60, // 1 minute
+        staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): {
             tasks: TaskProps[],
             remainingTasks: TaskProps[],

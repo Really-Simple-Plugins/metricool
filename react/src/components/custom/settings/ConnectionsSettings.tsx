@@ -17,7 +17,7 @@ const ConnectionsSettings = () => {
     const { data: connectedAccountsData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["connected", "accounts"],
         queryFn: () => httpClient.setRoute("connected_networks").get(),
-        staleTime: 1000 * 60, // 1 minute
+        staleTime: 1000 * 60 * 5, // 5 minutes
         select: (response): ConnectedAccount[] => {
             return ([
                 {

@@ -28,7 +28,7 @@ const NotificationsSidebar = () => {
     const { data: noticeData, isLoading, error, isFetched, errorUpdateCount, refetch } = useQuery({
         queryKey: ["notices"],
         queryFn: () => httpClient.setRoute("get_notices").get(),
-        staleTime: 1000 * 60, // 1 minute
+        staleTime: Infinity, // never stale unless manually invalidated
         select: (data): Record<string, Notice[]> => {
             const noticesWithVisibility = data.data.map((notice: Notice) => ({
                 ...notice,

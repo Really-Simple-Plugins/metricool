@@ -45,7 +45,7 @@ const OtherPlugins = () => {
     const { isLoading, error, data: otherPlugins = {}, refetch, errorUpdateCount } = useQuery({
         queryKey: ["other_plugins_data"],
         queryFn: () => httpClient.setRoute("other_plugins_data").get(),
-        staleTime: 1000 * 60 * 5, // 5 minutes
+        staleTime: Infinity, // never stale unless manually invalidated
         select: (data): Record<string, OtherPlugin> => {
             return data.data.plugins;
         }
