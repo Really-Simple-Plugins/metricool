@@ -74,17 +74,6 @@ class OnboardingController implements FeatureInterface
     }
 
     /**
-     * Handle incoming login request.
-     *
-     */
-    public function login(\WP_REST_Request $request): \WP_REST_Response
-    {
-        return $this->sendHttpResponse([
-            'onboarding' => $this->onboarding->state(),
-        ]);
-    }
-
-    /**
      * Create a new Metricool account. The created user is authenticated
      * automatically.
      *
@@ -237,7 +226,8 @@ class OnboardingController implements FeatureInterface
             $this->api->authenticate(
                 (string) ($tokenData['user_id'] ?? $tokenData['userId'] ?? ''),
                 (string) ($tokenData['access_token'] ?? $tokenData['accessToken'] ?? ''),
-                (string) ($tokenData['refresh_token'] ?? $tokenData['refreshToken'] ?? '')
+                (string) ($tokenData['refresh_token'] ?? $tokenData['refreshToken'] ?? ''),
+                (int) ($tokenData['expires_in'] ?? $tokenData['expires_in'] ?? 300)
             );
 
             // Retrieve brands and attempt to auto-select
