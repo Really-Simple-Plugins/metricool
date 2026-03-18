@@ -24,15 +24,12 @@ class OnboardingService
     /**
      * Set the onboarding as completed in the general options without autoload
      */
-    public function setOnboardingCompleted(): bool
+    public function setOnboardingCompleted(): void
     {
-        $completedPreviously = get_option('metricool_onboarding_completed', false);
-        if ($completedPreviously) {
-            return true;
-        }
-
+        // set the timestamp
         update_option('metricool_onboarding_completed_unix_timestamp', time(), false);
-        return update_option('metricool_onboarding_completed', true, false);
+        // set completed
+        update_option('metricool_onboarding_completed', true, false);
     }
 
 
@@ -55,7 +52,7 @@ class OnboardingService
         }
 
         try {
-            $this->storeBlogInfo($brands[0]['id']);
+            $this->storeBlogInfo((string) $brands[0]['id']);
         } catch (GuzzleException $e) {
             return false;
         }
@@ -85,34 +82,34 @@ class OnboardingService
         if (isset($brand['id'])) {
             $this->api->storeBlogId((string) $brand['id']);
         } else {
-            throw new \RuntimeException('Something went wrong. No brand id found.');
+            throw new \RuntimeException('Something went wrong.');
         }
 
         // Store the tracking hash
-        if (!empty($brand['hash'])) {
+        if (! empty($brand['hash'])) {
             $this->tracking->storeTrackingHash((string) $brand['hash']);
         }
 
         return true;
     }
 
-    public function mockUpBrands(): array
+    public function isOnboardingCompleted(): bool
+    {
+        return (bool) get_option('metricool_onboarding_completed', false);
+    }
+
+    public function isFromLegacyPlugin(): bool
+    {
+        return (bool) get_option('metricool_from_legacy_plugin', false);
+    }
+
+    public function state(): array
     {
         return [
-            [
-                'id' => 4962983,
-                'label' => 'Really Simple Plugins',
-                'title' => 'https://wimenbente.nl',
-                'image' => 'https://static.metricool.com/brand-logo/202507/4962983-file-4477890870715557446.png',
-                'hash' => '3ea6c275fdc13308a612fe1b4330261b',
-            ],
-            [
-                'id' => 2221200,
-                'label' => 'TestingMetri-Business',
-                'title' => 'Metricool',
-                'image' => 'https://static.metricool.com/brand-logo/202511/2221200-file-6884100583778344266.jpeg',
-                'hash' => 'b004950c87f5ffe7de25161216a4c8e4',
-            ]
+            'completed' => $this->isOnboardingCompleted(),
+            'authenticated' => $this->api->hasUserToken(),
+            'blog_id_selected' => $this->api->hasBlogId(),
+            'forced_login' => $this->isFromLegacyPlugin(),
         ];
     }
 }

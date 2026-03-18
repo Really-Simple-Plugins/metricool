@@ -38,11 +38,6 @@ class UserSettingsService
         return $this->fields;
     }
 
-    public function getField(string $name)
-    {
-        return $this->fields->where('name', $name)->first();
-    }
-
     /**
      * Return an array with keys and values of all the settings, optionally
      * filtered by section.

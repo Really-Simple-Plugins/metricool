@@ -23,11 +23,10 @@ class UserCredentials
      */
     public function updatePassword(string $oldPassword, string $newPassword): array
     {
-        // todo: implement oAuth authentication to aquire access token
-        // $response = $this->client->patch($this->endpoint . '?fields=password', json_encode([
-        //     'oldPassword' => $oldPassword,
-        //     'password' => $newPassword,
-        // ]));
+         $response = $this->client->patch($this->endpoint . '?fields=password', json_encode([
+             'oldPassword' => $oldPassword,
+             'password' => $newPassword,
+         ]));
 
         return ['success' => true];
     }

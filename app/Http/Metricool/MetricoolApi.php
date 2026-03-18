@@ -15,7 +15,7 @@ namespace Metricool\Http\Metricool;
  * @method bool isTesting()
  * @method bool isConnected()
  * @method bool storeBlogId(string $blogId)
- * @method bool authenticate(string $userId, string $userToken, string $refreshToken)
+ * @method bool authenticate(string $userId, string $userToken, string $refreshToken, $expires)
  */
 class MetricoolApi
 {

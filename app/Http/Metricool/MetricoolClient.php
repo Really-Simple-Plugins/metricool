@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
@@ -98,7 +99,7 @@ class MetricoolClient
 
     public function getRefreshToken(): string
     {
-        return $this->refreshToken;
+        return get_option('metricool_refresh_token');
     }
 
     public function setRefreshToken(string $refreshToken): void
@@ -116,6 +117,26 @@ class MetricoolClient
         update_option('metricool_refresh_token', $refreshToken);
 
         $this->setRefreshToken($refreshToken);
+    }
+
+    public function getTokenExpires()
+    {
+        return get_option('metricool_auth_token_expires');
+    }
+
+    public function tokenExpiresAt(): Carbon
+    {
+        return Carbon::createFromTimestamp($this->getTokenExpires());
+    }
+
+    public function isTokenExpired(): bool
+    {
+        return Carbon::now()->gt($this->tokenExpiresAt());
+    }
+
+    public function storeTokenExpires(int $expires): void
+    {
+        update_option('metricool_auth_token_expires', Carbon::now()->addSeconds($expires)->timestamp);
     }
 
     public function insertMiddleWare(callable $middleWare): void
@@ -136,15 +157,19 @@ class MetricoolClient
     /**
      * Set the authentication tokens and userId.
      */
-    public function authenticate(string $userId, string $userToken, string $refreshToken): self
+    public function authenticate(string $userId, string $userToken, string $refreshToken, int $expires): self
     {
         $this->storeUserId($userId);
         $this->storeUserToken($userToken);
         $this->storeRefreshToken($refreshToken);
+        $this->storeTokenExpires($expires);
 
         return $this;
     }
 
+    /**
+     * Check if the client has all the necessary authentication tokens to show the dashboard
+     */
     public function hasAuthentication(): bool
     {
         return $this->hasUserToken() && $this->hasUserId() && $this->hasBlogId();
@@ -214,6 +239,29 @@ class MetricoolClient
         return $this->request('DELETE', $endpoint);
     }
 
+    public function refreshToken(): void
+    {
+        $headers = [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+        $options = [
+            'form_params' => [
+                'client_id' => 'BaKuXnUZBvNvNHrNXtGivVxwnfGKitgc',
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $this->getRefreshToken(),
+            ]
+        ];
+
+        $response = $this->client->send(new Request('POST', 'https://app.metricool.com/oauth/token', $headers), $options);
+
+        $data = $this->parseResponse($response);
+
+        $this->storeUserToken($data['access_token']);
+        $this->storeRefreshToken($data['refresh_token']);
+        $this->storeTokenExpires($data['expires_in']);
+    }
+
     /**
      * @param mixed|null $body
      * @throws GuzzleException
@@ -222,8 +270,14 @@ class MetricoolClient
     {
         $this->validate();
 
+        if ($this->isTokenExpired()) {
+            $this->refreshToken();
+        }
+
         $response = $this->client->send(
-            new Request($method, $this->formatUrl($endpoint), ['X-Mc-Auth' => $this->userToken], $body)
+            new Request($method, $this->formatUrl($endpoint), [
+                'Authorization' => 'Bearer ' . $this->userToken
+            ], $body)
         );
 
         return $this->parseResponse($response);

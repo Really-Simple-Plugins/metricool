@@ -6,7 +6,6 @@ namespace Metricool\Features\Onboarding;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
-use Metricool\Features\Onboarding\Exceptions\TooManyBrandsException;
 use Metricool\Features\Onboarding\Services\AuthService;
 use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Http\Metricool\MetricoolApi;
@@ -42,7 +41,7 @@ class OnboardingController implements FeatureInterface
     public function addRoutes(array $routes): array
     {
         $routes['onboarding/login'] = [
-            'methods' => 'POST',
+            'methods' => 'GET',
             'callback' => [$this, 'login'],
         ];
 
@@ -65,56 +64,8 @@ class OnboardingController implements FeatureInterface
      */
     public function login(\WP_REST_Request $request): \WP_REST_Response
     {
-        // todo: storage ?
-        $email = (string) $request->get_param('email');
-        $password = (string) $request->get_param('password');
-
-        // Validate fields
-        if (!is_email($email) || empty($password)) {
-            return $this->sendHttpErrorResponse(
-                __('Validation failed.', 'metricool'),
-                [],
-                422
-            );
-        }
-
-        // Attempt to login
-        try {
-            $this->auth->login($email, $password);
-        } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(
-                __('The combination of username and password was incorrect.', 'metricool'),
-                [],
-                401
-            );
-        }
-
-        // Retrieve the brands for completing the onboarding process
-        $brands = $this->onboarding->mockUpBrands();
-
-        // Attempt to automatically set the blog information
-        try {
-            $this->onboarding->findAndRetrieveBlogInfo($brands);
-        } catch (TooManyBrandsException $e) {
-            // Return the brands that were found when blogId could not be automatically set, so the user can select one
-            return $this->sendHttpResponse([
-                'onboarding_finished' => false,
-                'message' => __('Please select a brand.', 'metricool'),
-                'connected_brands' => $brands,
-            ]);
-        }
-
-        // Check if the necessary authentication data is present
-        if (!$this->api->hasAuthentication()) {
-            // Todo: should we remove everything from database when this happens so user is not stuck?
-            return $this->sendHttpErrorResponse(__('Something went wrong.'), [], 502);
-        }
-
-        // Finish onboarding
-        $this->onboarding->setOnboardingCompleted();
-
         return $this->sendHttpResponse([
-            'onboarding_finished' => true,
+            'onboarding' => $this->onboarding->state(),
         ]);
     }
 
@@ -144,11 +95,16 @@ class OnboardingController implements FeatureInterface
 
         // Attempt to create the account
         try {
-            $this->accounts->createAccount($captcha, $email, $password, $marketing);
-            $brands = $this->onboarding->mockUpBrands();
+            $accountCreated = $this->accounts->createAccount($captcha, $email, $password, $marketing);
+
+            if (!$accountCreated) {
+                return $this->sendHttpErrorResponse(__('Could not create account. Please try again later.'), ['error' => 'No accessToken in response']);
+            }
         } catch (\GuzzleHttp\Exception\RequestException $e) {
             // Catch RequestException because it could be an email exists error
+            // Todo: add a better way to handle this because it's not very clean'
             $response = $e->getResponse();
+            $error = json_decode($response->getBody()->getContents());
 
             // Metricool return a 400 response with the same body on validation errors and existing e-mail addresses
             // Because we already did the validation, we can assume that it's an e-mail exists error
@@ -158,34 +114,25 @@ class OnboardingController implements FeatureInterface
 
             return $this->sendHttpErrorResponse(
                 $message,
-                ['error' => (string) $response->getBody()->getContents()],
+                ['error' => $error],
                 $response->getStatusCode()
             );
         }
 
-        // Attempt to automatically set the blog information
         try {
-            $this->onboarding->findAndRetrieveBlogInfo($brands);
-        } catch (TooManyBrandsException $e) {
-            // Return the brands that were found when blogId could not be automatically set, so the user can select one
-            return $this->sendHttpResponse([
-                'onboarding_finished' => false,
-                'message' => __('Please select a brand.', 'metricool'),
-                'connected_brands' => $brands,
-            ]);
+            $brands = $this->api->brands()->all();
+        } catch (GuzzleException $e) {
+            // todo: if this happens, the user could be stuck in the onboarding process, maybe we should unauthenticate and logout
+            return $this->sendHttpErrorResponse('Error while retrieving brands.');
         }
 
-        if (!$this->api->hasAuthentication()) {
-            // Return the brands that were found when blogId could not be automatically set, so the user can select one
-            return $this->sendHttpResponse([
-                'message' => __('Something went wrong.', 'metricool'),
-                'finish_onboarding' => false,
-            ]);
+        // Attempt to automatically set the blog information
+        if ($this->onboarding->findAndRetrieveBlogInfo($brands)) {
+            $this->onboarding->setOnboardingCompleted();
         }
 
         return $this->sendHttpResponse([
-            'message' => __('Account created successfully.', 'metricool'),
-            'finish_onboarding' => true,
+            'onboarding' => $this->onboarding->state()
         ]);
     }
 
@@ -204,13 +151,7 @@ class OnboardingController implements FeatureInterface
             try {
                 $this->onboarding->storeBlogInfo($blogId);
             } catch (BrandAccessDeniedException $e) {
-                $brands = $this->onboarding->mockUpBrands();
-
-                return $this->sendHttpResponse([
-                    'onboarding_finished' => false,
-                    'message' => __('Brand Access denied.', 'metricool'), // todo: better message
-                    'connected_brands' => $brands,
-                ]);
+                return $this->sendHttpErrorResponse(__('Brand Access denied.', 'metricool'), [], 403);
             }
         }
 
@@ -219,15 +160,8 @@ class OnboardingController implements FeatureInterface
             return $this->sendHttpErrorResponse('Onboarding failed. User is not authenticated.');
         }
 
-        $code = 200;
-        $message = __('Successfully finished onboarding!', 'metricool');
-
-        $success = $this->onboarding->setOnboardingCompleted();
-        if (!$success) {
-            $message = __('An error occurred while finishing the onboarding process', 'metricool');
-            $code = 500;
-        }
-
-        return $this->sendHttpResponse([], $success, $message, $code);
+        return $this->sendHttpResponse([
+            'onboarding' => $this->onboarding->state()
+        ]);
     }
 }

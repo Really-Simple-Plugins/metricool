@@ -24,30 +24,28 @@ class CreateAccountService
     public function createAccount(string $captcha, string $email, string $password, bool $newsletters): bool
     {
         // Attempt to sign up the user through RSPAL
-//        $signupResponse = $this->rspalClient->signUp([
-//            'username' => $email,
-//            'newsletters' => $newsletters,
-//        ], [
-//            'RSPAL-RecaptchaV3Token' => $captcha
-//        ]);
+        $signupResponse = $this->rspalClient->signUp([
+            'username' => $email,
+            'newsletters' => $newsletters,
+        ], [
+            'RSPAL-RecaptchaV3Token' => $captcha
+        ]);
 
-        // Authenticate with mock-up credentials
-        // Todo: remove mock-up
+        if (empty($signupResponse->data->accessToken)) {
+            return false;
+        }
+
+        // Store authentication data
         $this->metricoolApi->authenticate(
-            METRICOOL_USER_ID,
-            METRICOOL_USER_TOKEN,
-            'test_refresh_token'
+            (string) $signupResponse->data->userId,
+            (string) $signupResponse->data->accessToken,
+            (string) $signupResponse->data->refreshToken,
+            $signupResponse->data->expires ?? 300
         );
 
-        // Authenticate and set the password
-        // $this->metricoolApi->authenticate(
-        //     $signupResponse->data->userId,
-        //     $signupResponse->data->accessToken,
-        //     $signupResponse->data->refreshToken
-        // );
-
-        // $this->metricoolApi->userCredentials()
-        //     ->updatePassword('', $password);
+        // Set the user password
+        $this->metricoolApi->userCredentials()
+             ->updatePassword('', $password);
 
         return true;
     }
