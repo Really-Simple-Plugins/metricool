@@ -25,9 +25,11 @@ class MetricoolClient
     private string $blogId = '';
     private string $userId = '';
     protected array $middleWares = [];
+    private EnvironmentConfig $env;
 
     public function __construct(EnvironmentConfig $env)
     {
+        $this->env = $env;
         $this->apiUrl = $env->get('metricool.base_api_domain');
     }
 
@@ -237,6 +239,25 @@ class MetricoolClient
     public function delete(string $endpoint): ?array
     {
         return $this->request('DELETE', $endpoint);
+    }
+
+    /**
+     * Exchange an OAuth authorization code for an access token.
+     */
+    public function exchangeOAuthCode(string $code, string $redirectUri): array
+    {
+        $response = (new Client())->post($this->env->getString('metricool.oauth_token_url'), [
+            'form_params' => [
+                'grant_type' => 'authorization_code',
+                'client_id' => $this->env->getString('metricool.oauth_client_id'),
+                'code' => $code,
+                'redirect_uri' => $redirectUri,
+                'code_verifier' => 'login',
+            ],
+        ]);
+
+        $body = json_decode($response->getBody()->getContents(), true);
+        return $body;
     }
 
     public function refreshToken(): void

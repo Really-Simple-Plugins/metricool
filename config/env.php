@@ -40,6 +40,9 @@ return [
         'connect_twitter_url' => 'https://app.metricool.com/evolution/twitter',
         'tracking_script_url' => 'https://tracker.metricool.com/resources/be.js',
         'create_post_url' => 'https://app.metricool.com/planner/post',
+        'oauth_authorize_url' => 'https://app.metricool.com/oauth/authorize',
+        'oauth_token_url' => 'https://app.metricool.com/oauth/token',
+        'oauth_client_id' => 'BaKuXnUZBvNvNHrNXtGivVxwnfGKitgc',
     ],
     'http' => [
         'version' => 'v1',

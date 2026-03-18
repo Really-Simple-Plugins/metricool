@@ -6,11 +6,13 @@ namespace Metricool\Features\Onboarding;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
+use Metricool\Features\Onboarding\Exceptions\TooManyBrandsException;
 use Metricool\Features\Onboarding\Services\AuthService;
 use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\TrackingScriptService;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Traits\HasRestAccess;
 
 class OnboardingController implements FeatureInterface
@@ -21,13 +23,15 @@ class OnboardingController implements FeatureInterface
     private OnboardingService $onboarding;
     private CreateAccountService $accounts;
     private AuthService $auth;
+    private EnvironmentConfig $env;
 
-    public function __construct(MetricoolApi $api, OnboardingService $onboarding, CreateAccountService $accounts, AuthService $auth, TrackingScriptService $tracking)
+    public function __construct(MetricoolApi $api, OnboardingService $onboarding, CreateAccountService $accounts, AuthService $auth, TrackingScriptService $tracking, EnvironmentConfig $env)
     {
         $this->api = $api;
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
         $this->auth = $auth;
+        $this->env = $env;
     }
 
     public function register(): void
@@ -53,6 +57,17 @@ class OnboardingController implements FeatureInterface
         $routes['onboarding/finish_onboarding'] = [
             'methods' => 'POST',
             'callback' => [$this, 'finishOnboarding'],
+        ];
+
+        $routes['onboarding/oauth_redirect'] = [
+            'methods' => 'GET',
+            'callback' => [$this, 'oauthRedirect'],
+        ];
+
+        $routes['onboarding/oauth_callback'] = [
+            'methods' => 'GET',
+            'callback' => [$this, 'oauthCallback'],
+            'permission_callback' => [$this, 'oauthCallbackPermissionCheck'],
         ];
 
         return $routes;
@@ -163,5 +178,94 @@ class OnboardingController implements FeatureInterface
         return $this->sendHttpResponse([
             'onboarding' => $this->onboarding->state()
         ]);
+    }
+
+    /**
+     * Build and return the Metricool OAuth authorize URL.
+     */
+    public function oauthRedirect(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $state = wp_generate_password(32, false);
+        set_transient('metricool_oauth_state', $state, 10 * MINUTE_IN_SECONDS);
+
+        $redirectUri = rest_url($this->env->getString('http.namespace') . '/' . $this->env->getString('http.version') . '/onboarding/oauth_callback');
+
+        $authorizeUrl = add_query_arg([
+            'client_id' => $this->env->getString('metricool.oauth_client_id'),
+            'state' => $state,
+            'response_type' => 'code',
+            'redirect_uri' => $redirectUri,
+            'code_challenge' => 'login',
+        ], $this->env->getString('metricool.oauth_authorize_url'));
+
+        return $this->sendHttpResponse([
+            'redirect_url' => $authorizeUrl,
+        ]);
+    }
+
+    /**
+     * Handle the OAuth callback from Metricool. Exchanges the authorization
+     * code for tokens, authenticates the user, and redirects to the dashboard.
+     */
+    public function oauthCallback(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $code = (string) $request->get_param('code');
+        $state = (string) $request->get_param('state');
+
+        // Verify state to prevent CSRF
+        $storedState = get_transient('metricool_oauth_state');
+        delete_transient('metricool_oauth_state');
+
+        if (empty($state) || $state !== $storedState) {
+            wp_safe_redirect(add_query_arg('metricool_error', 'invalid_state', $this->env->getString('plugin.dashboard_url')));
+            exit;
+        }
+
+        if (empty($code)) {
+            wp_safe_redirect(add_query_arg('metricool_error', 'missing_code', $this->env->getString('plugin.dashboard_url')));
+            exit;
+        }
+
+        // Build the redirect_uri (must match what was sent in the authorize request)
+        $redirectUri = rest_url($this->env->getString('http.namespace') . '/' . $this->env->getString('http.version') . '/onboarding/oauth_callback');
+
+        try {
+            // Exchange the code for tokens
+            $tokenData = $this->api->exchangeOAuthCode($code, $redirectUri);
+
+            // Authenticate - store userId, accessToken, refreshToken
+            $this->api->authenticate(
+                (string) ($tokenData['user_id'] ?? $tokenData['userId'] ?? ''),
+                (string) ($tokenData['access_token'] ?? $tokenData['accessToken'] ?? ''),
+                (string) ($tokenData['refresh_token'] ?? $tokenData['refreshToken'] ?? '')
+            );
+
+            // Retrieve brands and attempt to auto-select
+            $brands = $this->api->brands()->all();
+
+            try {
+                $this->onboarding->findAndRetrieveBlogInfo($brands);
+                $this->onboarding->setOnboardingCompleted();
+            } catch (TooManyBrandsException $e) {
+                // User needs to select a brand - redirect to dashboard, frontend will handle brand selection
+            }
+        } catch (\Exception $e) {
+            wp_safe_redirect(add_query_arg('metricool_error', 'token_exchange_failed', $this->env->getString('plugin.dashboard_url')));
+            exit;
+        }
+
+        // Redirect to the WordPress dashboard
+        wp_safe_redirect($this->env->getString('plugin.dashboard_url'));
+        exit;
+    }
+
+    /**
+     * Permission check for the OAuth callback endpoint. The callback comes from
+     * an external redirect, so it won't have a nonce. We verify the user is a
+     * logged-in WP admin instead.
+     */
+    public function oauthCallbackPermissionCheck(\WP_REST_Request $request): bool
+    {
+        return current_user_can('manage_options');
     }
 }
