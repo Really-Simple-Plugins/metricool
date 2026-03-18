@@ -127,7 +127,6 @@ class Plugin
     {
         $this->providerManager->register([
             Providers\MetricoolApiProvider::class,
-            Providers\RspalApiProvider::class,
         ]);
     }
 

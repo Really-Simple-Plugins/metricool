@@ -7,6 +7,14 @@ namespace Metricool\Services;
 class TrackingScriptService
 {
     /**
+     * Stores the tracking hash in the database
+     */
+    public function storeTrackingHash(string $hash): void
+    {
+        update_option('metricool_tracking_script_hash', $hash);
+    }
+
+    /**
      * Returns if the user has enabled the widget in the settings
      */
     public function isTrackingWidgetActive(): bool

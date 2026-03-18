@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
+use Metricool\Features\Onboarding\OnboardingService;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasUserAccess;
 use Metricool\Traits\HasAllowlistControl;
@@ -17,10 +19,14 @@ class DashboardController implements ControllerInterface
     use HasAllowlistControl;
 
     private EnvironmentConfig $env;
+    private MetricoolApi $metricool;
+    private OnboardingService $onboarding;
 
-    public function __construct(EnvironmentConfig $env)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, OnboardingService $onboarding)
     {
         $this->env = $env;
+        $this->metricool = $metricool;
+        $this->onboarding = $onboarding;
     }
 
     public function register(): void
@@ -253,34 +259,38 @@ class DashboardController implements ControllerInterface
      */
     private function localizedReactSettings(array $chunkTranslation): array
     {
-        return apply_filters(
-            'metricool_localize_dashboard_script',
-            [
-                'nonce' => wp_create_nonce('metricool_nonce'),
-                'x_wp_nonce' => wp_create_nonce('wp_rest'),
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'rest_url' => get_rest_url(),
-                'rest_namespace' => $this->env->getString('http.namespace'),
-                'rest_version' => $this->env->getString('http.version'),
-                'site_url' => site_url(),
-                'assets_url' => $this->env->getUrl('plugin.assets_url'),
-                'json_translations' => ($chunkTranslation['json_translations'] ?? []),
-                'trusted_urls' => $this->env->get('frontend.trusted_urls'),
-                'is_onboarding_completed' => $this->isOnboardingCompleted(),
-                'support' => $this->env->get('metricool.support'),
-                'metricool_base_url' => $this->env->get('metricool.base_url'),
-                'metricool_help_url' => $this->env->get('metricool.help_url'),
-                'locale' => str_replace("_", "-", get_user_locale()),
-                'blogId' => (defined('METRICOOL_BLOG_ID') && !empty(METRICOOL_BLOG_ID) ? METRICOOL_BLOG_ID : ""),
-                'userId' => (defined('METRICOOL_USER_ID') && !empty(METRICOOL_USER_ID) ? METRICOOL_USER_ID : ""),
-                'from_legacy_upgrade' => true,
-            ]
-        );
-    }
+        $isOnboardingCompleted = $this->onboarding->isOnboardingCompleted();
 
-    private function isOnboardingCompleted(): bool
-    {
-        return (bool) get_option('metricool_onboarding_completed', false);
+        $settings = [
+            'nonce' => wp_create_nonce('metricool_nonce'),
+            'x_wp_nonce' => wp_create_nonce('wp_rest'),
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'rest_url' => get_rest_url(),
+            'rest_namespace' => $this->env->getString('http.namespace'),
+            'rest_version' => $this->env->getString('http.version'),
+            'site_url' => site_url(),
+            'assets_url' => $this->env->getUrl('plugin.assets_url'),
+            'json_translations' => ($chunkTranslation['json_translations'] ?? []),
+            'trusted_urls' => $this->env->get('frontend.trusted_urls'),
+            'onboarding' => $this->onboarding->state(),
+            'is_onboarding_completed' => $isOnboardingCompleted,
+            'support' => $this->env->get('metricool.support'),
+            'metricool_base_url' => $this->env->get('metricool.base_url'),
+            'metricool_help_url' => $this->env->get('metricool.help_url'),
+            'locale' => str_replace("_", "-", get_user_locale()),
+            'blogId' => $this->metricool->getBlogId(),
+            'userId' => $this->metricool->getUserId(),
+            'from_legacy_upgrade' => true,
+        ];
+
+        if ($isOnboardingCompleted) {
+            $settings['account'] = [
+                'user_id' => $this->metricool->getUserId(),
+                'blog_id' => $this->metricool->getBlogId()
+            ];
+        }
+
+        return apply_filters('metricool_localize_dashboard_script', $settings);
     }
 
     public function loadMainScriptsAsModule(string $tag, string $handle): string

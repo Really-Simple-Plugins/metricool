@@ -4,99 +4,112 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
+use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
+use Metricool\Features\Onboarding\Exceptions\TooManyBrandsException;
 use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Support\Helpers\Storage;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Services\TrackingScriptService;
 
 class OnboardingService
 {
-    use HasRestAccess;
-
     private MetricoolApi $api;
+    private TrackingScriptService $tracking;
 
-    public function __construct(MetricoolApi $api)
+    public function __construct(MetricoolApi $api, TrackingScriptService $tracking)
     {
         $this->api = $api;
-    }
-
-    public function isOnboardingCompleted(): bool
-    {
-        return get_option('metricool_onboarding_completed', false);
-    }
-
-    /**
-     * Store the onboarding step in the general options without autoload
-     */
-    public function setCompletedStep(int $step): void
-    {
-        update_option('metricool_completed_step', $step, false);
+        $this->tracking = $tracking;
     }
 
     /**
      * Set the onboarding as completed in the general options without autoload
      */
-    public function setOnboardingCompleted(): bool
+    public function setOnboardingCompleted(): void
     {
-        $this->setCompletedStep(5); // todo
-        $this->clearTemporaryData();
-
-        $completedPreviously = get_option('metricool_onboarding_completed', false);
-        if ($completedPreviously) {
-            return true;
-        }
-
+        // set the timestamp
         update_option('metricool_onboarding_completed_unix_timestamp', time(), false);
-        return update_option('metricool_onboarding_completed', true, false);
+        // set completed
+        update_option('metricool_onboarding_completed', true, false);
     }
 
-    /**
-     * Method can be used to set temporary data for the onboarding process.
-     */
-    public function setTemporaryData(array $data): void
-    {
-        $options = get_option('metricool_temporary_onboarding_data', []);
-        $options = array_merge($options, $data);
-        update_option('metricool_temporary_onboarding_data', $options, false);
-    }
 
     /**
-     * Method can be used to retrieve temporary data for the onboarding process.
-     * Returns the array of data as a Storage object for easier access.
+     * Automatically find the blog from the connected brand and try to retrieve
+     * the necessary onboarding information
+     *
+     * @throws TooManyBrandsException when there are more than one brand connected to the blog
+     * @throws BrandAccessDeniedException when the user does not have access to the picked brand
      */
-    public function getTemporaryDataStorage(): Storage
-    {
-        return new Storage(
-            get_option('metricool_temporary_onboarding_data', [])
-        );
-    }
-
-    /**
-     * Method should be used to clear the temporary data for the onboarding.
-     */
-    public function clearTemporaryData(): void
-    {
-        delete_option('metricool_temporary_onboarding_data');
-    }
-
-    /**
-     * Check if there is only one brand connected to the blog and store it.
-     * Doesn't succeed when there are multiple brands connected to the blog.
-     */
-    public function attemptToStoreBlogId(array $brands): bool
+    public function findAndRetrieveBlogInfo(array $brands): bool
     {
         if (empty($brands)) {
             throw new \RuntimeException('Something went wrong. No blogs found.');
         }
 
-        $canStoreBlogId = count($brands) == 1;
-        if (!$canStoreBlogId) {
+        // Can't store brand information if there are more than one brand
+        if (count($brands) !== 1) {
+            throw new TooManyBrandsException($brands);
+        }
+
+        try {
+            $this->storeBlogInfo((string) $brands[0]['id']);
+        } catch (GuzzleException $e) {
             return false;
         }
 
-        // Pick the only brand and store it's BlogId
-        $brand = reset($brands);
-        $this->api->storeBlogId((string) $brand['id']);
+        return true;
+    }
+
+    /**
+     * Store the necessary onboarding information from the Metricool brand
+     *
+     * @throws BrandAccessDeniedException when the current user has no access to the brand
+     * @throws GuzzleException when the Metricool API request fails
+     */
+    public function storeBlogInfo(string $blogId): bool
+    {
+        // Attempt to get the brand information from the API, checks if the user can access it
+        try {
+            $brand = $this->api->brands()->get($blogId);
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            // If user has no access to the brand, return an exception
+            if ($e->getResponse()->getStatusCode() === 403) {
+                throw new BrandAccessDeniedException();
+            }
+        }
+
+        // Store the blog id
+        if (isset($brand['id'])) {
+            $this->api->storeBlogId((string) $brand['id']);
+        } else {
+            throw new \RuntimeException('Something went wrong.');
+        }
+
+        // Store the tracking hash
+        if (! empty($brand['hash'])) {
+            $this->tracking->storeTrackingHash((string) $brand['hash']);
+        }
 
         return true;
+    }
+
+    public function isOnboardingCompleted(): bool
+    {
+        return (bool) get_option('metricool_onboarding_completed', false);
+    }
+
+    public function isFromLegacyPlugin(): bool
+    {
+        return (bool) get_option('metricool_from_legacy_plugin', false);
+    }
+
+    public function state(): array
+    {
+        return [
+            'completed' => $this->isOnboardingCompleted(),
+            'authenticated' => $this->api->hasUserToken(),
+            'blog_id_selected' => $this->api->hasBlogId(),
+            'forced_login' => $this->isFromLegacyPlugin(),
+        ];
     }
 }

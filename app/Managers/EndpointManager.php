@@ -105,7 +105,7 @@ final class EndpointManager extends AbstractManager
             $arguments = [
                 'methods' => $this->normalizeMethods($data['methods'] ?? 'GET'),
                 'callback' => $this->callbackMiddleware($callback, $middleware),
-                'permission_callback' => '__return_true',
+                'permission_callback' => ($data['permission_callback'] ?? [$this, 'defaultPermissionCallback']),
             ];
 
             if (!empty($data['args'])) {
