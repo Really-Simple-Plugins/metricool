@@ -46,6 +46,7 @@ const OtherPlugins = () => {
         queryKey: ["other_plugins_data"],
         queryFn: () => httpClient.setRoute("other_plugins_data").get(),
         staleTime: Infinity, // never stale unless manually invalidated
+        gcTime: Infinity, // data is never garbage collected
         select: (data): Record<string, OtherPlugin> => {
             return data.data.plugins;
         }
