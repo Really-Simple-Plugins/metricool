@@ -29,7 +29,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken() && $this->metricoolApi->hasUserId();
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken();
     }
 
     /**

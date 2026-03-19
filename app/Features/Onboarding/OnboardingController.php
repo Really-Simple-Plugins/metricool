@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
+use _PHPStan_e870ac104\Nette\Neon\Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
-use Metricool\Features\Onboarding\Exceptions\TooManyBrandsException;
-use Metricool\Features\Onboarding\Services\AuthService;
+use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
 use Metricool\Features\Onboarding\Services\CreateAccountService;
+use Metricool\Features\Onboarding\Services\OAuthService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\TrackingScriptService;
@@ -21,17 +22,23 @@ class OnboardingController implements FeatureInterface
 
     private MetricoolApi $api;
     private OnboardingService $onboarding;
-    private CreateAccountService $accounts;
-    private AuthService $auth;
     private EnvironmentConfig $env;
+    private CreateAccountService $accounts;
+    private OAuthService $oauth;
 
-    public function __construct(MetricoolApi $api, OnboardingService $onboarding, CreateAccountService $accounts, AuthService $auth, TrackingScriptService $tracking, EnvironmentConfig $env)
-    {
+    public function __construct(
+        MetricoolApi $api,
+        OnboardingService $onboarding,
+        CreateAccountService $accounts,
+        TrackingScriptService $tracking,
+        EnvironmentConfig $env,
+        OAuthService $oauth
+    ) {
         $this->api = $api;
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
-        $this->auth = $auth;
         $this->env = $env;
+        $this->oauth = $oauth;
     }
 
     public function register(): void
@@ -44,10 +51,6 @@ class OnboardingController implements FeatureInterface
      */
     public function addRoutes(array $routes): array
     {
-        $routes['onboarding/login'] = [
-            'methods' => 'GET',
-            'callback' => [$this, 'login'],
-        ];
 
         $routes['onboarding/create_account'] = [
             'methods' => 'POST',
@@ -76,8 +79,6 @@ class OnboardingController implements FeatureInterface
     /**
      * Create a new Metricool account. The created user is authenticated
      * automatically.
-     *
-     * @throws \GuzzleHttp\Exception\GuzzleException when Metricool API request fails
      */
     public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
@@ -99,40 +100,9 @@ class OnboardingController implements FeatureInterface
 
         // Attempt to create the account
         try {
-            $accountCreated = $this->accounts->createAccount($captcha, $email, $password, $marketing);
-
-            if (!$accountCreated) {
-                return $this->sendHttpErrorResponse(__('Could not create account. Please try again later.'), ['error' => 'No accessToken in response']);
-            }
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            // Catch RequestException because it could be an email exists error
-            // Todo: add a better way to handle this because it's not very clean'
-            $response = $e->getResponse();
-            $error = json_decode($response->getBody()->getContents());
-
-            // Metricool return a 400 response with the same body on validation errors and existing e-mail addresses
-            // Because we already did the validation, we can assume that it's an e-mail exists error
-            $message = $response->getStatusCode() == 400
-                ? __('E-mail already exists', 'metricool')
-                : __('Unknown Error. Please try again later.', 'metricool');
-
-            return $this->sendHttpErrorResponse(
-                $message,
-                ['error' => $error],
-                $response->getStatusCode()
-            );
-        }
-
-        try {
-            $brands = $this->api->brands()->all();
-        } catch (GuzzleException $e) {
-            // todo: if this happens, the user could be stuck in the onboarding process, maybe we should unauthenticate and logout
-            return $this->sendHttpErrorResponse('Error while retrieving brands.');
-        }
-
-        // Attempt to automatically set the blog information
-        if ($this->onboarding->findAndRetrieveBlogInfo($brands)) {
-            $this->onboarding->setOnboardingCompleted();
+            $this->accounts->createAccount($captcha, $email, $password, $marketing);
+        } catch (CreateAccountException $e) {
+            return $this->sendHttpErrorResponse($e->getMessage(), ['reason' => $e->reason], $e->getCode());
         }
 
         return $this->sendHttpResponse([
@@ -159,11 +129,6 @@ class OnboardingController implements FeatureInterface
             }
         }
 
-        // Check if the necessary authentication data is present
-        if (!$this->api->hasAuthentication()) {
-            return $this->sendHttpErrorResponse('Onboarding failed. User is not authenticated.');
-        }
-
         return $this->sendHttpResponse([
             'onboarding' => $this->onboarding->state()
         ]);
@@ -174,21 +139,8 @@ class OnboardingController implements FeatureInterface
      */
     public function oauthRedirect(\WP_REST_Request $request): \WP_REST_Response
     {
-        $state = wp_generate_password(32, false);
-        set_transient('metricool_oauth_state', $state, 10 * MINUTE_IN_SECONDS);
-
-        $redirectUri = rest_url($this->env->getString('http.namespace') . '/' . $this->env->getString('http.version') . '/onboarding/oauth_callback');
-
-        $authorizeUrl = add_query_arg([
-            'client_id' => $this->env->getString('metricool.oauth_client_id'),
-            'state' => $state,
-            'response_type' => 'code',
-            'redirect_uri' => $redirectUri,
-            'code_challenge' => 'login',
-        ], $this->env->getString('metricool.oauth_authorize_url'));
-
         return $this->sendHttpResponse([
-            'redirect_url' => $authorizeUrl,
+            'redirect_url' => $this->oauth->getAuthorizationUrl(),
         ]);
     }
 
@@ -216,33 +168,30 @@ class OnboardingController implements FeatureInterface
         }
 
         // Build the redirect_uri (must match what was sent in the authorize request)
-        $redirectUri = rest_url($this->env->getString('http.namespace') . '/' . $this->env->getString('http.version') . '/onboarding/oauth_callback');
+        $redirectUri = $this->oauth->getRedirectUrl();
 
         try {
             // Exchange the code for tokens
             $tokenData = $this->api->exchangeOAuthCode($code, $redirectUri);
 
+            if (empty($tokenData['user_id']) || empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
+                throw new Exception('Token data is missing');
+            }
+
             // Authenticate - store userId, accessToken, refreshToken
             $this->api->authenticate(
-                (string) ($tokenData['user_id'] ?? $tokenData['userId'] ?? ''),
-                (string) ($tokenData['access_token'] ?? $tokenData['accessToken'] ?? ''),
-                (string) ($tokenData['refresh_token'] ?? $tokenData['refreshToken'] ?? ''),
-                (int) ($tokenData['expires_in'] ?? $tokenData['expires_in'] ?? 300)
+                (string) $tokenData['user_id'],
+                (string) $tokenData['access_token'],
+                (string) $tokenData['refresh_token'],
+                (int) ($tokenData['expires_in'])
             );
-
-            // Retrieve brands and attempt to auto-select
-            $brands = $this->api->brands()->all();
-
-            try {
-                $this->onboarding->findAndRetrieveBlogInfo($brands);
-                $this->onboarding->setOnboardingCompleted();
-            } catch (TooManyBrandsException $e) {
-                // User needs to select a brand - redirect to dashboard, frontend will handle brand selection
-            }
         } catch (\Exception $e) {
             wp_safe_redirect(add_query_arg('metricool_error', 'token_exchange_failed', $this->env->getString('plugin.dashboard_url')));
             exit;
         }
+
+        // Retrieve brands and attempt to auto-select
+        $this->onboarding->findAndRetrieveBlogInfo();
 
         // Redirect to the WordPress dashboard
         wp_safe_redirect($this->env->getString('plugin.dashboard_url'));

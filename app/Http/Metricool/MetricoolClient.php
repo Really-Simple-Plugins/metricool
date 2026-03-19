@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool;
 
+use _PHPStan_e870ac104\Symfony\Component\String\Exception\RuntimeException;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -104,21 +105,9 @@ class MetricoolClient
         return get_option('metricool_refresh_token');
     }
 
-    public function setRefreshToken(string $refreshToken): void
-    {
-        $this->refreshToken = $refreshToken;
-    }
-
-    public function hasRefreshToken(): bool
-    {
-        return !empty($this->refreshToken);
-    }
-
     public function storeRefreshToken(string $refreshToken): void
     {
         update_option('metricool_refresh_token', $refreshToken);
-
-        $this->setRefreshToken($refreshToken);
     }
 
     public function getTokenExpires()
@@ -136,9 +125,13 @@ class MetricoolClient
         return Carbon::now()->gt($this->tokenExpiresAt());
     }
 
-    public function storeTokenExpires(int $expires): void
+    public function storeTokenExpires($expires): void
     {
-        update_option('metricool_auth_token_expires', Carbon::now()->addSeconds($expires)->timestamp);
+        if ($expires) {
+            $expires = Carbon::now()->addSeconds($expires)->timestamp;
+        }
+
+        update_option('metricool_auth_token_expires', $expires);
     }
 
     public function insertMiddleWare(callable $middleWare): void
@@ -167,6 +160,15 @@ class MetricoolClient
         $this->storeTokenExpires($expires);
 
         return $this;
+    }
+
+
+    public function unAuthenticate(): void
+    {
+        $this->storeUserId('');
+        $this->storeUserToken('');
+        $this->storeRefreshToken('');
+        $this->storeTokenExpires(null);
     }
 
     /**
@@ -243,6 +245,7 @@ class MetricoolClient
 
     /**
      * Exchange an OAuth authorization code for an access token.
+     * @throws GuzzleException
      */
     public function exchangeOAuthCode(string $code, string $redirectUri): array
     {
@@ -256,8 +259,39 @@ class MetricoolClient
             ],
         ]);
 
-        $body = json_decode($response->getBody()->getContents(), true);
-        return $body;
+        return $this->parseResponse($response);
+    }
+
+    public function authenticateWithCode(string $code, string $state, string $redirectUri): bool
+    {
+        // Verify state to prevent CSRF
+        $storedState = get_transient('metricool_oauth_state');
+        delete_transient('metricool_oauth_state');
+
+        if (empty($state) || $state !== $storedState) {
+            throw new RuntimeException('Invalid state');
+        }
+
+        // Exchange the code for tokens
+        try {
+            $tokenData = $this->exchangeOAuthCode($code, $redirectUri);
+        } catch (GuzzleException $e) {
+            throw new RuntimeException('Failed to exchange code for tokens: ' . $e->getMessage());
+        }
+
+        if (empty($tokenData['user_id']) || empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
+            throw new RuntimeException('Token data is missing');
+        }
+
+        // Authenticate - store userId, accessToken, refreshToken
+        $this->authenticate(
+            (string) $tokenData['user_id'],
+            (string) $tokenData['access_token'],
+            (string) $tokenData['refresh_token'],
+            (int) ($tokenData['expires_in'] ?? 300)
+        );
+
+        return true;
     }
 
     public function refreshToken(): void
@@ -274,7 +308,14 @@ class MetricoolClient
             ]
         ];
 
-        $response = $this->client->send(new Request('POST', 'https://app.metricool.com/oauth/token', $headers), $options);
+        try {
+            $response = $this->client->send(new Request('POST', 'https://app.metricool.com/oauth/token', $headers), $options);
+        } catch (GuzzleException $e) {
+            // If the refresh token is invalid, we need to unauthenticate the user
+            $this->unAuthenticate();
+            return;
+        }
+
 
         $data = $this->parseResponse($response);
 
