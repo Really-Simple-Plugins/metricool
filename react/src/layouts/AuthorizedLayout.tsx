@@ -35,7 +35,7 @@ const AuthorizedLayout = ({ children }: React.ComponentProps<"div">) => {
                     >
                         <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
                             <Icon icon={"sparkle"} className={"text-secondary"}/>
-                            {__("Upgrade to Premium", "metricool")}
+                            {__("Upgrade", "metricool")}
                         </FlexContainer>
                     </Button>)
                 ]}
