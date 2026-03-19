@@ -1,5 +1,5 @@
 import { __ } from "@wordpress/i18n";
-import { Button, Dialog, FlexContainer, Header } from "@/components/shared";
+import { Alert, Button, Dialog, FlexContainer, Header } from "@/components/shared";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { ConnectBrandStep, LoadingStep, OnboardingForm, SignInStep } from "@/components/custom";
 import { useEffect, useState } from "react";
@@ -45,7 +45,7 @@ export const OnboardingLayout = () => {
     const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
 
 
-    const { mutate: onSignUp } = useMutation({
+    const { mutate: onSignUp, error: signUpError,  } = useMutation({
         onMutate: () => {
             // setEnteredEmail(formValues.credentials.email);
             setActiveOnboardingStep(0);
@@ -71,6 +71,8 @@ export const OnboardingLayout = () => {
             }
         },
         onError: (error) => {
+            setOnboardingModalOpen(false);
+            setActiveOnboardingStep(0);
             console.error(error);
         }
     });
@@ -128,6 +130,9 @@ export const OnboardingLayout = () => {
             <FlexContainer direction={"row"} className={"w-full !gap-0 justify-between"}>
                 <FlexContainer direction={"column"} className={"min-w-[45%] max-w-[45%]"}>
                     <h1 className={"font-bold font-nunito text-[1.75rem] leading-8"}>{__("Join more than 2 million professionals, agencies and brands that use Metricool as their one-stop shop for social media and online ad management.", "metricool")}</h1>
+                    {signUpError && (
+                        <Alert variant={"error"} className={"sm:max-w-5/6"}>{signUpError.message}</Alert>
+                    )}
                     <OnboardingForm onSubmit={(values) => onSignUp(values)}/>
                 </FlexContainer>
                 <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={__("Laptop and phone displaying the Metricool app", "metricool")}/>
