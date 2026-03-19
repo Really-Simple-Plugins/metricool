@@ -37,6 +37,14 @@ class OAuthService
         ], $this->env->getString('metricool.oauth_authorize_url'));
     }
 
+    public function validateState(string $state): bool
+    {
+        $storedState = get_transient('metricool_oauth_state');
+        delete_transient('metricool_oauth_state');
+
+        return $state === $storedState;
+    }
+
     /**
      * Generates a unique state parameter for the OAuth flow and stores it in a transient.
      * The state parameter is used to prevent CSRF attacks.
