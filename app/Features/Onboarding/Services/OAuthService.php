@@ -49,7 +49,7 @@ class OAuthService
      * Generates a unique state parameter for the OAuth flow and stores it in a transient.
      * The state parameter is used to prevent CSRF attacks.
      */
-    private function generateState()
+    private function generateState(): string
     {
         $state = wp_generate_password(32, false);
         set_transient('metricool_oauth_state', $state, 10 * MINUTE_IN_SECONDS);
