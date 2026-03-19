@@ -63,6 +63,10 @@ final class EnvironmentConfig extends DeferredObject
             $items['metricool']['base_api_domain'] = constant('RSP_MC_BASE_API_DOMAIN');
         }
 
+        if (defined('RSP_MC_OAUTH_CLIENT_ID')) {
+            $items['metricool']['oauth_client_id'] = constant('RSP_MC_OAUTH_CLIENT_ID');
+        }
+
         return $items;
     }
 }
