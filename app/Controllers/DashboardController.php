@@ -280,7 +280,7 @@ class DashboardController implements ControllerInterface
             'locale' => str_replace("_", "-", get_user_locale()),
             'blogId' => $this->metricool->getBlogId(),
             'userId' => $this->metricool->getUserId(),
-            'from_legacy_upgrade' => true,
+            'from_legacy_upgrade' => false,
         ];
 
         if ($isOnboardingCompleted) {
