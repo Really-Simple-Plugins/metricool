@@ -64,23 +64,11 @@ export const OnboardingLayout = () => {
         },
         onSuccess: async (response) => {
             console.log(response);
-            if (response.data.finish_onboarding === false) {
+            if (response.data.blog_id_selected === false) {
                 setActiveOnboardingStep(1);
             } else {
-                finishOnboarding();
+                dispatch({ dispatchType: "setOnboardingComplete" });
             }
-        },
-        onError: (error) => {
-            console.error(error);
-        }
-    });
-
-    const { mutate: finishOnboarding } = useMutation({
-        mutationFn: async () => {
-            return await httpClient.setRoute("onboarding/finish_onboarding").setPayload({}).post();
-        },
-        onSuccess: () => {
-            dispatch({ dispatchType: "setOnboardingComplete" });
         },
         onError: (error) => {
             console.error(error);
@@ -155,7 +143,7 @@ export const OnboardingLayout = () => {
             </Dialog>
             <Dialog
                 id={"connect-brand-modal"}
-                open={!metricool.blogId}
+                // open={!metricool.blogId}
                 showCloseButton={false}
                 className={"flex flex-col gap-6 justify-center items-center"}
             >
