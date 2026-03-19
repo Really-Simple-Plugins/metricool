@@ -78,7 +78,14 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
         }
 
         $this->service->setPluginConfig($plugin);
-        $this->service->executeAction($action);
+
+        try {
+            $this->service->executeAction($action);
+        } catch (\Exception $e) {
+            return $this->sendHttpErrorResponse(
+                __('An error occurred while performing the action.', 'metricool')
+            );
+        }
 
         // After executing the action, a new action should be available
         $plugin['action'] = $this->service->getAvailablePluginAction();

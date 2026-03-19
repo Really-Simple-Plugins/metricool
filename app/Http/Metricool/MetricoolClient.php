@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool;
 
+use Carbon\Carbon;
 use GuzzleHttp\Client;
-use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * @todo Add error handling either with try-catches here, in the resources or
@@ -17,13 +19,17 @@ use GuzzleHttp\Psr7\Request;
 class MetricoolClient
 {
     private ?Client $client = null;
-    private string $apiUrl = 'https://app.metricool.com/api/';
-    private string $stagingApiUrl = 'https://app.metricool.com/api/'; // todo
-    private bool $testing = false;
+    private string $apiUrl;
     private string $userToken = '';
+    private string $refreshToken = '';
     private string $blogId = '';
     private string $userId = '';
     protected array $middleWares = [];
+
+    public function __construct(EnvironmentConfig $env)
+    {
+        $this->apiUrl = $env->get('metricool.base_api_domain');
+    }
 
     public function setUserId(string $userId): void
     {
@@ -40,9 +46,28 @@ class MetricoolClient
         return !empty($this->userId);
     }
 
+    public function storeUserId(string $userId): void
+    {
+        update_option('metricool_user_id', $userId);
+
+        $this->setUserId($userId);
+    }
+
+    public function getBlogId(): string
+    {
+        return $this->blogId;
+    }
+
     public function setBlogId(string $blogId): void
     {
         $this->blogId = $blogId;
+    }
+
+    public function storeBlogId(string $blogId): void
+    {
+        update_option('metricool_blog_id', $blogId);
+
+        $this->setBlogId($blogId);
     }
 
     public function hasBlogId(): bool
@@ -50,9 +75,9 @@ class MetricoolClient
         return !empty($this->blogId);
     }
 
-    public function getBlogId(): string
+    public function getUserToken(): string
     {
-        return $this->blogId;
+        return $this->userToken;
     }
 
     public function setUserToken(string $userToken): void
@@ -65,14 +90,53 @@ class MetricoolClient
         return !empty($this->userToken);
     }
 
-    public function setTesting(bool $testing): void
+    public function storeUserToken(string $token): void
     {
-        $this->testing = $testing;
+        update_option('metricool_auth_token', $token);
+
+        $this->setUserToken($token);
     }
 
-    public function isTesting(): bool
+    public function getRefreshToken(): string
     {
-        return $this->testing;
+        return get_option('metricool_refresh_token');
+    }
+
+    public function setRefreshToken(string $refreshToken): void
+    {
+        $this->refreshToken = $refreshToken;
+    }
+
+    public function hasRefreshToken(): bool
+    {
+        return !empty($this->refreshToken);
+    }
+
+    public function storeRefreshToken(string $refreshToken): void
+    {
+        update_option('metricool_refresh_token', $refreshToken);
+
+        $this->setRefreshToken($refreshToken);
+    }
+
+    public function getTokenExpires()
+    {
+        return get_option('metricool_auth_token_expires');
+    }
+
+    public function tokenExpiresAt(): Carbon
+    {
+        return Carbon::createFromTimestamp($this->getTokenExpires());
+    }
+
+    public function isTokenExpired(): bool
+    {
+        return Carbon::now()->gt($this->tokenExpiresAt());
+    }
+
+    public function storeTokenExpires(int $expires): void
+    {
+        update_option('metricool_auth_token_expires', Carbon::now()->addSeconds($expires)->timestamp);
     }
 
     public function insertMiddleWare(callable $middleWare): void
@@ -90,6 +154,22 @@ class MetricoolClient
         return ($this->client instanceof Client);
     }
 
+    /**
+     * Set the authentication tokens and userId.
+     */
+    public function authenticate(string $userId, string $userToken, string $refreshToken, int $expires): self
+    {
+        $this->storeUserId($userId);
+        $this->storeUserToken($userToken);
+        $this->storeRefreshToken($refreshToken);
+        $this->storeTokenExpires($expires);
+
+        return $this;
+    }
+
+    /**
+     * Check if the client has all the necessary authentication tokens to show the dashboard
+     */
     public function hasAuthentication(): bool
     {
         return $this->hasUserToken() && $this->hasUserId() && $this->hasBlogId();
@@ -111,7 +191,6 @@ class MetricoolClient
             'handler' => $handlerStack,
             'expect' => false,
             'headers' => [
-                'X-Mc-Auth' => $this->userToken,
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
             ]
@@ -160,6 +239,29 @@ class MetricoolClient
         return $this->request('DELETE', $endpoint);
     }
 
+    public function refreshToken(): void
+    {
+        $headers = [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+        $options = [
+            'form_params' => [
+                'client_id' => 'BaKuXnUZBvNvNHrNXtGivVxwnfGKitgc',
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $this->getRefreshToken(),
+            ]
+        ];
+
+        $response = $this->client->send(new Request('POST', 'https://app.metricool.com/oauth/token', $headers), $options);
+
+        $data = $this->parseResponse($response);
+
+        $this->storeUserToken($data['access_token']);
+        $this->storeRefreshToken($data['refresh_token']);
+        $this->storeTokenExpires($data['expires_in']);
+    }
+
     /**
      * @param mixed|null $body
      * @throws GuzzleException
@@ -168,8 +270,14 @@ class MetricoolClient
     {
         $this->validate();
 
+        if ($this->isTokenExpired()) {
+            $this->refreshToken();
+        }
+
         $response = $this->client->send(
-            new Request($method, $this->formatUrl($endpoint), [], $body)
+            new Request($method, $this->formatUrl($endpoint), [
+                'Authorization' => 'Bearer ' . $this->userToken
+            ], $body)
         );
 
         return $this->parseResponse($response);
@@ -189,8 +297,6 @@ class MetricoolClient
      */
     private function formatUrl(string $url): string
     {
-        $baseUri = $this->isTesting() ? $this->stagingApiUrl : $this->apiUrl;
-
         $query = http_build_query(array_filter([
             'userId' => $this->userId,
             'blogId' => $this->blogId,
@@ -203,7 +309,7 @@ class MetricoolClient
             ? $url . '?' . $query
             : $url . '&' . $query;
 
-        return trailingslashit($baseUri) . $url;
+        return trailingslashit($this->apiUrl) . $url;
     }
 
     /**

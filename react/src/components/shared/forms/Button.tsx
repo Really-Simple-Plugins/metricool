@@ -1,7 +1,9 @@
-import { Button as PrimitiveButton, buttonVariants as PrimitiveButtonVariants } from "@/components/shared/primitives/button.tsx";
+import {
+    Button as PrimitiveButton,
+    buttonVariants as PrimitiveButtonVariants
+} from "@/components/shared/primitives/button.tsx";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/functions/utils.ts";
-import { Icon, type IconProps } from "@/components/shared/user-feedback/Icon.tsx";
+import { cn } from "@/support/functions/utils.ts";
 
 const ButtonVariantStyling = {
     "primary": "bg-primary border-primary hover:bg-primary-light hover:text-primary hover:border-primary-light",
@@ -12,22 +14,24 @@ const ButtonVariantStyling = {
     "secondary-ghost": "bg-transparent text-secondary border-solid border-secondary hover:text-accent-foreground hover:bg-secondary-light hover:border-secondary-light hover:text-secondary-dark",
     "tertiary": "bg-tertiary border-tertiary hover:bg-tertiary-light hover:text-tertiary hover:border-tertiary-light",
     "tertiary-ghost": "bg-transparent text-tertiary border-solid border-tertiary hover:text-accent-foreground hover:bg-tertiary-light hover:border-tertiary-light hover:text-tertiary-dark",
-    "icon": "rounded-full border-none p-0 has-[>svg]:p-0 m-0 bg-transparent hover:bg-transparent text-gray-600 border-none",
-    "upsell": "bg-upsell border-upsell text-black  hover:bg-upsell hover:text-black",
+    "icon": "rounded-full border-none p-0 has-[>svg]:p-0 m-0 bg-transparent hover:bg-transparent text-gray-600",
+    "upsell": "bg-upsell border-upsell text-black hover:bg-upsell hover:text-black",
     "upsell-ghost": "bg-white border-neutral-200 text-black hover:bg-white hover:text-black",
     "black": "bg-black border-black text-white hover:bg-black hover:text-white hover:invert",
+    "link": "p-0 border-none text-black hover:text-wordpress-link-hover bg-transparent hover:bg-transparent font-normal underline !h-[fit-content]",
+    "unstyled": "p-0 border-none rounded-none font-normal font-base min-h-[fit-content] min-w-[fit-content]",
 };
 
 const ButtonVariants = cva(
-    "bg-primary rounded-xs px-3 border-2 font-semibold text-md cursor-pointer size-fit",
+    "rounded-xs px-3 border-2 font-semibold text-md cursor-pointer size-fit",
     {
         variants: {
             variant: ButtonVariantStyling,
             size: {
                 default: "h-8",
-                xs: "text-xs h-5 px-2 py-1 has-[>svg]:px-2 ",
+                xs: "text-xs h-5 px-2 py-1 has-[>svg]:px-2",
                 sm: "text-sm h-6",
-                lg: "text-lg h-10 ",
+                lg: "text-lg h-10",
                 icon: "h-[fit-content] w-[fit-content]",
             }
         },
@@ -42,27 +46,31 @@ type ButtonVariantsProps =
     | VariantProps<typeof PrimitiveButtonVariants>
     | VariantProps<typeof ButtonVariants>;
 
-type AdditionalIconProps = (
-    IconProps & {
-    iconPosition: "left" | "right",
-    iconClass?: string,
-} | {
-    icon?: never,
-    iconPosition?: never,
-    iconClass?: never,
-});
-
+/**
+ * A 'discriminating union type' which ensures that if the type is "button" (default)
+ * a Button component can only have either a link or an onClick prop, not both,
+ * and with type "submit" or "trigger" it can have neither.
+ *
+ * Type "trigger" was added as several shadcn components use buttons as triggers
+ * for certain interactivity. These are given an action by the component itself
+ * so they should not be given either a link or an onClick prop, which this
+ * union type only allowed with type "submit", which was not right for the
+ * behaviour.
+ */
 type ActionProps = ({
-    type: "submit",
+    type: "submit" | "trigger",
     link?: never,
+    target?: never,
     onClick?: never,
 } | {
     type?: "button",
     link?: never,
+    target?: never,
     onClick: React.ComponentProps<"button">["onClick"],
 } | {
     type?: "button",
     link: string,
+    target?: React.ComponentProps<"a">["target"],
     onClick?: never,
 });
 
@@ -82,34 +90,60 @@ const Button = ({
     children,
     className,
     size,
-    icon,
-    iconPosition,
-    iconClass,
     link,
+    onClick,
+    target = "_blank",
+    type = "button",
     ...props
-}: React.ComponentProps<"button"> & ButtonVariantsProps & AdditionalIconProps & ActionProps) => {
-    return (
+}: Omit<React.ComponentProps<"button">, "type"> & Required<Pick<ButtonVariantsProps, "variant">> & ButtonVariantsProps & ActionProps) => {
+    //@ts-expect-error tsc can't verify type narrowing on variant
+    const classes = cn(variant in ButtonVariantStyling ? ButtonVariants({ variant, size }) : PrimitiveButtonVariants({ variant, size }), className);
+
+    const StyledButton = () => (
         <PrimitiveButton
-            //@ts-expect-error tsc can't verify type narrowing on variant
-            className={cn(variant ? variant in ButtonVariantStyling ? ButtonVariants({ variant, size }) : buttonVariants({ variant, size }) : "", className)}
-            {...(link && {
-                onClick: () => {
-                    window.open(link, "_blank");
-                    window.focus();
-                }
-            })}
+            className={classes}
+            {...(onClick && { onClick: onClick })}
+            // we need to pass "button" if the type prop has "trigger" as value because "trigger" isn't a valid type for the base HTML button element
+            type={type !== "trigger" ? type : "button"}
             {...props}
         >
-            <div className={cn("flex gap-2 items-center", iconPosition === "left" && "flex-row-reverse")}>
-                {children && (<span>{children}</span>)}
-                {icon && iconPosition && (
-                    <Icon icon={icon} className={cn(size === "xs" ? "size-2" : "size-3.75", iconClass)}/>
-                )}
-            </div>
-            {variant && variant.includes("upsell") && (
-                <Icon icon={"upsell"} className={cn("size-2.5", variant === "upsell-ghost" && "p-0.5 rounded-full bg-upsell")}/>
-            )}
+            {/*span required for gradient text color to work*/}
+            {variant === "primary-gradient-ghost" ?
+                <span className={"inline-flex items-center justify-center gap-2 whitespace-nowrap"}>{children}</span>
+            :
+                children
+            }
         </PrimitiveButton>
+    );
+
+    if (variant === "link" && link) {
+        return (
+            <a
+                href={link}
+                target={target}
+                className={classes}
+                rel={"noopener noreferrer"}
+            >
+                {children}
+            </a>
+        );
+    }
+
+    if (type === "button" && link) {
+        return (
+            <a
+                href={link}
+                target={target}
+                className={"flex max-w-[fit-content]"}
+                rel={"noopener noreferrer"}
+            >
+                <StyledButton/>
+            </a>
+        );
+    }
+
+    return (
+        <StyledButton/>
     );
 };
 

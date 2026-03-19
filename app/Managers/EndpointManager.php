@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Metricool\Managers;
 
 use Carbon\Carbon;
-use Metricool\Traits\HasNonces;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasNonces;
 
 final class EndpointManager extends AbstractManager
 {

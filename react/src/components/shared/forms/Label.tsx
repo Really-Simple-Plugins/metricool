@@ -1,5 +1,5 @@
 import { Label as PrimitiveLabel } from "@/components/shared/primitives/label.tsx";
-import { cn } from "@/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 /**
  *

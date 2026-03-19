@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class ConnectedBrandsEndpoint implements SingleEndpointInterface
 {
@@ -29,7 +29,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken();
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken() && $this->metricoolApi->hasUserId();
     }
 
     /**

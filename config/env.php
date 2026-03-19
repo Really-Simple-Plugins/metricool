@@ -1,4 +1,6 @@
-<?php if (!defined('ABSPATH')) {
+<?php
+
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -12,7 +14,7 @@ return [
         'base_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . plugin_basename(dirname(__DIR__)) . '.php',
         'assets_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR,
         'lang_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'languages' . DIRECTORY_SEPARATOR,
-        'view_path' => dirname(__DIR__). DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+        'view_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
         'feature_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Features' . DIRECTORY_SEPARATOR,
         'migrations_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR,
         'react_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'react',
@@ -28,6 +30,8 @@ return [
         'review_url' => 'https://wordpress.org/support/plugin/metricool/reviews/#new-post',
     ],
     'metricool' => [
+        'rsp_auth_url' => 'https://metricool.rsp-auth.com',
+        'base_api_domain' => 'https://app.metricool.com/api',
         'base_url' => 'https://app.metricool.com/',
         'help_url' => 'https://help.metricool.com',
         'upgrade_premium_url' => 'https://app.metricool.com/user-settings/plan',
@@ -45,6 +49,8 @@ return [
         'trusted_urls' => [
             'legal_terms' => 'https://metricool.com/legal-terms/',
             'new_support_ticket' => 'https://wordpress.org/support/plugin/metricool/#new-topic-0',
+            'google_privacy_policy_url' => 'https://policies.google.com/privacy',
+            'google_terms_url' => 'https://policies.google.com/terms',
         ],
     ]
 ];

@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from "@/functions/utils.ts"
+import { cn } from "@/support/functions/utils.ts"
 import { Label } from "@/components/shared/primitives/label.tsx"
 import { Separator } from "@/components/shared/primitives/separator.tsx"
 import { Icon } from "@/components/shared/user-feedback/Icon.tsx"

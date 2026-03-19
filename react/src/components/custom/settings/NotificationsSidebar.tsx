@@ -1,4 +1,10 @@
-import { Block, BlockHeader, FetchingErrorAlert, FlexContainer, Icon, Notification } from "@/components/shared";
+import {
+    Block,
+    BlockHeader,
+    FlexContainer,
+    LoadingAndErrorState,
+    Notification
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useLocation } from "@tanstack/react-router";
@@ -46,13 +52,15 @@ const NotificationsSidebar = () => {
     return (
         <Block variant={"transparent"} className={"px-0"}>
             <BlockHeader title={__("Notifications", "metricool")} separator={true}/>
-            {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                    <Icon icon={"loading"} className={"size-5"}/>
-                </FlexContainer>
-            ) : error ? (
-                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={metricool.trusted_urls.new_support_ticket}/>
-            ) : noticeData?.visibleNotifications && noticeData?.visibleNotifications?.length > 0 && (
+            {!noticeData ? (
+                <LoadingAndErrorState
+                    error={error}
+                    isLoading={isLoading}
+                    errorUpdateCount={errorUpdateCount}
+                    refetch={refetch}
+                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                />
+            ) : noticeData.visibleNotifications && noticeData.visibleNotifications?.length > 0 && (
                 noticeData.visibleNotifications.map((notice) => (
                     <Notification key={notice.id} title={notice.title} variant={notice.type}>
                         <FlexContainer direction={"column"} className={"!gap-2"}>
