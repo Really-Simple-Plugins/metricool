@@ -35,7 +35,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                 password: "",
             },
             terms: false,
-            marketing: false,
+            marketing: true,
         },
     });
 
