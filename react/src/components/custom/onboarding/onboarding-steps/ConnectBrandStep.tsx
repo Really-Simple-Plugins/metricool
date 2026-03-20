@@ -69,51 +69,53 @@ const ConnectBrandStep = () => {
                     {__("Choose the brand that you want to connect to this website", "metricool")}
                 </div>
             </FlexContainer>
-            <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
-                <FieldWrapper
-                    label={__("Choose your brand", "metricool")}
-                    control={control}
-                    name={"id"}
-                    uniqueIdSuffix={"connected-brand"}
-                    render={(props) => (
-                        <Select
-                            {...props}
-                            onValueChange={(value) => {
-                                props.onChange(Number(value));
-                            }}
-                            className={"border-neutral-200 font-semibold !text-black"}
-                            placeholder={__("Select a brand", "metricool")}
-                        >
-                            {!connectedBrands ? (
-                                <LoadingAndErrorState
-                                    error={error}
-                                    isLoading={isLoading}
-                                    errorUpdateCount={errorUpdateCount}
-                                    refetch={refetch}
-                                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
-                                />
-                            ) : (connectedBrands.map((brand) => (
-                                <SelectOption
-                                    value={brand.id}
-                                    className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
-                                >
-                                    {brand.label}
-                                </SelectOption>
-                            )))}
-                        </Select>
-                    )}
+            {!connectedBrands ? (
+                <LoadingAndErrorState
+                    error={error}
+                    isLoading={isLoading}
+                    errorUpdateCount={errorUpdateCount}
+                    refetch={refetch}
+                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
                 />
-                <Button
-                    variant={"black"}
-                    type={"submit"}
-                    disabled={!dirtyFields.id}
-                >
-                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
-                        {__("Finish", "metricool")}
-                        <Icon icon={"arrow-right"}/>
-                    </FlexContainer>
-                </Button>
-            </form>
+            ) : (
+                <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
+                    <FieldWrapper
+                        label={__("Choose your brand", "metricool")}
+                        control={control}
+                        name={"id"}
+                        uniqueIdSuffix={"connected-brand"}
+                        render={(props) => (
+                            <Select
+                                {...props}
+                                onValueChange={(value) => {
+                                    props.onChange(Number(value));
+                                }}
+                                className={"border-neutral-200 font-semibold !text-black"}
+                                placeholder={__("Select a brand", "metricool")}
+                            >
+                                {connectedBrands.map((brand) => (
+                                    <SelectOption
+                                        value={brand.id}
+                                        className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
+                                    >
+                                        {brand.label}
+                                    </SelectOption>
+                                ))}
+                            </Select>
+                        )}
+                    />
+                    <Button
+                        variant={"black"}
+                        type={"submit"}
+                        disabled={!dirtyFields.id}
+                    >
+                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                            {__("Finish", "metricool")}
+                            <Icon icon={"arrow-right"}/>
+                        </FlexContainer>
+                    </Button>
+                </form>
+            )}
         </FlexContainer>
     );
 };
