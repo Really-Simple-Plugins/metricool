@@ -8,7 +8,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
  */
 export const Route = createFileRoute("/_authorized/settings/")({
     beforeLoad: ({ context }) => {
-        if (!context.metricool.is_onboarding_completed) {
+        if (!context.metricool.onboarding.state.completed) {
             throw redirect({ to: "/", replace: true });
         }
         throw redirect({ to: "/settings/account", replace: true });
