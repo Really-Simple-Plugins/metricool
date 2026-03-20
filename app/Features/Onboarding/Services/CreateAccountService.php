@@ -61,7 +61,7 @@ class CreateAccountService
                 throw new CreateAccountException(__('Something went wrong', 'metricool'), $e->getMessage());
             }
 
-            // Attempt to automatically set the blog information
+            // Attempt to automatically set the blog information, complete the onboarding process on success
             if ($this->onboarding->findAndRetrieveBlogInfo()) {
                 $this->onboarding->setOnboardingCompleted();
                 $this->onboarding->setShowWelcomeScreen();
