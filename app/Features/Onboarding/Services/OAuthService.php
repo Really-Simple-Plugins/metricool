@@ -72,4 +72,39 @@ class OAuthService
     {
         delete_option('metricool_oauth_state');
     }
+
+    public function parseUserIdFromAccessToken(string $accessToken): ?string
+    {
+        $parts = explode('.', $accessToken);
+        if (count($parts) !== 3) {
+            return null;
+        }
+
+        // Step 1 – base64url-decode the payload (second segment)
+        $payloadB64 = $parts[1];
+        $payloadBytes = base64_decode(strtr($payloadB64, '-_', '+/'));
+        if ($payloadBytes === false) {
+            return null;
+        }
+
+        // Step 2 – decompress (zlib DEFLATE with header, wbits = 15)
+        $json = zlib_decode($payloadBytes);
+        if ($json === false) {
+            return null;
+        }
+
+        // Step 3 – decode JSON and read the "sub" claim
+        $claims = json_decode($json, true);
+        if (!is_array($claims) || empty($claims['sub'])) {
+            return null;
+        }
+
+        // sub is "user:999999" – extract the numeric part
+        $subject = $claims['sub'];
+        if (str_starts_with($subject, 'user:')) {
+            return substr($subject, strlen('user:'));
+        }
+
+        return $subject;
+    }
 }
