@@ -26,31 +26,56 @@ class OnboardingService
             'completed' => $this->isOnboardingCompleted(),
             'authenticated' => $this->api->hasUserToken(),
             'blog_id_selected' => $this->api->hasBlogId(),
+        ];
+    }
+
+    public function mode(): array
+    {
+        return [
+            'show_welcome_screen' => $this->shouldShowWelcomeScreen(),
             'forced_login' => $this->isFromLegacyPlugin(),
         ];
     }
 
-    public function isOnboardingCompleted(): bool
+    public static function isOnboardingCompleted(): bool
     {
-        return $this->api->hasUserToken()
-            && $this->api->hasBlogId()
-            && $this->api->hasUserId();
+        return get_option('metricool_onboarding_completed', false) !== false;
     }
 
     /**
      * Set the onboarding as completed in the general options without autoload
+     *
      */
-    public function setOnboardingCompleted(): void
+    public function setOnboardingCompleted(bool $completed = true): void
     {
-        // set the timestamp
-        update_option('metricool_onboarding_completed_unix_timestamp', time(), false);
-        // set completed
-        update_option('metricool_onboarding_completed', true, false);
+        if ($completed === false) {
+            delete_option('metricool_onboarding_completed');
+        } else {
+            update_option('metricool_onboarding_completed', time(), false);
+        }
     }
 
     public function isFromLegacyPlugin(): bool
     {
         return (bool) get_option('metricool_from_legacy_plugin', false);
+    }
+
+    public function shouldShowWelcomeScreen(): bool
+    {
+        return $this->isOnboardingCompleted() && $this->showWelcomeScreenOnce();
+    }
+
+    public function showWelcomeScreenOnce(): bool
+    {
+        $show = (bool) get_option('metricool_show_welcome_screen', false);
+        $this->setShowWelcomeScreen(false);
+
+        return $show;
+    }
+
+    public function setShowWelcomeScreen(bool $show = true): void
+    {
+        update_option('metricool_show_welcome_screen', $show, false);
     }
 
     /**

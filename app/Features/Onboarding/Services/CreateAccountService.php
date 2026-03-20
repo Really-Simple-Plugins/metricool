@@ -64,6 +64,7 @@ class CreateAccountService
             // Attempt to automatically set the blog information
             if ($this->onboarding->findAndRetrieveBlogInfo()) {
                 $this->onboarding->setOnboardingCompleted();
+                $this->onboarding->setShowWelcomeScreen();
             }
         } catch (GuzzleException $e) {
             throw new CreateAccountException(__('Something went wrong.', 'metricool'), $e->getMessage());

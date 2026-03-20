@@ -39,8 +39,8 @@ class OAuthService
 
     public function validateState(string $state): bool
     {
-        $storedState = get_transient('metricool_oauth_state');
-        delete_transient('metricool_oauth_state');
+        $storedState = $this->getStoredState();
+        $this->deleteStoredState();
 
         return $state === $storedState;
     }
@@ -52,8 +52,24 @@ class OAuthService
     private function generateState(): string
     {
         $state = wp_generate_password(32, false);
-        set_transient('metricool_oauth_state', $state, 10 * MINUTE_IN_SECONDS);
+
+        $this->storeState($state);
 
         return $state;
+    }
+
+    private function getStoredState(): string
+    {
+        return get_option('metricool_oauth_state');
+    }
+
+    private function storeState(string $state): void
+    {
+        update_option('metricool_oauth_state', $state);
+    }
+
+    private function deleteStoredState(): void
+    {
+        delete_option('metricool_oauth_state');
     }
 }
