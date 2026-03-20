@@ -110,7 +110,7 @@ class MetricoolClient
 
     public function getTokenExpires(): ?int
     {
-        return get_option('metricool_auth_token_expires') ?: 0;
+        return (int) get_option('metricool_auth_token_expires') ?: 0;
     }
 
     public function tokenExpiresAt(): Carbon

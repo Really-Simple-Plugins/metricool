@@ -191,8 +191,10 @@ class OnboardingController implements FeatureInterface
             exit;
         }
 
-        // Retrieve brands and attempt to auto-select to finish onboarding
-        $this->onboarding->findAndRetrieveBlogInfo();
+        // Attempt to automatically set the blog information, complete the onboarding process on success
+        if ($this->onboarding->findAndRetrieveBlogInfo()) {
+            $this->onboarding->setOnboardingCompleted();
+        }
 
         // Redirect to the WordPress dashboard
         wp_safe_redirect($this->env->getString('plugin.dashboard_url'));

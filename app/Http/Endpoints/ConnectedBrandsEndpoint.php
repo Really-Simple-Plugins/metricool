@@ -57,7 +57,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
-            $response = $this->metricoolApi->connectedBrands()->get();
+            $response = $this->metricoolApi->brands()->all();
         } catch (\Throwable $e) {
             echo '<pre>';
             var_dump($e->getMessage()); // todo
