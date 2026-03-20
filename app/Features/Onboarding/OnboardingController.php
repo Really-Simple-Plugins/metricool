@@ -48,25 +48,32 @@ class OnboardingController implements FeatureInterface
      */
     public function addRoutes(array $routes): array
     {
-        $routes['onboarding/create_account'] = [
-            'methods' => 'POST',
-            'callback' => [$this, 'createAccount'],
-        ];
+        if ($this->onboarding->isOnboardingCompleted() === false) {
+            $routes['onboarding/create_account'] = [
+                'methods' => 'POST',
+                'callback' => [$this, 'createAccount'],
+            ];
 
-        $routes['onboarding/finish_onboarding'] = [
-            'methods' => 'POST',
-            'callback' => [$this, 'finishOnboarding'],
-        ];
+            $routes['onboarding/finish_onboarding'] = [
+                'methods' => 'POST',
+                'callback' => [$this, 'finishOnboarding'],
+            ];
 
-        $routes['onboarding/oauth_redirect'] = [
+            $routes['onboarding/oauth_redirect'] = [
+                'methods' => 'GET',
+                'callback' => [$this, 'oauthRedirect'],
+            ];
+
+            $routes['onboarding/oauth_callback'] = [
+                'methods' => 'GET',
+                'callback' => [$this, 'oauthCallback'],
+                'permission_callback' => [$this, 'oauthCallbackPermissionCheck'],
+            ];
+        }
+
+        $routes['onboarding/verify_web_connection'] = [
             'methods' => 'GET',
-            'callback' => [$this, 'oauthRedirect'],
-        ];
-
-        $routes['onboarding/oauth_callback'] = [
-            'methods' => 'GET',
-            'callback' => [$this, 'oauthCallback'],
-            'permission_callback' => [$this, 'oauthCallbackPermissionCheck'],
+            'callback' => [$this, 'verifyWebConnection'],
         ];
 
         return $routes;
@@ -158,18 +165,23 @@ class OnboardingController implements FeatureInterface
         try {
             $this->oauth->authenticateWithCode($code, $state);
         } catch (\RuntimeException $e) {
-            wp_safe_redirect(add_query_arg('oauth_error', 'en', $this->env->getString('plugin.dashboard_url')));
+            wp_safe_redirect(add_query_arg('oauth_error', $e->getMessage(), $this->env->getString('plugin.dashboard_url')));
             exit;
         }
 
         // Attempt to automatically set the blog information, complete the onboarding process on success
-        if ($this->onboarding->findAndRetrieveBlogInfo()) {
-            $this->onboarding->setOnboardingCompleted();
-        }
+        $this->onboarding->finalizeOnboarding();
 
         // Redirect to the WordPress dashboard
         wp_safe_redirect($this->env->getString('plugin.dashboard_url'));
         exit;
+    }
+
+    public function verifyWebConnection(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $response = $this->api->request('GET', 'admin/detectwebsite');
+
+        return $this->sendHttpResponse($response);
     }
 
     /**
@@ -179,6 +191,6 @@ class OnboardingController implements FeatureInterface
      */
     public function oauthCallbackPermissionCheck(\WP_REST_Request $request): bool
     {
-        return current_user_can('manage_options');
+        return true;
     }
 }

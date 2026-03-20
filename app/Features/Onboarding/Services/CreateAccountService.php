@@ -29,8 +29,13 @@ class CreateAccountService
      */
     public function createAccount(string $captcha, string $email, string $password, bool $newsletters): bool
     {
+        // First, check if the password is valid
+        if (!$this->isValidPassword($password)) {
+            throw new CreateAccountException(__('Password is not valid.', 'metricool'), 'Password is not valid', 422);
+        }
+
+        // Attempt to create the account
         try {
-            // Attempt to sign up the user through RSPAL
             $signupResponse = $this->rspalClient->signUp([
                 'username' => $email,
                 'newsletters' => $newsletters,
@@ -43,7 +48,7 @@ class CreateAccountService
 
         // Check if the user already exists
         if ($signupResponse->getStatusCode() == 400) {
-            throw new CreateAccountException(__('E-mail address exists.', 'metricool'), json_encode($signupResponse), 422);
+            throw new CreateAccountException(__('Something went wrong.', 'metricool'), 'Email or password error', 422);
         }
 
         // Check if the response contains the required fields
@@ -54,7 +59,7 @@ class CreateAccountService
         // Parse the user ID from the access token
         $userId = $this->oauth->parseUserIdFromAccessToken($signupResponse->data->accessToken);
 
-        // Store authentication data
+        /// Authenticate the Metricool API Client
         $this->metricoolApi->authenticate(
             $userId,
             (string) $signupResponse->data->accessToken,
@@ -66,8 +71,7 @@ class CreateAccountService
         $this->updatePassword($password);
 
         // Attempt to automatically set the blog information, complete the onboarding process on success
-        if ($this->onboarding->findAndRetrieveBlogInfo()) {
-            $this->onboarding->setOnboardingCompleted();
+        if ($this->onboarding->finalizeOnboarding()) {
             $this->onboarding->setShowWelcomeScreen();
         }
 
@@ -75,7 +79,17 @@ class CreateAccountService
     }
 
     /**
+     * Check if the password is: between 8 and 20 characters long, contains at least one uppercase letter, one lowercase letter, one number, and one special character
+     */
+    protected function isValidPassword(string $password): bool
+    {
+        return (bool) preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,20}$/', $password);
+    }
+
+    /**
      * Update the user's password.
+     *
+     * @throws CreateAccountException
      */
     protected function updatePassword(string $password): void
     {

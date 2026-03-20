@@ -61,13 +61,14 @@ class OAuthService
                 throw new \RuntimeException('missing_token_data');
             }
 
+            // Retrieve the user ID from the access token
             $userId = $this->parseUserIdFromAccessToken($tokenData['access_token']);
 
             if (empty($userId)) {
                 throw new \RuntimeException('token_parse_failed');
             }
 
-            // Authenticate - store userId, accessToken, refreshToken
+            // Authenticate the Metricool API Client
             $this->api->authenticate(
                 $userId,
                 (string) $tokenData['access_token'],

@@ -14,6 +14,11 @@ class TrackingScriptService
         update_option('metricool_tracking_script_hash', $hash);
     }
 
+    public function activateTrackingWidget(): void
+    {
+        update_option('metricool_tracking_script_active', true);
+    }
+
     /**
      * Returns if the user has enabled the widget in the settings
      */

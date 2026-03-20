@@ -269,6 +269,9 @@ class MetricoolClient
         return $this->parseResponse($response);
     }
 
+    /**
+     * Refresh the user token using the refresh token.
+     */
     public function refreshToken(): void
     {
         $headers = [
@@ -278,7 +281,7 @@ class MetricoolClient
 
         $options = [
             'form_params' => [
-                'client_id' => 'BaKuXnUZBvNvNHrNXtGivVxwnfGKitgc',
+                'client_id' => $this->env->getString('metricool.oauth_client_id'),
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $this->getRefreshToken(),
             ]
