@@ -12,7 +12,7 @@ import { __, _n, sprintf } from "@wordpress/i18n";
 import { useState } from "react";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { queryClient } from "@/main.tsx";
+// import { queryClient } from "@/main.tsx";
 
 /**
  * The Progress block used in {@link DashboardLayout}.
@@ -35,7 +35,7 @@ const Progress = () => {
     // always finish first before tasks are actually fetched so users receive
     // accurate information on first page load
     const { data: taskData, isLoading, error, refetch, errorUpdateCount } = useQuery({
-        enabled: queryClient.getQueryData(["connected", "accounts"]) !== undefined,
+        // enabled: queryClient.getQueryData(["connected", "accounts"]) !== undefined,
         queryKey: ["tasks"],
         queryFn: () => httpClient.setRoute("get_tasks").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
