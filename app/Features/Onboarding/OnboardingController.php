@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
-use _PHPStan_e870ac104\Nette\Neon\Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
@@ -12,7 +11,6 @@ use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Features\Onboarding\Services\OAuthService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\FeatureInterface;
-use Metricool\Services\TrackingScriptService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Traits\HasRestAccess;
 
@@ -30,7 +28,6 @@ class OnboardingController implements FeatureInterface
         MetricoolApi $api,
         OnboardingService $onboarding,
         CreateAccountService $accounts,
-        TrackingScriptService $tracking,
         EnvironmentConfig $env,
         OAuthService $oauth
     ) {
@@ -51,7 +48,6 @@ class OnboardingController implements FeatureInterface
      */
     public function addRoutes(array $routes): array
     {
-
         $routes['onboarding/create_account'] = [
             'methods' => 'POST',
             'callback' => [$this, 'createAccount'],
@@ -153,29 +149,22 @@ class OnboardingController implements FeatureInterface
         $code = (string) $request->get_param('code');
         $state = (string) $request->get_param('state');
 
-        // Verify state to prevent CSRF
-        $storedState = get_transient('metricool_oauth_state');
-        delete_transient('metricool_oauth_state');
-
-        if (empty($state) || $state !== $storedState) {
-            wp_safe_redirect(add_query_arg('metricool_error', 'invalid_state', $this->env->getString('plugin.dashboard_url')));
-            exit;
-        }
-
         if (empty($code)) {
             wp_safe_redirect(add_query_arg('metricool_error', 'missing_code', $this->env->getString('plugin.dashboard_url')));
             exit;
         }
 
-        // Build the redirect_uri (must match what was sent in the authorize request)
-        $redirectUri = $this->oauth->getRedirectUrl();
+        if (empty($state) || $this->oauth->validateState($state) === false) {
+            wp_safe_redirect(add_query_arg('metricool_error', 'invalid_state', $this->env->getString('plugin.dashboard_url')));
+            exit;
+        }
 
         try {
-            // Exchange the code for tokens
-            $tokenData = $this->api->exchangeOAuthCode($code, $redirectUri);
+            // Exchange the code for auth tokens
+            $tokenData = $this->api->exchangeOAuthCode($code, $this->oauth->getRedirectUrl());
 
             if (empty($tokenData['user_id']) || empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
-                throw new Exception('Token data is missing');
+                throw new \RuntimeException('Token data is missing');
             }
 
             // Authenticate - store userId, accessToken, refreshToken
@@ -185,12 +174,12 @@ class OnboardingController implements FeatureInterface
                 (string) $tokenData['refresh_token'],
                 (int) ($tokenData['expires_in'])
             );
-        } catch (\Exception $e) {
+        } catch (GuzzleException $e) {
             wp_safe_redirect(add_query_arg('metricool_error', 'token_exchange_failed', $this->env->getString('plugin.dashboard_url')));
             exit;
         }
 
-        // Retrieve brands and attempt to auto-select
+        // Retrieve brands and attempt to auto-select to finish onboarding
         $this->onboarding->findAndRetrieveBlogInfo();
 
         // Redirect to the WordPress dashboard
@@ -200,7 +189,7 @@ class OnboardingController implements FeatureInterface
 
     /**
      * Permission check for the OAuth callback endpoint. The callback comes from
-     * an external redirect, so it won't have a nonce. We verify the user is a
+     * an external redirect, so it won't have nonce's. We verify the user is a
      * logged-in WP admin instead.
      */
     public function oauthCallbackPermissionCheck(\WP_REST_Request $request): bool

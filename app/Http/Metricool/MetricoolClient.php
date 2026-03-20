@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool;
 
-use _PHPStan_e870ac104\Symfony\Component\String\Exception\RuntimeException;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
@@ -22,7 +21,6 @@ class MetricoolClient
     private ?Client $client = null;
     private string $apiUrl;
     private string $userToken = '';
-    private string $refreshToken = '';
     private string $blogId = '';
     private string $userId = '';
     protected array $middleWares = [];
@@ -110,9 +108,9 @@ class MetricoolClient
         update_option('metricool_refresh_token', $refreshToken);
     }
 
-    public function getTokenExpires()
+    public function getTokenExpires(): ?string
     {
-        return get_option('metricool_auth_token_expires');
+        return get_option('metricool_auth_token_expires') ?: '0';
     }
 
     public function tokenExpiresAt(): Carbon
@@ -125,7 +123,7 @@ class MetricoolClient
         return Carbon::now()->gt($this->tokenExpiresAt());
     }
 
-    public function storeTokenExpires($expires): void
+    public function storeTokenExpires(?int $expires): void
     {
         if ($expires) {
             $expires = Carbon::now()->addSeconds($expires)->timestamp;
@@ -249,7 +247,7 @@ class MetricoolClient
      */
     public function exchangeOAuthCode(string $code, string $redirectUri): array
     {
-        $response = (new Client())->post($this->env->getString('metricool.oauth_token_url'), [
+        $response = $this->client->post($this->env->getString('metricool.oauth_token_url'), [
             'form_params' => [
                 'grant_type' => 'authorization_code',
                 'client_id' => $this->env->getString('metricool.oauth_client_id'),
@@ -269,18 +267,18 @@ class MetricoolClient
         delete_transient('metricool_oauth_state');
 
         if (empty($state) || $state !== $storedState) {
-            throw new RuntimeException('Invalid state');
+            throw new \RuntimeException('Invalid state');
         }
 
         // Exchange the code for tokens
         try {
             $tokenData = $this->exchangeOAuthCode($code, $redirectUri);
         } catch (GuzzleException $e) {
-            throw new RuntimeException('Failed to exchange code for tokens: ' . $e->getMessage());
+            throw new \RuntimeException('Failed to exchange code for tokens: ' . $e->getMessage());
         }
 
         if (empty($tokenData['user_id']) || empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
-            throw new RuntimeException('Token data is missing');
+            throw new \RuntimeException('Token data is missing');
         }
 
         // Authenticate - store userId, accessToken, refreshToken

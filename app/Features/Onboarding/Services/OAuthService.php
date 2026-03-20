@@ -37,15 +37,39 @@ class OAuthService
         ], $this->env->getString('metricool.oauth_authorize_url'));
     }
 
+    public function validateState(string $state): bool
+    {
+        $storedState = $this->getStoredState();
+        $this->deleteStoredState();
+
+        return $state === $storedState;
+    }
+
     /**
      * Generates a unique state parameter for the OAuth flow and stores it in a transient.
      * The state parameter is used to prevent CSRF attacks.
      */
-    private function generateState()
+    private function generateState(): string
     {
         $state = wp_generate_password(32, false);
-        set_transient('metricool_oauth_state', $state, 10 * MINUTE_IN_SECONDS);
+
+        $this->storeState($state);
 
         return $state;
+    }
+
+    private function getStoredState(): string
+    {
+        return get_option('metricool_oauth_state');
+    }
+
+    private function storeState(string $state): void
+    {
+        update_option('metricool_oauth_state', $state);
+    }
+
+    private function deleteStoredState(): void
+    {
+        delete_option('metricool_oauth_state');
     }
 }

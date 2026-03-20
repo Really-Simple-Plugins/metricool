@@ -10,7 +10,9 @@ namespace Metricool\Http\Metricool;
  *
  * @method bool hasAuthentication()
  * @method bool hasUserToken()
+ * @method bool getUserId()
  * @method bool hasUserId()
+ * @method bool getBlogId()
  * @method bool hasBlogId()
  * @method bool isTesting()
  * @method bool isConnected()
