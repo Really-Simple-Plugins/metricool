@@ -159,22 +159,32 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 type PartialGlobalState = Partial<GlobalState>;
 
 interface ReducerAction {
-    dispatchType: "setOnboardingComplete" | "setDashboardModalClosed" | "setDashboardSetting",
+    dispatchType: "setOnboardingState" | "setDashboardModalClosed" | "setDashboardSetting",
     change?: PartialGlobalState,
 }
 
 const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalState => {
     switch (action.dispatchType) {
-        case "setOnboardingComplete": {
+        case "setOnboardingState": {
             return {
                 ...state,
-                metricool: { ...state.metricool, onboarding: { ...state.metricool.onboarding, state: { ...state.metricool.onboarding.state, completed: true } } }
+                ...(action?.change?.metricool && {
+                    metricool: {
+                        ...state.metricool,
+                        ...(action?.change?.metricool.onboarding && { onboarding: { ...action?.change?.metricool.onboarding } })
+                    }
+                })
             };
         }
         case "setDashboardModalClosed": {
             return {
                 ...state,
-                metricool: { ...state.metricool, onboarding: { ...state.metricool.onboarding, mode: { ...state.metricool.onboarding.mode, show_welcome_screen: false } } }
+                metricool: { ...state.metricool,
+                    onboarding: {
+                        ...state.metricool.onboarding,
+                        mode: { ...state.metricool.onboarding.mode, show_welcome_screen: false }
+                    }
+                }
             };
         }
         case "setDashboardSetting": {
