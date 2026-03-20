@@ -16,7 +16,7 @@ const HeaderTab = ({ link, children, className, external = false, badge }: React
         <Link
             to={link}
             className={cn(
-                "text-md text-black items-center flex gap-1 py-[23px] focus:outline-hidden relative ease-in-out duration-200 border-b-3 border-b-transparent [&.active]:border-b-primary hover:border-b-3 hover:border-b-primary-light hover:text-black",
+                "text-md text-black items-center flex gap-1 max-[700px]:py-[23px] focus:outline-hidden relative ease-in-out duration-200 border-b-3 border-b-transparent [&.active]:border-b-primary hover:border-b-3 hover:border-b-primary-light hover:text-black",
                 className
             )}
             {...(external && { target: "_blank" })}
@@ -58,7 +58,7 @@ type HeaderProps = {
 const Header = ({ tabs, actions, logo, variant, className }: React.ComponentProps<"div"> & HeaderProps) => {
     return (
         <div className={HeaderVariants({ variant })}>
-            <FlexContainer direction={"row"} className={cn("max-w-[125rem] mx-auto justify-between items-center flex-wrap max-[700px]:!gap-3 !gap-8", className)}>
+            <FlexContainer direction={"row"} className={cn("max-w-[125rem] mx-auto justify-between items-stretch flex-wrap max-[700px]:!gap-3 !gap-8", className)}>
                 <FlexContainer direction={"row"} className={"min-w-[4.375rem] min-h-[4.375rem] items-center justify-center"}>
                     {logo}
                 </FlexContainer>

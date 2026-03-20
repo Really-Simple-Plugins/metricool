@@ -19,6 +19,10 @@ import {
     faSquareArrowUpRight,
     faTable,
     faMagnifyingGlass,
+    faPlus,
+    faArrowTrendDown,
+    faArrowTrendUp,
+    faEye,
 } from "@fortawesome/pro-solid-svg-icons";
 import {
     faChevronDown,
@@ -48,7 +52,8 @@ import {
     faTiktok,
     faTwitch,
     faXTwitter,
-    faYoutube
+    faYoutube,
+    faWhatsapp,
 } from "@fortawesome/free-brands-svg-icons";
 
 const iconMap = {
@@ -78,6 +83,7 @@ const iconMap = {
     "tiktok": faTiktok,
     "twitch": faTwitch,
     "meta": faMeta,
+    "whatsapp": faWhatsapp,
     "up": faArrowUp,
     "down": faArrowDown,
     "left": faChevronLeft,
@@ -96,6 +102,10 @@ const iconMap = {
     "rocket": faRocketLaunch,
     "table": faTable,
     "search": faMagnifyingGlass,
+    "plus": faPlus,
+    "trend-down": faArrowTrendDown,
+    "trend-up": faArrowTrendUp,
+    "preview": faEye,
 };
 
 const Gbp = ({ className, ...props }: React.ComponentProps<"svg">) => (
