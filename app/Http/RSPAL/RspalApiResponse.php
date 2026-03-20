@@ -21,6 +21,10 @@ class RspalApiResponse
         $body = $response->getBody()->getContents();
         $data = json_decode($body, false);
 
+        if ($data->status && $data->status == 'OK') {
+            throw new \RuntimeException('Al Error Occurred');
+        }
+
         return new self(
             $statusCode,
             $data

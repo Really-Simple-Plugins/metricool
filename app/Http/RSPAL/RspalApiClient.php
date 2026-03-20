@@ -97,7 +97,7 @@ class RspalApiClient
     private function client(): Client
     {
         return new Client([
-            'http_errors' => true,
+            'http_errors' => false,
             'verify' => false,
         ]);
     }

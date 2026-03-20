@@ -10,12 +10,16 @@ namespace Metricool\Http\Metricool;
  *
  * @method bool hasAuthentication()
  * @method bool hasUserToken()
+ * @method bool getUserId()
  * @method bool hasUserId()
+ * @method bool getBlogId()
  * @method bool hasBlogId()
  * @method bool isTesting()
  * @method bool isConnected()
  * @method bool storeBlogId(string $blogId)
  * @method bool authenticate(string $userId, string $userToken, string $refreshToken, $expires)
+ * @method bool unAuthenticate()
+ * @method array exchangeOAuthCode(string $code, string $redirectUri)
  */
 class MetricoolApi
 {

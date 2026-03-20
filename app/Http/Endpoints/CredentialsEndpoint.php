@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
+use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Traits\HasAllowlistControl;
@@ -57,7 +58,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
      * retrieving the data.
      * @example /wp-json/metricool/v1/analytics
      */
-    public function callback(\WP_REST_Request $request)
+    public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
         $password = (string) $request->get_param('password');
         $newPassword = (string) $request->get_param('newPassword');
@@ -68,8 +69,12 @@ class CredentialsEndpoint implements SingleEndpointInterface
         }
 
         // Update the user password
-        $response = $this->metricoolApi->userCredentials()
-            ->updatePassword($password, $newPassword);
+        try {
+            $this->metricoolApi->userCredentials()
+                ->updatePassword($password, $newPassword);
+        } catch (GuzzleException $e) {
+            return $this->sendHttpErrorResponse(__('Something went wrong.', 'metricool'), ['data' => $e->getMessage()]);
+        }
 
         return $this->sendHttpResponse(['success' => true]);
     }

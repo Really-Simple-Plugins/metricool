@@ -123,7 +123,7 @@ class ReviewController implements ControllerInterface
      */
     private function onboardingCompletedTimestampSuitableForReview(): bool
     {
-        $onboardingCompletedTimestamp = get_option('metricool_onboarding_completed_unix_timestamp');
+        $onboardingCompletedTimestamp = get_option('metricool_onboarding_completed');
         if (empty($onboardingCompletedTimestamp)) {
             return false;
         }

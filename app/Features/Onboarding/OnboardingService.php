@@ -6,7 +6,6 @@ namespace Metricool\Features\Onboarding;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
-use Metricool\Features\Onboarding\Exceptions\TooManyBrandsException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\TrackingScriptService;
 
@@ -21,39 +20,83 @@ class OnboardingService
         $this->tracking = $tracking;
     }
 
-    /**
-     * Set the onboarding as completed in the general options without autoload
-     */
-    public function setOnboardingCompleted(): void
+    public function state(): array
     {
-        // set the timestamp
-        update_option('metricool_onboarding_completed_unix_timestamp', time(), false);
-        // set completed
-        update_option('metricool_onboarding_completed', true, false);
+        return [
+            'completed' => $this->isOnboardingCompleted(),
+            'authenticated' => $this->api->hasUserToken(),
+            'blog_id_selected' => $this->api->hasBlogId(),
+        ];
     }
 
+    public function mode(): array
+    {
+        return [
+            'show_welcome_screen' => $this->shouldShowWelcomeScreen(),
+            'forced_login' => $this->isFromLegacyPlugin(),
+        ];
+    }
+
+    public static function isOnboardingCompleted(): bool
+    {
+        return get_option('metricool_onboarding_completed', false) !== false;
+    }
+
+    /**
+     * Set the onboarding as completed in the general options without autoload
+     *
+     */
+    public function setOnboardingCompleted(bool $completed = true): void
+    {
+        if ($completed === false) {
+            delete_option('metricool_onboarding_completed');
+        } else {
+            update_option('metricool_onboarding_completed', time(), false);
+        }
+    }
+
+    public function isFromLegacyPlugin(): bool
+    {
+        return (bool) get_option('metricool_from_legacy_plugin', false);
+    }
+
+    public function shouldShowWelcomeScreen(): bool
+    {
+        return $this->isOnboardingCompleted() && $this->showWelcomeScreenOnce();
+    }
+
+    public function showWelcomeScreenOnce(): bool
+    {
+        $show = (bool) get_option('metricool_show_welcome_screen', false);
+        $this->setShowWelcomeScreen(false);
+
+        return $show;
+    }
+
+    public function setShowWelcomeScreen(bool $show = true): void
+    {
+        update_option('metricool_show_welcome_screen', $show, false);
+    }
 
     /**
      * Automatically find the blog from the connected brand and try to retrieve
      * the necessary onboarding information
-     *
-     * @throws TooManyBrandsException when there are more than one brand connected to the blog
-     * @throws BrandAccessDeniedException when the user does not have access to the picked brand
      */
-    public function findAndRetrieveBlogInfo(array $brands): bool
+    public function findAndRetrieveBlogInfo(): bool
     {
-        if (empty($brands)) {
-            throw new \RuntimeException('Something went wrong. No blogs found.');
+        try {
+            $brands = $this->api->brands()->all();
+        } catch (GuzzleException $e) {
+            return false;
         }
 
-        // Can't store brand information if there are more than one brand
-        if (count($brands) !== 1) {
-            throw new TooManyBrandsException($brands);
+        if (empty($brands)) {
+            return false;
         }
 
         try {
             $this->storeBlogInfo((string) $brands[0]['id']);
-        } catch (GuzzleException $e) {
+        } catch (GuzzleException | BrandAccessDeniedException $e) {
             return false;
         }
 
@@ -91,25 +134,5 @@ class OnboardingService
         }
 
         return true;
-    }
-
-    public function isOnboardingCompleted(): bool
-    {
-        return (bool) get_option('metricool_onboarding_completed', false);
-    }
-
-    public function isFromLegacyPlugin(): bool
-    {
-        return (bool) get_option('metricool_from_legacy_plugin', false);
-    }
-
-    public function state(): array
-    {
-        return [
-            'completed' => $this->isOnboardingCompleted(),
-            'authenticated' => $this->api->hasUserToken(),
-            'blog_id_selected' => $this->api->hasBlogId(),
-            'forced_login' => $this->isFromLegacyPlugin(),
-        ];
     }
 }

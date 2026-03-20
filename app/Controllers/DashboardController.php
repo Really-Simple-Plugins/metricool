@@ -272,7 +272,10 @@ class DashboardController implements ControllerInterface
             'assets_url' => $this->env->getUrl('plugin.assets_url'),
             'json_translations' => ($chunkTranslation['json_translations'] ?? []),
             'trusted_urls' => $this->env->get('frontend.trusted_urls'),
-            'onboarding' => $this->onboarding->state(),
+            'onboarding' => [
+                'state' => $this->onboarding->state(),
+                'mode' => $this->onboarding->mode(),
+            ],
             'is_onboarding_completed' => $isOnboardingCompleted,
             'support' => $this->env->get('metricool.support'),
             'metricool_base_url' => $this->env->get('metricool.base_url'),
