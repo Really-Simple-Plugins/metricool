@@ -102,7 +102,10 @@ class OnboardingController implements FeatureInterface
         }
 
         return $this->sendHttpResponse([
-            'onboarding' => $this->onboarding->state()
+            'onboarding' => [
+                'state' => $this->onboarding->state(),
+                'mode' => $this->onboarding->mode(),
+            ],
         ]);
     }
 
@@ -126,7 +129,10 @@ class OnboardingController implements FeatureInterface
         }
 
         return $this->sendHttpResponse([
-            'onboarding' => $this->onboarding->state()
+            'onboarding' => [
+                'state' => $this->onboarding->state(),
+                'mode' => $this->onboarding->mode(),
+            ],
         ]);
     }
 
@@ -181,7 +187,7 @@ class OnboardingController implements FeatureInterface
                 (int) ($tokenData['expires_in'])
             );
         } catch (GuzzleException $e) {
-            wp_safe_redirect(add_query_arg('oauth_error', 'token_exchange_failed', $this->env->getString('plugin.dashboard_url')));
+            wp_safe_redirect(add_query_arg('oauth_error', 'en', $this->env->getString('plugin.dashboard_url')));
             exit;
         }
 
