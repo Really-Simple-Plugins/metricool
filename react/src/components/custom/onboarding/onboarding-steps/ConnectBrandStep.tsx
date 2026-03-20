@@ -1,4 +1,5 @@
 import {
+    Alert,
     Button,
     DialogHeader,
     DialogTitle,
@@ -41,15 +42,18 @@ const ConnectBrandStep = () => {
         },
     });
 
-    const { mutate: onSubmit } = useMutation({
+    const { mutate: onSubmit, error: submitError } = useMutation({
         mutationFn: async (formValues: z.infer<typeof brandSchema>) => {
             console.log(formValues);
             return httpClient.setRoute("onboarding/finish_onboarding").setPayload({
                 blogId: formValues.id,
             }).post();
         },
-        onSuccess: () => {
-            dispatch({ dispatchType: "setOnboardingComplete" });
+        onSuccess: (response) => {
+            dispatch({
+                dispatchType: "setOnboardingState",
+                change: { metricool: { onboarding: { ...response.data.onboarding } } }
+            });
         },
         onError: (error) => {
             console.error(error);
@@ -69,6 +73,7 @@ const ConnectBrandStep = () => {
                     {__("Choose the brand that you want to connect to this website", "metricool")}
                 </div>
             </FlexContainer>
+            {submitError && (<Alert variant={"error"}>{submitError.message}</Alert>)}
             {!connectedBrands ? (
                 <LoadingAndErrorState
                     error={error}
