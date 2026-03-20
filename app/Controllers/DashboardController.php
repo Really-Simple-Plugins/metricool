@@ -259,8 +259,6 @@ class DashboardController implements ControllerInterface
      */
     private function localizedReactSettings(array $chunkTranslation): array
     {
-        $isOnboardingCompleted = $this->onboarding->isOnboardingCompleted();
-
         $settings = [
             'nonce' => wp_create_nonce('metricool_nonce'),
             'x_wp_nonce' => wp_create_nonce('wp_rest'),
@@ -276,16 +274,13 @@ class DashboardController implements ControllerInterface
                 'state' => $this->onboarding->state(),
                 'mode' => $this->onboarding->mode(),
             ],
-            'is_onboarding_completed' => $isOnboardingCompleted,
             'support' => $this->env->get('metricool.support'),
             'metricool_base_url' => $this->env->get('metricool.base_url'),
             'metricool_help_url' => $this->env->get('metricool.help_url'),
             'locale' => str_replace("_", "-", get_user_locale()),
-            'blogId' => $this->metricool->getBlogId(),
-            'userId' => $this->metricool->getUserId(),
         ];
 
-        if ($isOnboardingCompleted) {
+        if ($settings['onboarding']['state']['completed'] === true) {
             $settings['account'] = [
                 'user_id' => $this->metricool->getUserId(),
                 'blog_id' => $this->metricool->getBlogId()

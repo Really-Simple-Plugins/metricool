@@ -2,15 +2,19 @@
 
 namespace Metricool\Features\Onboarding\Services;
 
+use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class OAuthService
 {
     private EnvironmentConfig $env;
+    private MetricoolApi $api;
 
-    public function __construct(EnvironmentConfig $env)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $api)
     {
         $this->env = $env;
+        $this->api = $api;
     }
     /**
      * Retrieves the redirect URL for the OAuth flow.
@@ -37,6 +41,49 @@ class OAuthService
         ], $this->env->getString('metricool.oauth_authorize_url'));
     }
 
+    /**
+     * Authenticates the user using the OAuth code and state parameters.
+     */
+    public function authenticateWithCode(string $code, string $state): bool
+    {
+        // Verify state to prevent CSRF
+        $validated = $this->validateState($state);
+
+        if ($validated === false) {
+            throw new \RuntimeException('invalid_state');
+        }
+
+        try {
+            // Exchange the code for auth tokens
+            $tokenData = $this->api->exchangeOAuthCode($code, $this->getRedirectUrl());
+
+            if (empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
+                throw new \RuntimeException('missing_token_data');
+            }
+
+            $userId = $this->parseUserIdFromAccessToken($tokenData['access_token']);
+
+            if (empty($userId)) {
+                throw new \RuntimeException('token_parse_failed');
+            }
+
+            // Authenticate - store userId, accessToken, refreshToken
+            $this->api->authenticate(
+                $userId,
+                (string) $tokenData['access_token'],
+                (string) $tokenData['refresh_token'],
+                (int) ($tokenData['expires_in'])
+            );
+        } catch (GuzzleException $e) {
+            throw new \RuntimeException('token_exchange_failed');
+        }
+
+        return true;
+    }
+
+    /**
+     * Validates the state parameter from the OAuth flow.
+     */
     public function validateState(string $state): bool
     {
         $storedState = $this->getStoredState();
@@ -58,21 +105,33 @@ class OAuthService
         return $state;
     }
 
+    /**
+     * Retrieves the stored state parameter from the transient. Returns an empty string if not found.
+     */
     private function getStoredState(): string
     {
-        return get_option('metricool_oauth_state');
+        return (string) get_option('metricool_oauth_state');
     }
 
+    /**
+     * Stores the state parameter in a transient for later validation. The transient expires after 15 minutes.
+     */
     private function storeState(string $state): void
     {
         update_option('metricool_oauth_state', $state);
     }
 
+    /**
+     * Deletes the stored state parameter from the transient.
+     */
     private function deleteStoredState(): void
     {
         delete_option('metricool_oauth_state');
     }
 
+    /**
+     * Parses the user ID from the given access token. The access token is expected to be a JWT with a compressed payload.
+     */
     public function parseUserIdFromAccessToken(string $accessToken): ?string
     {
         $parts = explode('.', $accessToken);
@@ -105,6 +164,6 @@ class OAuthService
             return substr($subject, strlen('user:'));
         }
 
-        return $subject;
+        return null;
     }
 }

@@ -155,38 +155,9 @@ class OnboardingController implements FeatureInterface
         $code = (string) $request->get_param('code');
         $state = (string) $request->get_param('state');
 
-        if (empty($code)) {
-            wp_safe_redirect(add_query_arg('oauth_error', 'missing_code', $this->env->getString('plugin.dashboard_url')));
-            exit;
-        }
-
-        if (empty($state) || $this->oauth->validateState($state) === false) {
-            wp_safe_redirect(add_query_arg('oauth_error', 'invalid_state', $this->env->getString('plugin.dashboard_url')));
-            exit;
-        }
-
         try {
-            // Exchange the code for auth tokens
-            $tokenData = $this->api->exchangeOAuthCode($code, $this->oauth->getRedirectUrl());
-
-            if (empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
-                throw new \RuntimeException('Token data is missing');
-            }
-
-            $userId = $this->oauth->parseUserIdFromAccessToken($tokenData['access_token']);
-
-            if (empty($userId)) {
-                throw new \RuntimeException('Token could not be parsed');
-            }
-
-            // Authenticate - store userId, accessToken, refreshToken
-            $this->api->authenticate(
-                $userId,
-                (string) $tokenData['access_token'],
-                (string) $tokenData['refresh_token'],
-                (int) ($tokenData['expires_in'])
-            );
-        } catch (GuzzleException $e) {
+            $this->oauth->authenticateWithCode($code, $state);
+        } catch (\RuntimeException $e) {
             wp_safe_redirect(add_query_arg('oauth_error', 'en', $this->env->getString('plugin.dashboard_url')));
             exit;
         }
