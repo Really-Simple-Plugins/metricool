@@ -45,9 +45,8 @@ export const OnboardingLayout = () => {
     const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
 
 
-    const { mutate: onSignUp, error: signUpError,  } = useMutation({
+    const { mutate: onSignUp, error: signUpError, } = useMutation({
         onMutate: () => {
-            // setEnteredEmail(formValues.credentials.email);
             setActiveOnboardingStep(0);
             setOnboardingModalOpen(true);
         },
