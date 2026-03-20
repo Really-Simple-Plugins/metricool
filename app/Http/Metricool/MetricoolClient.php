@@ -108,9 +108,9 @@ class MetricoolClient
         update_option('metricool_refresh_token', $refreshToken);
     }
 
-    public function getTokenExpires(): ?string
+    public function getTokenExpires(): ?int
     {
-        return get_option('metricool_auth_token_expires') ?: '0';
+        return get_option('metricool_auth_token_expires') ?: 0;
     }
 
     public function tokenExpiresAt(): Carbon

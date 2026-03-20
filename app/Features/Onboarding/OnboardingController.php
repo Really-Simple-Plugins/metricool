@@ -163,13 +163,19 @@ class OnboardingController implements FeatureInterface
             // Exchange the code for auth tokens
             $tokenData = $this->api->exchangeOAuthCode($code, $this->oauth->getRedirectUrl());
 
-            if (empty($tokenData['user_id']) || empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
+            if (empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
                 throw new \RuntimeException('Token data is missing');
+            }
+
+            $userId = $this->oauth->parseUserIdFromAccessToken($tokenData['access_token']);
+
+            if (empty($userId)) {
+                throw new \RuntimeException('Token could not be parsed');
             }
 
             // Authenticate - store userId, accessToken, refreshToken
             $this->api->authenticate(
-                (string) $tokenData['user_id'],
+                $userId,
                 (string) $tokenData['access_token'],
                 (string) $tokenData['refresh_token'],
                 (int) ($tokenData['expires_in'])
