@@ -39,7 +39,7 @@ const generateRecaptchaToken = async (): Promise<string> => (
  */
 export const OnboardingLayout = () => {
     const { metricool, httpClient, dispatch } = useGlobalContext();
-    const [signInModalOpen, setSignInModalOpen] = useState<boolean>((metricool.onboarding.force_login || (metricool.onboarding.authenticated && !metricool.onboarding.blog_id_selected)));
+    const [signInModalOpen, setSignInModalOpen] = useState<boolean>((metricool.onboarding.mode.forced_login || (metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected)));
     const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
 
     const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
@@ -140,11 +140,11 @@ export const OnboardingLayout = () => {
             <Dialog
                 id={"sign-in-modal"}
                 open={signInModalOpen}
-                onOpenChange={(metricool.onboarding.force_login) ? undefined : setSignInModalOpen}
-                showCloseButton={!(metricool.onboarding.force_login)}
+                onOpenChange={(metricool.onboarding.mode.forced_login) ? undefined : setSignInModalOpen}
+                showCloseButton={!(metricool.onboarding.mode.forced_login)}
                 className={"flex flex-col gap-6 justify-center items-center"}
             >
-                {(!metricool.onboarding.authenticated && !metricool.onboarding.blog_id_selected) ? (
+                {(!metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected) ? (
                     <SignInStep/>
                 ) : (
                     <ConnectBrandStep/>

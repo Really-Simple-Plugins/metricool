@@ -14,7 +14,7 @@ const SignInStep = () => {
                         {__("Sign In", "metricool")}
                     </DialogTitle>
                     <span className={"text-base"}>
-                        {metricool.onboarding.force_login ?
+                        {metricool.onboarding.mode.forced_login ?
                             __("Sign in to discover the new Metricool plugin!", "metricool") :
                             __("Sign in to link WordPress to your Metricool account", "metricool")
                         }

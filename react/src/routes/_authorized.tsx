@@ -9,7 +9,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
  */
 export const Route = createFileRoute("/_authorized")({
     beforeLoad: ({ context }) => {
-        if (!context.metricool.onboarding.completed) {
+        if (!context.metricool.onboarding.state.completed) {
             throw redirect({ to: "/", replace: true });
         }
     }

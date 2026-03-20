@@ -39,7 +39,7 @@ function Index() {
 
     return (
         <>
-            {metricool.onboarding.completed ? (
+            {metricool.onboarding.state.completed ? (
                 <AuthorizedLayout>
                     <DashboardLayout/>
                 </AuthorizedLayout>

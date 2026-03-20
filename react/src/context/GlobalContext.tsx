@@ -7,6 +7,7 @@ import DynamicUrl from "@/support/helpers/DynamicUrl.tsx";
 // @ts-expect-error the metricool variable is globally set in the DashboardController
 // but the tsc complains it can't find it
 const METRICOOL_DATA = window.metricool.values;
+console.log(METRICOOL_DATA);
 const METRICOOL_API_URL = METRICOOL_DATA.rest_url + METRICOOL_DATA.rest_namespace + "/" + METRICOOL_DATA.rest_version + "/";
 
 export interface GlobalContext {
@@ -35,11 +36,15 @@ type MetricoolData = {
         google_terms_url: string,
     },
     onboarding: {
-        completed: boolean,
-        authenticated: boolean,
-        blog_id_selected: boolean,
-        force_login: boolean,
-        first_time: boolean,
+        "state": {
+            "completed": boolean,
+            "authenticated": boolean,
+            "blog_id_selected": boolean
+        },
+        "mode": {
+            "show_welcome_screen": boolean,
+            "forced_login": boolean,
+        }
     }
     support: string,
     metricool_base_url: string,
@@ -81,7 +86,7 @@ export const useGlobalContext = () => {
 };
 
 const initialGlobalState: GlobalState = {
-    metricool: { ...METRICOOL_DATA, onboarding: {...METRICOOL_DATA.onboarding, first_time: true } },
+    metricool: METRICOOL_DATA,
     httpClient: new HttpClient({
         NONCE: METRICOOL_DATA.nonce,
         X_WP_NONCE: METRICOOL_DATA.x_wp_nonce,
@@ -163,13 +168,13 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
         case "setOnboardingComplete": {
             return {
                 ...state,
-                metricool: { ...state.metricool, onboarding: { ...state.metricool.onboarding, completed: true } }
+                metricool: { ...state.metricool, onboarding: { ...state.metricool.onboarding, state: { ...state.metricool.onboarding.state, completed: true } } }
             };
         }
         case "setDashboardModalClosed": {
             return {
                 ...state,
-                metricool: { ...state.metricool, onboarding: { ...state.metricool.onboarding, first_time: false } }
+                metricool: { ...state.metricool, onboarding: { ...state.metricool.onboarding, mode: { ...state.metricool.onboarding.mode, show_welcome_screen: false } } }
             };
         }
         case "setDashboardSetting": {
