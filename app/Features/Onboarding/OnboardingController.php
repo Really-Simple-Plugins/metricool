@@ -150,12 +150,12 @@ class OnboardingController implements FeatureInterface
         $state = (string) $request->get_param('state');
 
         if (empty($code)) {
-            wp_safe_redirect(add_query_arg('metricool_error', 'missing_code', $this->env->getString('plugin.dashboard_url')));
+            wp_safe_redirect(add_query_arg('oauth_error', 'missing_code', $this->env->getString('plugin.dashboard_url')));
             exit;
         }
 
         if (empty($state) || $this->oauth->validateState($state) === false) {
-            wp_safe_redirect(add_query_arg('metricool_error', 'invalid_state', $this->env->getString('plugin.dashboard_url')));
+            wp_safe_redirect(add_query_arg('oauth_error', 'invalid_state', $this->env->getString('plugin.dashboard_url')));
             exit;
         }
 
@@ -181,7 +181,7 @@ class OnboardingController implements FeatureInterface
                 (int) ($tokenData['expires_in'])
             );
         } catch (GuzzleException $e) {
-            wp_safe_redirect(add_query_arg('metricool_error', 'token_exchange_failed', $this->env->getString('plugin.dashboard_url')));
+            wp_safe_redirect(add_query_arg('oauth_error', 'token_exchange_failed', $this->env->getString('plugin.dashboard_url')));
             exit;
         }
 
