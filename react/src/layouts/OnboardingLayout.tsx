@@ -62,11 +62,13 @@ export const OnboardingLayout = () => {
             }).post();
         },
         onSuccess: async (response) => {
-            console.log(response);
-            if (response.data.blog_id_selected === false) {
+            if (response.data.onboarding.blog_id_selected === false) {
                 setActiveOnboardingStep(1);
             } else {
-                dispatch({ dispatchType: "setOnboardingComplete" });
+                dispatch({
+                    dispatchType: "setOnboardingState",
+                    change: { metricool: { onboarding: { ...response.data.onboarding } } }
+                });
             }
         },
         onError: (error) => {
