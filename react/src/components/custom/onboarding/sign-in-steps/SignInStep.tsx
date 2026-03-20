@@ -1,9 +1,22 @@
-import { Button, DialogHeader, DialogTitle, FlexContainer, Icon } from "@/components/shared";
+import { Alert, Button, DialogHeader, DialogTitle, FlexContainer, Icon } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
+import { useMutation } from "@tanstack/react-query";
 
 const SignInStep = () => {
-    const { metricool } = useGlobalContext();
+    const { metricool, httpClient } = useGlobalContext();
+
+    const { mutate: getRedirectUrl, isPending, error } = useMutation({
+        mutationFn: async () => {
+            return httpClient.setRoute("onboarding/oauth_redirect").get();
+        },
+        onSuccess: (response) => {
+            window.location = response.data.redirect_url;
+        },
+        onError: (error) => {
+            console.error(error);
+        }
+    });
 
     return (
         <FlexContainer direction={"column"} className={"md:mx-8 mt-8 w-full"}>
@@ -20,18 +33,18 @@ const SignInStep = () => {
                         }
                     </span>
                 </FlexContainer>
+                {error && (<Alert variant={"error"}>{error.message}</Alert>)}
                 <Button
                     variant={"black"}
-                    link={metricool.metricool_base_url}
-                    target={"_self"}
+                    onClick={() => getRedirectUrl()}
+                    disabled={isPending}
                 >
                     <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
                         {__("Sign in on Metricool", "metricool")}
-                        <Icon icon={"external-link"}/>
+                        <Icon icon={isPending ? "loading" : "external-link"}/>
                     </FlexContainer>
                 </Button>
             </DialogHeader>
-
         </FlexContainer>
     );
 };
