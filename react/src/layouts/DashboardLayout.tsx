@@ -28,7 +28,7 @@ export const DashboardLayout = () => {
             </FlexContainer>
             <Dialog
                 id={"onboarding-completed-modal"}
-                open={!metricool.was_dashboard_modal_closed}
+                open={metricool.onboarding.first_time}
                 showCloseButton={true}
                 onOpenChange={() => dispatch({ dispatchType: "setDashboardModalClosed" })}
                 className={"flex flex-col justify-center items-center"}

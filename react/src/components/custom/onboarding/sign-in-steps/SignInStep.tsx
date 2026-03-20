@@ -11,15 +11,12 @@ const SignInStep = () => {
                 <img src={`${metricool.assets_url}img/logo.svg`} className={"h-11 w-auto"} alt={__("Metricool logo", "metricool")}/>
                 <FlexContainer direction={"column"} className={"justify-center items-center"}>
                     <DialogTitle className={"font-nunito font-bold m-0 text-2xl leading-6"}>
-                        {metricool.from_legacy_upgrade ?
-                            __("Welcome to our new plugin!", "metricool") :
-                            __("Sign In", "metricool")
-                        }
+                        {__("Sign In", "metricool")}
                     </DialogTitle>
                     <span className={"text-base"}>
-                        {metricool.from_legacy_upgrade ?
-                            __("Sign in to your Metricool account to start using our new plugin!", "metricool") :
-                            __("Sign in to your Metricool account ", "metricool")
+                        {metricool.onboarding.force_login ?
+                            __("Sign in to discover the new Metricool plugin!", "metricool") :
+                            __("Sign in to link WordPress to your Metricool account", "metricool")
                         }
                     </span>
                 </FlexContainer>

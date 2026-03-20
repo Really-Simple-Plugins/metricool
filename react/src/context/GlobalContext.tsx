@@ -34,15 +34,21 @@ type MetricoolData = {
         google_privacy_policy_url: string,
         google_terms_url: string,
     },
-    is_onboarding_completed: boolean,
-    was_dashboard_modal_closed: boolean,
+    onboarding: {
+        completed: boolean,
+        authenticated: boolean,
+        blog_id_selected: boolean,
+        force_login: boolean,
+        first_time: boolean,
+    }
     support: string,
     metricool_base_url: string,
     metricool_help_url: string,
     locale: string,
-    blogId: string,
-    userId: string,
-    from_legacy_upgrade: boolean,
+    account: {
+        blogId: string,
+        userId: string,
+    }
 };
 
 interface GlobalState {
@@ -75,7 +81,7 @@ export const useGlobalContext = () => {
 };
 
 const initialGlobalState: GlobalState = {
-    metricool: METRICOOL_DATA,
+    metricool: { ...METRICOOL_DATA, onboarding: {...METRICOOL_DATA.onboarding, first_time: true } },
     httpClient: new HttpClient({
         NONCE: METRICOOL_DATA.nonce,
         X_WP_NONCE: METRICOOL_DATA.x_wp_nonce,
@@ -104,7 +110,7 @@ const setTranslations = () => {
             console.error(error);
         }
     });
-}
+};
 
 /**
  * The main Global Context Component
@@ -155,10 +161,16 @@ interface ReducerAction {
 const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalState => {
     switch (action.dispatchType) {
         case "setOnboardingComplete": {
-            return { ...state, metricool: { ...state.metricool, is_onboarding_completed: true } };
+            return {
+                ...state,
+                metricool: { ...state.metricool, onboarding: { ...state.metricool.onboarding, completed: true } }
+            };
         }
         case "setDashboardModalClosed": {
-            return { ...state, metricool: { ...state.metricool, was_dashboard_modal_closed: true } };
+            return {
+                ...state,
+                metricool: { ...state.metricool, onboarding: { ...state.metricool.onboarding, first_time: false } }
+            };
         }
         case "setDashboardSetting": {
             if (!action.change) {

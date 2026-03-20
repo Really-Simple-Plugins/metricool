@@ -39,7 +39,7 @@ const generateRecaptchaToken = async (): Promise<string> => (
  */
 export const OnboardingLayout = () => {
     const { metricool, httpClient, dispatch } = useGlobalContext();
-    const [signInModalOpen, setSignInModalOpen] = useState<boolean>(metricool.from_legacy_upgrade);
+    const [signInModalOpen, setSignInModalOpen] = useState<boolean>((metricool.onboarding.force_login || (metricool.onboarding.authenticated && !metricool.onboarding.blog_id_selected)));
     const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
 
     const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
@@ -140,19 +140,15 @@ export const OnboardingLayout = () => {
             <Dialog
                 id={"sign-in-modal"}
                 open={signInModalOpen}
-                onOpenChange={(metricool.from_legacy_upgrade) ? undefined : setSignInModalOpen}
-                showCloseButton={!(metricool.from_legacy_upgrade)}
+                onOpenChange={(metricool.onboarding.force_login) ? undefined : setSignInModalOpen}
+                showCloseButton={!(metricool.onboarding.force_login)}
                 className={"flex flex-col gap-6 justify-center items-center"}
             >
-                <SignInStep/>
-            </Dialog>
-            <Dialog
-                id={"connect-brand-modal"}
-                // open={!metricool.blogId}
-                showCloseButton={false}
-                className={"flex flex-col gap-6 justify-center items-center"}
-            >
-                <ConnectBrandStep/>
+                {(!metricool.onboarding.authenticated && !metricool.onboarding.blog_id_selected) ? (
+                    <SignInStep/>
+                ) : (
+                    <ConnectBrandStep/>
+                )}
             </Dialog>
             <Dialog
                 id={"onboarding-modal"}
