@@ -12,6 +12,7 @@ use Metricool\Features\Onboarding\Services\OAuthService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Traits\HasRestAccess;
 
 class OnboardingController implements FeatureInterface
@@ -23,19 +24,22 @@ class OnboardingController implements FeatureInterface
     private EnvironmentConfig $env;
     private CreateAccountService $accounts;
     private OAuthService $oauth;
+    private RequestStorage $request;
 
     public function __construct(
         MetricoolApi $api,
         OnboardingService $onboarding,
         CreateAccountService $accounts,
         EnvironmentConfig $env,
-        OAuthService $oauth
+        OAuthService $oauth,
+        RequestStorage $request
     ) {
         $this->api = $api;
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
         $this->env = $env;
         $this->oauth = $oauth;
+        $this->request = $request;
     }
 
     public function register(): void
@@ -48,25 +52,32 @@ class OnboardingController implements FeatureInterface
      */
     public function addRoutes(array $routes): array
     {
-        $routes['onboarding/create_account'] = [
-            'methods' => 'POST',
-            'callback' => [$this, 'createAccount'],
-        ];
+        if ($this->onboarding->isOnboardingCompleted() === false) {
+            $routes['onboarding/create_account'] = [
+                'methods' => 'POST',
+                'callback' => [$this, 'createAccount'],
+            ];
 
-        $routes['onboarding/finish_onboarding'] = [
-            'methods' => 'POST',
-            'callback' => [$this, 'finishOnboarding'],
-        ];
+            $routes['onboarding/finish_onboarding'] = [
+                'methods' => 'POST',
+                'callback' => [$this, 'finishOnboarding'],
+            ];
 
-        $routes['onboarding/oauth_redirect'] = [
+            $routes['onboarding/oauth_redirect'] = [
+                'methods' => 'GET',
+                'callback' => [$this, 'oauthRedirect'],
+            ];
+
+            $routes['onboarding/oauth_callback'] = [
+                'methods' => 'GET',
+                'callback' => [$this, 'oauthCallback'],
+                'permission_callback' => [$this, 'oauthCallbackPermissionCheck'],
+            ];
+        }
+
+        $routes['onboarding/verify_web_connection'] = [
             'methods' => 'GET',
-            'callback' => [$this, 'oauthRedirect'],
-        ];
-
-        $routes['onboarding/oauth_callback'] = [
-            'methods' => 'GET',
-            'callback' => [$this, 'oauthCallback'],
-            'permission_callback' => [$this, 'oauthCallbackPermissionCheck'],
+            'callback' => [$this, 'verifyWebConnection'],
         ];
 
         return $routes;
@@ -79,11 +90,11 @@ class OnboardingController implements FeatureInterface
     public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
         // todo: storage ?
-        $email = (string) $request->get_param('email');
-        $password = (string) $request->get_param('password');
-        $marketing = (bool) $request->get_param('marketing');
-        $captcha = (string) $request->get_param('captcha');
-        $terms = (bool) $request->get_param('terms');
+        $email = $this->request->getEmail('email');
+        $password = $this->request->getString('password');
+        $marketing = $this->request->getBoolean('marketing');
+        $terms = $this->request->getBoolean('terms');
+        $captcha = $this->request->getString('captcha');
 
         // Validate fields
         if (!is_email($email) || empty($password) || empty($captcha) || !$terms) {
@@ -155,50 +166,26 @@ class OnboardingController implements FeatureInterface
         $code = (string) $request->get_param('code');
         $state = (string) $request->get_param('state');
 
-        if (empty($code)) {
-            wp_safe_redirect(add_query_arg('oauth_error', 'missing_code', $this->env->getString('plugin.dashboard_url')));
-            exit;
-        }
-
-        if (empty($state) || $this->oauth->validateState($state) === false) {
-            wp_safe_redirect(add_query_arg('oauth_error', 'invalid_state', $this->env->getString('plugin.dashboard_url')));
-            exit;
-        }
-
         try {
-            // Exchange the code for auth tokens
-            $tokenData = $this->api->exchangeOAuthCode($code, $this->oauth->getRedirectUrl());
-
-            if (empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
-                throw new \RuntimeException('Token data is missing');
-            }
-
-            $userId = $this->oauth->parseUserIdFromAccessToken($tokenData['access_token']);
-
-            if (empty($userId)) {
-                throw new \RuntimeException('Token could not be parsed');
-            }
-
-            // Authenticate - store userId, accessToken, refreshToken
-            $this->api->authenticate(
-                $userId,
-                (string) $tokenData['access_token'],
-                (string) $tokenData['refresh_token'],
-                (int) ($tokenData['expires_in'])
-            );
-        } catch (GuzzleException $e) {
-            wp_safe_redirect(add_query_arg('oauth_error', 'en', $this->env->getString('plugin.dashboard_url')));
+            $this->oauth->authenticateWithCode($code, $state);
+        } catch (\RuntimeException $e) {
+            wp_safe_redirect(add_query_arg('oauth_error', $e->getMessage(), $this->env->getString('plugin.dashboard_url')));
             exit;
         }
 
         // Attempt to automatically set the blog information, complete the onboarding process on success
-        if ($this->onboarding->findAndRetrieveBlogInfo()) {
-            $this->onboarding->setOnboardingCompleted();
-        }
+        $this->onboarding->finalizeOnboarding();
 
         // Redirect to the WordPress dashboard
         wp_safe_redirect($this->env->getString('plugin.dashboard_url'));
         exit;
+    }
+
+    public function verifyWebConnection(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $response = $this->api->request('GET', 'admin/detectwebsite');
+
+        return $this->sendHttpResponse($response);
     }
 
     /**
@@ -208,6 +195,6 @@ class OnboardingController implements FeatureInterface
      */
     public function oauthCallbackPermissionCheck(\WP_REST_Request $request): bool
     {
-        return current_user_can('manage_options');
+        return true;
     }
 }

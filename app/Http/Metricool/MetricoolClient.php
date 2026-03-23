@@ -167,6 +167,8 @@ class MetricoolClient
         $this->storeUserToken('');
         $this->storeRefreshToken('');
         $this->storeTokenExpires(null);
+        // Todo, event for this, so it can be done within the onboarding feature?
+        delete_option('metricool_onboarding_complete');
     }
 
     /**
@@ -247,7 +249,12 @@ class MetricoolClient
      */
     public function exchangeOAuthCode(string $code, string $redirectUri): array
     {
-        $response = $this->client->post($this->env->getString('metricool.oauth_token_url'), [
+        $headers = [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/x-www-form-urlencoded',
+        ];
+
+        $options = [
             'form_params' => [
                 'grant_type' => 'authorization_code',
                 'client_id' => $this->env->getString('metricool.oauth_client_id'),
@@ -255,65 +262,38 @@ class MetricoolClient
                 'redirect_uri' => $redirectUri,
                 'code_verifier' => 'login',
             ],
-        ]);
+        ];
+
+        $response = $this->client->send(new Request('POST', $this->env->getString('metricool.oauth_token_url'), $headers), $options);
 
         return $this->parseResponse($response);
     }
 
-    public function authenticateWithCode(string $code, string $state, string $redirectUri): bool
-    {
-        // Verify state to prevent CSRF
-        $storedState = get_transient('metricool_oauth_state');
-        delete_transient('metricool_oauth_state');
-
-        if (empty($state) || $state !== $storedState) {
-            throw new \RuntimeException('Invalid state');
-        }
-
-        // Exchange the code for tokens
-        try {
-            $tokenData = $this->exchangeOAuthCode($code, $redirectUri);
-        } catch (GuzzleException $e) {
-            throw new \RuntimeException('Failed to exchange code for tokens: ' . $e->getMessage());
-        }
-
-        if (empty($tokenData['user_id']) || empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
-            throw new \RuntimeException('Token data is missing');
-        }
-
-        // Authenticate - store userId, accessToken, refreshToken
-        $this->authenticate(
-            (string) $tokenData['user_id'],
-            (string) $tokenData['access_token'],
-            (string) $tokenData['refresh_token'],
-            (int) ($tokenData['expires_in'] ?? 300)
-        );
-
-        return true;
-    }
-
+    /**
+     * Refresh the user token using the refresh token.
+     */
     public function refreshToken(): void
     {
         $headers = [
             'Accept' => 'application/json',
             'Content-Type' => 'application/x-www-form-urlencoded',
         ];
+
         $options = [
             'form_params' => [
-                'client_id' => 'BaKuXnUZBvNvNHrNXtGivVxwnfGKitgc',
+                'client_id' => $this->env->getString('metricool.oauth_client_id'),
                 'grant_type' => 'refresh_token',
                 'refresh_token' => $this->getRefreshToken(),
             ]
         ];
 
         try {
-            $response = $this->client->send(new Request('POST', 'https://app.metricool.com/oauth/token', $headers), $options);
+            $response = $this->client->send(new Request('POST', $this->env->getString('metricool.oauth_token_url'), $headers), $options);
         } catch (GuzzleException $e) {
             // If the refresh token is invalid, we need to unauthenticate the user
             $this->unAuthenticate();
             return;
         }
-
 
         $data = $this->parseResponse($response);
 
