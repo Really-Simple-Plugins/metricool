@@ -72,10 +72,7 @@
         <form class="rsp-metricool-admin-notice-form" action="" method="POST">
             <?php wp_nonce_field($dismissAction, $dismissNonceName); ?>
             <input type="hidden" name="<?php echo esc_attr($formName); ?>" value="1">
-            <?php
-            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $content is rendered by our own view templates
-            echo $content;
-            ?>
+            <?php echo $content; ?>
         </form>
     </div>
 </div>
