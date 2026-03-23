@@ -22,8 +22,9 @@ class ReviewController implements ControllerInterface
     private EnvironmentConfig $env;
     private RequestStorage $request;
     private MetricoolApi $metricoolApi;
-    private string $reviewAction = 'rsp_metricool_review_form_submit';
-    private string $reviewNonceName = 'rsp_metricool_review_nonce';
+
+    private string $formAction = 'rsp_metricool_review_form_submit';
+    private string $formNonce = 'rsp_metricool_review_nonce';
 
     public function __construct(EnvironmentConfig $env, RequestStorage $request, MetricoolApi $metricoolApi)
     {
@@ -51,12 +52,15 @@ class ReviewController implements ControllerInterface
             return;
         }
 
-        $this->render('admin/review-notice', [
+        $this->render('admin/notices/layout', [
             'logoUrl' => $this->env->getUrl('plugin.assets_url') . 'img/mc-logo.svg',
-            'reviewUrl' => $this->env->getUrl('plugin.review_url'),
-            'reviewMessage' => $this->getReviewNoticeMessage(),
-            'reviewAction' => $this->reviewAction,
-            'reviewNonceName' => $this->reviewNonceName,
+            'formAction' => $this->formAction,
+            'formNonceName' => $this->formNonce,
+            'formName' => 'rsp_metricool_review_form',
+            'content' => $this->view('admin/notices/review-notice', [
+                'reviewUrl' => $this->env->getUrl('plugin.review_url'),
+                'reviewMessage' => $this->getReviewNoticeMessage(),
+            ]),
         ]);
     }
 
@@ -69,8 +73,8 @@ class ReviewController implements ControllerInterface
             return;
         }
 
-        $nonce = $this->request->get('global.' . $this->reviewNonceName);
-        if (wp_verify_nonce($nonce, $this->reviewAction) === false) {
+        $nonce = $this->request->get('global.' . $this->formNonce);
+        if (wp_verify_nonce($nonce, $this->formAction) === false) {
             return; // Invalid nonce
         }
 
@@ -95,6 +99,7 @@ class ReviewController implements ControllerInterface
      */
     private function canRenderReviewNotice(): bool
     {
+        return true;
         $previousChoice = get_option('metricool_review_notice_choice');
         if ($previousChoice === 'never') {
             return false;
