@@ -60,11 +60,16 @@ class UpgradeNoticeController implements ControllerInterface
             return;
         }
 
-        $this->render('admin/upgrade-notice', [
-            'logoUrl' => $this->env->getUrl('plugin.assets_url') . 'img/mc-logo.svg',
+        $content = $this->view('admin/upgrade-notice', [
             'dashboardUrl' => $this->env->getUrl('plugin.dashboard_url'),
+        ]);
+
+        $this->render('admin/admin-notice', [
+            'logoUrl' => $this->env->getUrl('plugin.assets_url') . 'img/mc-logo.svg',
             'dismissAction' => $this->dismissAction,
             'dismissNonceName' => $this->dismissNonceName,
+            'formName' => 'rsp_metricool_upgrade_notice_dismiss_form',
+            'content' => $content,
         ]);
     }
 

@@ -1,10 +1,15 @@
 <?php
 /**
+ * Base template for admin notices. Provides shared layout, styles,
+ * logo, and form wrapper. Each notice passes its own inner content
+ * via the $content variable (rendered by the calling controller).
+ *
  * Variables that should be passed to the view
  * @var string $logoUrl
- * @var string $dashboardUrl
  * @var string $dismissAction
  * @var string $dismissNonceName
+ * @var string $formName The hidden input name used to identify the form submission.
+ * @var string $content The inner HTML content specific to each notice type.
  */
 ?>
 
@@ -66,20 +71,11 @@
         <div class="rsp-metricool-admin-notice-image"><img src="<?php echo esc_url($logoUrl); ?>" alt="metricool-logo"></div>
         <form class="rsp-metricool-admin-notice-form" action="" method="POST">
             <?php wp_nonce_field($dismissAction, $dismissNonceName); ?>
-            <input type="hidden" name="rsp_metricool_upgrade_notice_dismiss_form" value="1">
-            <p><strong><?php esc_html_e('You have just upgraded to the new Metricool plugin', 'metricool'); ?></strong></p>
-            <p>
-                <?php esc_html_e('Please sign in to discover all new functionality', 'metricool'); ?>
-            </p>
-            <div class="rsp-metricool-buttons-row">
-                <a class="button button-primary" href="<?php echo esc_url($dashboardUrl); ?>">
-                    <?php esc_html_e('Sign in now!', 'metricool'); ?>
-                </a>
-                <div class="dashicons dashicons-no-alt"></div>
-                <button type="submit" class="link" title="<?php echo esc_attr__('Dismiss this notice.', 'metricool'); ?>">
-                    <?php esc_html_e('Don\'t show again', 'metricool'); ?>
-                </button>
-            </div>
+            <input type="hidden" name="<?php echo esc_attr($formName); ?>" value="1">
+            <?php
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- $content is rendered by our own view templates
+            echo $content;
+            ?>
         </form>
     </div>
 </div>

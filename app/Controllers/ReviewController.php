@@ -51,12 +51,17 @@ class ReviewController implements ControllerInterface
             return;
         }
 
-        $this->render('admin/review-notice', [
-            'logoUrl' => $this->env->getUrl('plugin.assets_url') . 'img/mc-logo.svg',
+        $content = $this->view('admin/review-notice', [
             'reviewUrl' => $this->env->getUrl('plugin.review_url'),
             'reviewMessage' => $this->getReviewNoticeMessage(),
-            'reviewAction' => $this->reviewAction,
-            'reviewNonceName' => $this->reviewNonceName,
+        ]);
+
+        $this->render('admin/admin-notice', [
+            'logoUrl' => $this->env->getUrl('plugin.assets_url') . 'img/mc-logo.svg',
+            'dismissAction' => $this->reviewAction,
+            'dismissNonceName' => $this->reviewNonceName,
+            'formName' => 'rsp_metricool_review_form',
+            'content' => $content,
         ]);
     }
 
