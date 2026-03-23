@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
-use Metricool\Features\Onboarding\OnboardingService;
 use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Services\DashboardService;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasUserAccess;
 use Metricool\Traits\HasAllowlistControl;
@@ -20,13 +20,13 @@ class DashboardController implements ControllerInterface
 
     private EnvironmentConfig $env;
     private MetricoolApi $metricool;
-    private OnboardingService $onboarding;
+    private DashboardService $dashboard;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, OnboardingService $onboarding)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $dashboard)
     {
         $this->env = $env;
         $this->metricool = $metricool;
-        $this->onboarding = $onboarding;
+        $this->dashboard = $dashboard;
     }
 
     public function register(): void
@@ -259,7 +259,7 @@ class DashboardController implements ControllerInterface
      */
     private function localizedReactSettings(array $chunkTranslation): array
     {
-        $isOnboardingCompleted = $this->onboarding->isOnboardingCompleted();
+        $isOnboardingCompleted = $this->dashboard->isOnboardingCompleted();
 
         $settings = [
             'nonce' => wp_create_nonce('metricool_nonce'),
@@ -273,8 +273,8 @@ class DashboardController implements ControllerInterface
             'json_translations' => ($chunkTranslation['json_translations'] ?? []),
             'trusted_urls' => $this->env->get('frontend.trusted_urls'),
             'onboarding' => [
-                'state' => $this->onboarding->state(),
-                'mode' => $this->onboarding->mode(),
+                'state' => $this->dashboard->state(),
+                'mode' => $this->dashboard->mode(),
             ],
             'is_onboarding_completed' => $isOnboardingCompleted,
             'support' => $this->env->get('metricool.support'),

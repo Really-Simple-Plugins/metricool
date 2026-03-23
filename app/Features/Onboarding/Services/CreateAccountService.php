@@ -7,20 +7,28 @@ use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
 use Metricool\Features\Onboarding\OnboardingService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Http\RSPAL\RspalApiClient;
+use Metricool\Services\DashboardService;
 
 class CreateAccountService
 {
-    private RspalApiClient $rspalClient;
-    private MetricoolApi $metricoolApi;
+    private RspalApiClient $rspal;
+    private MetricoolApi $api;
     private OnboardingService $onboarding;
     private OAuthService $oauth;
+    private DashboardService $dashboard;
 
-    public function __construct(RspalApiClient $rspalClient, MetricoolApi $metricoolApi, OnboardingService $onboarding, OAuthService $oauth)
-    {
-        $this->rspalClient = $rspalClient;
-        $this->metricoolApi = $metricoolApi;
+    public function __construct(
+        RspalApiClient $rspal,
+        MetricoolApi $api,
+        OnboardingService $onboarding,
+        OAuthService $oauth,
+        DashboardService $dashboard
+    ) {
+        $this->rspal = $rspal;
+        $this->api = $api;
         $this->onboarding = $onboarding;
         $this->oauth = $oauth;
+        $this->dashboard = $dashboard;
     }
 
     /**
@@ -36,7 +44,7 @@ class CreateAccountService
 
         // Attempt to create the account
         try {
-            $signupResponse = $this->rspalClient->signUp([
+            $signupResponse = $this->rspal->signUp([
                 'username' => $email,
                 'newsletters' => $newsletters,
             ], [
@@ -46,7 +54,7 @@ class CreateAccountService
             throw new CreateAccountException(__('Something went wrong.', 'metricool'), $e->getMessage(), 500);
         }
 
-        // Check if the user already exists
+        // A 400 response means e-mail exists or the password is invalid
         if ($signupResponse->getStatusCode() == 400) {
             throw new CreateAccountException(__('Something went wrong.', 'metricool'), 'Email or password error', 422);
         }
@@ -59,20 +67,32 @@ class CreateAccountService
         // Parse the user ID from the access token
         $userId = $this->oauth->parseUserIdFromAccessToken($signupResponse->data->accessToken);
 
-        /// Authenticate the Metricool API Client
-        $this->metricoolApi->authenticate(
+        if (empty($userId)) {
+            throw new CreateAccountException(__('Something went wrong.', 'metricool'), 'Failed to parse user ID from access token', 500);
+        }
+
+        // Authenticate the Metricool API Client
+        $this->api->authenticate(
             $userId,
             (string) $signupResponse->data->accessToken,
             (string) $signupResponse->data->refreshToken,
             $signupResponse->data->expires ?? 300
         );
 
-        // Attempt to set the password
-        $this->updatePassword($password);
+        try {
+            $this->api->userCredentials()
+                ->updatePassword('', $password);
+        } catch (GuzzleException $e) {
+            // todo: When this happens, the user account is created but the password is not set, so the user can't log in. We should handle this case properly,
+            // maybe by deleting the created account or allowing the user to set the password later?
+            $this->api->unAuthenticate();
+
+            throw new CreateAccountException(__('Something went wrong', 'metricool'), $e->getMessage(), 500);
+        }
 
         // Attempt to automatically set the blog information, complete the onboarding process on success
         if ($this->onboarding->finalizeOnboarding()) {
-            $this->onboarding->setShowWelcomeScreen();
+            $this->dashboard->setShowWelcomeScreen();
         }
 
         return true;
@@ -84,24 +104,5 @@ class CreateAccountService
     protected function isValidPassword(string $password): bool
     {
         return (bool) preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,20}$/', $password);
-    }
-
-    /**
-     * Update the user's password.
-     *
-     * @throws CreateAccountException
-     */
-    protected function updatePassword(string $password): void
-    {
-        try {
-            $this->metricoolApi->userCredentials()
-                ->updatePassword('', $password);
-        } catch (GuzzleException $e) {
-            // todo: When this happens, the user account is created but the password is not set, so the user can't log in. We should handle this case properly,
-            // maybe by deleting the created account or allowing the user to set the password later?
-            $this->metricoolApi->unAuthenticate();
-
-            throw new CreateAccountException(__('Something went wrong', 'metricool'), $e->getMessage(), 500);
-        }
     }
 }
