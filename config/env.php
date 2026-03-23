@@ -30,8 +30,8 @@ return [
         'review_url' => 'https://wordpress.org/support/plugin/metricool/reviews/#new-post',
     ],
     'metricool' => [
-        'rsp_auth_url' => 'https://metricool.rsp-auth.com',
-        'base_api_domain' => 'https://app.metricool.com/api',
+        'rsp_auth_url' => 'https://metricool.rsp-auth.com', // dont commit changes
+        'base_api_domain' => 'https://app.metricool.com/api', // dont commit changes
         'base_url' => 'https://app.metricool.com/',
         'help_url' => 'https://help.metricool.com',
         'upgrade_premium_url' => 'https://app.metricool.com/user-settings/plan',

@@ -27,7 +27,7 @@ class MetricoolApiProvider extends Provider
         $client = App::getInstance()->make(MetricoolClient::class);
 
         if ($blogId = get_option('metricool_blog_id')) {
-            $client->setBlogId($blogId); // todo - fetch from settings
+            $client->setBlogId($blogId);
         }
 
         if ($userId = get_option('metricool_user_id')) {

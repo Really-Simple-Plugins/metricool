@@ -12,6 +12,7 @@ use Metricool\Features\Onboarding\Services\OAuthService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Traits\HasRestAccess;
 
 class OnboardingController implements FeatureInterface
@@ -23,19 +24,22 @@ class OnboardingController implements FeatureInterface
     private EnvironmentConfig $env;
     private CreateAccountService $accounts;
     private OAuthService $oauth;
+    private RequestStorage $request;
 
     public function __construct(
         MetricoolApi $api,
         OnboardingService $onboarding,
         CreateAccountService $accounts,
         EnvironmentConfig $env,
-        OAuthService $oauth
+        OAuthService $oauth,
+        RequestStorage $request
     ) {
         $this->api = $api;
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
         $this->env = $env;
         $this->oauth = $oauth;
+        $this->request = $request;
     }
 
     public function register(): void
@@ -86,11 +90,11 @@ class OnboardingController implements FeatureInterface
     public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
         // todo: storage ?
-        $email = (string) $request->get_param('email');
-        $password = (string) $request->get_param('password');
-        $marketing = (bool) $request->get_param('marketing');
-        $captcha = (string) $request->get_param('captcha');
-        $terms = (bool) $request->get_param('terms');
+        $email = $this->request->getEmail('email');
+        $password = $this->request->getString('password');
+        $marketing = $this->request->getBoolean('marketing');
+        $terms = $this->request->getBoolean('terms');
+        $captcha = $this->request->getString('captcha');
 
         // Validate fields
         if (!is_email($email) || empty($password) || empty($captcha) || !$terms) {
