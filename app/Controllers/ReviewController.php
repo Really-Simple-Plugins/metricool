@@ -99,7 +99,6 @@ class ReviewController implements ControllerInterface
      */
     private function canRenderReviewNotice(): bool
     {
-        return true;
         $previousChoice = get_option('metricool_review_notice_choice');
         if ($previousChoice === 'never') {
             return false;
