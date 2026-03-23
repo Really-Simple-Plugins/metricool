@@ -61,6 +61,7 @@ class UpgradeNoticeController implements ControllerInterface
         }
 
         $this->render('admin/upgrade-notice', [
+            'logoUrl' => $this->env->getUrl('plugin.assets_url') . 'img/mc-logo.svg',
             'dashboardUrl' => $this->env->getUrl('plugin.dashboard_url'),
             'dismissAction' => $this->dismissAction,
             'dismissNonceName' => $this->dismissNonceName,
