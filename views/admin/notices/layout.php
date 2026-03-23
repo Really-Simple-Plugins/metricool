@@ -6,8 +6,8 @@
  *
  * Variables that should be passed to the view
  * @var string $logoUrl
- * @var string $dismissAction
- * @var string $dismissNonceName
+ * @var string $formAction
+ * @var string $formNonceName
  * @var string $formName The hidden input name used to identify the form submission.
  * @var string $content The inner HTML content specific to each notice type.
  */
@@ -46,6 +46,10 @@
     .rsp-metricool-admin-notice .rsp-metricool-admin-notice-form {
         margin-left: 30px;
     }
+    .rsp-metricool-admin-notice .rsp-metricool-admin-notice-form .button {
+        background: #000;
+        border-color: #999;
+    }
     .rsp-metricool-admin-notice .rsp-metricool-admin-notice-form button.link {
         background: none;
         border: none;
@@ -55,7 +59,6 @@
         padding: 0;
         font-size: inherit;
     }
-
     .rsp-metricool-admin-notice.rtl {
         border-left: 0;
         border-right: 4px solid #333;
@@ -70,7 +73,7 @@
     <div class="rsp-metricool-container">
         <div class="rsp-metricool-admin-notice-image"><img src="<?php echo esc_url($logoUrl); ?>" alt="metricool-logo"></div>
         <form class="rsp-metricool-admin-notice-form" action="" method="POST">
-            <?php wp_nonce_field($dismissAction, $dismissNonceName); ?>
+            <?php wp_nonce_field($formAction, $formNonceName); ?>
             <input type="hidden" name="<?php echo esc_attr($formName); ?>" value="1">
             <?php echo $content; ?>
         </form>

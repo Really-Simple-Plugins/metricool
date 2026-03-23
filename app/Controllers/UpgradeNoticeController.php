@@ -17,8 +17,9 @@ class UpgradeNoticeController implements ControllerInterface
 
     private EnvironmentConfig $env;
     private RequestStorage $request;
-    private string $dismissAction = 'rsp_metricool_upgrade_notice_dismiss';
-    private string $dismissNonceName = 'rsp_metricool_upgrade_notice_nonce';
+
+    private string $formAction = 'rsp_metricool_upgrade_notice_dismiss';
+    private string $formNonce = 'rsp_metricool_upgrade_notice_nonce';
 
     public function __construct(EnvironmentConfig $env, RequestStorage $request)
     {
@@ -60,16 +61,14 @@ class UpgradeNoticeController implements ControllerInterface
             return;
         }
 
-        $content = $this->view('admin/upgrade-notice', [
-            'dashboardUrl' => $this->env->getUrl('plugin.dashboard_url'),
-        ]);
-
-        $this->render('admin/admin-notice', [
+        $this->render('admin/notices/layout', [
             'logoUrl' => $this->env->getUrl('plugin.assets_url') . 'img/mc-logo.svg',
-            'dismissAction' => $this->dismissAction,
-            'dismissNonceName' => $this->dismissNonceName,
+            'formAction' => $this->formAction,
+            'formNonceName' => $this->formNonce,
             'formName' => 'rsp_metricool_upgrade_notice_dismiss_form',
-            'content' => $content,
+            'content' => $this->view('admin/notices/upgrade-notice', [
+                'dashboardUrl' => $this->env->getUrl('plugin.dashboard_url'),
+            ]),
         ]);
     }
 
