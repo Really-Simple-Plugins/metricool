@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
+use InvalidArgumentException;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Psr\Http\Message\ResponseInterface;
 
@@ -76,6 +77,13 @@ class MetricoolClient
         update_option('metricool_blog_id', $blogId);
 
         $this->setBlogId($blogId);
+    }
+
+    public function clearBlogId(): void
+    {
+        delete_option('metricool_blog_id');
+
+        $this->setBlogId('');
     }
 
     public function hasBlogId(): bool
@@ -180,9 +188,12 @@ class MetricoolClient
         return $this;
     }
 
-
+    /**
+     * Clear the authentication tokens and userId.
+     */
     public function logout(): void
     {
+        $this->clearBlogId();
         $this->clearUserId();
         $this->clearUserToken();
         $this->clearRefreshToken();
@@ -288,6 +299,7 @@ class MetricoolClient
 
     /**
      * Refresh the user token using the refresh token.
+     * @throws GuzzleException
      */
     public function refreshToken(): void
     {
@@ -305,11 +317,15 @@ class MetricoolClient
         ];
 
         try {
-            $response = $this->client->send(new Request('POST', $this->env->getString('metricool.oauth_token_url'), $headers), $options);
+            $response = $this->client->send(
+                new Request('POST', $this->env->getString('metricool.oauth_token_url'), $headers),
+                $options
+            );
         } catch (GuzzleException $e) {
             // If the refresh token is invalid, we need to unauthenticate the user
-            $this->unAuthenticate();
-            return;
+            $this->logout();
+
+            throw $e;
         }
 
         $data = $this->parseResponse($response);
@@ -387,7 +403,7 @@ class MetricoolClient
         }
 
         if (!empty($validationErrors)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Metricool Client is not setup correctly: ' . PHP_EOL .
                 implode(', ', $validationErrors)
             );
