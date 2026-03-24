@@ -151,6 +151,7 @@ class Field
      * returns default value when no value is found in storage.
      * @return mixed
      * @throws \LogicException when storage is not set by developer
+     * @throws \Exception
      */
     public function getValue()
     {
@@ -162,11 +163,7 @@ class Field
             throw new \LogicException('Storage not set for field: ' . $this->name . '. First call setStorage() before getValue().');
         }
 
-        try {
-            $value = $this->storage->get($this->getSettingName());
-        } catch (\Exception $e) {
-            $value = $this->getDefaultValue();
-        }
+        $value = $this->storage->get($this->getSettingName());
 
         return is_null($value) ? $this->getDefaultValue() : $this->castValue($value);
     }
