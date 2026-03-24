@@ -8,8 +8,6 @@ use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
 use Metricool\Services\TrackingScriptService;
 
-exit('D');
-
 class OnboardingService
 {
     private MetricoolApi $api;
@@ -24,10 +22,40 @@ class OnboardingService
     }
 
     /**
+     * Attempt to finish the onboarding process. When the necessary information is provided or retrieved,
+     * set the onboarding as completed.
+     *
+     * @throws GuzzleException
+     * @throws BrandAccessDeniedException
+     */
+    public function finalizeOnboarding(?string $blogId = null): bool
+    {
+        // When a blogId is provided, try to connect to the brand
+        if ($blogId !== null) {
+            $this->connectBlogId($blogId);
+        } else {
+            // When no blogId is provided, try to find the blog from the connected brands
+            $this->attemptToFindBlogIdFromApi();
+        }
+
+        // If the blogId is not set, the onboarding is not completed
+        if ($this->api->hasBlogId() === false) {
+            return false;
+        }
+
+        // When all the necessary information is retrieved, set the onboarding as completed
+        $this->dashboard->setOnboardingCompleted();
+
+        return true;
+    }
+
+    /**
      * Automatically find the blog from the connected brand and try to retrieve
      * the necessary onboarding information
+     *
+     * @throws BrandAccessDeniedException when the current user has no access to the brand
      */
-    public function finalizeOnboarding(): bool
+    private function attemptToFindBlogIdFromApi(): bool
     {
         try {
             $brands = $this->api->brands()->all();
@@ -44,13 +72,12 @@ class OnboardingService
         }
 
         try {
-            $this->storeBlogInfo((string) $brands[0]['id']);
+            $this->connectBlogId((string) $brands[0]['id']);
         } catch (GuzzleException | BrandAccessDeniedException $e) {
             return false;
         }
 
-        // When all the necessary information is retrieved, set the onboarding as completed
-        return $this->dashboard->setOnboardingCompleted();
+        return true;
     }
 
     /**
@@ -59,30 +86,27 @@ class OnboardingService
      * @throws BrandAccessDeniedException when the current user has no access to the brand
      * @throws GuzzleException when the Metricool API request fails
      */
-    public function storeBlogInfo(string $blogId): bool
+    private function connectBlogId(string $blogId): void
     {
-        // Attempt to get the brand information from the API, checks if the user can access it
         try {
             $brand = $this->api->brands()->get($blogId);
         } catch (\GuzzleHttp\Exception\RequestException $e) {
-            // If user has no access to the brand, return an exception
             if ($e->getResponse()->getStatusCode() === 403) {
                 throw new BrandAccessDeniedException();
             }
         }
 
-        // Store the blog id
+        // Store BlogId in API Client
         if (isset($brand['id'])) {
             $this->api->storeBlogId((string) $brand['id']);
         } else {
             throw new \RuntimeException('Something went wrong.');
         }
 
-        // Store the tracking hash
+        // Store the tracking hash and active the tracking widget
         if (! empty($brand['hash'])) {
-            $this->tracking->activateTrackingWidget((string) $brand['hash']);
+            $this->tracking->storeTrackingHash((string) $brand['hash']);
+            $this->tracking->activateTrackingWidget();
         }
-
-        return true;
     }
 }

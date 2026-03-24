@@ -10,7 +10,7 @@ use Metricool\Interfaces\ControllerInterface;
 use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
-class UpgradeNoticeController implements ControllerInterface
+class LegacyUpgradeController implements ControllerInterface
 {
     use HasViews;
     use HasAllowlistControl;
@@ -29,7 +29,7 @@ class UpgradeNoticeController implements ControllerInterface
 
     public function register(): void
     {
-        add_action('metricool_plugin_version_upgrade', [$this, 'maybeSetUpgradeNoticeFlag'], 10, 2);
+        add_action('metricool_plugin_version_upgrade', [$this, 'maybeSetLegacyFlags'], 10, 2);
 
         if ($this->adminAccessAllowed() === false) {
             return;
@@ -43,13 +43,23 @@ class UpgradeNoticeController implements ControllerInterface
      * Set a flag to show the upgrade notice when upgrading from a legacy
      * (pre-2.0) version of the plugin.
      */
-    public function maybeSetUpgradeNoticeFlag(string $previousVersion, string $newVersion): void
+    public function maybeSetLegacyFlags(string $previousVersion, string $newVersion): void
     {
         if (version_compare($previousVersion, '2.0.0', '<') === false) {
             return;
         }
 
-        update_option('_metricool_show_upgrade_notice', true, false);
+        update_option('metricool_show_upgrade_notice', true, false);
+        update_option('metricool_from_legacy_plugin', true, false);
+    }
+
+    /**
+     * Delete the legacy flags. Should happen after the first successful authentication.
+     */
+    public function deleteLegacyFlags(): void
+    {
+        delete_option('metricool_from_legacy_plugin');
+        delete_option('metricool_show_upgrade_notice');
     }
 
     /**
@@ -81,12 +91,12 @@ class UpgradeNoticeController implements ControllerInterface
             return;
         }
 
-        $nonce = $this->request->get('global.' . $this->dismissNonceName);
-        if (wp_verify_nonce($nonce, $this->dismissAction) === false) {
+        $nonce = $this->request->get('global.' . $this->formNonce);
+        if (wp_verify_nonce($nonce, $this->formAction) === false) {
             return;
         }
 
-        delete_option('_metricool_show_upgrade_notice');
+        delete_option('metricool_show_upgrade_notice');
     }
 
     /**
@@ -94,6 +104,7 @@ class UpgradeNoticeController implements ControllerInterface
      */
     private function shouldShowUpgradeNotice(): bool
     {
-        return (bool) get_option('_metricool_show_upgrade_notice', false);
+        $screen = get_current_screen();
+        return get_option('metricool_show_upgrade_notice', false) && $screen->id !== 'toplevel_page_metricool';
     }
 }

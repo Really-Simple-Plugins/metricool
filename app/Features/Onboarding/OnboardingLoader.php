@@ -23,7 +23,7 @@ class OnboardingLoader extends AbstractLoader
      */
     public function isEnabled(): bool
     {
-        return false;
+        return $this->dashboard->isOnboardingCompleted() === false;
     }
 
     /**
@@ -31,6 +31,6 @@ class OnboardingLoader extends AbstractLoader
      */
     public function inScope(): bool
     {
-        return false;//(is_admin() && $this->userIsOnDashboard()) || $this->requestIsRestRequest();
+        return (is_admin() && $this->userIsOnDashboard()) || $this->requestIsRestRequest();
     }
 }

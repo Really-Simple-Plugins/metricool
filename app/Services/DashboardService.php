@@ -2,15 +2,21 @@
 
 namespace Metricool\Services;
 
+use Metricool\Controllers\LegacyUpgradeController;
 use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class DashboardService
 {
     private MetricoolApi $api;
+    private LegacyUpgradeController $legacy;
+    private EnvironmentConfig $env;
 
-    public function __construct(MetricoolApi $api)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $api, LegacyUpgradeController $legacy)
     {
+        $this->env = $env;
         $this->api = $api;
+        $this->legacy = $legacy;
     }
 
     /**
@@ -24,9 +30,9 @@ class DashboardService
     public function state(): array
     {
         return [
-            'completed' => $this->isOnboardingCompleted(), // When the onboarding is completed, the user can start using the plugin
-            'authenticated' => $this->api->hasUserToken(), // When the user is authenticated, the plugin can retrieve the necessary information from the Metricool API
-            'blog_id_selected' => $this->api->hasBlogId(), // When the user has selected a blog, the plugin has stored the blog id
+            'completed' => $this->isOnboardingCompleted(),
+            'authenticated' => $this->api->hasUserToken(),
+            'blog_id_selected' => $this->api->hasBlogId(),
         ];
     }
 
@@ -56,12 +62,13 @@ class DashboardService
     /**
      * Store the onboarding timestamp
      */
-    public function setOnboardingCompleted(bool $completed = true): bool
+    public function setOnboardingCompleted(): bool
     {
-        if ($completed === false) {
-            return delete_option('metricool_onboarding_completed');
-        }
+        // Remove the legacy flags
+        // todo: use an event so this code can be moved to the LegacyController?
+        $this->legacy->deleteLegacyFlags();
 
+        // store the onboarding timestamp
         return update_option('metricool_onboarding_completed', time(), false);
     }
 
@@ -74,14 +81,6 @@ class DashboardService
     }
 
     /**
-     * Check if the welcome screen should be shown
-     */
-    public function shouldShowWelcomeScreen(): bool
-    {
-        return $this->isOnboardingCompleted() && $this->showWelcomeScreenOnce();
-    }
-
-    /**
      * Check if the welcome screen should be shown once
      */
     public function showWelcomeScreenOnce(): bool
@@ -90,6 +89,14 @@ class DashboardService
         delete_option('metricool_show_welcome_screen');
 
         return $show;
+    }
+
+    /**
+     * Check if the welcome screen should be shown
+     */
+    public function shouldShowWelcomeScreen(): bool
+    {
+        return $this->isOnboardingCompleted() && $this->showWelcomeScreenOnce();
     }
 
     /**
