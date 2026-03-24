@@ -28,7 +28,7 @@ class OptionsStorage extends AbstractStorage
      */
     public function get(string $key)
     {
-        return get_option($this->prefix . $key) ?? null;
+        return get_option($this->prefix . $this->convertCase($key)) ?? null;
     }
 
     /**
