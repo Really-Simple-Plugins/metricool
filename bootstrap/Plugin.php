@@ -140,7 +140,7 @@ class Plugin
         $this->controllerManager->register([
             Controllers\MigrationsController::class,
             Controllers\UpgradeController::class,
-            Controllers\UpgradeNoticeController::class,
+            Controllers\LegacyUpgradeController::class,
             Controllers\AdminController::class,
             Controllers\DashboardController::class,
             Controllers\CapabilityController::class,

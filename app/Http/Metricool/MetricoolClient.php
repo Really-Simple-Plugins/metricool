@@ -54,6 +54,13 @@ class MetricoolClient
         $this->setUserId($userId);
     }
 
+    public function clearUserId(): void
+    {
+        delete_option('metricool_user_id');
+
+        $this->setUserId('');
+    }
+
     public function getBlogId(): string
     {
         return $this->blogId;
@@ -98,6 +105,13 @@ class MetricoolClient
         $this->setUserToken($token);
     }
 
+    public function clearUserToken(): void
+    {
+        delete_option('metricool_auth_token');
+
+        $this->setUserToken('');
+    }
+
     public function getRefreshToken(): string
     {
         return get_option('metricool_refresh_token');
@@ -106,6 +120,12 @@ class MetricoolClient
     public function storeRefreshToken(string $refreshToken): void
     {
         update_option('metricool_refresh_token', $refreshToken);
+    }
+
+    public function clearRefreshToken(): void
+    {
+        delete_option('metricool_refresh_token');
+        delete_option('metricool_auth_token_expires');
     }
 
     public function getTokenExpires(): ?int
@@ -161,14 +181,11 @@ class MetricoolClient
     }
 
 
-    public function unAuthenticate(): void
+    public function logout(): void
     {
-        $this->storeUserId('');
-        $this->storeUserToken('');
-        $this->storeRefreshToken('');
-        $this->storeTokenExpires(null);
-        // Todo, event for this, so it can be done within the onboarding feature?
-        delete_option('metricool_onboarding_complete');
+        $this->clearUserId();
+        $this->clearUserToken();
+        $this->clearRefreshToken();
     }
 
     /**

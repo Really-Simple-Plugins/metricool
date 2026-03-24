@@ -56,28 +56,28 @@ class OAuthService
         try {
             // Exchange the code for auth tokens
             $tokenData = $this->api->exchangeOAuthCode($code, $this->getRedirectUrl());
-
-            if (empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
-                throw new \RuntimeException('missing_token_data');
-            }
-
-            // Retrieve the user ID from the access token
-            $userId = $this->parseUserIdFromAccessToken($tokenData['access_token']);
-
-            if (empty($userId)) {
-                throw new \RuntimeException('token_parse_failed');
-            }
-
-            // Authenticate the Metricool API Client
-            $this->api->authenticate(
-                $userId,
-                (string) $tokenData['access_token'],
-                (string) $tokenData['refresh_token'],
-                (int) ($tokenData['expires_in'])
-            );
         } catch (GuzzleException $e) {
             throw new \RuntimeException('token_exchange_failed');
         }
+
+        if (empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
+            throw new \RuntimeException('missing_token_data');
+        }
+
+        // Retrieve the user ID from the access token
+        $userId = $this->parseUserIdFromAccessToken($tokenData['access_token']);
+
+        if (empty($userId)) {
+            throw new \RuntimeException('token_parse_failed');
+        }
+
+        // Authenticate the Metricool API Client
+        $this->api->authenticate(
+            $userId,
+            (string) $tokenData['access_token'],
+            (string) $tokenData['refresh_token'],
+            (int) ($tokenData['expires_in'])
+        );
 
         return true;
     }
@@ -111,7 +111,7 @@ class OAuthService
      */
     private function getStoredState(): string
     {
-        return (string) get_option('metricool_oauth_state');
+        return (string) get_transient('metricool_oauth_state');
     }
 
     /**
@@ -119,7 +119,7 @@ class OAuthService
      */
     private function storeState(string $state): void
     {
-        update_option('metricool_oauth_state', $state);
+        set_transient('metricool_oauth_state', $state, MINUTE_IN_SECONDS * 15);
     }
 
     /**
@@ -127,7 +127,7 @@ class OAuthService
      */
     private function deleteStoredState(): void
     {
-        delete_option('metricool_oauth_state');
+        delete_transient('metricool_oauth_state');
     }
 
     /**

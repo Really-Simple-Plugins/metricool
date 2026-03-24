@@ -11,6 +11,7 @@ use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Features\Onboarding\Services\OAuthService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\FeatureInterface;
+use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Traits\HasRestAccess;
@@ -25,6 +26,7 @@ class OnboardingController implements FeatureInterface
     private CreateAccountService $accounts;
     private OAuthService $oauth;
     private RequestStorage $request;
+    private DashboardService $dashboard;
 
     public function __construct(
         MetricoolApi $api,
@@ -32,7 +34,8 @@ class OnboardingController implements FeatureInterface
         CreateAccountService $accounts,
         EnvironmentConfig $env,
         OAuthService $oauth,
-        RequestStorage $request
+        RequestStorage $request,
+        DashboardService $dashboard
     ) {
         $this->api = $api;
         $this->onboarding = $onboarding;
@@ -40,6 +43,7 @@ class OnboardingController implements FeatureInterface
         $this->env = $env;
         $this->oauth = $oauth;
         $this->request = $request;
+        $this->dashboard = $dashboard;
     }
 
     public function register(): void
@@ -52,32 +56,25 @@ class OnboardingController implements FeatureInterface
      */
     public function addRoutes(array $routes): array
     {
-        if ($this->onboarding->isOnboardingCompleted() === false) {
-            $routes['onboarding/create_account'] = [
-                'methods' => 'POST',
-                'callback' => [$this, 'createAccount'],
-            ];
+        $routes['onboarding/create_account'] = [
+            'methods' => 'POST',
+            'callback' => [$this, 'createAccount'],
+        ];
 
-            $routes['onboarding/finish_onboarding'] = [
-                'methods' => 'POST',
-                'callback' => [$this, 'finishOnboarding'],
-            ];
+        $routes['onboarding/finish_onboarding'] = [
+            'methods' => 'POST',
+            'callback' => [$this, 'finishOnboarding'],
+        ];
 
-            $routes['onboarding/oauth_redirect'] = [
-                'methods' => 'GET',
-                'callback' => [$this, 'oauthRedirect'],
-            ];
-
-            $routes['onboarding/oauth_callback'] = [
-                'methods' => 'GET',
-                'callback' => [$this, 'oauthCallback'],
-                'permission_callback' => [$this, 'oauthCallbackPermissionCheck'],
-            ];
-        }
-
-        $routes['onboarding/verify_web_connection'] = [
+        $routes['onboarding/oauth_redirect'] = [
             'methods' => 'GET',
-            'callback' => [$this, 'verifyWebConnection'],
+            'callback' => [$this, 'oauthRedirect'],
+        ];
+
+        $routes['onboarding/oauth_callback'] = [
+            'methods' => 'GET',
+            'callback' => [$this, 'oauthCallback'],
+            'permission_callback' => [$this, 'oauthCallbackPermissionCheck'],
         ];
 
         return $routes;
@@ -89,7 +86,6 @@ class OnboardingController implements FeatureInterface
      */
     public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
-        // todo: storage ?
         $email = $this->request->getEmail('email');
         $password = $this->request->getString('password');
         $marketing = $this->request->getBoolean('marketing');
@@ -114,8 +110,8 @@ class OnboardingController implements FeatureInterface
 
         return $this->sendHttpResponse([
             'onboarding' => [
-                'state' => $this->onboarding->state(),
-                'mode' => $this->onboarding->mode(),
+                'state' => $this->dashboard->state(),
+                'mode' => $this->dashboard->mode(),
             ],
         ]);
     }
@@ -123,26 +119,26 @@ class OnboardingController implements FeatureInterface
     /**
      * Method is used to finish the onboarding process. It is called when the
      * user has completed the onboarding process and wants to finish it.
-     *
-     * @throws GuzzleException
      */
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
-        $blogId = (string) $request->get_param('blog_id');
+        $blogId = $this->request->getString('blog_id');
 
         // Store the blogId if it was provided by the client, to store the necessary blog information
         if (!empty($blogId)) {
             try {
-                $this->onboarding->storeBlogInfo($blogId);
+                $this->onboarding->finalizeOnboarding($blogId);
             } catch (BrandAccessDeniedException $e) {
-                return $this->sendHttpErrorResponse(__('Brand Access denied.', 'metricool'), [], 403);
+                return $this->sendHttpErrorResponse(__('Brand Access denied, please select a different brand.', 'metricool'), [], 403);
+            } catch (GuzzleException $e) {
+                return $this->sendHttpErrorResponse(__('Something went wrong.', 'metricool'));
             }
         }
 
         return $this->sendHttpResponse([
             'onboarding' => [
-                'state' => $this->onboarding->state(),
-                'mode' => $this->onboarding->mode(),
+                'state' => $this->dashboard->state(),
+                'mode' => $this->dashboard->mode(),
             ],
         ]);
     }
@@ -152,6 +148,11 @@ class OnboardingController implements FeatureInterface
      */
     public function oauthRedirect(\WP_REST_Request $request): \WP_REST_Response
     {
+        // Check if authorizationUrl is a secure URL, otherwise redirect to the dashboard
+        if (is_ssl() === false) {
+            return $this->sendHttpErrorResponse(__('HTTPS is required to be able to authorize this website.', 'metricool'), [], 400);
+        }
+
         return $this->sendHttpResponse([
             'redirect_url' => $this->oauth->getAuthorizationUrl(),
         ]);
@@ -168,24 +169,22 @@ class OnboardingController implements FeatureInterface
 
         try {
             $this->oauth->authenticateWithCode($code, $state);
-        } catch (\RuntimeException $e) {
+        } catch (\Exception $e) {
             wp_safe_redirect(add_query_arg('oauth_error', $e->getMessage(), $this->env->getString('plugin.dashboard_url')));
             exit;
         }
 
-        // Attempt to automatically set the blog information, complete the onboarding process on success
-        $this->onboarding->finalizeOnboarding();
+        // Attempt to automatically set the blog information, completes the onboarding process on success
+        try {
+            $this->onboarding->finalizeOnboarding();
+        } catch (BrandAccessDeniedException | GuzzleException $e) {
+            wp_safe_redirect(add_query_arg('oauth_error', 'onboarding_failed', $this->env->getString('plugin.dashboard_url')));
+            exit;
+        }
 
         // Redirect to the WordPress dashboard
         wp_safe_redirect($this->env->getString('plugin.dashboard_url'));
         exit;
-    }
-
-    public function verifyWebConnection(\WP_REST_Request $request): \WP_REST_Response
-    {
-        $response = $this->api->request('GET', 'admin/detectwebsite');
-
-        return $this->sendHttpResponse($response);
     }
 
     /**
