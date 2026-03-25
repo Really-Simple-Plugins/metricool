@@ -23,6 +23,7 @@ import {
     faArrowTrendDown,
     faArrowTrendUp,
     faEye,
+    faSignOut,
 } from "@fortawesome/pro-solid-svg-icons";
 import {
     faChevronDown,
@@ -106,6 +107,7 @@ const iconMap = {
     "trend-down": faArrowTrendDown,
     "trend-up": faArrowTrendUp,
     "preview": faEye,
+    "sign-out": faSignOut,
 };
 
 const Gbp = ({ className, ...props }: React.ComponentProps<"svg">) => (

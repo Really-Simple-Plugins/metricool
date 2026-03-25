@@ -8,7 +8,7 @@ import DynamicUrl from "@/support/helpers/DynamicUrl.tsx";
 // but the tsc complains it can't find it
 const METRICOOL_DATA = window.metricool.values;
 console.log(METRICOOL_DATA);
-const METRICOOL_API_URL = METRICOOL_DATA.rest_url + METRICOOL_DATA.rest_namespace + "/" + METRICOOL_DATA.rest_version + "/";
+const METRICOOL_API_URL = METRICOOL_DATA.api_url;
 
 export interface GlobalContext {
     globalState: GlobalState,
@@ -26,6 +26,8 @@ type MetricoolData = {
     rest_url: string,
     rest_namespace: string,
     rest_version: string,
+    api_url: string,
+    dashboard_url: string,
     site_url: string,
     assets_url: string,
     json_translations: string[],
@@ -36,14 +38,14 @@ type MetricoolData = {
         google_terms_url: string,
     },
     onboarding: {
-        "state": {
-            "completed": boolean,
-            "authenticated": boolean,
-            "blog_id_selected": boolean
+        state: {
+            completed: boolean,
+            authenticated: boolean,
+            blog_id_selected: boolean
         },
-        "mode": {
-            "show_welcome_screen": boolean,
-            "forced_login": boolean,
+        mode: {
+            show_welcome_screen: boolean,
+            forced_login: boolean,
         }
     }
     support: string,

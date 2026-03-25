@@ -1,9 +1,11 @@
 import {
     Block,
     BlockHeader,
+    Button,
     FieldWrapper,
     FlexContainer,
     FormFooter,
+    Icon,
     Input,
     LoadingAndErrorState,
     showToast,
@@ -104,6 +106,18 @@ const AccountSettings = () => {
         }
     });
 
+    const { mutate: doLogout } = useMutation({
+        mutationFn: async () => {
+            return httpClient.setRoute("logout").post();
+        },
+        onSuccess: (response) => {
+            window.location.href = metricool.dashboard_url;
+        },
+        onError: (error) => {
+            console.error(error);
+        }
+    });
+
     useBlocker({
         shouldBlockFn: () => {
             if (!isDirty) {
@@ -123,6 +137,15 @@ const AccountSettings = () => {
     return (
         <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col min-w-full md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
+                <Block className={"rounded-t-md rounded-b-none"}>
+                    <BlockHeader title={__("Account settings", "metricool")}/>
+                    <Button variant={"black"} onClick={() => doLogout()} >
+                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                            {__("Logout", "metricool")}
+                            <Icon icon={"sign-out"}/>
+                        </FlexContainer>
+                    </Button>
+                </Block>
                 <Block className={"rounded-t-md rounded-b-none"}>
                     <BlockHeader title={__("Monthly summary", "metricool")}/>
                     {!values ? (
