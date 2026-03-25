@@ -4,6 +4,7 @@ namespace Metricool\Http\RSPAL;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class RspalApiClient
@@ -36,11 +37,14 @@ class RspalApiClient
         'Accept' => 'application/json',
     ];
 
-    protected EnvironmentConfig $env;
+    private EnvironmentConfig $env;
+    private MetricoolClient $metricool;
 
-    public function __construct(EnvironmentConfig $env)
+    public function __construct(EnvironmentConfig $env, MetricoolClient $metricool)
     {
         $this->env = $env;
+        $this->metricool = $metricool;
+
         $this->baseEndpoint = $this->env->getUrl('metricool.rsp_auth_url');
         $this->client = $this->client();
     }
@@ -107,6 +111,13 @@ class RspalApiClient
      */
     private function headers(array $headers = []): array
     {
+        $headers['User-Agent'] = $this->metricool->getRequestUserAgent();
+
+        return array_merge($this->headers, $this->rspalHeaders(), $headers);
+    }
+
+    protected function rspalHeaders(): array
+    {
         $rspalHeaders = [
             'RSPAL-PluginName' => $this->env->getString('plugin.name'),
             'RSPAL-PluginVersion' => $this->env->getString('plugin.version'),
@@ -114,10 +125,9 @@ class RspalApiClient
             'RSPAL-Origin' => trailingslashit(site_url()),
             'RSPAL-InstallationId' => $this->getInstallationId(),
         ];
-
         $rspalHeaders['RSPAL-Signature'] = $this->getInstallationSignature($rspalHeaders, $rspalHeaders['RSPAL-InstallationId']);
 
-        return array_merge($rspalHeaders, $headers, $this->headers);
+        return $rspalHeaders;
     }
 
     /**
