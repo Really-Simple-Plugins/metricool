@@ -9,14 +9,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
-use InvalidArgumentException;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Psr\Http\Message\ResponseInterface;
+use RuntimeException;
+use InvalidArgumentException;
 
-/**
- * @todo Add error handling either with try-catches here, in the resources or
- * @todo on implementation level.
- */
 class MetricoolClient
 {
     private ?Client $client = null;
@@ -284,7 +281,19 @@ class MetricoolClient
      */
     public function hasAuthentication(): bool
     {
-        return $this->hasUserToken() && $this->hasUserId() && $this->hasBlogId();
+        return $this->hasUserToken() && $this->hasUserId();
+    }
+
+    /**
+     * Build the middleware stack for the HTTP client.
+     */
+    protected function middleware(): HandlerStack
+    {
+        $handlerStack = HandlerStack::create();
+        foreach ($this->middleWares as $middleWare) {
+            $handlerStack->push($middleWare);
+        }
+        return $handlerStack;
     }
 
     /**
@@ -296,22 +305,35 @@ class MetricoolClient
             return $this->client;
         }
 
-        $handlerStack = HandlerStack::create();
-        foreach ($this->middleWares as $middleWare) {
-            $handlerStack->push($middleWare);
-        }
-
         $this->client = new Client([
             'http_errors' => true,
-            'handler' => $handlerStack,
+            'handler' => $this->middleware(),
             'expect' => false,
             'headers' => [
                 'Accept' => 'application/json',
                 'Content-Type' => 'application/json',
+                'User-Agent' => $this->getRequestUserAgent(),
             ]
         ]);
 
         return $this->client;
+    }
+
+    /**
+     * Get the user agent string for the request.
+     */
+    public function getRequestUserAgent(): string
+    {
+        return "MetricoolPlugin/" . $this->env->getString('plugin.version') . " (WordPress/" . get_bloginfo('version') . "; PHP/" . phpversion() . "; ref: " . $this->getReferrer() . "; +" . site_url() . ")";
+    }
+
+    /**
+     * EXTENDIFY_PARTNER_ID will contain the required value if WordPress is
+     * configured using Extendify. Otherwise, use default 'wp'.
+     */
+    public function getReferrer(): string
+    {
+        return (defined('EXTENDIFY_PARTNER_ID') ? constant('EXTENDIFY_PARTNER_ID') : 'wp');
     }
 
     /**
@@ -403,16 +425,19 @@ class MetricoolClient
             ],
         ];
 
-        $response = $this->client->send(new Request('POST', $this->env->getString('metricool.oauth_token_url'), $headers), $options);
+        $response = $this->client->send(
+            new Request('POST', $this->env->getString('metricool.oauth_token_url'), $headers),
+            $options
+        );
 
         return $this->parseResponse($response);
     }
 
     /**
      * Refresh the authentication token using the refresh token.
-     * @throws GuzzleException the user will be unauthenticated if the refresh token request fails.
+     * @throws RuntimeException the user will be unauthenticated if the refresh token request fails.
      */
-    private function refreshAuthToken(): void
+    public function refreshAuthToken(): void
     {
         $headers = [
             'Accept' => 'application/json',
@@ -433,8 +458,9 @@ class MetricoolClient
                 $options
             );
         } catch (GuzzleException $e) {
+            // If the refresh token request fails, we need to log the user out.
             $this->logout();
-            throw $e;
+            throw new RuntimeException('Failed to refresh authentication token. Please log in again.', 500, $e);
         }
 
         $data = $this->parseResponse($response);
@@ -485,8 +511,8 @@ class MetricoolClient
     {
         $validationErrors = [];
 
-        if (empty($this->userToken)) {
-            $validationErrors[] = 'User token is required to connect to Metricool API.';
+        if ($this->hasAuthentication() === false) {
+            $validationErrors[] = 'Authentication is required for Metricool API.';
         }
 
         if ($this->isConnected() === false) {
