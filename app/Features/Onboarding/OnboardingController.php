@@ -86,11 +86,11 @@ class OnboardingController implements FeatureInterface
      */
     public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
-        $email = $this->request->getEmail('email');
-        $password = $this->request->getString('password');
-        $marketing = $this->request->getBoolean('marketing');
-        $terms = $this->request->getBoolean('terms');
-        $captcha = $this->request->getString('captcha');
+        $email = (string) $request->get_param('email');
+        $password = (string) $request->get_param('password');
+        $marketing = (bool) $request->get_param('marketing');
+        $terms = (bool) $request->get_param('terms');
+        $captcha = (string) $request->get_param('captcha');
 
         // Validate fields
         if (!is_email($email) || empty($password) || empty($captcha) || !$terms) {
@@ -122,7 +122,7 @@ class OnboardingController implements FeatureInterface
      */
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
-        $blogId = $this->request->getString('blog_id');
+        $blogId = (string) $request->get_param('blogId');
 
         // Store the blogId if it was provided by the client, to store the necessary blog information
         if (!empty($blogId)) {
