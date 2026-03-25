@@ -22,6 +22,7 @@ class LogoutEndpoint implements SingleEndpointInterface
 
     public MetricoolApi $metricoolApi;
     private EnvironmentConfig $env;
+    private DashboardService $dashboard;
 
     public function __construct(MetricoolApi $metricoolApi, EnvironmentConfig $env, DashboardService $dashboard)
     {
@@ -53,7 +54,7 @@ class LogoutEndpoint implements SingleEndpointInterface
     public function registerArguments(): array
     {
         return [
-            'methods' => \WP_REST_Server::READABLE,
+            'methods' => \WP_REST_Server::EDITABLE,
             'callback' => [$this, 'callback'],
         ];
     }
@@ -65,7 +66,6 @@ class LogoutEndpoint implements SingleEndpointInterface
     {
         $this->deleteAllOptions();
 
-        wp_safe_redirect(add_query_arg('logout', true, $this->env->getString('plugin.dashboard_url')));
-        exit;
+        return $this->sendHttpResponse(['success' => true]);
     }
 }
