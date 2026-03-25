@@ -4,17 +4,14 @@ namespace Metricool\Services;
 
 use Metricool\Controllers\LegacyUpgradeController;
 use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class DashboardService
 {
     private MetricoolApi $api;
     private LegacyUpgradeController $legacy;
-    private EnvironmentConfig $env;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $api, LegacyUpgradeController $legacy)
+    public function __construct(MetricoolApi $api, LegacyUpgradeController $legacy)
     {
-        $this->env = $env;
         $this->api = $api;
         $this->legacy = $legacy;
     }
@@ -60,7 +57,7 @@ class DashboardService
     }
 
     /**
-     * Store the onboarding timestamp
+     * Completes the onboarding process and store the timestamp
      */
     public function setOnboardingCompleted(): bool
     {
@@ -70,6 +67,14 @@ class DashboardService
 
         // store the onboarding timestamp
         return update_option('metricool_onboarding_completed', time(), false);
+    }
+
+    /**
+     * Clear the onboarding data
+     */
+    public function clearOnboardingData()
+    {
+        delete_option('metricool_onboarding_completed');
     }
 
     /**

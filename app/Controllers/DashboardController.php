@@ -268,6 +268,9 @@ class DashboardController implements ControllerInterface
             'rest_url' => get_rest_url(),
             'rest_namespace' => $this->env->getString('http.namespace'),
             'rest_version' => $this->env->getString('http.version'),
+            'api_url' => trailingslashit(
+                get_rest_url(null, $this->env->getString('http.namespace') . '/' . $this->env->getString('http.version'))
+            ),
             'site_url' => site_url(),
             'assets_url' => $this->env->getUrl('plugin.assets_url'),
             'json_translations' => ($chunkTranslation['json_translations'] ?? []),

@@ -165,6 +165,7 @@ class Plugin
             Http\Endpoints\AnalyticsEndpoint::class,
             Http\Endpoints\RealtimeEndpoint::class,
             Http\Endpoints\OtherPluginsEndpoints::class,
+            Http\Endpoints\LogoutEndpoint::class,
         ]);
     }
 }

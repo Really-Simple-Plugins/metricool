@@ -18,7 +18,7 @@ namespace Metricool\Http\Metricool;
  * @method bool isConnected()
  * @method bool storeBlogId(string $blogId)
  * @method bool authenticate(string $userId, string $userToken, string $refreshToken, $expires)
- * @method bool unAuthenticate()
+ * @method bool logout()
  * @method array exchangeOAuthCode(string $code, string $redirectUri)
  */
 class MetricoolApi

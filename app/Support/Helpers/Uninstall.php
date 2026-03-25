@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Support\Helpers;
 
+use Metricool\Traits\DeletesOptions;
+
 class Uninstall
 {
+    use DeletesOptions;
+
     /**
      * Handle plugin uninstallation.
      * @internal Method is currently hooked as the uninstallation callback
@@ -13,6 +17,6 @@ class Uninstall
      */
     public function handlePluginUninstall(): void
     {
-        // todo
+        $this->deleteAllOptions(true);
     }
 }
