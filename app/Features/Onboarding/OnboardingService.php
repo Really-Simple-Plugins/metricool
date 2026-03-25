@@ -44,9 +44,7 @@ class OnboardingService
         }
 
         // When all the necessary information is retrieved, set the onboarding as completed
-        $this->dashboard->setOnboardingCompleted();
-
-        return true;
+        return $this->dashboard->setOnboardingCompleted();
     }
 
     /**
@@ -55,29 +53,27 @@ class OnboardingService
      *
      * @throws BrandAccessDeniedException when the current user has no access to the brand
      */
-    private function attemptToFindBlogIdFromApi(): bool
+    private function attemptToFindBlogIdFromApi(): void
     {
         try {
             $brands = $this->api->brands()->all();
         } catch (GuzzleException $e) {
-            return false;
+            return;
         }
 
         if (empty($brands)) {
-            return false;
+            return;
         }
 
         if (count($brands) > 1) {
-            return false;
+            return;
         }
 
         try {
             $this->connectBlogId((string) $brands[0]['id']);
         } catch (GuzzleException | BrandAccessDeniedException $e) {
-            return false;
+            return;
         }
-
-        return true;
     }
 
     /**
