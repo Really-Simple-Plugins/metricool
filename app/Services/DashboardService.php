@@ -53,7 +53,7 @@ class DashboardService
      */
     public function isOnboardingCompleted(): bool
     {
-        return get_option('metricool_onboarding_completed', false) !== false;
+        return $this->api->hasUserToken() && $this->api->hasBlogId() && get_option('metricool_onboarding_completed', false);
     }
 
     /**
@@ -66,7 +66,7 @@ class DashboardService
         $this->legacy->deleteLegacyFlags();
 
         // store the onboarding timestamp
-        return update_option('metricool_onboarding_completed', time(), false);
+        return update_option('metricool_onboarding_completed', time());
     }
 
     /**
