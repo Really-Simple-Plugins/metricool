@@ -10,7 +10,7 @@
  * Plugin Name: Metricool
  * Plugin URI: https://metricool.com/
  * Description: Allows you to track your users and readers using metricool.com
- * Version: 2.0.0-beta.1
+ * Version: 2.0.0-beta.2
  * Requires at least: 6.0
  * Requires PHP: 7.4
  * Author: Really Simple Plugins
