@@ -110,7 +110,7 @@ const AccountSettings = () => {
         mutationFn: async () => {
             return httpClient.setRoute("logout").post();
         },
-        onSuccess: (response) => {
+        onSuccess: () => {
             window.location.href = metricool.dashboard_url;
         },
         onError: (error) => {
