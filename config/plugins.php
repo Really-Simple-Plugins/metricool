@@ -1,4 +1,6 @@
-<?php if (!defined('ABSPATH')) {
+<?php
+
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -12,7 +14,7 @@ return [
         'constant_premium' => 'rsssl_pro',
         'url' => 'https://wordpress.org/plugins/really-simple-ssl/',
         'upgrade_url' => 'https://really-simple-ssl.com/pro?src=metricool-plugin',
-        'title' => "Really Simple Security - " . __("Lightweight plugin. Heavyweight security features.", "metricool" ),
+        'title' => "Really Simple Security - " . __("Lightweight plugin. Heavyweight security features.", "metricool"),
         'color' => '#f4bf3e',
     ],
     'complianz-gdpr' => [
@@ -27,17 +29,6 @@ return [
         'title' => 'Complianz - ' . __('Consent Management as it should be', 'metricool'),
         'color' => '#009fff',
     ],
-    'complianz-terms-conditions' => [
-        'slug' => 'complianz-terms-conditions',
-        'options_prefix' => 'cmplz_tc',
-        'activation_slug' => 'complianz-terms-conditions/complianz-terms-conditions.php',
-        'constant_free' => 'cmplz_tc_version',
-        'create' => admin_url('admin.php?page=terms-conditions'),
-        'url' => 'https://wordpress.org/plugins/complianz-terms-conditions/',
-        'upgrade_url' => 'https://complianz.io?metricool=cmplz-plugin',
-        'title' => 'Complianz - '. __("Terms & Conditions", "metricool"),
-        'color' => '#000000',
-    ],
     'simplybook' => [
         'slug' => 'simplybook',
         'options_prefix' => 'simplybook',
@@ -46,5 +37,16 @@ return [
         'url' => 'https://wordpress.org/plugins/simplybook/',
         'title' => 'SimplyBook.me - ' . __('Online Booking System', 'metricool'),
         'color' => '#06ADEF',
+    ],
+    'complianz-terms-conditions' => [
+        'slug' => 'complianz-terms-conditions',
+        'options_prefix' => 'cmplz_tc',
+        'activation_slug' => 'complianz-terms-conditions/complianz-terms-conditions.php',
+        'constant_free' => 'cmplz_tc_version',
+        'create' => admin_url('admin.php?page=terms-conditions'),
+        'url' => 'https://wordpress.org/plugins/complianz-terms-conditions/',
+        'upgrade_url' => 'https://complianz.io?metricool=cmplz-plugin',
+        'title' => 'Complianz - ' . __("Terms & Conditions", "metricool"),
+        'color' => '#000000',
     ],
 ];
