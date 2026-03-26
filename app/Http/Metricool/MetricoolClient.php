@@ -212,8 +212,7 @@ class MetricoolClient
     public function isTokenExpired(): bool
     {
         return Carbon::now()
-            ->subMinute() // add a 1-minute buffer to account for clock differences
-            ->gt($this->tokenExpiresAt());
+            ->gt($this->tokenExpiresAt()->subMinute()); // add 1-minute buffer so refreshing happens before the token expires
     }
 
     /**
