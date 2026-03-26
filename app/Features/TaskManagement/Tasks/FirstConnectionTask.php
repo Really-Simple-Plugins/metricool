@@ -25,7 +25,7 @@ class FirstConnectionTask extends AbstractTask
      */
     public function getText(): string
     {
-        return __('Get the most out of Metricool', 'metricool');
+        return __('Get the most out of Metricool by linking your Social accounts', 'metricool');
     }
 
     /**
