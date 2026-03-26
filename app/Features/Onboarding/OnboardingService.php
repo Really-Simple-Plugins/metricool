@@ -30,11 +30,11 @@ class OnboardingService
      */
     public function finalizeOnboarding(?string $blogId = null): bool
     {
-        // When a blogId is provided, try to connect to the brand
         if ($blogId !== null) {
+            // When a blogId is provided, try to connect to the brand
             $this->connectBlogId($blogId);
         } else {
-            // When no blogId is provided, try to find the blog from the connected brands
+            // Try to find the blog from the brands connected to the account and retrieve the necessary information
             $this->attemptToFindBlogIdFromApi();
         }
 
