@@ -84,8 +84,7 @@ class RemoteStorage extends AbstractStorage
         foreach ($settings as $key => $value) {
             $requestData[$this->convertCase($key)] = $value;
         }
-
-
+        
         // Send the request to the client
         $this->client->{$this->method}($requestData);
     }
@@ -98,9 +97,6 @@ class RemoteStorage extends AbstractStorage
         if (empty($this->settings)) {
             return;
         }
-
-
-        var_dump(is_array($this->settings));
 
         $this->client->{$this->method}($this->settings);
     }
