@@ -18,8 +18,8 @@ class MetricoolUrl
     {
         // todo - fetch from settings
         $queryArgs = array_filter([
-            'blogId' => (defined('METRICOOL_BLOG_ID') ? METRICOOL_BLOG_ID : ''),
-            'userId' => (defined('METRICOOL_USER_ID') ? METRICOOL_USER_ID : ''),
+            'blogId' => get_option('metricool_blog_id', ''),
+            'userId' => get_option('metricool_user_id', ''),
         ]);
 
         return add_query_arg($queryArgs, $url);
@@ -36,8 +36,8 @@ class MetricoolUrl
     {
         // todo - fetch from settings
         $queryArgs = [
-            'blogId' => (defined('METRICOOL_BLOG_ID') ? METRICOOL_BLOG_ID : ''),
-            'userId' => (defined('METRICOOL_USER_ID') ? METRICOOL_USER_ID : ''),
+            'blogId' => get_option('metricool_blog_id', ''),
+            'userId' => get_option('metricool_user_id', ''),
             'post.content' => $content,
         ];
 

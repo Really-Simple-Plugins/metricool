@@ -1,6 +1,6 @@
 {
     "name": "really-simple-plugins/metricool",
-    "version": "2.0.0",
+    "version": "2.0.0-beta.2",
     "description": "Allows you to track your users and readers using metricool.com",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",

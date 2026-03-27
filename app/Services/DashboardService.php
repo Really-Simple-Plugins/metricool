@@ -70,14 +70,6 @@ class DashboardService
     }
 
     /**
-     * Clear the onboarding data
-     */
-    public function clearOnboardingData()
-    {
-        delete_option('metricool_onboarding_completed');
-    }
-
-    /**
      * Check if the onboarding was completed from the legacy plugin
      */
     public function isFromLegacyPlugin(): bool

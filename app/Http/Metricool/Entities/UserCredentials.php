@@ -25,10 +25,10 @@ class UserCredentials
      */
     public function updatePassword(string $oldPassword, string $newPassword): array
     {
-         $response = $this->client->patch($this->endpoint . '?fields=password', json_encode([
+         $this->client->patch($this->endpoint . '?fields=password', [
              'oldPassword' => $oldPassword,
              'password' => $newPassword,
-         ]));
+         ]);
 
         return ['success' => true];
     }

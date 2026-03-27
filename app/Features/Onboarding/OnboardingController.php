@@ -74,7 +74,6 @@ class OnboardingController implements FeatureInterface
         $routes['onboarding/oauth_callback'] = [
             'methods' => 'GET',
             'callback' => [$this, 'oauthCallback'],
-            'permission_callback' => [$this, 'oauthCallbackPermissionCheck'],
         ];
 
         return $routes;
@@ -185,15 +184,5 @@ class OnboardingController implements FeatureInterface
         // Redirect to the WordPress dashboard
         wp_safe_redirect($this->env->getString('plugin.dashboard_url'));
         exit;
-    }
-
-    /**
-     * Permission check for the OAuth callback endpoint. The callback comes from
-     * an external redirect, so it won't have nonce's. We verify the user is a
-     * logged-in WP admin instead.
-     */
-    public function oauthCallbackPermissionCheck(\WP_REST_Request $request): bool
-    {
-        return true;
     }
 }
