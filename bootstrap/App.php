@@ -187,7 +187,7 @@ final class App
                 $this->instances[$dependencyClass] = $dependency;
             }
 
-            $arguments[] = $this->get($dependencyClass);
+            $arguments[] = $dependency;
         }
 
         $made = new $class(...$arguments);
