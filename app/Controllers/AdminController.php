@@ -12,7 +12,7 @@ use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 class AdminController implements ControllerInterface
 {
     use HasAllowlistControl;
-    use hasViews;
+    use HasViews;
 
     private EnvironmentConfig $env;
 

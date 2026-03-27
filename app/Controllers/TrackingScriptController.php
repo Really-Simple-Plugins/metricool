@@ -11,7 +11,7 @@ use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class TrackingScriptController implements ControllerInterface
 {
-    use hasViews;
+    use HasViews;
 
     private EnvironmentConfig $env;
     private TrackingScriptService $service;
