@@ -130,7 +130,16 @@ class MetricoolApi
      */
     public function brands(bool $useCache = true): Entities\Brands
     {
-        return new Entities\Brands($this->client);
+        $cacheName = 'metricool_entities_cache_user_brands';
+        $cache = wp_cache_get($cacheName, 'metricool');
+        if ($useCache && !empty($cache)) {
+            return $cache;
+        }
+
+        $entity = new Entities\Brands($this->client);
+        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
+
+        return new $entity;
     }
 
     /**
