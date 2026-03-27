@@ -34,7 +34,7 @@ class UserSettings
     {
         $response = $this->client->patch(
             $this->getFieldPatchEndpoint($data),
-            json_encode($data)
+            $data
         );
 
         return ($response['data'] ?? []);

@@ -139,7 +139,7 @@ class MetricoolApi
         $entity = new Entities\Brands($this->client);
         wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
 
-        return new $entity;
+        return $entity;
     }
 
     /**

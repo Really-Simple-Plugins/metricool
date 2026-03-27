@@ -47,7 +47,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
     public function registerArguments(): array
     {
         return [
-            'methods' => \WP_REST_Server::READABLE,
+            'methods' => \WP_REST_Server::EDITABLE,
             'callback' => [$this, 'callback'],
             'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];

@@ -304,7 +304,7 @@ class MetricoolClient
     /**
      * Build or return the configured HTTP client instance.
      */
-    private function client(): CLient
+    private function client(): Client
     {
         if ($this->client) {
             return $this->client;
@@ -372,7 +372,7 @@ class MetricoolClient
      * Send a PATCH request.
      * @throws GuzzleException
      */
-    public function patch(string $endpoint, string $body): ?array
+    public function patch(string $endpoint, array $body): ?array
     {
         return $this->request('PATCH', $endpoint, $body);
     }
@@ -404,7 +404,7 @@ class MetricoolClient
             $response = $this->client->send(
                 new Request($method, $this->formatUrl($endpoint), [
                     'Authorization' => 'Bearer ' . $this->userToken
-                ], $body)
+                ], json_encode($body))
             );
         } catch (GuzzleException $e) {
             if ($e->getCode() === 401) {
