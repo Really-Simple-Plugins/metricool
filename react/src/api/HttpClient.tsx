@@ -115,6 +115,12 @@ class HttpClient {
         });
 
         if (!response.ok) {
+            
+            if(response.status == 401) {
+                // todo: gracefully log the user out when this happens
+                window.location.reload();
+            }
+
             const errorData = await response.json();
             return this.handleError(errorData);
         }
