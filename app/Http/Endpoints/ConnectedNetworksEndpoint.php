@@ -25,20 +25,20 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token.
-     */
-    public function enabled(): bool
-    {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken();
-    }
-
-    /**
      * @inheritDoc
      */
     public function registerRoute(): string
     {
         return self::ROUTE;
+    }
+
+    /**
+     * Only enable this endpoint if the user has access to the admin area and
+     * the user has saved a user token.
+     */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasBlogId();
     }
 
     /**
@@ -49,6 +49,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];
     }
 
@@ -60,7 +61,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
         try {
             $response = $this->buildResponse($request);
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(__('Failed to load brands data', 'metricool'), $e->getMessage());
+            return $this->sendHttpErrorResponse(__('Failed to load brands data', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
         return $this->sendHttpResponse($response);

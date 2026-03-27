@@ -28,20 +28,20 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
-     */
-    public function enabled(): bool
-    {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication();
-    }
-
-    /**
      * @inheritDoc
      */
     public function registerRoute(): string
     {
         return self::ROUTE;
+    }
+
+    /**
+     * Only enable this endpoint if the user has access to the admin area and
+     * the user has saved a user token, - ID and blog ID.
+     */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasBlogId();
     }
 
     /**
@@ -52,6 +52,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];
     }
 
@@ -66,7 +67,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         try {
             $response = $this->buildResponse($request);
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(__('Failed to load Analytics data', 'metricool'), $e->getMessage());
+            return $this->sendHttpErrorResponse(__('Failed to load Analytics data', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
         return $this->sendHttpResponse($response);

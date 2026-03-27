@@ -25,20 +25,20 @@ class CredentialsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
-     */
-    public function enabled(): bool
-    {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken() && $this->metricoolApi->hasUserId();
-    }
-
-    /**
      * @inheritDoc
      */
     public function registerRoute(): string
     {
         return self::ROUTE;
+    }
+
+    /**
+     * Only enable this endpoint if the user has access to the admin area and
+     * the user has saved a user token.
+     */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed();
     }
 
     /**
@@ -49,6 +49,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];
     }
 
@@ -73,7 +74,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
             $this->metricoolApi->userCredentials()
                 ->updatePassword($password, $newPassword);
         } catch (GuzzleException $e) {
-            return $this->sendHttpErrorResponse(__('Something went wrong.', 'metricool'), ['data' => $e->getMessage()]);
+            return $this->sendHttpErrorResponse(__('Something went wrong.', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
         return $this->sendHttpResponse(['success' => true]);

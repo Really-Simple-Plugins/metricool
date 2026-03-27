@@ -32,6 +32,14 @@ class LogoutEndpoint implements SingleEndpointInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function registerRoute(): string
+    {
+        return self::ROUTE;
+    }
+
+    /**
      * Only enable this endpoint if the user has access to the admin area and
      * the user has saved a user token, - ID and blog ID.
      */
@@ -43,19 +51,12 @@ class LogoutEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function registerRoute(): string
-    {
-        return self::ROUTE;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function registerArguments(): array
     {
         return [
             'methods' => \WP_REST_Server::EDITABLE,
             'callback' => [$this, 'callback'],
+            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];
     }
 

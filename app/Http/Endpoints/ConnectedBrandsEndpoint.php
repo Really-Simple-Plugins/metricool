@@ -29,7 +29,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken();
+        return $this->adminAccessAllowed();
     }
 
     /**
@@ -48,6 +48,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];
     }
 
@@ -59,9 +60,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
         try {
             $response = $this->metricoolApi->brands()->all();
         } catch (\Throwable $e) {
-            echo '<pre>';
-            var_dump($e->getMessage()); // todo
-            exit();
+            return $this->sendHttpErrorResponse(__('Failed to load brands data', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
         return $this->sendHttpResponse($response);

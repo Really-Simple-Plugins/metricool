@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
+use Exception;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Services\RealtimeService;
 use Metricool\Traits\HasAllowlistControl;
@@ -28,20 +29,20 @@ class RealtimeEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
-     */
-    public function enabled(): bool
-    {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication();
-    }
-
-    /**
      * @inheritDoc
      */
     public function registerRoute(): string
     {
         return self::ROUTE;
+    }
+
+    /**
+     * Only enable this endpoint if the user has access to the admin area and
+     * the user has saved a user token, - ID and blog ID.
+     */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasBlogId();
     }
 
     /**
@@ -52,6 +53,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];
     }
 
@@ -63,8 +65,8 @@ class RealtimeEndpoint implements SingleEndpointInterface
     {
         try {
             $response = $this->buildResponse($request);
-        } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(__('Failed to load Realtime data', 'metricool'), $e->getMessage());
+        } catch (Exception $e) {
+            return $this->sendHttpErrorResponse(__('Failed to load Realtime data', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
         return $this->sendHttpResponse($response);
@@ -74,7 +76,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
      * Build the specific Analytics response for the endpoint. This is mainly
      * used in the plugin Dashboard to reflect non-realtime statistics.
      * Building it server side prevents client-side complexity.
-     * @throws \Exception
+     * @throws Exception
      */
     private function buildResponse(\WP_REST_Request $request): array
     {
@@ -83,12 +85,12 @@ class RealtimeEndpoint implements SingleEndpointInterface
         // Get our data
         $sessions = $realtimeModule->sessions()->get();
         if (!isset($sessions['timeline'])) {
-            throw new \Exception('Session data is missing');
+            throw new Exception('Session data is missing');
         }
 
         $values = $realtimeModule->current()->get();
         if (!isset($values['activeVisits'])) {
-            throw new \Exception('Visitors data is missing');
+            throw new Exception('Visitors data is missing');
         }
 
         // Add the pageViews to the timeline and totals

@@ -24,20 +24,20 @@ class SubscriptionEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token and ID.
-     */
-    public function enabled(): bool
-    {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken() && $this->metricoolApi->hasUserId();
-    }
-
-    /**
      * @inheritDoc
      */
     public function registerRoute(): string
     {
         return self::ROUTE;
+    }
+
+    /**
+     * Only enable this endpoint if the user has access to the admin area and
+     * the user has saved a user token and ID.
+     */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed();
     }
 
     /**
@@ -48,6 +48,7 @@ class SubscriptionEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];
     }
 
@@ -58,10 +59,8 @@ class SubscriptionEndpoint implements SingleEndpointInterface
     {
         try {
             $response = $this->metricoolApi->subscription()->get();
-        } catch (\Throwable $e) {
-            echo '<pre>';
-            var_dump($e->getMessage()); // todo
-            exit();
+        } catch (\Exception $e) {
+            return $this->sendHttpErrorResponse(__('Failed to load subscription data', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
         return $this->sendHttpResponse($response);

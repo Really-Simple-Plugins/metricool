@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Services\OtherPluginService;
 use Metricool\Support\Helpers\Storages\GeneralConfig;
@@ -17,22 +18,16 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
 
     private GeneralConfig $config;
     private OtherPluginService $service;
+    private MetricoolApi $metricoolApi;
 
-    public function __construct(GeneralConfig $config, OtherPluginService $service)
+    public function __construct(GeneralConfig $config, OtherPluginService $service, MetricoolApi $metricoolApi)
     {
         $this->config = $config;
         $this->service = $service;
+        $this->metricoolApi = $metricoolApi;
     }
 
-    /**
-     * Only enable this endpoint if the user has access to the admin area
-     */
-    public function enabled(): bool
-    {
-        return $this->adminAccessAllowed();
-    }
-
-    /**
+     /**
      * @inheritDoc
      */
     public function registerRoutes(): array
@@ -50,6 +45,14 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
     }
 
     /**
+     * Only enable this endpoint if the user has access to the admin area
+     */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed();
+    }
+
+    /**
      * Get plugin data for other plugin section
      */
     public function getOtherPluginsData(\WP_REST_Request $request): \WP_REST_Response
@@ -58,6 +61,18 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
         return $this->sendHttpResponse([
             'plugins' => $plugins
         ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerArguments(): array
+    {
+        return [
+            'methods' => \WP_REST_Server::EDITABLE,
+            'callback' => [$this, 'callback'],
+            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
+        ];
     }
 
     /**
@@ -83,7 +98,9 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
             $this->service->executeAction($action);
         } catch (\Exception $e) {
             return $this->sendHttpErrorResponse(
-                __('An error occurred while performing the action.', 'metricool')
+                __('An error occurred while performing the action.', 'metricool'),
+                $e->getMessage(),
+                $e->getCode()
             );
         }
 
