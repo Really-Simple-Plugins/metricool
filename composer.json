@@ -18,7 +18,8 @@
         "adbario/php-dot-notation": "*",
         "automattic/jetpack-autoloader": "^5",
         "guzzlehttp/guzzle": "^7.9",
-        "nesbot/carbon": "*"
+        "nesbot/carbon": "*",
+        "ext-zlib": "*"
     },
     "require-dev": {
         "phpcompatibility/php-compatibility": "^9.3",

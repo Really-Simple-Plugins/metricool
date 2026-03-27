@@ -143,7 +143,7 @@ class OAuthService
         // Step 1 – base64url-decode the payload (second segment)
         $payloadB64 = $parts[1];
         $payloadBytes = base64_decode(strtr($payloadB64, '-_', '+/'));
-        if ($payloadBytes === false) {
+        if (! $payloadBytes) {
             return null;
         }
 
@@ -161,7 +161,7 @@ class OAuthService
 
         // sub is "user:999999" – extract the numeric part
         $subject = $claims['sub'];
-        if (str_starts_with($subject, 'user:')) {
+        if (strstr($subject, 'user:') !== false) {
             return substr($subject, strlen('user:'));
         }
 
