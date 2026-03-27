@@ -90,6 +90,7 @@ class OnboardingService
             if ($e->getResponse()->getStatusCode() === 403) {
                 throw new BrandAccessDeniedException();
             }
+            throw $e;
         }
 
         // Store BlogId in API Client
