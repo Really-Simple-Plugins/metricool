@@ -394,11 +394,19 @@ class MetricoolClient
             $this->refreshAuthToken();
         }
 
-        $response = $this->client->send(
-            new Request($method, $this->formatUrl($endpoint), [
-                'Authorization' => 'Bearer ' . $this->userToken
-            ], $body)
-        );
+        try {
+            $response = $this->client->send(
+                new Request($method, $this->formatUrl($endpoint), [
+                    'Authorization' => 'Bearer ' . $this->userToken
+                ], $body)
+            );
+        } catch (GuzzleException $e) {
+            if ($e->getCode() === 401) {
+                $this->logout();
+            }
+
+            throw $e;
+        }
 
         return $this->parseResponse($response);
     }
