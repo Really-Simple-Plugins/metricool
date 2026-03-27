@@ -10,12 +10,15 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Metricool\Traits\DeletesOptions;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use InvalidArgumentException;
 
 class MetricoolClient
 {
+    use DeletesOptions;
+    
     private ?Client $client = null;
     private string $apiUrl;
     private string $userToken = '';
@@ -273,6 +276,9 @@ class MetricoolClient
         $this->clearUserId();
         $this->clearUserToken();
         $this->clearRefreshToken();
+
+        // todo: check if we want to remove tracking widget from website on logout
+        $this->deleteAllOptions();
     }
 
     /**
