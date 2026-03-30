@@ -29,20 +29,17 @@ class OnboardingController implements FeatureInterface
     private DashboardService $dashboard;
 
     public function __construct(
-        MetricoolApi $api,
-        OnboardingService $onboarding,
+        OnboardingService    $onboarding,
         CreateAccountService $accounts,
-        EnvironmentConfig $env,
-        OAuthService $oauth,
-        RequestStorage $request,
-        DashboardService $dashboard
-    ) {
-        $this->api = $api;
+        EnvironmentConfig    $env,
+        OAuthService         $oauth,
+        DashboardService     $dashboard
+    )
+    {
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
         $this->env = $env;
         $this->oauth = $oauth;
-        $this->request = $request;
         $this->dashboard = $dashboard;
     }
 
@@ -176,7 +173,7 @@ class OnboardingController implements FeatureInterface
         // Attempt to automatically set the blog information, completes the onboarding process on success
         try {
             $this->onboarding->finalizeOnboarding();
-        } catch (BrandAccessDeniedException | GuzzleException $e) {
+        } catch (BrandAccessDeniedException|GuzzleException $e) {
             wp_safe_redirect(add_query_arg('oauth_error', 'onboarding_failed', $this->env->getString('plugin.dashboard_url')));
             exit;
         }
