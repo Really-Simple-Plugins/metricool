@@ -169,9 +169,8 @@ class OtherPluginService
      */
     protected function premiumPluginIsInstalled(): bool
     {
-        return $this->pluginConfig->has('constant_premium') && defined(
-                $this->pluginConfig->getString('constant_premium')
-            );
+        return $this->pluginConfig->has('constant_premium')
+            && defined($this->pluginConfig->getString('constant_premium'));
     }
 
     /**
@@ -196,9 +195,8 @@ class OtherPluginService
      */
     protected function pluginCanBeUpgraded(): bool
     {
-        return $this->pluginConfig->has('constant_premium') && !defined(
-                $this->pluginConfig->getString('constant_premium')
-            );
+        return $this->pluginConfig->has('constant_premium')
+            && !defined($this->pluginConfig->getString('constant_premium'));
     }
 
     /**
@@ -206,9 +204,7 @@ class OtherPluginService
      */
     protected function pluginFileExists(): bool
     {
-        return file_exists(
-            trailingslashit(WP_PLUGIN_DIR) . $this->pluginConfig->getString('activation_slug')
-        );
+        return file_exists(trailingslashit(WP_PLUGIN_DIR) . $this->pluginConfig->getString('activation_slug'));
     }
 
     /**

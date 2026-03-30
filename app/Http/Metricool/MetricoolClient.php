@@ -18,7 +18,7 @@ use InvalidArgumentException;
 class MetricoolClient
 {
     use DeletesOptions;
-    
+
     private ?Client $client = null;
     private string $apiUrl;
     private string $userToken = '';
