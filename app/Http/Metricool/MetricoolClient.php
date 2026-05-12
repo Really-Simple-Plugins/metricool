@@ -478,6 +478,10 @@ class MetricoolClient
 
         $data = $this->parseResponse($response);
 
+        if (!isset($data['access_token'], $data['refresh_token'], $data['expires_in'])) {
+            throw new RuntimeException('refresh_token response invalid.');
+        }
+
         $this->storeUserToken($data['access_token']);
         $this->storeRefreshToken($data['refresh_token']);
         $this->storeTokenExpires($data['expires_in']);
