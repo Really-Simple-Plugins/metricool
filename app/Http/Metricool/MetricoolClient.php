@@ -14,6 +14,7 @@ use Metricool\Traits\DeletesOptions;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
 use InvalidArgumentException;
+use function Symfony\Component\Translation\t;
 
 class MetricoolClient
 {
@@ -243,6 +244,15 @@ class MetricoolClient
      */
     public function connect(): Client
     {
+        // Refresh the token if it's expired
+        if ($this->hasAuthentication() && $this->isTokenExpired()) {
+            try {
+                $this->refreshAuthToken();
+            } catch (\RuntimeException $e) {
+                // maybe show an error that the user is logged out?
+            }
+        }
+
         return $this->client();
     }
 
