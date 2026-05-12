@@ -61,16 +61,13 @@ class OnboardingService
             return;
         }
 
-        if (empty($brands)) {
-            return;
-        }
-
-        if (count($brands) > 1) {
+        $brand = (count($brands) === 1 ? (array) $brands[0] : []);
+        if (empty($brand['id'])) {
             return;
         }
 
         try {
-            $this->connectBlogId((string) $brands[0]['id']);
+            $this->connectBlogId((string) $brand['id']);
         } catch (GuzzleException|BrandAccessDeniedException $e) {
             return;
         }
@@ -94,11 +91,11 @@ class OnboardingService
         }
 
         // Store BlogId in API Client
-        if (isset($brand['id'])) {
-            $this->api->storeBlogId((string) $brand['id']);
-        } else {
+        if (!isset($brand['id'])) {
             throw new \RuntimeException('Something went wrong.');
         }
+
+        $this->api->storeBlogId((string) $brand['id']);
 
         // Store the tracking hash and active the tracking widget
         if (!empty($brand['hash'])) {

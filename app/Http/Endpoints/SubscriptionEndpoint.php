@@ -37,7 +37,7 @@ class SubscriptionEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication() && $this->metricoolApi->hasBlogId();
     }
 
     /**
@@ -48,7 +48,6 @@ class SubscriptionEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
-            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];
     }
 

@@ -27,7 +27,7 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
         $this->metricoolApi = $metricoolApi;
     }
 
-     /**
+    /**
      * @inheritDoc
      */
     public function registerRoutes(): array
@@ -71,7 +71,6 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
         return [
             'methods' => \WP_REST_Server::EDITABLE,
             'callback' => [$this, 'callback'],
-            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];
     }
 

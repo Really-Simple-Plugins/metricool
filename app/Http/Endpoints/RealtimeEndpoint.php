@@ -42,7 +42,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasBlogId();
+        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication() && $this->metricoolApi->hasBlogId();
     }
 
     /**
@@ -53,7 +53,6 @@ class RealtimeEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
-            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
         ];
     }
 
