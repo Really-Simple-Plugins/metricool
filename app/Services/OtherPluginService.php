@@ -112,7 +112,12 @@ class OtherPluginService
 
         set_transient($transientName, $this->pluginConfig->getString('slug'), MINUTE_IN_SECONDS);
 
-        $pluginInfo = $this->getCurrentPluginInfo();
+        try {
+            $pluginInfo = $this->getCurrentPluginInfo();
+        } catch (\Exception $e) {
+            return false;
+        }
+
         $downloadLink = esc_url_raw($pluginInfo->versions['trunk']);
 
         require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';

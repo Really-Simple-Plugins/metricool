@@ -45,6 +45,15 @@ class MetricoolApiProvider extends Provider
             throw new \RuntimeException('Failed to setup the Metricool API in the container: ' . $e->getMessage());
         }
 
+        // Refresh the token if it's expired
+        if ($client->hasAuthentication() && $client->isTokenExpired()) {
+            try {
+                $client->refreshAuthToken();
+            } catch (\RuntimeException $e) {
+                // maybe show an error that the user is logged out?
+            }
+        }
+
         return new MetricoolApi($client);
     }
 }

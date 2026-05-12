@@ -34,7 +34,7 @@ class DashboardService
     {
         return [
             'completed' => $this->isOnboardingCompleted(),
-            'authenticated' => $this->api->hasUserToken(),
+            'authenticated' => $this->api->hasAuthentication(),
             'blog_id_selected' => $this->api->hasBlogId(),
         ];
     }
