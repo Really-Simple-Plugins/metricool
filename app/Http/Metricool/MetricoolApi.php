@@ -8,20 +8,7 @@ namespace Metricool\Http\Metricool;
  * Facade for Metricool API entities. Calls to undefined methods are routed to
  * {@see MetricoolClient}
  *
- * @method bool hasAuthentication()
- * @method bool authenticate(string $userId, string $userToken, string $refreshToken, $expires)
- * @method bool hasUserToken()
- * @method bool getUserId()
- * @method bool hasUserId()
- * @method bool getBlogId()
- * @method bool hasBlogId()
- * @method bool storeBlogId(string $blogId)
- * @method bool isTokenExpired()
- * @method bool isTesting()
- * @method bool isConnected()
- * @method bool logout()
- * @method array exchangeOAuthCode(string $code, string $redirectUri)
- * @method void refreshAuthToken()
+ * @mixin MetricoolClient
  */
 class MetricoolApi
 {
