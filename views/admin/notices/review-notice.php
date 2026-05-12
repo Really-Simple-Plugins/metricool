@@ -8,4 +8,4 @@
  */
 ?>
 
-<?php echo wp_kses_post(wpautop($reviewMessage)); ?>
+<?php echo wp_kses_post(wpautop($reviewMessage));
