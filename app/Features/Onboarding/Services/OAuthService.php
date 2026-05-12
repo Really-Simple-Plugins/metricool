@@ -16,6 +16,7 @@ class OAuthService
         $this->env = $env;
         $this->api = $api;
     }
+
     /**
      * Retrieves the redirect URL for the OAuth flow.
      */
@@ -60,7 +61,7 @@ class OAuthService
             throw new \RuntimeException('token_exchange_failed');
         }
 
-        if (empty($tokenData['access_token']) || empty($tokenData['refresh_token'])) {
+        if (empty($tokenData['access_token']) || empty($tokenData['refresh_token']) || empty($tokenData['expires_in'])) {
             throw new \RuntimeException('missing_token_data');
         }
 
@@ -143,7 +144,7 @@ class OAuthService
         // Step 1 – base64url-decode the payload (second segment)
         $payloadB64 = $parts[1];
         $payloadBytes = base64_decode(strtr($payloadB64, '-_', '+/'));
-        if (! $payloadBytes) {
+        if (!$payloadBytes) {
             return null;
         }
 
