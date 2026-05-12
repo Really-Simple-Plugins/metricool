@@ -98,7 +98,7 @@ final class ReviewNotice extends AbstractAdminNotice
      */
     private function onboardingCompletedTimestampSuitableForReview(): bool
     {
-        $onboardingCompletedTimestamp = get_option('metricool_onboarding_completed');
+        $onboardingCompletedTimestamp = get_option('metricool_onboarding_completed_at');
         if (empty($onboardingCompletedTimestamp)) {
             return false;
         }

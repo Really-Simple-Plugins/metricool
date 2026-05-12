@@ -8,7 +8,7 @@ use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class DashboardService
 {
-    public const ONBOARDING_COMPLETED_OPTION = 'metricool_onboarding_completed';
+    public const ONBOARDING_COMPLETED_OPTION = 'metricool_onboarding_completed_at';
     public const FORCED_LOGIN_OPTION = 'metricool_force_login';
 
     private EnvironmentConfig $env;

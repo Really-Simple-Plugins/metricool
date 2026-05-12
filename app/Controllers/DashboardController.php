@@ -20,13 +20,13 @@ class DashboardController implements ControllerInterface
 
     private EnvironmentConfig $env;
     private MetricoolApi $metricool;
-    private DashboardService $dashboard;
+    private DashboardService $service;
 
     public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $dashboard)
     {
         $this->env = $env;
         $this->metricool = $metricool;
-        $this->dashboard = $dashboard;
+        $this->service = $dashboard;
     }
 
     public function register(): void
@@ -36,8 +36,8 @@ class DashboardController implements ControllerInterface
         }
 
         // Show forced login screen when coming from legacy
-        add_action('metricool_plugin_legacy_upgrade', [$this->dashboard, 'enableForcedLogin']);
-        add_action('metricool_onboarding_completed', [$this->dashboard, 'disableForcedLogin']);
+        add_action('metricool_plugin_legacy_upgrade', [$this->service, 'enableForcedLogin']);
+        add_action('metricool_onboarding_completed', [$this->service, 'disableForcedLogin']);
 
         // Redirect on the activation hook, but do it after anything else.
         add_action('metricool_activation', [$this, 'maybeRedirectToDashboard'], 9999);
@@ -263,7 +263,7 @@ class DashboardController implements ControllerInterface
      */
     private function localizedReactSettings(array $chunkTranslation): array
     {
-        $isOnboardingCompleted = $this->dashboard->isOnboardingCompleted();
+        $isOnboardingCompleted = $this->service->isOnboardingCompleted();
 
         $settings = [
             'nonce' => wp_create_nonce('metricool_nonce'),
@@ -281,8 +281,8 @@ class DashboardController implements ControllerInterface
             'json_translations' => ($chunkTranslation['json_translations'] ?? []),
             'trusted_urls' => $this->env->get('frontend.trusted_urls'),
             'onboarding' => [
-                'state' => $this->dashboard->state(),
-                'mode' => $this->dashboard->mode(),
+                'state' => $this->service->state(),
+                'mode' => $this->service->mode(),
             ],
             'is_onboarding_completed' => $isOnboardingCompleted,
             'support' => $this->env->get('metricool.support'),
