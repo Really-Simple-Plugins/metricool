@@ -47,7 +47,7 @@ class DashboardService
     {
         return [
             'show_welcome_screen' => $this->shouldShowWelcomeScreen(),
-            'forced_login' => $this->isFromLegacyPlugin(),
+            'forced_login' => $this->isForcedLogin(),
         ];
     }
 
