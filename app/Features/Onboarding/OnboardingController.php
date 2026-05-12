@@ -20,12 +20,10 @@ class OnboardingController implements FeatureInterface
 {
     use HasRestAccess;
 
-    private MetricoolApi $api;
     private OnboardingService $onboarding;
     private EnvironmentConfig $env;
     private CreateAccountService $accounts;
     private OAuthService $oauth;
-    private RequestStorage $request;
     private DashboardService $dashboard;
 
     public function __construct(

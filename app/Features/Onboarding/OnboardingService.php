@@ -43,6 +43,8 @@ class OnboardingService
             return false;
         }
 
+        $this->dashboard->clearForcedLogin();
+
         // When all the necessary information is retrieved, set the onboarding as completed
         return $this->dashboard->setOnboardingCompleted();
     }
@@ -71,7 +73,7 @@ class OnboardingService
 
         try {
             $this->connectBlogId((string) $brands[0]['id']);
-        } catch (GuzzleException | BrandAccessDeniedException $e) {
+        } catch (GuzzleException|BrandAccessDeniedException $e) {
             return;
         }
     }
@@ -101,7 +103,7 @@ class OnboardingService
         }
 
         // Store the tracking hash and active the tracking widget
-        if (! empty($brand['hash'])) {
+        if (!empty($brand['hash'])) {
             $this->tracking->storeTrackingHash((string) $brand['hash']);
             $this->tracking->activateTrackingWidget();
         }

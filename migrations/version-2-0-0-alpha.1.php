@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 use Metricool\Interfaces\MigrationInterface;
 
-return new class() implements MigrationInterface
-{
+return new class() implements MigrationInterface {
     public function version(): string
     {
         return '2.0.0-alpha.1'; // first version in the 2.x series
@@ -21,6 +20,7 @@ return new class() implements MigrationInterface
             require_once ABSPATH . WPINC . DIRECTORY_SEPARATOR . 'option.php';
         }
 
+        // migrate tracking script
         $profileId = trim(get_option('metricool_profile_id', ''));
 
         if (!empty($profileId)) {
@@ -29,5 +29,11 @@ return new class() implements MigrationInterface
         }
 
         delete_option('metricool_profile_id');
+
+        // set legacy flags
+        if (!empty($profileId)) {
+            update_option('metricool_show_upgrade_notice', true, false);
+            update_option('metricool_from_legacy_plugin', true, false);
+        }
     }
 };

@@ -7,6 +7,9 @@ use Metricool\Http\Metricool\MetricoolApi;
 
 class DashboardService
 {
+    public const ONBOARDING_COMPLETED_OPTION = 'metricool_onboarding_completed';
+    public const FORCED_LOGIN_OPTION = 'metricool_force_login';
+
     private MetricoolApi $api;
     private LegacyUpgradeController $legacy;
 
@@ -53,7 +56,7 @@ class DashboardService
      */
     public function isOnboardingCompleted(): bool
     {
-        return $this->api->hasUserToken() && $this->api->hasBlogId() && get_option('metricool_onboarding_completed', false);
+        return $this->api->hasUserToken() && $this->api->hasBlogId() && get_option(self::ONBOARDING_COMPLETED_OPTION, false);
     }
 
     /**
@@ -66,15 +69,31 @@ class DashboardService
         $this->legacy->deleteLegacyFlags();
 
         // store the onboarding timestamp
-        return update_option('metricool_onboarding_completed', time());
+        return update_option(self::ONBOARDING_COMPLETED_OPTION, time());
     }
 
     /**
-     * Check if the onboarding was completed from the legacy plugin
+     * Check if the front-end should show the forced login screen
      */
-    public function isFromLegacyPlugin(): bool
+    public function isForcedLogin(): bool
     {
-        return (bool) get_option('metricool_from_legacy_plugin', false);
+        return (bool) get_option(self::FORCED_LOGIN_OPTION, false);
+    }
+
+    /**
+     * Set the forced login state
+     */
+    public function setForcedLogin(bool $forcedLogin): bool
+    {
+        return update_option(self::FORCED_LOGIN_OPTION, $forcedLogin);
+    }
+
+    /**
+     * Set the forced login state
+     */
+    public function clearForcedLogin(): bool
+    {
+        return delete_option(self::FORCED_LOGIN_OPTION);
     }
 
     /**
