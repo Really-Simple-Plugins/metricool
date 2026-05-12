@@ -4,11 +4,19 @@ declare(strict_types=1);
 
 namespace Metricool\Support\Helpers;
 
+use Metricool\Services\OptionsService;
 use Metricool\Traits\DeletesOptions;
 
 class Uninstall
 {
     use DeletesOptions;
+
+    private OptionsService $options;
+
+    public function __construct(OptionsService $options)
+    {
+        $this->options = $options;
+    }
 
     /**
      * Handle plugin uninstallation.
@@ -17,6 +25,6 @@ class Uninstall
      */
     public function handlePluginUninstall(): void
     {
-        $this->deleteAllOptions(true);
+        $this->options->wipe(true);
     }
 }

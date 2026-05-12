@@ -1,10 +1,14 @@
 <?php
 
-namespace Metricool\Traits;
+namespace Metricool\Services;
 
-trait DeletesOptions
+class OptionsService
 {
-    public function deleteAllOptions(bool $private = false): bool
+    /**
+     * Delete all plugin options from the wp_options table
+     * @param bool $private Whether to delete private options (prefixed with _)
+     */
+    public function wipe(bool $private = false): bool
     {
         global $wpdb;
         $query = "DELETE FROM $wpdb->options WHERE option_name LIKE %s";
