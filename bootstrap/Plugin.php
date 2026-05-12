@@ -144,7 +144,7 @@ class Plugin
             Controllers\AdminController::class,
             Controllers\DashboardController::class,
             Controllers\CapabilityController::class,
-            Controllers\ReviewController::class,
+
             Controllers\TrackingScriptController::class,
             Controllers\SharePostController::class,
         ]);
