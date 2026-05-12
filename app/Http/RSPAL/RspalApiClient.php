@@ -118,14 +118,17 @@ class RspalApiClient
 
     protected function rspalHeaders(): array
     {
+        $installationId = $this->getInstallationId();
+
         $rspalHeaders = [
             'RSPAL-PluginName' => $this->env->getString('plugin.name'),
             'RSPAL-PluginVersion' => $this->env->getString('plugin.version'),
             'RSPAL-PluginPath' => $this->getPluginPathHeader(),
             'RSPAL-Origin' => trailingslashit(site_url()),
-            'RSPAL-InstallationId' => $this->getInstallationId(),
+            'RSPAL-InstallationId' => $installationId,
         ];
-        $rspalHeaders['RSPAL-Signature'] = $this->getInstallationSignature($rspalHeaders, $rspalHeaders['RSPAL-InstallationId']);
+
+        $rspalHeaders['RSPAL-Signature'] = $this->getInstallationSignature($rspalHeaders, $installationId);
 
         return $rspalHeaders;
     }
@@ -162,7 +165,7 @@ class RspalApiClient
      */
     private function setInstallationId(string $installationId): void
     {
-        $installation = update_option(self::INSTALLATION_ID_OPTION, $installationId);
+        $installation = update_option(self::INSTALLATION_ID_OPTION, $installationId, false);
 
         if (!$installation) {
             throw new \RuntimeException('Failed to store InstallationID');
