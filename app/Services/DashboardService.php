@@ -2,18 +2,24 @@
 
 namespace Metricool\Services;
 
-use Metricool\Controllers\LegacyUpgradeController;
+use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class DashboardService
 {
-    private MetricoolApi $api;
-    private LegacyUpgradeController $legacy;
+    public const ONBOARDING_COMPLETED_OPTION = 'metricool_onboarding_completed';
+    public const FORCED_LOGIN_OPTION = 'metricool_force_login';
 
-    public function __construct(MetricoolApi $api, LegacyUpgradeController $legacy)
+    private EnvironmentConfig $env;
+    private MetricoolApi $api;
+    private RequestStorage $request;
+
+    public function __construct(EnvironmentConfig $env, MetricoolApi $api, RequestStorage $request)
     {
+        $this->env = $env;
         $this->api = $api;
-        $this->legacy = $legacy;
+        $this->request = $request;
     }
 
     /**
@@ -44,8 +50,55 @@ class DashboardService
     {
         return [
             'show_welcome_screen' => $this->shouldShowWelcomeScreen(),
-            'forced_login' => $this->isFromLegacyPlugin(),
+            'forced_login' => $this->isForcedLogin(),
         ];
+    }
+
+    /**
+     * Enable the forced login screen
+     */
+    public function enableForcedLogin(): bool
+    {
+        return $this->setForcedLogin(true);
+    }
+
+    /**
+     * Disable the forced login state
+     */
+    public function disableForcedLogin(): bool
+    {
+        return delete_option(self::FORCED_LOGIN_OPTION);
+    }
+
+    /**
+     * Check if the front-end should show the forced login screen
+     */
+    public function isForcedLogin(): bool
+    {
+        return (bool) get_option(self::FORCED_LOGIN_OPTION, false);
+    }
+
+    /**
+     * Set the forced login state
+     */
+    public function setForcedLogin(bool $forcedLogin): bool
+    {
+        return update_option(self::FORCED_LOGIN_OPTION, $forcedLogin);
+    }
+
+    /**
+     * Check if the current admin screen is the Leadinfo dashboard page
+     */
+    public function isUserOnDashboard(): bool
+    {
+        $pageVisitedByUser = $this->request->getString('global.page');
+        $dashboardUrl = $this->env->getString('plugin.dashboard_url');
+
+        $pluginPageQueryString = wp_parse_url($dashboardUrl, PHP_URL_QUERY);
+        parse_str($pluginPageQueryString, $parsedQuery);
+        $pluginDashboardPage = ($parsedQuery['page'] ?? '');
+
+        return $pageVisitedByUser === $pluginDashboardPage;
     }
 
     /**
@@ -53,36 +106,25 @@ class DashboardService
      */
     public function isOnboardingCompleted(): bool
     {
-        return $this->api->hasUserToken() && $this->api->hasBlogId() && get_option('metricool_onboarding_completed', false);
+        return $this->api->hasUserToken() && $this->api->hasBlogId() && get_option(self::ONBOARDING_COMPLETED_OPTION, false);
     }
 
     /**
-     * Completes the onboarding process and store the timestamp
+     * Completes the onboarding process by removing all onboarding data and storing the timestamp
      */
     public function setOnboardingCompleted(): bool
     {
-        // Remove the legacy flags
-        // todo: use an event so this code can be moved to the LegacyController?
-        $this->legacy->deleteLegacyFlags();
+        $this->setForcedLogin(false);
 
-        // store the onboarding timestamp
-        return update_option('metricool_onboarding_completed', time());
+        return update_option(self::ONBOARDING_COMPLETED_OPTION, time());
     }
 
     /**
-     * Clear the onboarding data
+     * Check if the welcome screen should be shown
      */
-    public function clearOnboardingData()
+    public function shouldShowWelcomeScreen(): bool
     {
-        delete_option('metricool_onboarding_completed');
-    }
-
-    /**
-     * Check if the onboarding was completed from the legacy plugin
-     */
-    public function isFromLegacyPlugin(): bool
-    {
-        return (bool) get_option('metricool_from_legacy_plugin', false);
+        return $this->isOnboardingCompleted() && $this->showWelcomeScreenOnce();
     }
 
     /**
@@ -94,14 +136,6 @@ class DashboardService
         delete_option('metricool_show_welcome_screen');
 
         return $show;
-    }
-
-    /**
-     * Check if the welcome screen should be shown
-     */
-    public function shouldShowWelcomeScreen(): bool
-    {
-        return $this->isOnboardingCompleted() && $this->showWelcomeScreenOnce();
     }
 
     /**

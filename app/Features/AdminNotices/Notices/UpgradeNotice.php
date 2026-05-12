@@ -5,15 +5,20 @@ declare(strict_types=1);
 namespace Metricool\Features\AdminNotices\Notices;
 
 use Metricool\Features\AdminNotices\AbstractAdminNotice;
+use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 final class UpgradeNotice extends AbstractAdminNotice
 {
     public const IDENTIFIER = 'upgrade';
 
-    public function __construct(EnvironmentConfig $env)
+    private DashboardService $dashboard;
+
+    public function __construct(EnvironmentConfig $env, DashboardService $dashboard)
     {
         parent::__construct($env);
+
+        $this->dashboard = $dashboard;
     }
 
     /**
@@ -21,11 +26,8 @@ final class UpgradeNotice extends AbstractAdminNotice
      */
     protected function canDisplay(): bool
     {
-        $screen = get_current_screen();
-
-        return get_option('metricool_show_upgrade_notice', false)
-            && $screen !== null
-            && $screen->id !== 'toplevel_page_metricool';
+        return !$this->dashboard->isUserOnDashboard() &&
+            get_option('metricool_show_upgrade_notice', false);
     }
 
     /**
@@ -33,7 +35,7 @@ final class UpgradeNotice extends AbstractAdminNotice
      */
     public function isSnoozable(): bool
     {
-        return false;
+        return true;
     }
 
     /**

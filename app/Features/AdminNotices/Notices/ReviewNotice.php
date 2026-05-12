@@ -7,21 +7,23 @@ namespace Metricool\Features\AdminNotices\Notices;
 use Carbon\Carbon;
 use Metricool\Features\AdminNotices\AbstractAdminNotice;
 use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 final class ReviewNotice extends AbstractAdminNotice
 {
     public const IDENTIFIER = 'review';
-
     private const MIN_SESSIONS_COUNT = 20;
 
     private MetricoolApi $metricoolApi;
+    private DashboardService $dashboard;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $metricoolApi)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $metricoolApi, DashboardService $dashboard)
     {
         parent::__construct($env);
 
         $this->metricoolApi = $metricoolApi;
+        $this->dashboard = $dashboard;
     }
 
     /**
@@ -29,16 +31,8 @@ final class ReviewNotice extends AbstractAdminNotice
      */
     protected function canDisplay(): bool
     {
-        if ($this->onboardingCompletedTimestampSuitableForReview() === false) {
-            return false;
-        }
-
-        $screen = get_current_screen();
-        if ($screen && ('post' === $screen->base)) {
-            return false;
-        }
-
-        return true;
+        return !$this->dashboard->isUserOnDashboard() &&
+            $this->onboardingCompletedTimestampSuitableForReview();
     }
 
     /**
@@ -139,7 +133,7 @@ final class ReviewNotice extends AbstractAdminNotice
         }
 
         return sprintf(
-            // translators: %s is replaced by either "x sessions" or "statistics", %2$ and %3$ are replaced with opening and closing a tag containing hyperlink
+        // translators: %s is replaced by either "x sessions" or "statistics", %2$ and %3$ are replaced with opening and closing a tag containing hyperlink
             __('Hi, Metricool has tracked %s on your site for the last 30 days. If you have a moment, please consider leaving a review on wordpress.org to spread the word. We greatly appreciate it! If you have any questions or feedback, leave us a %2$smessage%3$s.', 'metricool'),
             $mentionedStatistic,
             '<a href="' . $this->env->getUrl('plugin.support_url') . '"  rel="noopener noreferrer"  target="_blank">',
