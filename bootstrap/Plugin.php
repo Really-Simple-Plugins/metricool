@@ -140,11 +140,9 @@ class Plugin
         $this->controllerManager->register([
             Controllers\MigrationsController::class,
             Controllers\UpgradeController::class,
-            Controllers\LegacyUpgradeController::class,
             Controllers\AdminController::class,
             Controllers\DashboardController::class,
             Controllers\CapabilityController::class,
-            Controllers\ReviewController::class,
             Controllers\TrackingScriptController::class,
             Controllers\SharePostController::class,
         ]);

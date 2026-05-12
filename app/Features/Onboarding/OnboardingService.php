@@ -43,8 +43,6 @@ class OnboardingService
             return false;
         }
 
-        $this->dashboard->clearForcedLogin();
-
         // When all the necessary information is retrieved, set the onboarding as completed
         return $this->dashboard->setOnboardingCompleted();
     }

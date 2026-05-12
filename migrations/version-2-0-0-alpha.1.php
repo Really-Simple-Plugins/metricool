@@ -29,11 +29,5 @@ return new class() implements MigrationInterface {
         }
 
         delete_option('metricool_profile_id');
-
-        // set legacy flags
-        if (!empty($profileId)) {
-            update_option('metricool_show_upgrade_notice', true, false);
-            update_option('metricool_from_legacy_plugin', true, false);
-        }
     }
 };

@@ -2,21 +2,24 @@
 
 namespace Metricool\Services;
 
-use Metricool\Controllers\LegacyUpgradeController;
+use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class DashboardService
 {
     public const ONBOARDING_COMPLETED_OPTION = 'metricool_onboarding_completed';
     public const FORCED_LOGIN_OPTION = 'metricool_force_login';
 
+    private EnvironmentConfig $env;
     private MetricoolApi $api;
-    private LegacyUpgradeController $legacy;
+    private RequestStorage $request;
 
-    public function __construct(MetricoolApi $api, LegacyUpgradeController $legacy)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $api, RequestStorage $request)
     {
+        $this->env = $env;
         $this->api = $api;
-        $this->legacy = $legacy;
+        $this->request = $request;
     }
 
     /**
@@ -52,24 +55,19 @@ class DashboardService
     }
 
     /**
-     * Check if the onboarding was completed
+     * Enable the forced login screen
      */
-    public function isOnboardingCompleted(): bool
+    public function enableForcedLogin(): bool
     {
-        return $this->api->hasUserToken() && $this->api->hasBlogId() && get_option(self::ONBOARDING_COMPLETED_OPTION, false);
+        return $this->setForcedLogin(true);
     }
 
     /**
-     * Completes the onboarding process and store the timestamp
+     * Disable the forced login state
      */
-    public function setOnboardingCompleted(): bool
+    public function disableForcedLogin(): bool
     {
-        // Remove the legacy flags
-        // todo: use an event so this code can be moved to the LegacyController?
-        $this->legacy->deleteLegacyFlags();
-
-        // store the onboarding timestamp
-        return update_option(self::ONBOARDING_COMPLETED_OPTION, time());
+        return delete_option(self::FORCED_LOGIN_OPTION);
     }
 
     /**
@@ -89,11 +87,46 @@ class DashboardService
     }
 
     /**
-     * Set the forced login state
+     * Check if the current admin screen is the Leadinfo dashboard page
      */
-    public function clearForcedLogin(): bool
+    public function isUserOnDashboard(): bool
     {
-        return delete_option(self::FORCED_LOGIN_OPTION);
+        $pageVisitedByUser = $this->request->getString('global.page');
+        $dashboardUrl = $this->env->getString('plugin.dashboard_url');
+
+        $pluginPageQueryString = wp_parse_url($dashboardUrl, PHP_URL_QUERY);
+        parse_str($pluginPageQueryString, $parsedQuery);
+        $pluginDashboardPage = ($parsedQuery['page'] ?? '');
+
+        return $pageVisitedByUser === $pluginDashboardPage;
+    }
+
+    /**
+     * Check if the onboarding was completed
+     */
+    public function isOnboardingCompleted(): bool
+    {
+        return $this->api->hasUserToken() && $this->api->hasBlogId() && get_option(self::ONBOARDING_COMPLETED_OPTION, false);
+    }
+
+    /**
+     * Completes the onboarding process by removing all onboarding data and storing the timestamp
+     */
+    public function setOnboardingCompleted(): bool
+    {
+        $timestamp = time();
+
+        do_action('metricool_onboarding_completed', $timestamp);
+
+        return update_option(self::ONBOARDING_COMPLETED_OPTION, $timestamp);
+    }
+
+    /**
+     * Check if the welcome screen should be shown
+     */
+    public function shouldShowWelcomeScreen(): bool
+    {
+        return $this->isOnboardingCompleted() && $this->showWelcomeScreenOnce();
     }
 
     /**
@@ -105,14 +138,6 @@ class DashboardService
         delete_option('metricool_show_welcome_screen');
 
         return $show;
-    }
-
-    /**
-     * Check if the welcome screen should be shown
-     */
-    public function shouldShowWelcomeScreen(): bool
-    {
-        return $this->isOnboardingCompleted() && $this->showWelcomeScreenOnce();
     }
 
     /**

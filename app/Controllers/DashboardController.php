@@ -35,6 +35,10 @@ class DashboardController implements ControllerInterface
             return;
         }
 
+        // Show forced login screen when coming from legacy
+        add_action('metricool_plugin_legacy_upgrade', [$this->dashboard, 'enableForcedLogin']);
+        add_action('metricool_onboarding_completed', [$this->dashboard, 'disableForcedLogin']);
+
         // Redirect on the activation hook, but do it after anything else.
         add_action('metricool_activation', [$this, 'maybeRedirectToDashboard'], 9999);
 
@@ -143,7 +147,7 @@ class DashboardController implements ControllerInterface
             $manifest_contents = file_get_contents($manifest);
             $decoded_manifest = json_decode($manifest_contents, true);
             foreach ($decoded_manifest as $key => $value) {
-                if (substr($value['file'], - 3) === '.js') {
+                if (substr($value['file'], -3) === '.js') {
                     wp_register_script(
                         $key,
                         $this->env->getUrl('plugin.react_url') . '/build/' . $value['file'],
@@ -211,9 +215,9 @@ class DashboardController implements ControllerInterface
         // filter the filenames to get the JavaScript and asset filenames
         foreach ($filenames as $filename) {
             if (strpos($filename, 'index.') === 0) {
-                if (substr($filename, - 3) === '.js') {
+                if (substr($filename, -3) === '.js') {
                     $jsFileName = $filename;
-                } elseif (substr($filename, - 10) === '.asset.php') {
+                } elseif (substr($filename, -10) === '.asset.php') {
                     $assetFilename = $filename;
                 }
             }
