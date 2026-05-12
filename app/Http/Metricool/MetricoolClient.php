@@ -196,7 +196,7 @@ class MetricoolClient
     /**
      * Get the token expiration timestamp.
      */
-    public function getTokenExpires(): ?int
+    public function getTokenExpires(): int
     {
         return (int) get_option('metricool_auth_token_expires') ?: 0;
     }
@@ -221,11 +221,9 @@ class MetricoolClient
     /**
      * Persist the token expiration time.
      */
-    public function storeTokenExpires(?int $expiresIn): void
+    public function storeTokenExpires(int $expiresIn): void
     {
-        if ($expiresIn) {
-            $expiresIn = Carbon::now()->addSeconds($expiresIn)->timestamp;
-        }
+        $expiresIn = Carbon::now()->addSeconds($expiresIn)->timestamp;
 
         update_option('metricool_auth_token_expires', $expiresIn);
     }
