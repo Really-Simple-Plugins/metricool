@@ -50,7 +50,7 @@ class MetricoolUserService
      */
     public function isPremium(): bool
     {
-        return isset($this->user['subscription']['plan']['name'])
-            && $this->user['subscription']['plan']['name'] !== 'FREE';
+        return isset($this->user['subscription']['plan']['id'])
+            && $this->user['subscription']['plan']['id'] !== 'FREE';
     }
 }

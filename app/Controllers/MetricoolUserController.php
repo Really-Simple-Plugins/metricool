@@ -27,7 +27,6 @@ class MetricoolUserController implements ControllerInterface
         add_filter('metricool_localize_dashboard_script', function ($script) {
             // Add premium status to settings
             $script['account']['is_premium'] = $this->service->update()->isPremium();
-
             return $script;
         });
     }
