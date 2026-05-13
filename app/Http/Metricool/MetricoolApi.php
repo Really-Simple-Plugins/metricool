@@ -90,6 +90,14 @@ class MetricoolApi
     /**
      * Easy access to the UserSettings entity.
      */
+    public function user(): Entities\User
+    {
+        return new Entities\User($this->client);
+    }
+
+    /**
+     * Easy access to the UserSettings entity.
+     */
     public function userSettings(bool $useCache = true): Entities\UserSettings
     {
         $cacheName = 'metricool_entities_cache_user_settings';

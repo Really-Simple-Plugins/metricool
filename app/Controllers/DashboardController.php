@@ -6,7 +6,7 @@ namespace Metricool\Controllers;
 
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
-use Metricool\Services\UserAccountService;
+use Metricool\Services\MetricoolUserService;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasUserAccess;
 use Metricool\Traits\HasAllowlistControl;
@@ -22,9 +22,9 @@ class DashboardController implements ControllerInterface
     private EnvironmentConfig $env;
     private MetricoolApi $metricool;
     private DashboardService $service;
-    private UserAccountService $account;
+    private MetricoolUserService $account;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $dashboard, UserAccountService $account)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $dashboard, MetricoolUserService $account)
     {
         $this->env = $env;
         $this->metricool = $metricool;

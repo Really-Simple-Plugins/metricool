@@ -145,6 +145,7 @@ class Plugin
             Controllers\CapabilityController::class,
             Controllers\TrackingScriptController::class,
             Controllers\SharePostController::class,
+            Controllers\MetricoolUserController::class,
         ]);
     }
 

@@ -2,13 +2,14 @@
 
 namespace Metricool\Controllers;
 
-use Metricool\Services\UserAccountService;
+use Metricool\Interfaces\ControllerInterface;
+use Metricool\Services\MetricoolUserService;
 
-class UserAccountController
+class MetricoolUserController implements ControllerInterface
 {
-    private UserAccountService $service;
+    private MetricoolUserService $service;
 
-    public function __construct(UserAccountService $service)
+    public function __construct(MetricoolUserService $service)
     {
         $this->service = $service;
     }
