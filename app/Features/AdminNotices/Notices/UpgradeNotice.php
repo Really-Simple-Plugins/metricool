@@ -35,7 +35,7 @@ final class UpgradeNotice extends AbstractAdminNotice
      */
     public function isSnoozable(): bool
     {
-        return true;
+        return false;
     }
 
     /**
