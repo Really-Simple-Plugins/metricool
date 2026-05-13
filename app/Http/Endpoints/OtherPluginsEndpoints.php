@@ -136,7 +136,7 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
             return $plugin;
         });
 
-        return $plugins->sortBy('active')
+        return $plugins->where('active', '==', false)
             ->take(3)
             ->toArray();
     }

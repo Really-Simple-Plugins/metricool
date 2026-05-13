@@ -49,7 +49,7 @@ class OtherPluginService
      */
     public function getPluginActive(): bool
     {
-        return $this->pluginIsActive();
+        return $this->pluginIsActive() || $this->premiumPluginIsInstalled();
     }
 
     /**

@@ -17,6 +17,15 @@ return [
         'title' => "Really Simple Security - " . __("Lightweight plugin. Heavyweight security features.", "metricool"),
         'color' => '#f4bf3e',
     ],
+    'simplybook' => [
+        'slug' => 'simplybook',
+        'options_prefix' => 'simplybook',
+        'activation_slug' => 'simplybook/simplybook.php',
+        'create' => admin_url('admin.php?page=simplybook-integration'),
+        'url' => 'https://wordpress.org/plugins/simplybook/',
+        'title' => 'SimplyBook.me - ' . __('Online Booking System', 'metricool'),
+        'color' => '#06ADEF',
+    ],
     'complianz-gdpr' => [
         'slug' => 'complianz-gdpr',
         'options_prefix' => 'cmplz',
@@ -28,15 +37,6 @@ return [
         'upgrade_url' => 'https://complianz.io?src=metricool-plugin',
         'title' => 'Complianz - ' . __('Consent Management as it should be', 'metricool'),
         'color' => '#009fff',
-    ],
-    'simplybook' => [
-        'slug' => 'simplybook',
-        'options_prefix' => 'simplybook',
-        'activation_slug' => 'simplybook/simplybook.php',
-        'create' => admin_url('admin.php?page=simplybook-integration'),
-        'url' => 'https://wordpress.org/plugins/simplybook/',
-        'title' => 'SimplyBook.me - ' . __('Online Booking System', 'metricool'),
-        'color' => '#06ADEF',
     ],
     'complianz-terms-conditions' => [
         'slug' => 'complianz-terms-conditions',
