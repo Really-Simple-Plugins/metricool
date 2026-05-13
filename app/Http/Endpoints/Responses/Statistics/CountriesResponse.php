@@ -18,9 +18,9 @@ class CountriesResponse extends DistributionResponse
     public function getChartColumns(): array
     {
         return [
-            'value' => 'value',
             'country' => __('Country', 'metricool'),
             'visitors' => __('Visitors', 'metricool'),
+            'percentage' => __('Percentage', 'metricool'),
         ];
     }
 
@@ -30,7 +30,6 @@ class CountriesResponse extends DistributionResponse
     protected function parseSingleItem(DistributionDTO $item, int $total): object
     {
         return (object) [
-            'value' => $item->value,
             'country' => Locale::getDisplayRegion('-' . $item->value, get_user_locale()),
             'visitors' => $item->amount,
             'percentage' => $item->calculatePercentageFromTotal($total),
