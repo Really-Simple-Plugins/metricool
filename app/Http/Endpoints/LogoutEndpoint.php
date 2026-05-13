@@ -6,8 +6,6 @@ namespace Metricool\Http\Endpoints;
 
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Services\OptionsService;
-use Metricool\Traits\DeletesOptions;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -19,12 +17,10 @@ class LogoutEndpoint implements SingleEndpointInterface
     public const ROUTE = 'logout';
 
     private MetricoolApi $metricoolApi;
-    private OptionsService $options;
 
-    public function __construct(MetricoolApi $metricoolApi, OptionsService $options)
+    public function __construct(MetricoolApi $metricoolApi)
     {
         $this->metricoolApi = $metricoolApi;
-        $this->options = $options;
     }
 
     /**
@@ -60,7 +56,7 @@ class LogoutEndpoint implements SingleEndpointInterface
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
-        $this->options->wipe();
+        $this->metricoolApi->logout();
 
         return $this->sendHttpResponse(['success' => true]);
     }

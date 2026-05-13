@@ -9,6 +9,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
+use Metricool\Services\OptionsService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
@@ -17,19 +18,24 @@ use InvalidArgumentException;
 class MetricoolClient
 {
     private ?Client $client = null;
+
+    private EnvironmentConfig $env;
+    private OptionsService $options;
+
     private string $apiUrl;
     private string $userToken = '';
     private string $blogId = '';
     private string $userId = '';
     protected array $middleWares = [];
-    private EnvironmentConfig $env;
+
 
     /**
      * Create a new Metricool API client wrapper.
      */
-    public function __construct(EnvironmentConfig $env)
+    public function __construct(EnvironmentConfig $env, OptionsService $options)
     {
         $this->env = $env;
+        $this->options = $options;
         $this->apiUrl = $env->get('metricool.base_api_domain');
     }
 
@@ -267,13 +273,7 @@ class MetricoolClient
      */
     public function logout(): void
     {
-        $this->clearBlogId();
-        $this->clearUserId();
-        $this->clearUserToken();
-        $this->clearRefreshToken();
-
-        // todo: check if we want to remove tracking widget from website on logout
-        $this->deleteAllOptions();
+        $this->options->wipe();
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Metricool\Controllers;
 
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
+use Metricool\Services\UserAccountService;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasUserAccess;
 use Metricool\Traits\HasAllowlistControl;
@@ -21,12 +22,14 @@ class DashboardController implements ControllerInterface
     private EnvironmentConfig $env;
     private MetricoolApi $metricool;
     private DashboardService $service;
+    private UserAccountService $account;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $dashboard)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $dashboard, UserAccountService $account)
     {
         $this->env = $env;
         $this->metricool = $metricool;
         $this->service = $dashboard;
+        $this->account = $account;
     }
 
     public function register(): void
@@ -284,20 +287,17 @@ class DashboardController implements ControllerInterface
                 'state' => $this->service->state(),
                 'mode' => $this->service->mode(),
             ],
-            'is_onboarding_completed' => $isOnboardingCompleted,
             'support' => $this->env->get('metricool.support'),
             'metricool_base_url' => $this->env->get('metricool.base_url'),
             'metricool_help_url' => $this->env->get('metricool.help_url'),
             'locale' => str_replace("_", "-", get_user_locale()),
-            'blogId' => $this->metricool->getBlogId(),
-            'userId' => $this->metricool->getUserId(),
-            'from_legacy_upgrade' => false,
         ];
 
         if ($isOnboardingCompleted) {
             $settings['account'] = [
                 'user_id' => $this->metricool->getUserId(),
-                'blog_id' => $this->metricool->getBlogId()
+                'blog_id' => $this->metricool->getBlogId(),
+                'is_premium' => $this->account->isPremium(),
             ];
         }
 

@@ -112,7 +112,7 @@ class Plugin
      */
     public static function uninstall(): void
     {
-        $uninstallInstance = new \Metricool\Support\Helpers\Uninstall();
+        $uninstallInstance = App::getInstance()->make('\Metricool\Support\Helpers\Uninstall');
         $uninstallInstance->handlePluginUninstall();
     }
 
