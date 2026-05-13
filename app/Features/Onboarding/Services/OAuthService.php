@@ -112,7 +112,7 @@ class OAuthService
      */
     private function getStoredState(): string
     {
-        return (string) get_transient('metricool_oauth_state');
+        return (string) get_option('metricool_oauth_state');
     }
 
     /**
