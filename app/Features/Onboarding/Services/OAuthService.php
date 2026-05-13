@@ -120,7 +120,7 @@ class OAuthService
      */
     private function storeState(string $state): void
     {
-        set_transient('metricool_oauth_state', $state, MINUTE_IN_SECONDS * 15);
+        update_option('metricool_oauth_state', $state, false);
     }
 
     /**
@@ -128,7 +128,7 @@ class OAuthService
      */
     private function deleteStoredState(): void
     {
-        delete_transient('metricool_oauth_state');
+        delete_option('metricool_oauth_state');
     }
 
     /**
