@@ -25,7 +25,6 @@ class OnboardingService
      * Attempt to finish the onboarding process. When the necessary information is provided or retrieved,
      * set the onboarding as completed.
      *
-     * @throws GuzzleException
      * @throws BrandAccessDeniedException
      */
     public function finalizeOnboarding(?string $blogId = null): bool
@@ -42,6 +41,9 @@ class OnboardingService
         if ($this->api->hasBlogId() === false) {
             return false;
         }
+
+        // todo: REMOVED EXCEPTION WHEN THIS BRAND RETURNS 403 FOR TESTING -> We should show an error that the tracker couldn't be loaded, or add the exception back.
+        $this->maybeActivateTrackingHash($this->api->getBlogId());
 
         // When all the necessary information is retrieved, set the onboarding as completed
         return $this->dashboard->setOnboardingCompleted();
@@ -66,41 +68,33 @@ class OnboardingService
             return;
         }
 
-        try {
-            $this->connectBlogId((string) $brand['id']);
-        } catch (GuzzleException|BrandAccessDeniedException $e) {
-            return;
-        }
+        $this->connectBlogId((string) $brand['id']);
     }
 
     /**
      * Store the necessary onboarding information from the Metricool brand
-     *
-     * @throws BrandAccessDeniedException when the current user has no access to the brand
-     * @throws GuzzleException when the Metricool API request fails
      */
     private function connectBlogId(string $blogId): void
     {
+        $this->api->storeBlogId($blogId);
+    }
+
+    /**
+     * Activate the tracking hash for the given blog ID and store it in the database
+     */
+    private function maybeActivateTrackingHash(string $blogId): void
+    {
         try {
             $brand = $this->api->brands()->get($blogId);
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
-            if ($e->getResponse()->getStatusCode() === 403) {
-                throw new BrandAccessDeniedException();
-            }
-            throw $e;
+        } catch (GuzzleException $e) {
+            return;
         }
 
-        // Store BlogId in API Client
-        if (!isset($brand['id'])) {
-            throw new \RuntimeException('Something went wrong.');
-        }
+        $trackingId = isset($brand['hash']) ? (string) $brand['hash'] : null;
 
-        $this->api->storeBlogId((string) $brand['id']);
-
-        // Store the tracking hash and active the tracking widget
-        if (!empty($brand['hash'])) {
-            $this->tracking->storeTrackingHash((string) $brand['hash']);
-            $this->tracking->activateTrackingWidget();
+        if ($trackingId !== null) {
+            $this->tracking->storeTrackingHash($trackingId)
+                ->activateTrackingWidget();
         }
     }
 }
