@@ -297,7 +297,6 @@ class DashboardController implements ControllerInterface
             $settings['account'] = [
                 'user_id' => $this->metricool->getUserId(),
                 'blog_id' => $this->metricool->getBlogId(),
-                'is_premium' => $this->account->isPremium(),
             ];
         }
 

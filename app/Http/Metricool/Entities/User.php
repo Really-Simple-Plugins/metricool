@@ -23,8 +23,8 @@ class User
      *
      * @throws GuzzleException
      */
-    public function get(): object
+    public function get(): array
     {
-        return json_decode(json_encode($this->client->get($this->endpoint)));
+        return $this->client->get($this->endpoint);
     }
 }
