@@ -22,14 +22,14 @@ class DashboardController implements ControllerInterface
     private EnvironmentConfig $env;
     private MetricoolApi $metricool;
     private DashboardService $service;
-    private MetricoolUserService $account;
+    private MetricoolUserService $metricoolUser;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $dashboard, MetricoolUserService $account)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $dashboard, MetricoolUserService $metricoolUser)
     {
         $this->env = $env;
         $this->metricool = $metricool;
         $this->service = $dashboard;
-        $this->account = $account;
+        $this->metricoolUser = $metricoolUser;
     }
 
     public function register(): void
@@ -294,9 +294,12 @@ class DashboardController implements ControllerInterface
         ];
 
         if ($isOnboardingCompleted) {
+            $this->metricoolUser->update();
+
             $settings['account'] = [
                 'user_id' => $this->metricool->getUserId(),
                 'blog_id' => $this->metricool->getBlogId(),
+                'is_premium' => $this->metricoolUser->isPremium(),
             ];
         }
 
