@@ -16,7 +16,7 @@ class Event
      * Event names
      */
     public const CONNECTED_SOCIAL_NETWORKS_DATA_LOADED = 'connected_social_networks_data_loaded';
-    public const SUBSCRIPTION_DATA_LOADED = 'subscription_data_loaded';
+    public const METRICOOL_USER_UPDATED = 'metricool_user_updated';
     public const POST_SCHEDULED = 'post_scheduled';
 
     /**

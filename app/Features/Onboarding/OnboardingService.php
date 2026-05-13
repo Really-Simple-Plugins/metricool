@@ -6,6 +6,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
+use Metricool\Services\MetricoolUserService;
 use Metricool\Services\TrackingScriptService;
 
 class OnboardingService
@@ -13,12 +14,14 @@ class OnboardingService
     private MetricoolApi $api;
     private TrackingScriptService $tracking;
     private DashboardService $dashboard;
+    private MetricoolUserService $metricoolUser;
 
-    public function __construct(MetricoolApi $api, TrackingScriptService $tracking, DashboardService $dashboard)
+    public function __construct(MetricoolApi $api, TrackingScriptService $tracking, DashboardService $dashboard, MetricoolUserService $metricoolUser)
     {
         $this->api = $api;
         $this->tracking = $tracking;
         $this->dashboard = $dashboard;
+        $this->metricoolUser = $metricoolUser;
     }
 
     /**
@@ -41,6 +44,9 @@ class OnboardingService
         if ($this->api->hasBlogId() === false) {
             return false;
         }
+
+        // Update the metricool user data from the API
+        $this->metricoolUser->update();
 
         // todo: REMOVED EXCEPTION WHEN THIS BRAND RETURNS 403 FOR TESTING -> We should show an error that the tracker couldn't be loaded, or add the exception back.
         $this->maybeActivateTrackingHash($this->api->getBlogId());

@@ -6,6 +6,7 @@ namespace Metricool\Services;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Support\Helpers\Event;
 
 class MetricoolUserService
 {
@@ -30,6 +31,8 @@ class MetricoolUserService
         }
 
         $this->storeUser($user);
+
+        Event::dispatch(EVENT::METRICOOL_USER_UPDATED, $user);
 
         return $this;
     }

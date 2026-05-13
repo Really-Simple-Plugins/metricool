@@ -18,12 +18,13 @@ class CreateAccountService
     private DashboardService $dashboard;
 
     public function __construct(
-        RspalApiClient $rspal,
-        MetricoolApi $api,
+        RspalApiClient    $rspal,
+        MetricoolApi      $api,
         OnboardingService $onboarding,
-        OAuthService $oauth,
-        DashboardService $dashboard
-    ) {
+        OAuthService      $oauth,
+        DashboardService  $dashboard
+    )
+    {
         $this->rspal = $rspal;
         $this->api = $api;
         $this->onboarding = $onboarding;
@@ -85,8 +86,6 @@ class CreateAccountService
             $this->api->userCredentials()
                 ->updatePassword('', $password);
         } catch (GuzzleException $e) {
-            // todo: When this happens, the user account is created but the password is not set, so the user can't log in. We should handle this case properly,
-            // maybe by deleting the created account or allowing the user to set the password later?
             $this->api->logout();
 
             throw new CreateAccountException($globalError, $e->getMessage(), 500);

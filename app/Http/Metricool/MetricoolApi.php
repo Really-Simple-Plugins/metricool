@@ -37,23 +37,6 @@ class MetricoolApi
     }
 
     /**
-     * Easy access to the Subscription entity.
-     */
-    public function subscription(bool $useCache = true): Entities\Subscription
-    {
-        $cacheName = 'metricool_entities_cache_subscription';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new Entities\Subscription($this->client);
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
-    }
-
-    /**
      * Easy access to the statistic entities via the StatisticsFacade.
      */
     public function statistics(bool $useCache = true): Entities\Facades\StatisticsFacade

@@ -5,22 +5,25 @@ declare(strict_types=1);
 namespace Metricool\Features\TaskManagement;
 
 use Metricool\Features\TaskManagement\Tasks\HistoricalDataTask;
+use Metricool\Services\MetricoolUserService;
 use Metricool\Support\Helpers\Event;
 
 class TaskManagementListener
 {
     private TaskManagementService $service;
+    private MetricoolUserService $metricoolUser;
 
-    public function __construct(TaskManagementService $service)
+    public function __construct(TaskManagementService $service, MetricoolUserService $metricoolUser)
     {
         $this->service = $service;
+        $this->metricoolUser = $metricoolUser;
     }
 
     public function listen(): void
     {
         add_action('metricool_event_' . Event::POST_SCHEDULED, [$this, 'handlePostScheduled']);
         add_action('metricool_event_' . Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, [$this, 'handleSocialConnectedNetworks']);
-        add_action('metricool_event_' . Event::SUBSCRIPTION_DATA_LOADED, [$this, 'handleSubscriptionLoaded']);
+        add_action('metricool_event_' . Event::METRICOOL_USER_UPDATED, [$this, 'handleMetricoolUserUpdate']);
     }
 
     /**
@@ -52,11 +55,11 @@ class TaskManagementListener
     /**
      * This event receives the active subscription data of the user and completes or opens tasks
      * based on the subscription data. For example, if the user has a premium subscription
-     * @see Event::SUBSCRIPTION_DATA_LOADED
+     * @see Event::METRICOOL_USER_LOADED
      */
-    public function handleSubscriptionLoaded(array $subscription): void
+    public function handleMetricoolUserUpdate(array $user): void
     {
-        $isPremium = strtolower($subscription['planId']) !== 'free';
+        $isPremium = $this->metricoolUser->isPremium();
 
         // Complete or open the HistoricalDataTask based on subscription status
         if ($isPremium) {
