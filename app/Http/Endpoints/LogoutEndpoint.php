@@ -15,7 +15,6 @@ class LogoutEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
-    use DeletesOptions;
 
     public const ROUTE = 'logout';
 
