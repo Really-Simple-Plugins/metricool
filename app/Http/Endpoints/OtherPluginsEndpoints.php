@@ -7,6 +7,7 @@ namespace Metricool\Http\Endpoints;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Services\OtherPluginService;
+use Metricool\Support\Helpers\Collection;
 use Metricool\Support\Helpers\Storages\GeneralConfig;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
@@ -18,13 +19,11 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
 
     private GeneralConfig $config;
     private OtherPluginService $service;
-    private MetricoolApi $metricoolApi;
 
-    public function __construct(GeneralConfig $config, OtherPluginService $service, MetricoolApi $metricoolApi)
+    public function __construct(GeneralConfig $config, OtherPluginService $service)
     {
         $this->config = $config;
         $this->service = $service;
-        $this->metricoolApi = $metricoolApi;
     }
 
     /**
@@ -119,20 +118,26 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
      */
     public function buildOtherPluginData(string $targetPluginSlug = ''): array
     {
-        $plugins = $this->config->get('plugins');
+        $plugins = new Collection($this->config->get('plugins'));
 
         if (!empty($targetPluginSlug)) {
-            $plugins = array_filter($plugins, function ($plugin) use ($targetPluginSlug) {
-                return isset($plugin['slug']) && ($plugin['slug'] === $targetPluginSlug);
+            $plugins = $plugins->filter(function ($plugin) use ($targetPluginSlug) {
+                return isset($plugin['slug']) && $plugin['slug'] === $targetPluginSlug;
             });
         }
 
-        foreach ($plugins as $index => $plugin) {
+        $plugins = $plugins->map(function ($plugin) {
             $this->service->setPluginConfig($plugin);
-            $plugins[$index]['url'] = $this->service->getPluginUrl();
-            $plugins[$index]['action'] = $this->service->getAvailablePluginAction();
-        }
 
-        return $plugins;
+            $plugin['url'] = $this->service->getPluginUrl();
+            $plugin['action'] = $this->service->getAvailablePluginAction();
+            $plugin['active'] = $this->service->getPluginActive();
+
+            return $plugin;
+        });
+
+        return $plugins->sortBy('active')
+            ->take(3)
+            ->toArray();
     }
 }

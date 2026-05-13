@@ -45,6 +45,14 @@ class OtherPluginService
     }
 
     /**
+     * Method returns if the plugin is active.
+     */
+    public function getPluginActive(): bool
+    {
+        return $this->pluginIsActive();
+    }
+
+    /**
      * Method returns the action fitting for the context of the plugin.
      */
     public function getAvailablePluginAction(): string

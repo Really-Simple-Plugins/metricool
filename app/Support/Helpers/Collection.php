@@ -40,6 +40,11 @@ final class Collection implements IteratorAggregate
         return reset($this->items) ?: null;
     }
 
+    public function take(int $count): Collection
+    {
+        return new Collection(array_slice($this->items, 0, $count));
+    }
+
     /**
      * Push one or more items to the end of the collection
      * @param mixed ...$values
@@ -84,7 +89,7 @@ final class Collection implements IteratorAggregate
             $results = array_values($results);
         }
 
-        return new static($results);
+        return new Collection($results);
     }
 
     /**
@@ -113,10 +118,10 @@ final class Collection implements IteratorAggregate
     public function filter(?callable $callback = null): self
     {
         if ($callback) {
-            return new static(array_filter($this->items, $callback, ARRAY_FILTER_USE_BOTH));
+            return new Collection(array_filter($this->items, $callback, ARRAY_FILTER_USE_BOTH));
         }
 
-        return new static(array_filter($this->items));
+        return new Collection(array_filter($this->items));
     }
 
     /**
@@ -213,7 +218,7 @@ final class Collection implements IteratorAggregate
 
         $items = array_map($callback, $this->items, $keys);
 
-        return new static(array_combine($keys, $items));
+        return new Collection(array_combine($keys, $items));
     }
 
     /**
