@@ -291,9 +291,11 @@ class DashboardController implements ControllerInterface
             'metricool_base_url' => $this->env->get('metricool.base_url'),
             'metricool_help_url' => $this->env->get('metricool.help_url'),
             'locale' => str_replace("_", "-", get_user_locale()),
+            'supported_languages' => $this->metricool->supportedLanguages(),
         ];
 
         if ($isOnboardingCompleted) {
+            // Update the user from api so we always have the latest data
             $this->metricoolUser->update();
 
             $settings['account'] = [

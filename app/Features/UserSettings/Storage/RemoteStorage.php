@@ -24,9 +24,9 @@ class RemoteStorage extends AbstractStorage
 
     public function __construct(string $name, array $config)
     {
-        $this->client = App::getInstance()->get(MetricoolApi::class)->userSettings();
         $this->method = $config['method'] ?? 'post';
         $this->casing = $config['casing'] ?? '';
+        $this->client = App::getInstance()->get(MetricoolApi::class)->userSettings();
 
         parent::__construct($name);
     }

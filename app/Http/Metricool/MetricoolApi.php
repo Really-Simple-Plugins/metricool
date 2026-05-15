@@ -81,18 +81,9 @@ class MetricoolApi
     /**
      * Easy access to the UserSettings entity.
      */
-    public function userSettings(bool $useCache = true): Entities\UserSettings
+    public function userSettings(): Entities\UserSettings
     {
-        $cacheName = 'metricool_entities_cache_user_settings';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new Entities\UserSettings($this->client);
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new Entities\UserSettings($this->client);
     }
 
     /**
@@ -118,6 +109,51 @@ class MetricoolApi
         wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
 
         return $entity;
+    }
+
+    /**
+     * List of languages that Metricool supports
+     */
+    public static function supportedLanguages(): array
+    {
+        return [
+            [
+                'label' => __('English', 'metricool'),
+                'value' => 'en',
+            ],
+            [
+                'label' => __('Spanish', 'metricool'),
+                'value' => 'es',
+            ],
+            [
+                'label' => __('French', 'metricool'),
+                'value' => 'fr',
+            ],
+            [
+                'label' => __('Portuguese (Portugal)', 'metricool'),
+                'value' => 'pt',
+            ],
+            [
+                'label' => __('Portuguese (Brazil)', 'metricool'),
+                'value' => 'br',
+            ],
+            [
+                'label' => __('Deutsch', 'metricool'),
+                'value' => 'de',
+            ],
+            [
+                'label' => __('Italian', 'metricool'),
+                'value' => 'it',
+            ],
+            [
+                'label' => __('Danish', 'metricool'),
+                'value' => 'da',
+            ],
+            [
+                'label' => __('Dutch', 'metricool'),
+                'value' => 'nl',
+            ],
+        ];
     }
 
     /**
