@@ -77,7 +77,7 @@ final class PeriodFilter
                 $this->startDate->startOfMonth();
                 break;
             default:
-                throw new \LogicException('Unsupported period given: ' . sanitize_text_field($this->period));
+                throw new \LogicException('Unsupported period given: ' . esc_html(sanitize_text_field($this->period)));
         }
 
         return $this;

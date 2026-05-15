@@ -114,7 +114,7 @@ final class App
         $reflector = new \ReflectionClass($class);
 
         if ($reflector->isInstantiable() === false) {
-            throw new \Exception("Target [{$class}] is not instantiable.");
+            throw new \Exception(esc_html("Target [{$class}] is not instantiable."));
         }
 
         $constructor = $reflector->getConstructor();
@@ -136,20 +136,20 @@ final class App
                     continue;
                 }
 
-                throw new \Exception(sprintf(
+                throw new \Exception(esc_html(sprintf(
                     'Cannot resolve untyped parameter $%s for [%s] without a default value.',
                     $parameter->getName(),
                     $class
-                ));
+                )));
             }
 
             // For PHP 7.4 only ReflectionNamedType exists (no unions).
             if ($type instanceof \ReflectionNamedType === false) {
-                throw new \Exception(sprintf(
+                throw new \Exception(esc_html(sprintf(
                     'Unsupported parameter type for $%s in [%s].',
                     $parameter->getName(),
                     $class
-                ));
+                )));
             }
 
             // If nullable and no default, we still must supply something;
@@ -159,23 +159,23 @@ final class App
                     continue;
                 }
 
-                throw new \Exception(sprintf(
+                throw new \Exception(esc_html(sprintf(
                     'Cannot autowire builtin parameter $%s (%s) for [%s]. Provide a default or register a factory.',
                     $parameter->getName(),
                     $type->getName(),
                     $class
-                ));
+                )));
             }
 
             /** @var class-string $dependencyClass */
             $dependencyClass = $type->getName();
 
             if ($dependencyClass === self::class) {
-                throw new \Exception(sprintf(
+                throw new \Exception(esc_html(sprintf(
                     'Cannot resolve App container dependency for $%s in [%s] to prevent circular dependencies.',
                     $parameter->getName(),
                     $class
-                ));
+                )));
             }
 
             // Using get() will also resolve dependencies of dependencies

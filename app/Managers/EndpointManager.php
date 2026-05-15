@@ -98,7 +98,7 @@ final class EndpointManager extends AbstractManager
 
             if (!is_callable($callback)) {
                 throw new \InvalidArgumentException(
-                    sprintf('The callback for the route "%s" is not callable.', $route)
+                    esc_html(sprintf('The callback for the route "%s" is not callable.', $route))
                 );
             }
 

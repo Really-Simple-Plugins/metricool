@@ -14,7 +14,7 @@ class OptionsStorage extends AbstractStorage
     public function __construct(string $name, array $config)
     {
         if (!isset($config['prefix'])) {
-            throw new \InvalidArgumentException('Prefix is required for OptionsStorage: ' . $name);
+            throw new \InvalidArgumentException('Prefix is required for OptionsStorage: ' . esc_html($name));
         }
 
         $this->prefix = $config['prefix'];

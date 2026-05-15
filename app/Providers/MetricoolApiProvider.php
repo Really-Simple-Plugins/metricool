@@ -42,7 +42,7 @@ class MetricoolApiProvider extends Provider
         try {
             $client->connect();
         } catch (\Exception $e) {
-            throw new \RuntimeException('Failed to setup the Metricool API in the container: ' . $e->getMessage());
+            throw new \RuntimeException('Failed to setup the Metricool API in the container: ' . esc_html($e->getMessage()));
         }
 
         // Refresh the token if it's expired

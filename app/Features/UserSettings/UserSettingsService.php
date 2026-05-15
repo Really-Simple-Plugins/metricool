@@ -88,6 +88,7 @@ class UserSettingsService
         // Still throw validation errors if any, this should not block storage
         // submission for valid fields
         if (count($validationErrors) > 0) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $validationErrors contains ValidatorFailedException objects with pre-escaped messages.
             throw new ValidationFailedExceptions($validationErrors);
         }
 

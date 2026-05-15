@@ -47,7 +47,7 @@ class RealtimeStatistics
     public function __construct(MetricoolClient $client, string $metric)
     {
         if (!in_array($metric, $this->compatibleMetrics)) {
-            throw new \InvalidArgumentException("Incompatible metric given: $metric");
+            throw new \InvalidArgumentException(esc_html("Incompatible metric given: $metric"));
         }
 
         $this->client = $client;

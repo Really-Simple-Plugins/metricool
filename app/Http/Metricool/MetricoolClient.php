@@ -468,6 +468,7 @@ class MetricoolClient
         } catch (GuzzleException $e) {
             // If the refresh token request fails, we need to log the user out.
             $this->logout();
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a Throwable passed as $previous, not output.
             throw new RuntimeException('Failed to refresh authentication token. Please log in again.', 500, $e);
         }
 
@@ -534,7 +535,7 @@ class MetricoolClient
         if (!empty($validationErrors)) {
             throw new InvalidArgumentException(
                 'Metricool Client is not setup correctly: ' . PHP_EOL .
-                implode(', ', $validationErrors)
+                esc_html(implode(', ', $validationErrors))
             );
         }
     }

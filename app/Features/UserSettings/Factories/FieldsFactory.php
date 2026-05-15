@@ -66,7 +66,7 @@ class FieldsFactory
 
             // Abort when storage not present in config
             if ($storage == null) {
-                throw new StorageNotFoundException('Storage "' . $field->getStorageName() . '" not found for field: ' . $field->getName());
+                throw new StorageNotFoundException('Storage "' . esc_html($field->getStorageName()) . '" not found for field: ' . esc_html($field->getName()));
             }
 
             // Set validated storage to the field

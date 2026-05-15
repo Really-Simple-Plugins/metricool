@@ -138,7 +138,7 @@ class Field
     public function setValue($value, ?\WP_REST_Request $request = null): void
     {
         if (empty($this->storage)) {
-            throw new \LogicException('Storage not set for field: ' . $this->name . '. First call setStorage() before setValue().');
+            throw new \LogicException('Storage not set for field: ' . esc_html($this->name) . '. First call setStorage() before setValue().');
         }
 
         $this->validate($value, $request);
@@ -160,7 +160,7 @@ class Field
         }
 
         if (empty($this->storage)) {
-            throw new \LogicException('Storage not set for field: ' . $this->name . '. First call setStorage() before getValue().');
+            throw new \LogicException('Storage not set for field: ' . esc_html($this->name) . '. First call setStorage() before getValue().');
         }
 
         $value = $this->storage->get($this->getSettingName());

@@ -19,7 +19,7 @@ class SupportedLanguageValidator extends AbstractValidator
 
         if ($availableLanguages->where('value', $value)->count() == 0) {
             // translators: %s is the invalid language code submitted by the user.
-            throw new ValidatorFailedException(sprintf(__('%s is not a supported language', 'metricool'), $value), $this);
+            throw new ValidatorFailedException(esc_html(sprintf(__('%s is not a supported language', 'metricool'), $value)), $this);
         }
     }
 }

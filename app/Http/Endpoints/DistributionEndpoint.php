@@ -124,7 +124,7 @@ class DistributionEndpoint implements SingleEndpointInterface
     protected function createResponseObjectFromMetric(string $metric, Collection $statistics): DistributionResponse
     {
         if (!array_key_exists($metric, self::METRICS_RESPONSE_MAPPER)) {
-            throw new \InvalidArgumentException("Metric $metric is not accepted by this endpoint");
+            throw new \InvalidArgumentException(esc_html("Metric $metric is not accepted by this endpoint"));
         }
 
         $response = self::METRICS_RESPONSE_MAPPER[$metric];

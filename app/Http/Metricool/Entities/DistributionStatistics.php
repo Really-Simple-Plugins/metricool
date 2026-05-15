@@ -41,7 +41,7 @@ class DistributionStatistics
     public function __construct(MetricoolClient $client, string $metric, bool $filterRequired = true)
     {
         if (!in_array($metric, $this->metrics)) {
-            throw new \InvalidArgumentException("Incompatible metric given: $metric");
+            throw new \InvalidArgumentException(esc_html("Incompatible metric given: $metric"));
         }
 
         $this->metric = $metric;

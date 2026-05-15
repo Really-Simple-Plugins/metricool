@@ -41,7 +41,7 @@ class CreateAccountService
 
         // First, check if the password is valid
         if (!$this->isValidPassword($password)) {
-            throw new CreateAccountException(__('Password is not valid.', 'metricool'), 'Password is not valid', 422);
+            throw new CreateAccountException(esc_html__('Password is not valid.', 'metricool'), 'Password is not valid', 422);
         }
 
         // Attempt to create the account
@@ -53,24 +53,24 @@ class CreateAccountService
                 'RSPAL-RecaptchaV3Token' => $captcha
             ]);
         } catch (GuzzleException $e) {
-            throw new CreateAccountException($globalError, $e->getMessage(), 500);
+            throw new CreateAccountException(esc_html($globalError), esc_html($e->getMessage()), 500);
         }
 
         // A 400 response means e-mail exists or the password is invalid
         if ($signupResponse->getStatusCode() == 400) {
-            throw new CreateAccountException($globalError, 'Email or password error', 422);
+            throw new CreateAccountException(esc_html($globalError), 'Email or password error', 422);
         }
 
         // Check if the response contains the required fields
         if (empty($signupResponse->data->accessToken) || empty($signupResponse->data->refreshToken)) {
-            throw new CreateAccountException($globalError, 'Signup response is missing required fields', 500);
+            throw new CreateAccountException(esc_html($globalError), 'Signup response is missing required fields', 500);
         }
 
         // Parse the user ID from the access token
         $userId = $this->oauth->parseUserIdFromAccessToken($signupResponse->data->accessToken);
 
         if (empty($userId)) {
-            throw new CreateAccountException($globalError, 'Failed to parse user ID from access token', 500);
+            throw new CreateAccountException(esc_html($globalError), 'Failed to parse user ID from access token', 500);
         }
 
         // Authenticate the Metricool API Client
@@ -87,7 +87,7 @@ class CreateAccountService
         } catch (GuzzleException $e) {
             $this->api->logout();
 
-            throw new CreateAccountException($globalError, $e->getMessage(), 500);
+            throw new CreateAccountException(esc_html($globalError), esc_html($e->getMessage()), 500);
         }
 
         // Attempt to automatically set the blog information, complete the onboarding process on success

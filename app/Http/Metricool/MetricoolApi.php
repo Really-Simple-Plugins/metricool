@@ -170,6 +170,6 @@ class MetricoolApi
             return $this->client->{$name}(...$arguments);
         }
 
-        throw new \BadMethodCallException("Method {$name} does not exist on MetricoolClient.");
+        throw new \BadMethodCallException(esc_html("Method {$name} does not exist on MetricoolClient."));
     }
 }
