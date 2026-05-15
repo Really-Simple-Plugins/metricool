@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Services\OtherPluginService;
 use Metricool\Support\Helpers\Collection;

@@ -18,13 +18,12 @@ class CreateAccountService
     private DashboardService $dashboard;
 
     public function __construct(
-        RspalApiClient    $rspal,
-        MetricoolApi      $api,
+        RspalApiClient $rspal,
+        MetricoolApi $api,
         OnboardingService $onboarding,
-        OAuthService      $oauth,
-        DashboardService  $dashboard
-    )
-    {
+        OAuthService $oauth,
+        DashboardService $dashboard
+    ) {
         $this->rspal = $rspal;
         $this->api = $api;
         $this->onboarding = $onboarding;

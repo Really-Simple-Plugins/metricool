@@ -9,11 +9,9 @@ use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
 use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Features\Onboarding\Services\OAuthService;
-use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
-use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Traits\HasRestAccess;
 
 class OnboardingController implements FeatureInterface
@@ -27,13 +25,12 @@ class OnboardingController implements FeatureInterface
     private DashboardService $dashboard;
 
     public function __construct(
-        OnboardingService    $onboarding,
+        OnboardingService $onboarding,
         CreateAccountService $accounts,
-        EnvironmentConfig    $env,
-        OAuthService         $oauth,
-        DashboardService     $dashboard
-    )
-    {
+        EnvironmentConfig $env,
+        OAuthService $oauth,
+        DashboardService $dashboard
+    ) {
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
         $this->env = $env;
@@ -171,7 +168,7 @@ class OnboardingController implements FeatureInterface
         // Attempt to automatically set the blog information, completes the onboarding process on success
         try {
             $this->onboarding->finalizeOnboarding();
-        } catch (BrandAccessDeniedException|GuzzleException $e) {
+        } catch (BrandAccessDeniedException | GuzzleException $e) {
             wp_safe_redirect(add_query_arg('oauth_error', 'onboarding_failed', $this->env->getString('plugin.dashboard_url')));
             exit;
         }
