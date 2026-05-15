@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Metricool\Features\TaskManagement;
+
 if (!defined('ABSPATH')) {
     exit;
 }
-
-namespace Metricool\Features\TaskManagement;
 
 use Metricool\Features\TaskManagement\Tasks\HistoricalDataTask;
 use Metricool\Services\MetricoolUserService;

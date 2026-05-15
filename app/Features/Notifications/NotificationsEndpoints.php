@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Metricool\Features\Notifications;
+
 if (!defined('ABSPATH')) {
     exit;
 }
-
-namespace Metricool\Features\Notifications;
 
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;

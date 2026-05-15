@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Metricool\Features\AdminNotices;
+
 if (!defined('ABSPATH')) {
     exit;
 }
-
-namespace Metricool\Features\AdminNotices;
 
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;

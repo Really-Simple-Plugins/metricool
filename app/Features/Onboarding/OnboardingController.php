@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Metricool\Features\Onboarding;
+
 if (!defined('ABSPATH')) {
     exit;
 }
-
-namespace Metricool\Features\Onboarding;
 
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;

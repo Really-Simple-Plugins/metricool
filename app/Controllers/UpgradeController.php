@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Metricool\Controllers;
+
 if (!defined('ABSPATH')) {
     exit;
 }
-
-namespace Metricool\Controllers;
 
 use Metricool\Interfaces\ControllerInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Metricool\Services;
+
 if (!defined('ABSPATH')) {
     exit;
 }
-
-namespace Metricool\Services;
 
 use Metricool\Support\Helpers\Storage;
 

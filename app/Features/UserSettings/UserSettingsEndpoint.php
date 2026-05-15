@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Metricool\Features\UserSettings;
+
 if (!defined('ABSPATH')) {
     exit;
 }
-
-namespace Metricool\Features\UserSettings;
 
 use Metricool\Features\UserSettings\Exceptions\StorageSubmitException;
 use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;

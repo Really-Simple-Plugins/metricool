@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
+namespace Metricool\Bootstrap;
+
 if (!defined('ABSPATH')) {
     exit;
 }
-
-namespace Metricool\Bootstrap;
 
 use Metricool\Controllers;
 use Metricool\Http;
