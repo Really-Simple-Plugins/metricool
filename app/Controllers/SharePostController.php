@@ -116,7 +116,7 @@ class SharePostController implements ControllerInterface
         // Validate nonce or wp_die on empty
         $nonce = $this->request->getString('global._metricool_action_nonce');
         if (empty($nonce) || !$this->verifyNonce($nonce, 'metricool_action')) {
-            wp_die(__('Invalid nonce.', 'metricool'));
+            wp_die(esc_html__('Invalid nonce.', 'metricool'));
         }
 
         $this->handleSharePostAction();
