@@ -57,7 +57,7 @@ class AdminNoticesController implements FeatureInterface
      */
     public function enqueueStyles(): void
     {
-        wp_enqueue_style('metricool-admin-notice', $this->env->getUrl('plugin.assets_url') . 'css/admin-notice.css');
+        wp_enqueue_style('metricool-admin-notice', $this->env->getUrl('plugin.assets_url') . 'css/admin-notice.css', [], $this->env->getString('plugin.version'));
     }
 
     /**
