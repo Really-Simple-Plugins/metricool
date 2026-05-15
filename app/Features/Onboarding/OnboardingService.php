@@ -75,7 +75,15 @@ class OnboardingService
             return;
         }
 
-        $this->api->storeBlogId((string) $brand['id']);
+        $this->connectBlogId((string) $brand['id']);
+    }
+
+    /**
+     * Store the necessary onboarding information from the Metricool brand
+     */
+    private function connectBlogId(string $blogId): void
+    {
+        $this->api->storeBlogId($blogId);
     }
 
     /**
