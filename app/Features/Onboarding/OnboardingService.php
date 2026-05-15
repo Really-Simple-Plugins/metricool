@@ -69,20 +69,13 @@ class OnboardingService
             return;
         }
 
+        // Get the brand when there is only one, abort if there are more
         $brand = (count($brands) === 1 ? (array) $brands[0] : []);
-        if (empty($brand['id'])) {
+        if (!isset($brand['id'])) {
             return;
         }
 
-        $this->connectBlogId((string) $brand['id']);
-    }
-
-    /**
-     * Store the necessary onboarding information from the Metricool brand
-     */
-    private function connectBlogId(string $blogId): void
-    {
-        $this->api->storeBlogId($blogId);
+        $this->api->storeBlogId((string) $brand['id']);
     }
 
     /**
