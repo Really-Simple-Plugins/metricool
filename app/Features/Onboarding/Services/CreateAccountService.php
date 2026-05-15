@@ -8,24 +8,29 @@ use Metricool\Features\Onboarding\OnboardingService;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Http\RSPAL\RspalApiClient;
 use Metricool\Services\DashboardService;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class CreateAccountService
 {
     private RspalApiClient $rspal;
     private MetricoolApi $api;
+    private EnvironmentConfig $env;
     private OnboardingService $onboarding;
     private OAuthService $oauth;
     private DashboardService $dashboard;
 
+
     public function __construct(
         RspalApiClient $rspal,
         MetricoolApi $api,
+        EnvironmentConfig $env,
         OnboardingService $onboarding,
         OAuthService $oauth,
         DashboardService $dashboard
     ) {
         $this->rspal = $rspal;
         $this->api = $api;
+        $this->env = $env;
         $this->onboarding = $onboarding;
         $this->oauth = $oauth;
         $this->dashboard = $dashboard;
@@ -37,7 +42,10 @@ class CreateAccountService
      */
     public function createAccount(string $captcha, string $email, string $password, bool $newsletters): bool
     {
-        $globalError = __('Something went wrong. Please try again or leave a support message on WordPress.org', 'metricool');
+        $globalError = sprintf(
+            __('Something went wrong. Please try again or <a href="%s" target="_blank">leave a support message</a>.', 'metricool'),
+            $this->env->getUrl('support_url')
+        );
 
         // First, check if the password is valid
         if (!$this->isValidPassword($password)) {
