@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 namespace Metricool\Features\TaskManagement;
 
 use Metricool\Traits\HasRestAccess;

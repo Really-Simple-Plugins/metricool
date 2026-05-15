@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 /**
  * Inner content for the legacy upgrade admin notice.
  * Rendered inside the layout.php template.

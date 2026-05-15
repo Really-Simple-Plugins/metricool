@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Interfaces\MigrationInterface;
 
 return new class() implements MigrationInterface {
