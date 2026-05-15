@@ -14,8 +14,7 @@ class FirstDayOfWeekValidator extends AbstractValidator
     public function validate($value, \WP_REST_Request $request = null): void
     {
         if ($value !== '1' && $value !== '7') {
-            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
-            throw new ValidatorFailedException(esc_html__('Please enter a valid day of the week (1 or 7)', 'metricool'), $this);
+            throw new ValidatorFailedException(esc_html__('Please enter a valid day of the week (1 or 7)', 'metricool'));
         }
     }
 }

@@ -15,8 +15,7 @@ class RequiredValidator extends AbstractValidator
     public function validate($value, ?\WP_REST_Request $request = null): void
     {
         if ($this->isEmptyValue($value)) {
-            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
-            throw new ValidatorFailedException(esc_html__('This field is required', 'metricool'), $this);
+            throw new ValidatorFailedException(esc_html__('This field is required', 'metricool'));
         }
     }
 }

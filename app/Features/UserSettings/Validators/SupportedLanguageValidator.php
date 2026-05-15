@@ -19,8 +19,8 @@ class SupportedLanguageValidator extends AbstractValidator
 
         if ($availableLanguages->where('value', $value)->count() == 0) {
             // translators: %s is the invalid language code submitted by the user.
-            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
-            throw new ValidatorFailedException(esc_html(sprintf(__('%s is not a supported language', 'metricool'), $value)), $this);
+            $message = esc_html(sprintf(__('%s is not a supported language', 'metricool'), $value));
+            throw new ValidatorFailedException($message);
         }
     }
 }

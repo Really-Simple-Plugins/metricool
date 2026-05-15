@@ -11,12 +11,4 @@ use Metricool\Features\UserSettings\Validators\AbstractValidator;
  */
 class ValidatorFailedException extends \RuntimeException
 {
-    public AbstractValidator $validator;
-
-    public function __construct(string $message, AbstractValidator $validator)
-    {
-        $this->validator = $validator;
-
-        parent::__construct($message);
-    }
 }

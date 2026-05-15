@@ -42,6 +42,7 @@ class CreateAccountService
      */
     public function createAccount(string $captcha, string $email, string $password, bool $newsletters): bool
     {
+        // translators: %s is a url to the support page
         $globalError = sprintf(
             __('Something went wrong. Please try again or <a href="%s" target="_blank">leave a support message</a>.', 'metricool'),
             $this->env->getUrl('support_url')
