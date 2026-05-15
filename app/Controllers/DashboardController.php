@@ -159,7 +159,7 @@ class DashboardController implements ControllerInterface
                         $key,
                         $this->env->getUrl('plugin.react_url') . '/build/' . $value['file'],
                         [],
-                        $this->env->getString('plugin.version'),
+                        null,
                         false,
                     );
                     $translation_data = load_script_textdomain($key, 'metricool');
@@ -172,7 +172,7 @@ class DashboardController implements ControllerInterface
                             'metricool-main-script',
                             $this->env->getUrl('plugin.react_url') . '/build/' . $value['file'],
                             [],
-                            $this->env->getString('plugin.version'),
+                            null,
                             false,
                         );
                     }
@@ -182,7 +182,7 @@ class DashboardController implements ControllerInterface
                         'metricool-tailwind',
                         $this->env->getUrl('plugin.react_url') . '/build/' . $value['css'][0],
                         [],
-                        $this->env->getString('plugin.version'),
+                        null,
                     );
                 }
             }
