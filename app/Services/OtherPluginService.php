@@ -164,6 +164,7 @@ class OtherPluginService
         //when activated from the network admin, we assume the user wants network activated
         $networkwide = is_multisite() && is_network_admin();
         if (!defined('DOING_CRON')) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- DOING_CRON is a WordPress core constant.
             define('DOING_CRON', true);
         }
 
