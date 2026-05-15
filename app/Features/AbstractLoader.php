@@ -75,12 +75,14 @@ abstract class AbstractLoader
         $pluginHttpNamespace = $this->env->getString('http.namespace');
         $restUrlPrefix = trailingslashit(rest_get_url_prefix());
 
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-        $currentRequestUri = ($_SERVER['REQUEST_URI'] ?? '');
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.NonceVerification.Recommended
+        $currentRequestUri = isset($_SERVER['REQUEST_URI'])
+            ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']))
+            : '';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a REST route detection check, not form processing.
         $isPlainPermalink = (
             isset($_GET['rest_route'])
-            && (strpos($_GET['rest_route'], $pluginHttpNamespace) !== false)
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- This is a REST route detection check, not form processing.
+            && (strpos(sanitize_text_field(wp_unslash($_GET['rest_route'])), $pluginHttpNamespace) !== false)
         );
 
         return (strpos($currentRequestUri, $restUrlPrefix) !== false) || $isPlainPermalink;
