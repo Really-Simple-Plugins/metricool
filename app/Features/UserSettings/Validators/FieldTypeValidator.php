@@ -24,6 +24,7 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
             throw new ValidatorFailedException(esc_html__('Please enter a valid boolean', 'metricool'), $this);
         }
 
@@ -32,6 +33,7 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
             throw new ValidatorFailedException(esc_html__('Please enter a valid integer', 'metricool'), $this);
         }
 
@@ -40,6 +42,7 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
             throw new ValidatorFailedException(esc_html__('Please enter a valid float', 'metricool'), $this);
         }
 
@@ -48,6 +51,7 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
             throw new ValidatorFailedException(esc_html__('Please enter a valid string', 'metricool'), $this);
         }
 
@@ -56,6 +60,7 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
             throw new ValidatorFailedException(esc_html__('Please enter a valid array', 'metricool'), $this);
         }
 
@@ -64,9 +69,11 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
             throw new ValidatorFailedException(esc_html__('Please enter a valid object', 'metricool'), $this);
         }
 
+        // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
         throw new ValidatorFailedException(esc_html__('Please enter a valid value', 'metricool'), $this);
     }
 }

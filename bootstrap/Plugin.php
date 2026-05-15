@@ -59,6 +59,7 @@ class Plugin
      */
     public function loadPluginTextDomain(): void
     {
+        // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Required for self-hosted installs not on WordPress.org.
         load_plugin_textdomain('metricool');
     }
 
