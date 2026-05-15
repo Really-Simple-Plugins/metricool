@@ -34,11 +34,6 @@ class OptionsService
             wp_cache_flush();
         }
 
-        // Make sure deleted options are not cached
-        if (function_exists('wp_cache_flush')) {
-            wp_cache_flush();
-        }
-
         return $result !== false;
     }
 }
