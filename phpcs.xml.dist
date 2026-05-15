@@ -53,9 +53,11 @@
         </properties>
     </rule>
 
-    <!-- Side-effects guard; excluding front controller/bootstrapper -->
+    <!-- Side-effects guard; ABSPATH protection is required by WordPress in every PHP file -->
     <rule ref="PSR1.Files.SideEffects">
-    <exclude-pattern>metricool.php</exclude-pattern>
+        <exclude-pattern>metricool.php</exclude-pattern>
+        <exclude-pattern>app/*</exclude-pattern>
+        <exclude-pattern>bootstrap/*</exclude-pattern>
     </rule>
 
     <!-- PHPCompatibility:  -->
