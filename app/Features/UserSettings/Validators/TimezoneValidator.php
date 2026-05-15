@@ -17,6 +17,7 @@ class TimezoneValidator extends AbstractValidator
 
         if (!in_array($value, $validTimezones)) {
             // translators: %s is the invalid timezone submitted by the user.
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $this is the validator instance, not output.
             throw new ValidatorFailedException(esc_html(sprintf(__('%s is not a valid timezone', 'metricool'), $value)), $this);
         }
     }
