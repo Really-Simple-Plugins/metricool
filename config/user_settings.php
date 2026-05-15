@@ -22,6 +22,7 @@ return [
         'timezone' => [
             'section' => 'preferences',
             'storage' => 'metricool',
+            'validators' => ['timezone'],
         ],
         'firstDayOfTheWeek' => [
             'section' => 'preferences',
