@@ -2,6 +2,9 @@ import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { type GlobalContext } from "@/context/GlobalContext.tsx";
 import type { QueryClient } from "@tanstack/react-query";
 
+// @ts-expect-error window.metricool is globally defined
+const GOOGLE_RECAPTCHA_URL = window.metricool.values.google_recaptcha_url;
+
 /**
  * Tanstack Router's entry into the entire app, from which it generates
  * `routeTree.gen.ts`.
@@ -16,7 +19,7 @@ export const Route = createRootRouteWithContext<GlobalContext & { queryClient: Q
     head: () => ({
         scripts: [
             {
-                src: "https://www.google.com/recaptcha/enterprise.js?render=6LflMV4sAAAAAMyPohHfMRVjZQBcu-YuZz_3nTTK",
+                src: GOOGLE_RECAPTCHA_URL,
             },
         ],
     }),

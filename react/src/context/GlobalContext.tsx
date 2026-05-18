@@ -55,7 +55,9 @@ type MetricoolData = {
     account: {
         blogId: string,
         userId: string,
-    }
+    },
+    google_recaptcha_url: string,
+    google_recaptcha_key: string,
 };
 
 interface GlobalState {
@@ -203,4 +205,3 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
         }
     }
 };
-

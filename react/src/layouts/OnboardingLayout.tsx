@@ -7,20 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import { z } from "zod";
 import { HeadContent } from "@tanstack/react-router";
-
-const generateRecaptchaToken = async (): Promise<string> => (
-    new Promise((resolve) => {
-        // @ts-expect-error grecaptcha globally defined through script
-        grecaptcha.enterprise.ready(
-            () =>
-                void (async () => {
-                    // @ts-expect-error grecaptcha globally defined through script
-                    const token = await grecaptcha.enterprise.execute("6LflMV4sAAAAAMyPohHfMRVjZQBcu-YuZz_3nTTK", { action: "signup" });
-                    resolve(token);
-                })(),
-        );
-    })
-);
+import { generateRecaptchaToken } from "@/support/functions/utils.ts";
 
 /**
  * The Onboarding Layout.
@@ -51,7 +38,7 @@ export const OnboardingLayout = () => {
             setOnboardingModalOpen(true);
         },
         mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
-            const token = await generateRecaptchaToken();
+            const token = await generateRecaptchaToken(metricool.google_recaptcha_key, "signup");
 
             return await httpClient.setRoute("onboarding/create_account").setPayload({
                 email: formValues.credentials.email,

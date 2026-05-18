@@ -296,6 +296,8 @@ class DashboardController implements ControllerInterface
             'metricool_help_url' => $this->env->get('metricool.help_url'),
             'locale' => str_replace("_", "-", get_user_locale()),
             'supported_languages' => $this->metricool->supportedLanguages(),
+            'google_recaptcha_url' => $this->getGoogleRecaptchaUrl(),
+            'google_recaptcha_key' => $this->env->getString('metricool.google_recaptcha_key'),
         ];
 
         if ($isOnboardingCompleted) {
@@ -311,6 +313,18 @@ class DashboardController implements ControllerInterface
         }
 
         return apply_filters('metricool_localize_dashboard_script', $settings);
+    }
+
+    /**
+     * Get the Google reCAPTCHA URL with the key from the environment config.
+     */
+    private function getGoogleRecaptchaUrl(): string
+    {
+        return str_replace(
+            "{{KEY}}",
+            $this->env->getString('metricool.google_recaptcha_key'),
+            $this->env->getString('metricool.google_recaptcha_script_url')
+        );
     }
 
     public function loadMainScriptsAsModule(string $tag, string $handle): string

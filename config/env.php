@@ -43,6 +43,8 @@ return [
         'oauth_authorize_url' => 'https://app.metricool.com/oauth/authorize',
         'oauth_token_url' => 'https://app.metricool.com/oauth/token',
         'oauth_client_id' => 'BaKuXnUZBvNvNHrNXtGivVxwnfGKitgc',
+        'google_recaptcha_script_url' => 'https://www.google.com/recaptcha/enterprise.js?render={{KEY}}',
+        'google_recaptcha_key' => '6LflMV4sAAAAAMyPohHfMRVjZQBcu-YuZz_3nTTK',
     ],
     'http' => [
         'version' => 'v1',
