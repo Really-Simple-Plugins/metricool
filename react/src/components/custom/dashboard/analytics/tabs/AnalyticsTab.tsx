@@ -40,51 +40,6 @@ type TimelineData = {
     visitors: number,
 }[]
 
-const periodFilterOptions: Record<string, PeriodFilterOption> = {
-    lastWeek: {
-        label: __("Last week", "metricool"),
-        option: "lastweek",
-        isUpsell: false,
-        xAxisInterval: 0,
-    },
-    currentMonth: {
-        label: __("Current month", "metricool"),
-        option: "currentmonth",
-        isUpsell: false,
-        xAxisInterval: 0,
-    },
-    last30Days: {
-        label: __("Last 30 days", "metricool"),
-        option: "last30days",
-        isUpsell: false,
-        xAxisInterval: 2,
-    },
-    previousMonth: {
-        label: __("Previous month", "metricool"),
-        option: "previousmonth",
-        isUpsell: false,
-        xAxisInterval: 2,
-    },
-    last3Months: {
-        label: __("Last 3 months", "metricool"),
-        option: "last3months",
-        isUpsell: false,
-        xAxisInterval: 6,
-    },
-    last6Months: {
-        label: __("Last 6 months", "metricool"),
-        option: "last6months",
-        isUpsell: true,
-        xAxisInterval: 29,
-    },
-    last12Months: {
-        label: __("Last 12 months", "metricool"),
-        option: "last12months",
-        isUpsell: true,
-        xAxisInterval: 29,
-    },
-};
-
 const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activePeriodFilterInContext: PeriodFilterOption | undefined): PeriodFilterOption => {
     if (activePeriodFilterInContext) {
         return activePeriodFilterInContext;
@@ -95,6 +50,52 @@ const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activeP
 
 const AnalyticsTab = () => {
     const { httpClient, metricool, dispatch, dashboardSettings, metricoolDynamicUrl } = useGlobalContext();
+
+    const periodFilterOptions: Record<string, PeriodFilterOption> = {
+        lastWeek: {
+            label: __("Last week", "metricool"),
+            option: "lastweek",
+            isUpsell: false,
+            xAxisInterval: 0,
+        },
+        currentMonth: {
+            label: __("Current month", "metricool"),
+            option: "currentmonth",
+            isUpsell: false,
+            xAxisInterval: 0,
+        },
+        last30Days: {
+            label: __("Last 30 days", "metricool"),
+            option: "last30days",
+            isUpsell: false,
+            xAxisInterval: 2,
+        },
+        previousMonth: {
+            label: __("Previous month", "metricool"),
+            option: "previousmonth",
+            isUpsell: false,
+            xAxisInterval: 2,
+        },
+        last3Months: {
+            label: __("Last 3 months", "metricool"),
+            option: "last3months",
+            isUpsell: false,
+            xAxisInterval: 6,
+        },
+        last6Months: {
+            label: __("Last 6 months", "metricool"),
+            option: "last6months",
+            isUpsell: !metricool.account.is_premium,
+            xAxisInterval: 29,
+        },
+        last12Months: {
+            label: __("Last 12 months", "metricool"),
+            option: "last12months",
+            isUpsell: !metricool.account.is_premium,
+            xAxisInterval: 29,
+        },
+    };
+
     const numberFormatter = Intl.NumberFormat(metricool.locale, {
         notation: "compact",
         minimumFractionDigits: 0,
@@ -229,7 +230,7 @@ const AnalyticsTab = () => {
                         <>
                             <Select
                                 defaultValue={periodFilter.option}
-                                icon={{ icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" }}
+                                icon={!metricool.account.is_premium ? { icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" } : undefined}
                                 inputSize={"sm"}
                                 className={"border-neutral-200 font-semibold !text-black min-w-36 max-w-36 flex-row-reverse "}
                                 onValueChange={(value) => {
@@ -272,7 +273,7 @@ const AnalyticsTab = () => {
                                 )}
                             </Select>
                             <Button
-                                variant={"upsell"}
+                                variant={metricool.account.is_premium ? "primary" : "upsell"}
                                 size={"sm"}
                                 link={metricoolDynamicUrl.withPath("evolution/reports")}
                             >
