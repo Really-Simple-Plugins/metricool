@@ -55,6 +55,15 @@ type MetricoolData = {
     account: {
         blogId: string,
         userId: string,
+        is_premium: boolean,
+        user: {
+            id: number,
+            mail: string,
+            language: string,
+            name: string,
+            lastName: string,
+            timezone: string,
+        }
     }
 };
 
