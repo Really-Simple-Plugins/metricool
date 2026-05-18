@@ -38,7 +38,22 @@ const CountriesTab = () => {
         queryKey: ["analytics", "countries"],
         queryFn: () => httpClient.setRoute("distribution/countries").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): { tableData: DataTableColumns[], chartData: string[][] } => data.data,
+        select: (data): { tableData: DataTableColumns[], chartData: string[][] } => {
+            if (data.data.chartData.length === 0) {
+                /**
+                 * Google Geochart requires the data array to always have headers,
+                 * else it throws an error. It also requires the headers array
+                 * to always have a length of 2 if there is no further data, or
+                 * it throws a different error. Therefor we return this custom
+                 * array if the backend returns an empty chartData array.
+                 */
+                return {
+                    ...data.data,
+                    chartData: [["", ""]]
+                };
+            }
+            return data.data;
+        },
     });
 
     const geochartOptions = {
@@ -65,10 +80,11 @@ const CountriesTab = () => {
                         <div className={"min-h-[185px]"}>
                             <Chart
                                 data={countryData.chartData}
-                                chartType="GeoChart"
+                                chartType={"GeoChart"}
                                 options={geochartOptions}
                                 height={"185px"}
                                 width={"100%"}
+                                chartVersion={"51"}
                             />
                         </div>
                     </FlexContainer>
