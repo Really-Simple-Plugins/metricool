@@ -3,7 +3,7 @@ import { __ } from "@wordpress/i18n";
 
 const OnboardingSchema = z.object({
     brand: z.object({
-        id: z.number(),
+        id: z.string(),
         label: z.string(),
         title: z.string(),
         image: z.string(),

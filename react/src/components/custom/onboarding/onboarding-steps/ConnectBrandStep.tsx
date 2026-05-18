@@ -44,7 +44,6 @@ const ConnectBrandStep = () => {
 
     const { mutate: onSubmit, error: submitError } = useMutation({
         mutationFn: async (formValues: z.infer<typeof brandSchema>) => {
-            console.log(formValues);
             return httpClient.setRoute("onboarding/finish_onboarding").setPayload({
                 blogId: formValues.id,
             }).post();
@@ -92,9 +91,7 @@ const ConnectBrandStep = () => {
                         render={(props) => (
                             <Select
                                 {...props}
-                                onValueChange={(value) => {
-                                    props.onChange(Number(value));
-                                }}
+                                onValueChange={props.onChange}
                                 className={"border-neutral-200 font-semibold !text-black"}
                                 placeholder={__("Select a brand", "metricool")}
                             >
