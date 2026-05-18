@@ -48,6 +48,10 @@ const userSettingsFormSchema = z.object({
  */
 const AccountSettings = () => {
     const { httpClient, metricool } = useGlobalContext();
+    /**
+     * `data` is renamed to `values`, because `useForm` (below) expects this as
+     * the name of the object that holds the form values.
+     */
     const { data: values, isLoading, error: queryError, errorUpdateCount, refetch } = useQuery({
         queryKey: ["user_settings"],
         queryFn: () => httpClient.setRoute("user_settings").get(),
