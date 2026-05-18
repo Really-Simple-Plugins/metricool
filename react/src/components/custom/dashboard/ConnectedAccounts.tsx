@@ -38,6 +38,7 @@ export type ConnectedAccount = {
  */
 const ConnectedAccounts = () => {
     const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();
+
     const { data: connectedAccountsData, isLoading, error, refetch, errorUpdateCount } = useQuery({
         queryKey: ["connected", "accounts"],
         queryFn: () => httpClient.setRoute("connected_networks").get(),
@@ -59,7 +60,7 @@ const ConnectedAccounts = () => {
                     icon: "twitter",
                     connectedClasses: "text-x",
                     unconnectedClasses: "bg-x border-x hover:bg-transparent hover:**:data-content:text-x",
-                    upsell: true,
+                    upsell: !metricool.account.is_premium,
                     metricoolWebsitePath: "evolution/twitter",
                     isConnected: !!response.data.twitter?.username,
                     ...(response.data.twitter && { userName: response.data.twitter.username }),
@@ -79,7 +80,7 @@ const ConnectedAccounts = () => {
                     icon: "linkedIn",
                     connectedClasses: "text-linkedin",
                     unconnectedClasses: "bg-linkedin border-linkedin hover:bg-transparent hover:**:data-content:text-linkedin",
-                    upsell: true,
+                    upsell: !metricool.account.is_premium,
                     metricoolWebsitePath: "/evolution/linkedin",
                     isConnected: !!response.data.linkedin?.username,
                     ...(response.data.linkedin && { userName: response.data.linkedin.username }),
