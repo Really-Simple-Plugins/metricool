@@ -21,7 +21,7 @@ import { generateRecaptchaToken } from "@/support/functions/utils.ts";
  *
  * Contains a {@link Dialog} to show the onboarding flow.
  *
- * Contains a {@link Dialog} to show the {@link SignInForm}
+ * Contains a {@link Dialog} to show the {@link SignInStep}
  *
  */
 export const OnboardingLayout = () => {
