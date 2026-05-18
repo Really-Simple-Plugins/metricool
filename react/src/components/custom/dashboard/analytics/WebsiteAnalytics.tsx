@@ -27,8 +27,8 @@ const WebsiteAnalytics = () => {
 
     // This state saves the activeTab's index in the tabs array, so it can be
     // easily rendered with {tabs[activeTab].component} below.
-    // Initiated as 1 for the AnalyticsTab.
-    const [activeTab, setActiveTab] = useState(dashboardSettings.activeWebsiteAnalyticsTab ?? 1);
+    // Initiated as 0 for the RealtimeTab.
+    const [activeTab, setActiveTab] = useState(dashboardSettings.activeWebsiteAnalyticsTab ?? 0);
     const tabs = [{
         title: __("Real-time", "metricool"),
         component: <RealtimeTab />
