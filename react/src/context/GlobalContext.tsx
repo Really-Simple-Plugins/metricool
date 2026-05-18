@@ -56,7 +56,7 @@ type MetricoolData = {
         blogId: string,
         userId: string,
         is_premium: boolean,
-        user?: {
+        user: {
             id: number,
             mail: string,
             language: string,
