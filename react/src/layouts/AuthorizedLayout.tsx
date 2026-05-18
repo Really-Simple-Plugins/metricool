@@ -29,7 +29,7 @@ const AuthorizedLayout = ({ children }: React.ComponentProps<"div">) => {
                             {__("Help Center", "metricool")}
                         </FlexContainer>
                     </Button>),
-                    (!metricool.account.is_premium && (
+                    (!metricool.account?.is_premium && (
                         <Button
                             variant={"primary-gradient"}
                             link={metricoolDynamicUrl.withPath("user-settings/plan")}

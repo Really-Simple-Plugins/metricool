@@ -21,16 +21,16 @@ const SettingsMenu = () => {
                     {__("Affiliation Program", "metricool")}
                 </ListItem>
                 <ListItem
-                    className={cn("text-md cursor-pointer hover:underline", !metricool.account.is_premium ? "text-upsell font-semibold" : "text-black")}
+                    className={cn("text-md cursor-pointer hover:underline", !metricool.account?.is_premium ? "text-upsell font-semibold" : "text-black")}
                     link={metricoolDynamicUrl.withPath("user-management/users")}
-                    {...(!metricool.account.is_premium && { icon: "upsell", iconClass: "rounded-full bg-upsell size-2.5 p-0.5 text-black", iconPosition: "right" })}
+                    {...(!metricool.account?.is_premium && { icon: "upsell", iconClass: "rounded-full bg-upsell size-2.5 p-0.5 text-black", iconPosition: "right" })}
                 >
                     {__("User Management", "metricool")}
                 </ListItem>
                 <ListItem
-                    className={cn("text-md cursor-pointer hover:underline", !metricool.account.is_premium ? "text-upsell font-semibold" : "text-black")}
+                    className={cn("text-md cursor-pointer hover:underline", !metricool.account?.is_premium ? "text-upsell font-semibold" : "text-black")}
                     link={metricoolDynamicUrl.withPath("my-tasks/open")}
-                    {...(!metricool.account.is_premium && { icon: "upsell", iconClass: "rounded-full bg-upsell size-2.5 p-0.5 text-black", iconPosition: "right" })}
+                    {...(!metricool.account?.is_premium && { icon: "upsell", iconClass: "rounded-full bg-upsell size-2.5 p-0.5 text-black", iconPosition: "right" })}
                 >
                     {__("My Tasks", "metricool")}
                 </ListItem>

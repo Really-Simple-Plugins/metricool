@@ -85,13 +85,13 @@ const AnalyticsTab = () => {
         last6Months: {
             label: __("Last 6 months", "metricool"),
             option: "last6months",
-            isUpsell: !metricool.account.is_premium,
+            isUpsell: !metricool?.account.is_premium,
             xAxisInterval: 29,
         },
         last12Months: {
             label: __("Last 12 months", "metricool"),
             option: "last12months",
-            isUpsell: !metricool.account.is_premium,
+            isUpsell: !metricool?.account.is_premium,
             xAxisInterval: 29,
         },
     };
@@ -230,7 +230,7 @@ const AnalyticsTab = () => {
                         <>
                             <Select
                                 defaultValue={periodFilter.option}
-                                icon={!metricool.account.is_premium ? { icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" } : undefined}
+                                icon={!metricool.account?.is_premium ? { icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" } : undefined}
                                 inputSize={"sm"}
                                 className={"border-neutral-200 font-semibold !text-black min-w-36 max-w-36 flex-row-reverse "}
                                 onValueChange={(value) => {
@@ -273,7 +273,7 @@ const AnalyticsTab = () => {
                                 )}
                             </Select>
                             <Button
-                                variant={metricool.account.is_premium ? "primary" : "upsell"}
+                                variant={metricool.account?.is_premium ? "primary" : "upsell"}
                                 size={"sm"}
                                 link={metricoolDynamicUrl.withPath("evolution/reports")}
                             >
