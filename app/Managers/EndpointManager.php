@@ -65,21 +65,23 @@ final class EndpointManager extends AbstractManager
     }
 
     /**
-     * Resolve middleware alias strings to MiddlewareInterface instances.
+     * Resolve middleware entries to MiddlewareInterface instances. Each entry
+     * can be either a registered alias (e.g. 'auth:metricool') or a fully
+     * qualified class name (e.g. MetricoolAuthenticated::class).
      *
-     * @param string[] $middlewareNames
+     * @param string[] $middlewareEntries
      * @return MiddlewareInterface[]
      */
-    private function resolveMiddleware(array $middlewareNames): array
+    private function resolveMiddleware(array $middlewareEntries): array
     {
         $resolved = [];
 
-        foreach ($middlewareNames as $alias) {
-            $class = $this->middlewareConfig->get($alias);
+        foreach ($middlewareEntries as $entry) {
+            $class = $this->middlewareConfig->get($entry) ?? $entry;
 
-            if ($class === null) {
+            if (!is_string($class) || !class_exists($class)) {
                 throw new \InvalidArgumentException(
-                    esc_html(sprintf("Middleware alias '%s' is not registered.", $alias))
+                    esc_html(sprintf("Middleware '%s' could not be resolved to a valid class.", $entry))
                 );
             }
 
@@ -87,7 +89,7 @@ final class EndpointManager extends AbstractManager
 
             if (!$instance instanceof MiddlewareInterface) {
                 throw new \InvalidArgumentException(
-                    esc_html(sprintf("Middleware '%s' must implement MiddlewareInterface.", $alias))
+                    esc_html(sprintf("Middleware '%s' must implement MiddlewareInterface.", $entry))
                 );
             }
 
