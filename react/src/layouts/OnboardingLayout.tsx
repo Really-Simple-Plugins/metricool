@@ -132,7 +132,9 @@ export const OnboardingLayout = () => {
                 <FlexContainer direction={"column"} className={"min-w-[45%] max-w-[45%]"}>
                     <h1 className={"font-bold font-nunito text-[1.75rem] leading-8"}>{__("Join more than 2 million professionals, agencies and brands that use Metricool as their one-stop shop for social media and online ad management.", "metricool")}</h1>
                     {signUpError && (
-                        <Alert variant={"error"} className={"sm:max-w-5/6"}>{signUpError.message}</Alert>
+                        <Alert variant={"error"} className={"sm:max-w-5/6"}>
+                            <div dangerouslySetInnerHTML={{ __html: signUpError.message}}></div>
+                        </Alert>
                     )}
                     <OnboardingForm onSubmit={(values) => onSignUp(values)}/>
                 </FlexContainer>
