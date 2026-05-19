@@ -85,13 +85,13 @@ const AnalyticsTab = () => {
         last6Months: {
             label: __("Last 6 months", "metricool"),
             option: "last6months",
-            isUpsell: !metricool?.account.is_premium,
+            isUpsell: !metricool.account?.is_premium,
             xAxisInterval: 29,
         },
         last12Months: {
             label: __("Last 12 months", "metricool"),
             option: "last12months",
-            isUpsell: !metricool?.account.is_premium,
+            isUpsell: !metricool.account?.is_premium,
             xAxisInterval: 29,
         },
     };
