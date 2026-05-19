@@ -37,12 +37,11 @@ class RealtimeEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
+     * @inheritDoc
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication() && $this->metricoolApi->hasBlogId();
+        return $this->adminAccessAllowed();
     }
 
     /**
@@ -53,6 +52,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'middleware' => ['auth:metricool'],
         ];
     }
 
