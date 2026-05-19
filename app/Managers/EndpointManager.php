@@ -9,6 +9,7 @@ use Metricool\Bootstrap\App;
 use Metricool\Http\Middleware\MiddlewareInterface;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Support\Helpers\Storages\MiddlewareConfig;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasNonces;
 
@@ -19,8 +20,7 @@ final class EndpointManager extends AbstractManager
 
     private array $routes = [];
 
-    /** @var array<string, class-string<MiddlewareInterface>> */
-    private array $middlewareAliases = [];
+    private MiddlewareConfig $middlewareConfig;
 
     /**
      * @inheritDoc
@@ -57,15 +57,11 @@ final class EndpointManager extends AbstractManager
     }
 
     /**
-     * Load middleware aliases from the config file.
+     * Load middleware aliases from the MiddlewareConfig storage.
      */
     private function loadMiddlewareAliases(): void
     {
-        $configPath = $this->env->getString('plugin.path') . '/config/middleware.php';
-
-        if (file_exists($configPath)) {
-            $this->middlewareAliases = require $configPath;
-        }
+        $this->middlewareConfig = App::getInstance()->make(MiddlewareConfig::class);
     }
 
     /**
@@ -79,13 +75,15 @@ final class EndpointManager extends AbstractManager
         $resolved = [];
 
         foreach ($middlewareNames as $alias) {
-            if (!isset($this->middlewareAliases[$alias])) {
+            $class = $this->middlewareConfig->get($alias);
+
+            if ($class === null) {
                 throw new \InvalidArgumentException(
                     esc_html(sprintf("Middleware alias '%s' is not registered.", $alias))
                 );
             }
 
-            $instance = App::getInstance()->make($this->middlewareAliases[$alias]);
+            $instance = App::getInstance()->make($class);
 
             if (!$instance instanceof MiddlewareInterface) {
                 throw new \InvalidArgumentException(
