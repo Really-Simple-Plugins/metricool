@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Metricool\Managers;
 
 use Carbon\Carbon;
+use Metricool\Bootstrap\App;
+use Metricool\Http\Middleware\MiddlewareInterface;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Traits\HasAllowlistControl;
@@ -16,6 +18,9 @@ final class EndpointManager extends AbstractManager
     use HasAllowlistControl;
 
     private array $routes = [];
+
+    /** @var array<string, class-string<MiddlewareInterface>> */
+    private array $middlewareAliases = [];
 
     /**
      * @inheritDoc
@@ -46,8 +51,52 @@ final class EndpointManager extends AbstractManager
      */
     public function afterRegister(): void
     {
+        $this->loadMiddlewareAliases();
         $this->registerWordPressRestRoutes();
         do_action('metricool_endpoints_loaded');
+    }
+
+    /**
+     * Load middleware aliases from the config file.
+     */
+    private function loadMiddlewareAliases(): void
+    {
+        $configPath = $this->env->getString('plugin.path') . '/config/middleware.php';
+
+        if (file_exists($configPath)) {
+            $this->middlewareAliases = require $configPath;
+        }
+    }
+
+    /**
+     * Resolve middleware alias strings to MiddlewareInterface instances.
+     *
+     * @param string[] $middlewareNames
+     * @return MiddlewareInterface[]
+     */
+    private function resolveMiddleware(array $middlewareNames): array
+    {
+        $resolved = [];
+
+        foreach ($middlewareNames as $alias) {
+            if (!isset($this->middlewareAliases[$alias])) {
+                throw new \InvalidArgumentException(
+                    esc_html(sprintf("Middleware alias '%s' is not registered.", $alias))
+                );
+            }
+
+            $instance = App::getInstance()->make($this->middlewareAliases[$alias]);
+
+            if (!$instance instanceof MiddlewareInterface) {
+                throw new \InvalidArgumentException(
+                    esc_html(sprintf("Middleware '%s' must implement MiddlewareInterface.", $alias))
+                );
+            }
+
+            $resolved[] = $instance;
+        }
+
+        return $resolved;
     }
 
     /**
@@ -94,7 +143,7 @@ final class EndpointManager extends AbstractManager
         foreach ($routes as $route => $data) {
             $version = ($data['version'] ?? $this->env->getString('http.version'));
             $callback = ($data['callback'] ?? null);
-            $middleware = ($data['middleware'] ?? null);
+            $middleware = ($data['middleware'] ?? []);
 
             if (!is_callable($callback)) {
                 throw new \InvalidArgumentException(
@@ -141,18 +190,22 @@ final class EndpointManager extends AbstractManager
     }
 
     /**
-     * This method is used to add middleware to the callback function. The
-     * middleware should be a callable function that takes a request as an
-     * argument and returns a response. The default middleware is to switch
-     * the user locale to the current user locale.
+     * Wrap the endpoint callback with the default locale-switching middleware
+     * and any named middleware from the pipeline.
+     *
+     * @param string[] $middlewareNames
      */
-    public function callbackMiddleware(?callable $callback, ?callable $middleware): callable
+    public function callbackMiddleware(callable $callback, array $middlewareNames = []): callable
     {
-        return function ($request) use ($callback, $middleware) {
-            if (is_callable($middleware)) {
-                $middleware($request);
-            } else {
-                $this->defaultMiddlewareCallback();
+        return function (\WP_REST_Request $request) use ($callback, $middlewareNames) {
+            $this->defaultMiddlewareCallback();
+
+            $middlewareInstances = $this->resolveMiddleware($middlewareNames);
+            foreach ($middlewareInstances as $middleware) {
+                $response = $middleware->handle($request);
+                if ($response instanceof \WP_REST_Response) {
+                    return $response;
+                }
             }
 
             return $callback($request);
