@@ -73,16 +73,16 @@ const ConnectBrandStep = () => {
                 </div>
             </FlexContainer>
             {submitError && (<Alert variant={"error"}>{submitError.message}</Alert>)}
-            {!connectedBrands ? (
-                <LoadingAndErrorState
-                    error={error}
-                    isLoading={isLoading}
-                    errorUpdateCount={errorUpdateCount}
-                    refetch={refetch}
-                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
-                />
-            ) : (
-                <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
+            <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
+                {!connectedBrands ? (
+                    <LoadingAndErrorState
+                        error={error}
+                        isLoading={isLoading}
+                        errorUpdateCount={errorUpdateCount}
+                        refetch={refetch}
+                        supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    />
+                ) : (
                     <FieldWrapper
                         label={__("Choose your brand", "metricool")}
                         control={control}
@@ -106,6 +106,14 @@ const ConnectBrandStep = () => {
                             </Select>
                         )}
                     />
+                )}
+                <FlexContainer direction={"row"}>
+                    <Button
+                        variant={"black-ghost"}
+                        onClick={() => doLogout()}
+                    >
+                        {__("Cancel", "metricool")}
+                    </Button>
                     <Button
                         variant={"black"}
                         type={"submit"}
@@ -116,8 +124,8 @@ const ConnectBrandStep = () => {
                             <Icon icon={"arrow-right"}/>
                         </FlexContainer>
                     </Button>
-                </form>
-            )}
+                </FlexContainer>
+            </form>
         </FlexContainer>
     );
 };
