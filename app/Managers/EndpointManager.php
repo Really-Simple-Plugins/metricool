@@ -132,7 +132,7 @@ final class EndpointManager extends AbstractManager
 
             if (!is_callable($callback)) {
                 throw new \InvalidArgumentException(
-                    esc_html(sprintf('The callback for the route "%s" is not callable.', $route))
+                    esc_html(sprintf('The callback for the route: %s is not callable.', $route))
                 );
             }
 
@@ -218,7 +218,7 @@ final class EndpointManager extends AbstractManager
 
             if (!is_string($class) || !class_exists($class)) {
                 throw new \InvalidArgumentException(
-                    esc_html(sprintf("Middleware '%s' could not be resolved to a valid class.", $entry))
+                    esc_html(sprintf("Middleware: %s could not be resolved to a valid class.", $entry))
                 );
             }
 
@@ -226,7 +226,7 @@ final class EndpointManager extends AbstractManager
 
             if (!$instance instanceof MiddlewareInterface) {
                 throw new \InvalidArgumentException(
-                    esc_html(sprintf("Middleware '%s' must implement MiddlewareInterface.", $entry))
+                    esc_html(sprintf('Middleware: %s must implement MiddlewareInterface.', $entry))
                 );
             }
 
