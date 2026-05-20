@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Http\Middleware;
 
 use Carbon\Carbon;
+use Metricool\Interfaces\MiddlewareInterface;
 
 /**
  * Set the locale for the current request. The locale is determined by the user's locale, or the site's locale if the user is not logged in.

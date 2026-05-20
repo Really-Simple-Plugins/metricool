@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Http\Middleware;
+namespace Metricool\Interfaces;
 
 interface MiddlewareInterface
 {

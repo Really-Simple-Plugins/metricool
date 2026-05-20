@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Managers;
 
 use Metricool\Bootstrap\App;
-use Metricool\Http\Middleware\MiddlewareInterface;
+use Metricool\Interfaces\MiddlewareInterface;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;

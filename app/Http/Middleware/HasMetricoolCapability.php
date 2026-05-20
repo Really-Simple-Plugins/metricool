@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Middleware;
 
+use Metricool\Interfaces\MiddlewareInterface;
 use Metricool\Traits\HasRestAccess;
 
 /**
@@ -16,9 +17,9 @@ class HasMetricoolCapability implements MiddlewareInterface
     /**
      * @throws \Exception when not called with a capability
      */
-    public function handle(\WP_REST_Request $request, $arguments = null): ?\WP_REST_Response
+    public function handle(\WP_REST_Request $request): ?\WP_REST_Response
     {
-        if (!current_user_can('metricool_manage')) {
+        if (false === current_user_can('metricool_manage')) {
             return $this->sendHttpErrorResponse(
                 __('You are not allowed to do this', 'metricool'),
                 null,

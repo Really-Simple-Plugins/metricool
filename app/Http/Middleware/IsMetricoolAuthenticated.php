@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Http\Middleware;
 
 use Metricool\Http\Metricool\MetricoolClient;
+use Metricool\Interfaces\MiddlewareInterface;
 use Metricool\Traits\HasRestAccess;
 
 /**
@@ -23,7 +24,7 @@ class IsMetricoolAuthenticated implements MiddlewareInterface
 
     public function handle(\WP_REST_Request $request): ?\WP_REST_Response
     {
-        if (!$this->client->hasAuthentication()) {
+        if (false === $this->client->hasAuthentication()) {
             return $this->sendHttpErrorResponse(
                 __('Unauthorized. Please log in into the Metricool Plugin.', 'metricool'),
                 null,

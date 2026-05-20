@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Middleware;
 
+use Metricool\Interfaces\MiddlewareInterface;
 use Metricool\Traits\HasRestAccess;
 
 /**
@@ -15,7 +16,7 @@ class IsWordPressAdminRequest implements MiddlewareInterface
 
     public function handle(\WP_REST_Request $request): ?\WP_REST_Response
     {
-        if (!is_admin()) {
+        if (false === is_admin()) {
             return $this->sendHttpErrorResponse(
                 __('Unauthorized. Please log in into the WordPress admin.', 'metricool'),
                 null,

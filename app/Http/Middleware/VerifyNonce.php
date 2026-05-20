@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Middleware;
 
+use Metricool\Interfaces\MiddlewareInterface;
 use Metricool\Traits\HasNonces;
 use Metricool\Traits\HasRestAccess;
 
