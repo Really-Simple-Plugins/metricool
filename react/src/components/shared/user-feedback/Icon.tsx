@@ -1,5 +1,5 @@
 import { FontAwesomeIcon, type FontAwesomeIconProps } from "@fortawesome/react-fontawesome";
-import { cn } from "@/support/functions/utils.ts";
+import { cn } from "@/support/functions/utils";
 import {
     faArrowDown,
     faArrowRight,

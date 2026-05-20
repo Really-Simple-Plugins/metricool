@@ -1,5 +1,24 @@
-import { Input as PrimitiveInput } from "@/components/shared/primitives/input.tsx";
-import { cn } from "@/support/functions/utils.ts";
+import { Input as PrimitiveInput } from "@/components/shared/primitives/input";
+import { InputGroup as PrimitiveInputGroup } from "@/components/shared/primitives/input-group";
+import { cn } from "@/support/functions/utils";
+import * as React from "react";
+
+const inputClasses = "data-[slot=input]:rounded-xs has-[>[data-slot=input-group-control]]:rounded-xs px-2 shadow-none flex bg-white text-md md:text-md *:data-[slot=input-group-control]:text-md md:*:data-[slot=input-group-control]:text-md font-semibold text-black data-[slot=input]:!min-h-10 data-[slot=input]:aria-invalid:focus-visible:ring-rsp-error-dark/20 data-[slot=input]:focus-visible:aria-invalid:ring-3 data-[slot=input]:aria-invalid:border-rsp-error-dark";
+
+/**
+ *
+ * @version 1.0.0
+ */
+const InputGroup = ({ className, children }: React.ComponentProps<"div">) => {
+    return (
+        <PrimitiveInputGroup className={cn(
+            inputClasses,
+            className,
+        )}>
+            {children}
+        </PrimitiveInputGroup>
+    );
+};
 
 /**
  *
@@ -9,8 +28,7 @@ const Input = ({ className, type, children, ...props }: React.ComponentProps<"in
     return (
         <PrimitiveInput
             className={cn(
-                "data-[slot=input]:rounded-xs px-2 shadow-none flex bg-white text-md font-semibold text-black data-[slot=input]:!min-h-9",
-                "data-[slot=input]:aria-invalid:focus-visible:ring-rsp-error-dark/20 data-[slot=input]:focus-visible:aria-invalid:ring-3 data-[slot=input]:aria-invalid:border-rsp-error-dark",
+                inputClasses,
                 className,
             )}
             type={type}
@@ -21,4 +39,4 @@ const Input = ({ className, type, children, ...props }: React.ComponentProps<"in
     );
 };
 
-export { Input };
+export { Input, InputGroup };
