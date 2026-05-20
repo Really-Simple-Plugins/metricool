@@ -36,6 +36,7 @@ type MetricoolData = {
         new_support_ticket: string,
         google_privacy_policy_url: string,
         google_terms_url: string,
+        base_url: string,
     },
     onboarding: {
         state: {
