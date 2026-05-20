@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class ConnectedNetworksEndpoint implements SingleEndpointInterface
 {
@@ -48,7 +48,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
-            'middleware' => ['auth:metricool'],
+            'middleware' => ['metricool:auth'],
         ];
     }
 

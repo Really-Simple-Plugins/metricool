@@ -47,7 +47,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
-            'middleware' => ['auth:metricool'],
+            'middleware' => ['metricool:auth'],
         ];
     }
 

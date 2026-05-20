@@ -37,7 +37,7 @@ class LogoutEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication();
+        return $this->adminAccessAllowed();
     }
 
     /**
@@ -48,6 +48,7 @@ class LogoutEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::EDITABLE,
             'callback' => [$this, 'callback'],
+            'middleware' => ['metricool:auth'],
         ];
     }
 

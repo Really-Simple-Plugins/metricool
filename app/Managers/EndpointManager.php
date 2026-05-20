@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Metricool\Managers;
 
-use Carbon\Carbon;
 use Metricool\Bootstrap\App;
 use Metricool\Http\Middleware\MiddlewareInterface;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Support\Helpers\Storages\MiddlewareConfig;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasNonces;
@@ -19,8 +19,16 @@ final class EndpointManager extends AbstractManager
     use HasAllowlistControl;
 
     private array $routes = [];
+    private array $defaultMiddleware;
+    private array $aliases;
 
-    private MiddlewareConfig $middlewareConfig;
+    public function __construct(MiddlewareConfig $middleware, EnvironmentConfig $env)
+    {
+        $this->aliases = $middleware->get('aliases', []);
+        $this->defaultMiddleware = $middleware->get('default_middleware', []);
+
+        parent::__construct($env);
+    }
 
     /**
      * @inheritDoc
@@ -51,52 +59,8 @@ final class EndpointManager extends AbstractManager
      */
     public function afterRegister(): void
     {
-        $this->loadMiddlewareAliases();
         $this->registerWordPressRestRoutes();
         do_action('metricool_endpoints_loaded');
-    }
-
-    /**
-     * Load middleware aliases from the MiddlewareConfig storage.
-     */
-    private function loadMiddlewareAliases(): void
-    {
-        $this->middlewareConfig = App::getInstance()->make(MiddlewareConfig::class);
-    }
-
-    /**
-     * Resolve middleware entries to MiddlewareInterface instances. Each entry
-     * can be either a registered alias (e.g. 'auth:metricool') or a fully
-     * qualified class name (e.g. MetricoolAuthenticated::class).
-     *
-     * @param string[] $middlewareEntries
-     * @return MiddlewareInterface[]
-     */
-    private function resolveMiddleware(array $middlewareEntries): array
-    {
-        $resolved = [];
-
-        foreach ($middlewareEntries as $entry) {
-            $class = $this->middlewareConfig->get($entry) ?? $entry;
-
-            if (!is_string($class) || !class_exists($class)) {
-                throw new \InvalidArgumentException(
-                    esc_html(sprintf("Middleware '%s' could not be resolved to a valid class.", $entry))
-                );
-            }
-
-            $instance = App::getInstance()->make($class);
-
-            if (!$instance instanceof MiddlewareInterface) {
-                throw new \InvalidArgumentException(
-                    esc_html(sprintf("Middleware '%s' must implement MiddlewareInterface.", $entry))
-                );
-            }
-
-            $resolved[] = $instance;
-        }
-
-        return $resolved;
     }
 
     /**
@@ -130,9 +94,26 @@ final class EndpointManager extends AbstractManager
 
     /**
      * This method provides a way to register custom REST routes via the
-     * metricool_rest_routes filter. A controller of feature should be
+     * metricool_rest_routes filter. A controller or feature should be
      * instantiated before this manager is called and the controller should
      * hook into the metricool_rest_routes filter to add its own routes.
+     *
+     *      public function registerArguments(): array
+     *      {
+     *          return [
+     *              'methods' => \WP_REST_Server::READABLE,
+     *              'callback' => [$this, 'callback'],
+     *              'permission_callback' => [$this, 'permissionCallback'],
+     *              'middleware' => [
+     *                  'user_can:administrator', // alias in config/middleware.php
+     *                  ExampleMiddleware::class, // MiddlewareInterface class
+     *              ],
+     *              'apply_default_middleware' => true, // optional, default is true
+     *              'version' => 'v1', // optional, default is the value config/env.php
+     *              'args' => [], // optional, args passed to register_rest_route
+     *          ];
+     *      }
+     *
      * @uses apply_filters metricool_rest_routes
      * @throws \InvalidArgumentException
      */
@@ -141,9 +122,13 @@ final class EndpointManager extends AbstractManager
         $routes = $this->getPluginRestRoutes();
 
         foreach ($routes as $route => $data) {
-            $version = ($data['version'] ?? $this->env->getString('http.version'));
+            $methods = ($data['methods'] ?? 'GET');
             $callback = ($data['callback'] ?? null);
+            $permissionCallback = ($data['permission_callback'] ?? null);
             $middleware = ($data['middleware'] ?? []);
+            $applyDefaultMiddleware = $data['apply_default_middleware'] ?? true;
+            $version = ($data['version'] ?? $this->env->getString('http.version'));
+            $args = ($data['args'] ?? null);
 
             if (!is_callable($callback)) {
                 throw new \InvalidArgumentException(
@@ -151,14 +136,18 @@ final class EndpointManager extends AbstractManager
                 );
             }
 
+            if ($applyDefaultMiddleware === true) {
+                $middleware = array_merge($this->defaultMiddleware, $middleware);
+            }
+
             $arguments = [
-                'methods' => $this->normalizeMethods($data['methods'] ?? 'GET'),
+                'methods' => $this->normalizeMethods($methods),
                 'callback' => $this->callbackMiddleware($callback, $middleware),
-                'permission_callback' => ($data['permission_callback'] ?? [$this, 'defaultPermissionCallback']),
+                'permission_callback' => $permissionCallback,
             ];
 
-            if (!empty($data['args'])) {
-                $arguments['args'] = $data['args'];
+            if ($args !== null) {
+                $arguments['args'] = $args;
             }
 
             register_rest_route($this->env->getString('http.namespace') . '/' . $version, $route, $arguments);
@@ -198,8 +187,6 @@ final class EndpointManager extends AbstractManager
     public function callbackMiddleware(callable $callback, array $middlewareNames = []): callable
     {
         return function (\WP_REST_Request $request) use ($callback, $middlewareNames) {
-            $this->defaultMiddlewareCallback();
-
             $middlewareInstances = $this->resolveMiddleware($middlewareNames);
             foreach ($middlewareInstances as $middleware) {
                 $response = $middleware->handle($request);
@@ -213,38 +200,38 @@ final class EndpointManager extends AbstractManager
     }
 
     /**
-     * This method is used to switch the user locale to the current user locale.
-     * This is important because we will otherwise show the default site
-     * language to the user for the Tasks and Notifications. Those
-     * translations are created in PHP and not in JS.
+     * Resolve middleware entries to MiddlewareInterface instances. Each entry
+     * can be either a registered alias (e.g. 'auth:metricool') or a fully
+     * qualified class name (e.g. MetricoolAuthenticated::class).
+     *
+     * @param string[] $middleware
+     * @return MiddlewareInterface[]
      */
-    private function defaultMiddlewareCallback(): void
+    private function resolveMiddleware(array $middleware): array
     {
-        switch_to_user_locale(get_current_user_id());
-        Carbon::setLocale(get_user_locale());
-    }
+        $resolved = [];
 
-    /**
-     * The default permission callback, will check if the nonce is valid and if
-     * the user has the required permissions to do a request.
-     * @return bool|\WP_Error
-     */
-    public function defaultPermissionCallback(\WP_REST_Request $request)
-    {
-        $method = $request->get_method();
-        $nonce = $request->get_param('nonce');
+        foreach ($middleware as $entry) {
+            $class = $this->aliases[$entry] ?? $entry;
 
-        // For methods that modify data, verify the nonce
-        $methodsRequiringNonce = ['POST', 'PUT', 'PATCH', 'DELETE'];
-        if (in_array($method, $methodsRequiringNonce) && ($this->verifyNonce($nonce) === false)) {
-            return new \WP_Error(
-                'rest_forbidden',
-                __('Forbidden.', 'metricool'),
-                ['status' => 403]
-            );
+            if (!is_string($class) || !class_exists($class)) {
+                throw new \InvalidArgumentException(
+                    esc_html(sprintf("Middleware '%s' could not be resolved to a valid class.", $entry))
+                );
+            }
+
+            $instance = App::getInstance()->make($class);
+
+            if (!$instance instanceof MiddlewareInterface) {
+                throw new \InvalidArgumentException(
+                    esc_html(sprintf("Middleware '%s' must implement MiddlewareInterface.", $entry))
+                );
+            }
+
+            $resolved[] = $instance;
         }
 
-        return true;
+        return $resolved;
     }
 
     /**

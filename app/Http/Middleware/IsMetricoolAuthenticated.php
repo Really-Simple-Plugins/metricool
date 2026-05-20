@@ -7,7 +7,10 @@ namespace Metricool\Http\Middleware;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Traits\HasRestAccess;
 
-class MetricoolAuthenticated implements MiddlewareInterface
+/**
+ * Checks if the client is authenticated with Metricool API.
+ */
+class IsMetricoolAuthenticated implements MiddlewareInterface
 {
     use HasRestAccess;
 
@@ -22,7 +25,7 @@ class MetricoolAuthenticated implements MiddlewareInterface
     {
         if (!$this->client->hasAuthentication()) {
             return $this->sendHttpErrorResponse(
-                __('Unauthorized. Please log in to Metricool.', 'metricool'),
+                __('Unauthorized. Please log in into the Metricool Plugin.', 'metricool'),
                 null,
                 401
             );
