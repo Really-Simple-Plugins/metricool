@@ -45,7 +45,7 @@ class CreateAccountService
         // translators: %s is a url to the support page
         $globalError = sprintf(
             __('Something went wrong. Please try again or <a href="%s" target="_blank">leave a support message</a>.', 'metricool'),
-            $this->env->getUrl('support_url')
+            $this->env->get('frontend.trusted_urls.new_support_ticket')
         );
 
         // First, check if the password is valid
