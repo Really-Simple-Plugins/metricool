@@ -66,6 +66,9 @@ export const camelCaseToHyphenated = (string: string) => {
 };
 
 /**
+ * Function to generate reCAPTCHA token.
+ * Await the returned promise to be able to get the actual token and use it
+ * however needed.
  *
  * @param key
  * @param action
