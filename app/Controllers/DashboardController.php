@@ -270,8 +270,6 @@ class DashboardController implements ControllerInterface
      */
     private function localizedReactSettings(array $chunkTranslation): array
     {
-        $isOnboardingCompleted = $this->service->isOnboardingCompleted();
-
         $settings = [
             'nonce' => wp_create_nonce('metricool_nonce'),
             'x_wp_nonce' => wp_create_nonce('wp_rest'),
@@ -300,7 +298,7 @@ class DashboardController implements ControllerInterface
             'google_recaptcha_key' => $this->env->getString('metricool.google_recaptcha_key'),
         ];
 
-        if ($isOnboardingCompleted) {
+        if ($this->metricool->hasAuthentication()) {
             // Update the user from api so we always have the latest data
             $this->metricoolUser->update();
 

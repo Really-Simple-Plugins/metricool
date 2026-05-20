@@ -53,9 +53,18 @@ type MetricoolData = {
     metricool_base_url: string,
     metricool_help_url: string,
     locale: string,
-    account: {
+    account?: {
         blogId: string,
         userId: string,
+        is_premium: boolean,
+        user: {
+            id: number,
+            mail: string,
+            language: string,
+            name: string,
+            lastName: string,
+            timezone: string,
+        }
     },
     google_recaptcha_url: string,
     google_recaptcha_key: string,
@@ -101,8 +110,8 @@ const initialGlobalState: GlobalState = {
     metricoolDynamicUrl: new DynamicUrl({
         baseUrl: METRICOOL_DATA.metricool_base_url,
     }).setSearchParams({
-        blogId: METRICOOL_DATA.blogId,
-        userId: METRICOOL_DATA.userId,
+        blogId: METRICOOL_DATA.account.blog_id,
+        userId: METRICOOL_DATA.account.user_id,
     }),
 };
 

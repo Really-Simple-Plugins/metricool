@@ -60,7 +60,7 @@ trait HasRestAccess
             'status' => $status ? 'success' : 'error',
             'data' => $data,
             'request_success' => true, // can be used to check if the response in react actually contains this array.
-        ], $code);
+        ], $code ?: 500);
     }
 
     /**

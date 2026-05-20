@@ -197,9 +197,11 @@ const OtherPlugins = () => {
                     <FlexContainer direction={"column"} className={"!gap-2"}>
                         {Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (
                             <ListItem
-                                icon={"circle"}
-                                iconColor={pluginData.options_prefix.split("_")[0]}
-                                iconPosition={"left"}
+                                iconProps={{
+                                    icon: "circle",
+                                    iconColor: pluginData.options_prefix.split("_")[0],
+                                    iconPosition: "left",
+                                }}
                                 action={getOtherPluginAction(pluginData, pluginKey)}
                                 className={"font-semibold"}
                             >
