@@ -455,10 +455,8 @@ class MetricoolClient
         $lockAcquired = $this->acquireRefreshLock();
 
         do {
-            wp_cache_delete('alloptions', 'options');
-
-            if (!$this->isTokenExpired()) {
-                $this->setUserToken(get_option('metricool_auth_token'));
+            if (!$this->isFreshTokenExpired()) {
+                $this->setUserToken($this->getFreshUserToken());
                 break;
             }
 
@@ -474,6 +472,42 @@ class MetricoolClient
         if ($lockAcquired) {
             $this->releaseRefreshLock();
         }
+    }
+
+    /**
+     * Check whether the access token is expired by reading directly from the
+     * database, bypassing the WordPress object cache.
+     */
+    private function isFreshTokenExpired(): bool
+    {
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $expires = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+                'metricool_auth_token_expires'
+            )
+        );
+
+        return Carbon::now()->gt(Carbon::createFromTimestamp($expires)->subMinute());
+    }
+
+    /**
+     * Read the access token directly from the database, bypassing the
+     * WordPress object cache.
+     */
+    private function getFreshUserToken(): string
+    {
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        return (string) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+                'metricool_auth_token'
+            )
+        );
     }
 
     /**
