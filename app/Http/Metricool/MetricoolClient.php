@@ -519,27 +519,43 @@ class MetricoolClient
     }
 
     /**
-     * Acquire a MySQL named lock to serialize token refresh attempts.
+     * Acquire a lock via wp_options to serialize token refresh attempts.
+     * Uses INSERT IGNORE for atomicity: only one process can create the row.
      */
     private function acquireRefreshLock(): bool
     {
         global $wpdb;
 
+        // Remove stale locks older than 30 seconds as a safety net.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $result = $wpdb->get_var("SELECT GET_LOCK('metricool_refresh_token', 0)");
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value < %d",
+                'metricool_refresh_lock',
+                time() - 30
+            )
+        );
 
-        return $result === '1';
+        // Attempt to insert the lock row. INSERT IGNORE ensures only one
+        // process succeeds when racing concurrently.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $wpdb->query(
+            $wpdb->prepare(
+                "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %d, 'no')",
+                'metricool_refresh_lock',
+                time()
+            )
+        );
+
+        return $result !== false && $result > 0;
     }
 
     /**
-     * Release the MySQL named lock after a token refresh.
+     * Release the wp_options lock after a token refresh.
      */
     private function releaseRefreshLock(): void
     {
-        global $wpdb;
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $wpdb->get_var("SELECT RELEASE_LOCK('metricool_refresh_token')");
+        delete_option('metricool_refresh_lock');
     }
 
     /**
