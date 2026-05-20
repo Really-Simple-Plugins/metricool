@@ -10,7 +10,7 @@ import {
     Select,
     SelectOption,
 } from "@/components/shared";
-import { __ } from "@wordpress/i18n";
+import { __, sprintf } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { clsx } from "clsx";
 import { useForm } from "react-hook-form";
@@ -18,6 +18,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import DOMPurify from "dompurify";
 
 const brandSchema = OnboardingSchema.shape.brand;
 
@@ -83,6 +84,27 @@ const ConnectBrandStep = () => {
                 <div className={"text-base text-center"}>
                     {__("Choose the brand that you want to connect to this website", "metricool")}
                 </div>
+                <Alert
+                    variant={"info"}
+                    className={"text-left"}
+                >
+                    <div
+                        onClick={() => doLogout()}
+                        dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(
+                                sprintf(
+                                    /*translators: the two variables are opening and closing anchor tags */
+                                    __(
+                                        "Don’t see the brand you’re looking for? %1$sGo to Metricool.com%2$s and make sure you’re logged into the correct account.",
+                                        "metricool",
+                                    ),
+                                    `<a onclick="${() => doLogout}" class="underline" href=${metricool.trusted_urls.base_url} target="_blank" rel="noopener noreferrer">`,
+                                    `</a>`
+                                ), { ADD_ATTR: ["target"] }
+                            )
+                        }}
+                    />
+                </Alert>
             </FlexContainer>
             {submitError && (<Alert variant={"error"}>{submitError.message}</Alert>)}
             <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
