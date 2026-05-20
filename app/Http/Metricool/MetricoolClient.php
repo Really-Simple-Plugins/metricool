@@ -443,19 +443,46 @@ class MetricoolClient
 
     /**
      * Refresh the authentication token using the refresh token.
+     *
+     * Uses a MySQL lock to prevent concurrent processes from both attempting
+     * a refresh. The process that cannot acquire the lock waits in a loop
+     * until the token is refreshed by the lock holder.
+     *
      * @throws RuntimeException the user will be unauthenticated if the refresh token request fails.
      */
     public function refreshAuthToken(): void
     {
-        // Force a fresh database read to detect if a concurrent request
-        // already refreshed the token.
-        $this->clearOptionsCache();
+        $lockAcquired = $this->acquireRefreshLock();
 
-        if (!$this->isTokenExpired()) {
-            $this->setUserToken(get_option('metricool_auth_token'));
-            return;
+        do {
+            wp_cache_delete('alloptions', 'options');
+
+            if (!$this->isTokenExpired()) {
+                $this->setUserToken(get_option('metricool_auth_token'));
+                break;
+            }
+
+            if (!$lockAcquired) {
+                usleep(100000); // 100ms
+                continue;
+            }
+
+            $this->performTokenRefresh();
+            break;
+        } while (true);
+
+        if ($lockAcquired) {
+            $this->releaseRefreshLock();
         }
+    }
 
+    /**
+     * Perform the actual token refresh request against the Metricool OAuth endpoint.
+     *
+     * @throws RuntimeException when the refresh request fails or the response is invalid.
+     */
+    private function performTokenRefresh(): void
+    {
         $headers = [
             'Accept' => 'application/json',
             'Content-Type' => 'application/x-www-form-urlencoded',
@@ -475,15 +502,6 @@ class MetricoolClient
                 $options
             );
         } catch (GuzzleException $e) {
-            // A concurrent request may have refreshed the token while this
-            // request was in-flight, invalidating the refresh token we used.
-            $this->clearOptionsCache();
-
-            if (!$this->isTokenExpired()) {
-                $this->setUserToken(get_option('metricool_auth_token'));
-                return;
-            }
-
             $this->logout();
             // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a Throwable passed as $previous, not output.
             throw new RuntimeException('Failed to refresh authentication token. Please log in again.', 500, $e);
@@ -501,12 +519,27 @@ class MetricoolClient
     }
 
     /**
-     * Clear the WordPress object cache for authentication options to force
-     * a fresh database read on the next get_option call.
+     * Acquire a MySQL named lock to serialize token refresh attempts.
      */
-    private function clearOptionsCache(): void
+    private function acquireRefreshLock(): bool
     {
-        wp_cache_delete('alloptions', 'options');
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $wpdb->get_var("SELECT GET_LOCK('metricool_refresh_token', 0)");
+
+        return $result === '1';
+    }
+
+    /**
+     * Release the MySQL named lock after a token refresh.
+     */
+    private function releaseRefreshLock(): void
+    {
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $wpdb->get_var("SELECT RELEASE_LOCK('metricool_refresh_token')");
     }
 
     /**
