@@ -51,7 +51,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
-            'middleware' => ['metricool:auth'],
+            'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
 
