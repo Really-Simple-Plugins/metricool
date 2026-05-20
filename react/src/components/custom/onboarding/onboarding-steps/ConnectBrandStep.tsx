@@ -59,6 +59,18 @@ const ConnectBrandStep = () => {
         }
     });
 
+    const { mutate: doLogout } = useMutation({
+        mutationFn: async () => {
+            return httpClient.setRoute("logout").post();
+        },
+        onSuccess: () => {
+            window.location.href = metricool.dashboard_url;
+        },
+        onError: (error) => {
+            console.error(error);
+        }
+    });
+
     return (
         <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center"}>
             <FlexContainer direction={"column"} className={"w-full !gap-2"}>
