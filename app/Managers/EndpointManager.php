@@ -179,25 +179,23 @@ final class EndpointManager extends AbstractManager
     }
 
     /**
-     * Wrap the endpoint callback with the default locale-switching middleware
-     * and any named middleware from the pipeline.
-     *
-     * @param string[] $middlewareNames
+     * Wrap the endpoint callback with the default middleware and any named middleware from the pipeline.
+     * Each entry can be either a registered alias (e.g. 'auth:metricool') or a fully qualified class name (e.g. MetricoolAuthenticated::class).
      */
-    public function callbackMiddleware(callable $callback, array $middlewareNames = []): callable
+    public function callbackMiddleware(callable $callback, array $middlewares = []): callable
     {
-        return function (\WP_REST_Request $request) use ($callback, $middlewareNames) {
+        return function (\WP_REST_Request $request) use ($callback, $middlewares) {
             try {
-                $middlewareInstances = $this->resolveMiddleware($middlewareNames);
-            } catch (\InvalidArgumentException $e) {
-                return new \WP_REST_Response(['message' => $e->getMessage()], 500);
-            }
+                $middlewareInstances = $this->resolveMiddleware($middlewares);
 
-            foreach ($middlewareInstances as $middleware) {
-                $response = $middleware->handle($request);
-                if ($response instanceof \WP_REST_Response) {
-                    return $response;
+                foreach ($middlewareInstances as $middleware) {
+                    $response = $middleware->handle($request);
+                    if ($response instanceof \WP_REST_Response) {
+                        return $response;
+                    }
                 }
+            } catch (\Exception $e) {
+                return new \WP_REST_Response(['message' => $e->getMessage()], 500);
             }
 
             return $callback($request);
@@ -205,12 +203,11 @@ final class EndpointManager extends AbstractManager
     }
 
     /**
-     * Resolve middleware entries to MiddlewareInterface instances. Each entry
-     * can be either a registered alias (e.g. 'auth:metricool') or a fully
-     * qualified class name (e.g. MetricoolAuthenticated::class).
+     * Resolve middleware entries to MiddlewareInterface instances.
      *
      * @param string[] $middleware
      * @return MiddlewareInterface[]
+     * @throws \ReflectionException
      */
     private function resolveMiddleware(array $middleware): array
     {
