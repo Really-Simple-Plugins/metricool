@@ -447,6 +447,15 @@ class MetricoolClient
      */
     public function refreshAuthToken(): void
     {
+        // Force a fresh database read to detect if a concurrent request
+        // already refreshed the token.
+        $this->clearOptionsCache();
+
+        if (!$this->isTokenExpired()) {
+            $this->setUserToken(get_option('metricool_auth_token'));
+            return;
+        }
+
         $headers = [
             'Accept' => 'application/json',
             'Content-Type' => 'application/x-www-form-urlencoded',
@@ -466,7 +475,15 @@ class MetricoolClient
                 $options
             );
         } catch (GuzzleException $e) {
-            // If the refresh token request fails, we need to log the user out.
+            // A concurrent request may have refreshed the token while this
+            // request was in-flight, invalidating the refresh token we used.
+            $this->clearOptionsCache();
+
+            if (!$this->isTokenExpired()) {
+                $this->setUserToken(get_option('metricool_auth_token'));
+                return;
+            }
+
             $this->logout();
             // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a Throwable passed as $previous, not output.
             throw new RuntimeException('Failed to refresh authentication token. Please log in again.', 500, $e);
@@ -481,6 +498,15 @@ class MetricoolClient
         $this->storeUserToken($data['access_token']);
         $this->storeRefreshToken($data['refresh_token']);
         $this->storeTokenExpires($data['expires_in']);
+    }
+
+    /**
+     * Clear the WordPress object cache for authentication options to force
+     * a fresh database read on the next get_option call.
+     */
+    private function clearOptionsCache(): void
+    {
+        wp_cache_delete('alloptions', 'options');
     }
 
     /**
