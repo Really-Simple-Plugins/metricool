@@ -19,7 +19,7 @@ const ButtonVariantStyling = {
     "upsell": "bg-upsell border-upsell text-black hover:bg-upsell hover:text-black",
     "upsell-ghost": "bg-white border-neutral-200 text-black hover:bg-white hover:text-black",
     "black": "bg-black border-black text-white hover:bg-black hover:text-white hover:invert",
-    "black-ghost": "bg-transparent text-black border-black hover:bg-black hover:text-white",
+    "black-ghost": "bg-transparent text-black border-black border-1 hover:bg-black hover:text-white",
     "link": "p-0 border-none text-black hover:text-wordpress-link-hover bg-transparent hover:bg-transparent font-normal underline !h-[fit-content]",
     "unstyled": "p-0 border-none rounded-none font-normal font-base min-h-[fit-content] min-w-[fit-content]",
     "toggle": cn(ToggleVariantStyling.variant.primary, "max-w-[fit-content] border-none"),
@@ -34,7 +34,7 @@ const ButtonVariants = cva(
                 default: "h-7.5",
                 xs: "text-xs h-5 px-2 py-1 has-[>svg]:px-2",
                 sm: "text-sm h-6",
-                lg: "text-lg h-10",
+                lg: "text-md h-10",
                 icon: "h-[fit-content] w-[fit-content]",
                 toggle: ToggleVariantStyling.size.default
             }

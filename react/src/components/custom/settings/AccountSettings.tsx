@@ -9,6 +9,7 @@ import {
     Input,
     LoadingAndErrorState,
     showToast,
+    SignOut,
     Switch
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
@@ -47,7 +48,7 @@ const userSettingsFormSchema = z.object({
  *
  */
 const AccountSettings = () => {
-    const { httpClient, metricool } = useGlobalContext();
+    const { httpClient, metricool, metricoolDynamicUrl } = useGlobalContext();
     /**
      * `data` is renamed to `values`, because `useForm` (below) expects this as
      * the name of the object that holds the form values.
@@ -143,11 +144,10 @@ const AccountSettings = () => {
             <FlexContainer direction={"column"}>
                 <Block className={"rounded-t-md rounded-b-none"}>
                     <BlockHeader title={__("Account settings", "metricool")}/>
-                    <Button variant={"black"} onClick={() => doLogout()} >
-                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
-                            {__("Logout", "metricool")}
-                            <Icon icon={"sign-out"}/>
-                        </FlexContainer>
+                    <SignOut onSignOut={() => doLogout()} currentUserEmail={metricool.account?.user.mail ?? ""}/>
+                    <Button variant={"primary-ghost"} className={"font-bold"} link={metricoolDynamicUrl.withPath("user-settings/access")}>
+                        {__("Change Password","metricool")}
+                        <Icon icon={"external-link"}/>
                     </Button>
                 </Block>
                 <Block className={"rounded-t-md rounded-b-none"}>
