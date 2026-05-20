@@ -125,8 +125,6 @@ class OnboardingController implements FeatureInterface
                 $this->onboarding->finalizeOnboarding($blogId);
             } catch (BrandAccessDeniedException $e) {
                 return $this->sendHttpErrorResponse(__('Brand Access denied, please select a different brand.', 'metricool'), [], 403);
-            } catch (GuzzleException $e) {
-                return $this->sendHttpErrorResponse(__('Something went wrong.', 'metricool'));
             }
         }
 
