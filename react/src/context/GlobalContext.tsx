@@ -52,9 +52,18 @@ type MetricoolData = {
     metricool_base_url: string,
     metricool_help_url: string,
     locale: string,
-    account: {
+    account?: {
         blogId: string,
         userId: string,
+        is_premium: boolean,
+        user: {
+            id: number,
+            mail: string,
+            language: string,
+            name: string,
+            lastName: string,
+            timezone: string,
+        }
     }
 };
 

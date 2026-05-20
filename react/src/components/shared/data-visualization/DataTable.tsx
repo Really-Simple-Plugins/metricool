@@ -15,9 +15,9 @@ import {
     TableHead as PrimitiveTableHead,
     TableHeader as PrimitiveTableHeader,
     TableRow as PrimitiveTableRow,
-} from "@/components/shared/primitives/table.tsx";
-import { Icon } from "@/components/shared/user-feedback/Icon.tsx";
-import { Button } from "@/components/shared/forms/Button.tsx";
+} from "@/components/shared/primitives/table";
+import { Icon } from "@/components/shared/user-feedback/Icon";
+import { Button } from "@/components/shared/forms/Button";
 import { useState } from "react";
 import { __, sprintf } from "@wordpress/i18n";
 
@@ -149,7 +149,7 @@ const DataTable = <TData, TValue>({ data, columns, tableSettings }: DataTablePro
                 <div className={"flex items-center justify-center text-sm font-semibold"}>
                     {sprintf(
                         /*translators: variables are page numbers*/
-                        __("Page %1$s of %2$s", "metricool"), [String(table.getState().pagination.pageIndex === 0 ? 0 : table.getState().pagination.pageIndex + 1), String(table.getPageCount())]
+                        __("Page %1$s of %2$s", "metricool"), [String(table.getPageCount() === 0 ? 0 : table.getState().pagination.pageIndex + 1), String(table.getPageCount())]
                     )}
                 </div>
                 <div className={"flex gap-1"}>

@@ -1,9 +1,10 @@
 import {
     Button as PrimitiveButton,
     buttonVariants as PrimitiveButtonVariants
-} from "@/components/shared/primitives/button.tsx";
+} from "@/components/shared/primitives/button";
+import { ToggleVariantStyling } from "@/components/shared/forms/Toggle";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/support/functions/utils.ts";
+import { cn } from "@/support/functions/utils";
 
 const ButtonVariantStyling = {
     "primary": "bg-primary border-primary hover:bg-primary-light hover:text-primary hover:border-primary-light",
@@ -18,21 +19,24 @@ const ButtonVariantStyling = {
     "upsell": "bg-upsell border-upsell text-black hover:bg-upsell hover:text-black",
     "upsell-ghost": "bg-white border-neutral-200 text-black hover:bg-white hover:text-black",
     "black": "bg-black border-black text-white hover:bg-black hover:text-white hover:invert",
+    "black-ghost": "bg-transparent text-black border-black border-1 hover:bg-black hover:text-white",
     "link": "p-0 border-none text-black hover:text-wordpress-link-hover bg-transparent hover:bg-transparent font-normal underline !h-[fit-content]",
     "unstyled": "p-0 border-none rounded-none font-normal font-base min-h-[fit-content] min-w-[fit-content]",
+    "toggle": cn(ToggleVariantStyling.variant.primary, "max-w-[fit-content] border-none"),
 };
 
 const ButtonVariants = cva(
-    "rounded-xs px-3 border-2 font-semibold text-md cursor-pointer size-fit",
+    "rounded-xs px-3 py-0 border-2 font-semibold text-md cursor-pointer size-fit leading-(--text-md)",
     {
         variants: {
             variant: ButtonVariantStyling,
             size: {
-                default: "h-8",
+                default: "h-7.5",
                 xs: "text-xs h-5 px-2 py-1 has-[>svg]:px-2",
                 sm: "text-sm h-6",
-                lg: "text-lg h-10",
+                lg: "text-md h-10",
                 icon: "h-[fit-content] w-[fit-content]",
+                toggle: ToggleVariantStyling.size.default
             }
         },
         defaultVariants: {
@@ -110,7 +114,7 @@ const Button = ({
             {/*span required for gradient text color to work*/}
             {variant === "primary-gradient-ghost" ?
                 <span className={"inline-flex items-center justify-center gap-2 whitespace-nowrap"}>{children}</span>
-            :
+                :
                 children
             }
         </PrimitiveButton>

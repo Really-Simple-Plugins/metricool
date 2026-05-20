@@ -64,3 +64,25 @@ export const camelCaseToHyphenated = (string: string) => {
     }
     return hyphenatedString.replace(".", "-");
 };
+
+/**
+ * Function to generate reCAPTCHA token.
+ * Await the returned promise to be able to get the actual token and use it
+ * however needed.
+ *
+ * @param key
+ * @param action
+ */
+export const generateRecaptchaToken = async (key: string, action: string): Promise<string> => (
+    new Promise((resolve) => {
+        // @ts-expect-error grecaptcha globally defined through script
+        grecaptcha.enterprise.ready(
+            () =>
+                void (async () => {
+                    // @ts-expect-error grecaptcha globally defined through script
+                    const token = await grecaptcha.enterprise.execute(key, { action: action });
+                    resolve(token);
+                })(),
+        );
+    })
+);

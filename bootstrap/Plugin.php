@@ -163,7 +163,6 @@ class Plugin
         $this->endpointManager->register([
             Http\Endpoints\ConnectedBrandsEndpoint::class,
             Http\Endpoints\ConnectedNetworksEndpoint::class,
-            Http\Endpoints\SubscriptionEndpoint::class,
             Http\Endpoints\DistributionEndpoint::class,
             Http\Endpoints\AnalyticsEndpoint::class,
             Http\Endpoints\RealtimeEndpoint::class,
