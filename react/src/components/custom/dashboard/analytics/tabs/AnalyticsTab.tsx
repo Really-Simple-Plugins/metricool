@@ -15,8 +15,8 @@ import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
-import { clsx } from "clsx";
 import { queryClient } from "@/main.tsx";
+import { cn } from "@/support/functions/utils";
 
 type MetricData = {
     label: string,
@@ -212,7 +212,7 @@ const AnalyticsTab = () => {
                         </div>
                     )}
                     <LineChart
-                        className={clsx(isPending && "opacity-45")}
+                        className={cn(isPending && "opacity-45")}
                         chartConfig={chartConfig}
                         chartSettings={{
                             xAxisKey: lineChartXAxisDataKey,
@@ -265,7 +265,7 @@ const AnalyticsTab = () => {
                                     ) : (
                                         <SelectOption
                                             value={filterOption.option}
-                                            className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
+                                            className={cn("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
                                         >
                                             {filterOption.label}
                                         </SelectOption>
