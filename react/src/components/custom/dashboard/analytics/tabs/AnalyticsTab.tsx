@@ -274,7 +274,7 @@ const AnalyticsTab = () => {
                             </Select>
                             <Button
                                 variant={metricool.account?.is_premium ? "black-ghost" : "upsell"}
-                                className={cn(metricool.account?.is_premium && "border-1 border-neutral-200")}
+                                className={cn(metricool.account?.is_premium && "border-neutral-200")}
                                 size={"sm"}
                                 link={metricoolDynamicUrl.withPath("evolution/reports")}
                             >
