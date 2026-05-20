@@ -38,7 +38,7 @@ const ConnectBrandStep = () => {
     } = useForm<z.infer<typeof brandSchema>>({
         resolver: zodResolver(brandSchema),
         defaultValues: {
-            id: undefined,
+            id: "",
         },
     });
 
