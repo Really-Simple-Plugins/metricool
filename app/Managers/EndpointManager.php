@@ -187,7 +187,12 @@ final class EndpointManager extends AbstractManager
     public function callbackMiddleware(callable $callback, array $middlewareNames = []): callable
     {
         return function (\WP_REST_Request $request) use ($callback, $middlewareNames) {
-            $middlewareInstances = $this->resolveMiddleware($middlewareNames);
+            try {
+                $middlewareInstances = $this->resolveMiddleware($middlewareNames);
+            } catch (\InvalidArgumentException $e) {
+                return new \WP_REST_Response(['message' => $e->getMessage()], 500);
+            }
+
             foreach ($middlewareInstances as $middleware) {
                 $response = $middleware->handle($request);
                 if ($response instanceof \WP_REST_Response) {
