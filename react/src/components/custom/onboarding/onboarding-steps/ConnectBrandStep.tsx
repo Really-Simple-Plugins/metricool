@@ -144,6 +144,7 @@ const ConnectBrandStep = () => {
                 <FlexContainer direction={"row"}>
                     <Button
                         variant={"black-ghost"}
+                        className={"border-0"}
                         onClick={() => doLogout()}
                     >
                         {__("Cancel", "metricool")}
