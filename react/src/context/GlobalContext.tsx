@@ -1,7 +1,7 @@
-import React, { createContext, type Dispatch, useContext, useEffect, useReducer, } from "react";
+import React, {createContext, type Dispatch, useContext, useEffect, useReducer,} from "react";
 import HttpClient from "@/api/HttpClient.tsx";
-import { setLocaleData } from "@wordpress/i18n";
-import type { PeriodFilterOption } from "@/components/custom";
+import {setLocaleData} from "@wordpress/i18n";
+import type {PeriodFilterOption} from "@/components/custom";
 import DynamicUrl from "@/support/helpers/DynamicUrl.tsx";
 
 // @ts-expect-error the metricool variable is globally set in the DashboardController
@@ -107,8 +107,8 @@ const initialGlobalState: GlobalState = {
     metricoolDynamicUrl: new DynamicUrl({
         baseUrl: METRICOOL_DATA.metricool_base_url,
     }).setSearchParams({
-        blogId: METRICOOL_DATA.account.blog_id,
-        userId: METRICOOL_DATA.account.user_id,
+        blogId: METRICOOL_DATA.account?.blog_id,
+        userId: METRICOOL_DATA.account?.user_id,
     }),
 };
 
