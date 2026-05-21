@@ -510,8 +510,7 @@ class MetricoolClient
             )
         );
 
-        $lockAquired = ($result !== false && $result > 0);
-        return $lockAquired;
+        return ($result !== false && $result > 0);
     }
 
     /**
@@ -532,6 +531,8 @@ class MetricoolClient
             usleep($sleepDuration * 1000);
             $waited += $sleepDuration;
         }
+
+        throw new \RuntimeException('Timed out waiting for token refresh. Please try again.');
     }
 
     /**
@@ -579,7 +580,7 @@ class MetricoolClient
         } catch (GuzzleException $e) {
             $this->logout();
             // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a Throwable passed as $previous, not output.
-            throw new RuntimeException('Failed to refresh authentication token. Please log in again.', 500, $e);
+            throw new RuntimeException('Failed to refresh authentication token. Please log in again.', 401, $e);
         }
 
         $data = $this->parseResponse($response);
