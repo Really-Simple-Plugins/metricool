@@ -17,6 +17,7 @@ final class GeneralConfig extends DeferredObject
 {
     private array $filesToSkip = [
         'env', // EnvironmentConfig
+        'middleware', // MiddlewareConfig
         'user_settings', // UserSettingsConfig
     ];
 

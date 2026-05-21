@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace Metricool\Http\Endpoints;
 
 use Exception;
-use Metricool\Traits\HasRestAccess;
-use Metricool\Services\RealtimeService;
-use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Endpoints\Responses\RealtimeResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Http\Endpoints\Responses\RealtimeResponse;
+use Metricool\Services\RealtimeService;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class RealtimeEndpoint implements SingleEndpointInterface
 {
@@ -37,12 +37,11 @@ class RealtimeEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
+     * @inheritDoc
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication() && $this->metricoolApi->hasBlogId();
+        return $this->adminAccessAllowed();
     }
 
     /**
@@ -53,6 +52,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
 
