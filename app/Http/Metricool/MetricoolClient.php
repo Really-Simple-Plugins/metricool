@@ -9,11 +9,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
+use InvalidArgumentException;
 use Metricool\Services\OptionsService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use InvalidArgumentException;
 
 class MetricoolClient
 {
@@ -566,7 +566,7 @@ class MetricoolClient
             $wpdb->prepare(
                 "DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value < %d",
                 'metricool_refresh_lock',
-                time() - 30
+                time() - 15
             )
         );
 
