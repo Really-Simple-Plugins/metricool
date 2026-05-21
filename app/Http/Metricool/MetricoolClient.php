@@ -17,6 +17,17 @@ use RuntimeException;
 
 class MetricoolClient
 {
+    private const OPTION_USER_ID = 'metricool_user_id';
+    private const OPTION_BLOG_ID = 'metricool_blog_id';
+    private const OPTION_AUTH_TOKEN = 'metricool_auth_token';
+    private const OPTION_REFRESH_TOKEN = 'metricool_refresh_token';
+    private const OPTION_AUTH_TOKEN_EXPIRES = 'metricool_auth_token_expires';
+    private const OPTION_REFRESH_LOCK = 'metricool_refresh_lock';
+
+    private const LOCK_STALE_MS = 15000;
+    private const LOCK_WAIT_SLEEP_MS = 100;
+    private const LOCK_WAIT_MAX_MS = 5000;
+
     private ?Client $client = null;
 
     private EnvironmentConfig $env;
@@ -68,7 +79,7 @@ class MetricoolClient
      */
     public function storeUserId(string $userId): void
     {
-        update_option('metricool_user_id', $userId);
+        update_option(self::OPTION_USER_ID, $userId);
 
         $this->setUserId($userId);
     }
@@ -78,7 +89,7 @@ class MetricoolClient
      */
     public function clearUserId(): void
     {
-        delete_option('metricool_user_id');
+        delete_option(self::OPTION_USER_ID);
 
         $this->setUserId('');
     }
@@ -104,7 +115,7 @@ class MetricoolClient
      */
     public function storeBlogId(string $blogId): void
     {
-        update_option('metricool_blog_id', $blogId);
+        update_option(self::OPTION_BLOG_ID, $blogId);
 
         $this->setBlogId($blogId);
     }
@@ -114,7 +125,7 @@ class MetricoolClient
      */
     public function clearBlogId(): void
     {
-        delete_option('metricool_blog_id');
+        delete_option(self::OPTION_BLOG_ID);
 
         $this->setBlogId('');
     }
@@ -156,7 +167,7 @@ class MetricoolClient
      */
     public function storeUserToken(string $token): void
     {
-        update_option('metricool_auth_token', $token);
+        update_option(self::OPTION_AUTH_TOKEN, $token);
 
         $this->setUserToken($token);
     }
@@ -166,7 +177,7 @@ class MetricoolClient
      */
     public function clearUserToken(): void
     {
-        delete_option('metricool_auth_token');
+        delete_option(self::OPTION_AUTH_TOKEN);
 
         $this->setUserToken('');
     }
@@ -176,7 +187,7 @@ class MetricoolClient
      */
     public function getRefreshToken(): string
     {
-        return get_option('metricool_refresh_token');
+        return get_option(self::OPTION_REFRESH_TOKEN);
     }
 
     /**
@@ -184,7 +195,7 @@ class MetricoolClient
      */
     public function storeRefreshToken(string $refreshToken): void
     {
-        update_option('metricool_refresh_token', $refreshToken);
+        update_option(self::OPTION_REFRESH_TOKEN, $refreshToken);
     }
 
     /**
@@ -192,8 +203,8 @@ class MetricoolClient
      */
     public function clearRefreshToken(): void
     {
-        delete_option('metricool_refresh_token');
-        delete_option('metricool_auth_token_expires');
+        delete_option(self::OPTION_REFRESH_TOKEN);
+        delete_option(self::OPTION_AUTH_TOKEN_EXPIRES);
     }
 
     /**
@@ -201,7 +212,15 @@ class MetricoolClient
      */
     public function getTokenExpires(): int
     {
-        return (int) get_option('metricool_auth_token_expires') ?: 0;
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        return (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+                self::OPTION_AUTH_TOKEN_EXPIRES
+            )
+        );
     }
 
     /**
@@ -228,7 +247,7 @@ class MetricoolClient
     {
         $expiresIn = Carbon::now()->addSeconds($expiresIn)->timestamp;
 
-        update_option('metricool_auth_token_expires', $expiresIn);
+        update_option(self::OPTION_AUTH_TOKEN_EXPIRES, $expiresIn);
     }
 
     /**
@@ -452,52 +471,46 @@ class MetricoolClient
      */
     public function refreshAuthToken(): void
     {
-        $lockAcquired = $this->acquireRefreshLock();
+        $maxWait = self::LOCK_WAIT_MAX_MS;
+        $sleep = self::LOCK_WAIT_SLEEP_MS;
+        $waited = 0;
 
-        do {
-            if (!$this->isFreshTokenExpired()) {
-                $this->setUserToken($this->getFreshUserToken());
-                break;
+        // check if we can refresh, else someone else is refreshing
+        $canRefresh = $this->maybeAcquireRefreshLock();
+
+        try {
+            while ($waited < $maxWait) {
+                // Another request may have refreshed the token, lets check
+                if (!$this->isTokenExpired()) {
+                    $this->setUserToken($this->fetchUserToken());
+                    return;
+                }
+
+                // Perform the refresh if lock is acquired
+                if ($canRefresh) {
+                    $this->performTokenRefresh();
+                    return;
+                }
+
+                // Wait 100 ms and try again
+                usleep($sleep * 1000);
+                $waited += $sleep;
             }
 
-            if (!$lockAcquired) {
-                usleep(100000); // 100ms
-                continue;
+            throw new RuntimeException('Timed out waiting for authentication token refresh.');
+        } finally {
+            if ($canRefresh) {
+                $this->releaseRefreshLock();
             }
-
-            $this->performTokenRefresh();
-            break;
-        } while (true);
-
-        if ($lockAcquired) {
-            $this->releaseRefreshLock();
         }
     }
 
-    /**
-     * Check whether the access token is expired by reading directly from the
-     * database, bypassing the WordPress object cache.
-     */
-    private function isFreshTokenExpired(): bool
-    {
-        global $wpdb;
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $expires = (int) $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
-                'metricool_auth_token_expires'
-            )
-        );
-
-        return Carbon::now()->gt(Carbon::createFromTimestamp($expires)->subMinute());
-    }
 
     /**
      * Read the access token directly from the database, bypassing the
      * WordPress object cache.
      */
-    private function getFreshUserToken(): string
+    private function fetchUserToken(): string
     {
         global $wpdb;
 
@@ -505,7 +518,7 @@ class MetricoolClient
         return (string) $wpdb->get_var(
             $wpdb->prepare(
                 "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
-                'metricool_auth_token'
+                self::OPTION_AUTH_TOKEN
             )
         );
     }
@@ -556,17 +569,17 @@ class MetricoolClient
      * Acquire a lock via wp_options to serialize token refresh attempts.
      * Uses INSERT IGNORE for atomicity: only one process can create the row.
      */
-    private function acquireRefreshLock(): bool
+    private function maybeAcquireRefreshLock(): bool
     {
         global $wpdb;
 
-        // Remove stale locks older than 30 seconds as a safety net.
+        // Remove stale locks older than 15 seconds as a safety net.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $wpdb->query(
             $wpdb->prepare(
                 "DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value < %d",
-                'metricool_refresh_lock',
-                time() - 15
+                self::OPTION_REFRESH_LOCK,
+                time() - (int) (self::LOCK_STALE_MS / 1000)
             )
         );
 
@@ -576,7 +589,7 @@ class MetricoolClient
         $result = $wpdb->query(
             $wpdb->prepare(
                 "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %d, 'no')",
-                'metricool_refresh_lock',
+                self::OPTION_REFRESH_LOCK,
                 time()
             )
         );
@@ -589,7 +602,7 @@ class MetricoolClient
      */
     private function releaseRefreshLock(): void
     {
-        delete_option('metricool_refresh_lock');
+        delete_option(self::OPTION_REFRESH_LOCK);
     }
 
     /**
