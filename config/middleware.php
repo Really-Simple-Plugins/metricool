@@ -23,14 +23,4 @@ return [
         'locale',
         'nonce',
     ],
-    // Todo: this would be even nicer
-    'groups' => [
-        'admin' => [
-            'user_can:metricool_manage'
-        ],
-        'rest' => [
-            'locale',
-            'nonce',
-        ]
-    ]
 ];
