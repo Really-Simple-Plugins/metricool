@@ -471,40 +471,68 @@ class MetricoolClient
      */
     public function refreshAuthToken(): void
     {
-        $maxWait = self::LOCK_WAIT_MAX_MS;
-        $sleep = self::LOCK_WAIT_SLEEP_MS;
-        $waited = 0;
-
-        // check if we can refresh, else someone else is refreshing
-        $canRefresh = $this->maybeAcquireRefreshLock();
-
-        try {
-            while ($waited < $maxWait) {
-                // Another request may have refreshed the token, lets check
-                if (!$this->isTokenExpired()) {
-                    $this->setUserToken($this->fetchUserToken());
-                    return;
-                }
-
-                // Perform the refresh if lock is acquired
-                if ($canRefresh) {
-                    $this->performTokenRefresh();
-                    return;
-                }
-
-                // Wait 100 ms and try again
-                usleep($sleep * 1000);
-                $waited += $sleep;
-            }
-
-            throw new RuntimeException('Timed out waiting for authentication token refresh.');
-        } finally {
-            if ($canRefresh) {
-                $this->releaseRefreshLock();
-            }
+        $lockAcquired = $this->lockTokenRefresh();
+        if ($lockAcquired === false) {
+            $this->waitForRefresh();
+            return;
         }
+
+        $this->performTokenRefresh();
+        $this->releaseRefreshLock();
     }
 
+    /**
+     * Acquire a lock via wp_options to serialize token refresh attempts.
+     * Uses INSERT IGNORE for atomicity: only one process can create the row.
+     */
+    private function lockTokenRefresh(): bool
+    {
+        global $wpdb;
+
+        // Remove stale locks older than 15 seconds as a safety net.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value < %d",
+                self::OPTION_REFRESH_LOCK,
+                time() - (int) (self::LOCK_STALE_MS / 1000)
+            )
+        );
+
+        // Attempt to insert the lock row. INSERT IGNORE ensures only one
+        // process succeeds when racing concurrently.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $wpdb->query(
+            $wpdb->prepare(
+                "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %d, 'no')",
+                self::OPTION_REFRESH_LOCK,
+                time()
+            )
+        );
+
+        $lockAquired = ($result !== false && $result > 0);
+        return $lockAquired;
+    }
+
+    /**
+     * Wait for another process to refresh the token by polling if the token is expired
+     */
+    private function waitForRefresh(): void
+    {
+        $maxWait = self::LOCK_WAIT_MAX_MS;
+        $sleepDuration = self::LOCK_WAIT_SLEEP_MS;
+        $waited = 0;
+
+        while ($waited < $maxWait) {
+            if ($this->isTokenExpired() === false) {
+                $this->setUserToken($this->fetchUserToken());
+                return;
+            }
+
+            usleep($sleepDuration * 1000);
+            $waited += $sleepDuration;
+        }
+    }
 
     /**
      * Read the access token directly from the database, bypassing the
@@ -563,38 +591,6 @@ class MetricoolClient
         $this->storeUserToken($data['access_token']);
         $this->storeRefreshToken($data['refresh_token']);
         $this->storeTokenExpires($data['expires_in']);
-    }
-
-    /**
-     * Acquire a lock via wp_options to serialize token refresh attempts.
-     * Uses INSERT IGNORE for atomicity: only one process can create the row.
-     */
-    private function maybeAcquireRefreshLock(): bool
-    {
-        global $wpdb;
-
-        // Remove stale locks older than 15 seconds as a safety net.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $wpdb->query(
-            $wpdb->prepare(
-                "DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value < %d",
-                self::OPTION_REFRESH_LOCK,
-                time() - (int) (self::LOCK_STALE_MS / 1000)
-            )
-        );
-
-        // Attempt to insert the lock row. INSERT IGNORE ensures only one
-        // process succeeds when racing concurrently.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $result = $wpdb->query(
-            $wpdb->prepare(
-                "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %d, 'no')",
-                self::OPTION_REFRESH_LOCK,
-                time()
-            )
-        );
-
-        return $result !== false && $result > 0;
     }
 
     /**
