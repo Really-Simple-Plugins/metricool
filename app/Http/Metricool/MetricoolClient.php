@@ -9,11 +9,11 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
+use InvalidArgumentException;
 use Metricool\Services\OptionsService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use InvalidArgumentException;
 
 class MetricoolClient
 {
@@ -443,9 +443,79 @@ class MetricoolClient
 
     /**
      * Refresh the authentication token using the refresh token.
+     *
+     * Uses a MySQL lock to prevent concurrent processes from both attempting
+     * a refresh. The process that cannot acquire the lock waits in a loop
+     * until the token is refreshed by the lock holder.
+     *
      * @throws RuntimeException the user will be unauthenticated if the refresh token request fails.
      */
     public function refreshAuthToken(): void
+    {
+        $lockAcquired = $this->acquireRefreshLock();
+
+        do {
+            if (!$this->isFreshTokenExpired()) {
+                $this->setUserToken($this->getFreshUserToken());
+                break;
+            }
+
+            if (!$lockAcquired) {
+                usleep(100000); // 100ms
+                continue;
+            }
+
+            $this->performTokenRefresh();
+            break;
+        } while (true);
+
+        if ($lockAcquired) {
+            $this->releaseRefreshLock();
+        }
+    }
+
+    /**
+     * Check whether the access token is expired by reading directly from the
+     * database, bypassing the WordPress object cache.
+     */
+    private function isFreshTokenExpired(): bool
+    {
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $expires = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+                'metricool_auth_token_expires'
+            )
+        );
+
+        return Carbon::now()->gt(Carbon::createFromTimestamp($expires)->subMinute());
+    }
+
+    /**
+     * Read the access token directly from the database, bypassing the
+     * WordPress object cache.
+     */
+    private function getFreshUserToken(): string
+    {
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        return (string) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+                'metricool_auth_token'
+            )
+        );
+    }
+
+    /**
+     * Perform the actual token refresh request against the Metricool OAuth endpoint.
+     *
+     * @throws RuntimeException when the refresh request fails or the response is invalid.
+     */
+    private function performTokenRefresh(): void
     {
         $headers = [
             'Accept' => 'application/json',
@@ -466,7 +536,6 @@ class MetricoolClient
                 $options
             );
         } catch (GuzzleException $e) {
-            // If the refresh token request fails, we need to log the user out.
             $this->logout();
             // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a Throwable passed as $previous, not output.
             throw new RuntimeException('Failed to refresh authentication token. Please log in again.', 500, $e);
@@ -481,6 +550,46 @@ class MetricoolClient
         $this->storeUserToken($data['access_token']);
         $this->storeRefreshToken($data['refresh_token']);
         $this->storeTokenExpires($data['expires_in']);
+    }
+
+    /**
+     * Acquire a lock via wp_options to serialize token refresh attempts.
+     * Uses INSERT IGNORE for atomicity: only one process can create the row.
+     */
+    private function acquireRefreshLock(): bool
+    {
+        global $wpdb;
+
+        // Remove stale locks older than 30 seconds as a safety net.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value < %d",
+                'metricool_refresh_lock',
+                time() - 15
+            )
+        );
+
+        // Attempt to insert the lock row. INSERT IGNORE ensures only one
+        // process succeeds when racing concurrently.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $wpdb->query(
+            $wpdb->prepare(
+                "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %d, 'no')",
+                'metricool_refresh_lock',
+                time()
+            )
+        );
+
+        return $result !== false && $result > 0;
+    }
+
+    /**
+     * Release the wp_options lock after a token refresh.
+     */
+    private function releaseRefreshLock(): void
+    {
+        delete_option('metricool_refresh_lock');
     }
 
     /**
