@@ -28,7 +28,7 @@ class VerifyNonce implements MiddlewareInterface
         $methodsRequiringNonce = ['POST', 'PUT', 'PATCH', 'DELETE'];
         if (in_array($method, $methodsRequiringNonce) && ($this->verifyNonce($nonce) === false)) {
             return $this->sendHttpErrorResponse(
-                __('Forbidden.', 'metricool'),
+                __('Forbidden', 'metricool'),
                 null,
                 403
             );
