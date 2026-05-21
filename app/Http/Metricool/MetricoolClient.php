@@ -489,7 +489,7 @@ class MetricoolClient
     {
         global $wpdb;
 
-        // Remove stale locks older than 15 seconds as a safety net.
+        // Remove stale locks that might be left behind if a process crashes during refresh. We consider locks older than LOCK_STALE_MS as stale.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $wpdb->query(
             $wpdb->prepare(
@@ -499,8 +499,7 @@ class MetricoolClient
             )
         );
 
-        // Attempt to insert the lock row. INSERT IGNORE ensures only one
-        // process succeeds when racing concurrently.
+        // Attempt to insert the lock row. INSERT IGNORE ensures only one process succeeds when racing concurrently.
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $result = $wpdb->query(
             $wpdb->prepare(
