@@ -473,7 +473,7 @@ class MetricoolClient
     {
         $lockAcquired = $this->lockTokenRefresh();
         if ($lockAcquired === false) {
-            $this->waitForRefresh();
+            $this->pollForNewUserToken();
             return;
         }
 
@@ -514,8 +514,9 @@ class MetricoolClient
 
     /**
      * Wait for another process to refresh the token by polling if the token is expired
+     * @throws RuntimeException if the token is still expired after waiting for the maximum time.
      */
-    private function waitForRefresh(): void
+    private function pollForNewUserToken(): void
     {
         $maxWait = self::LOCK_WAIT_MAX_MS;
         $sleepDuration = self::LOCK_WAIT_SLEEP_MS;
