@@ -142,7 +142,7 @@ const AccountSettings = () => {
     return (
         <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col min-w-full md:min-w-[50%]"}>
             <FlexContainer direction={"column"}>
-                <Block className={"rounded-t-md rounded-b-none"}>
+                <Block className={"rounded-md"}>
                     <BlockHeader title={__("Account settings", "metricool")}/>
                     <SignOut onSignOut={() => doLogout()} currentUserEmail={metricool.account?.user.mail ?? ""}/>
                     <Button variant={"primary-ghost"} className={"font-bold"} link={metricoolDynamicUrl.withPath("user-settings/access")}>
