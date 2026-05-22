@@ -117,6 +117,7 @@ final class EndpointManager extends AbstractManager
      *
      * @uses apply_filters metricool_rest_routes
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     public function registerWordPressRestRoutes(): void
     {
@@ -125,7 +126,7 @@ final class EndpointManager extends AbstractManager
         foreach ($routes as $route => $data) {
             $methods = ($data['methods'] ?? 'GET');
             $callback = ($data['callback'] ?? null);
-            $permissionCallback = ($data['permission_callback'] ?? null);
+            $permissionCallback = ($data['permission_callback'] ?? '__return_true');
             $middleware = ($data['middleware'] ?? []);
             $applyDefaultMiddleware = ($data['apply_default_middleware'] ?? true);
             $version = ($data['version'] ?? $this->env->getString('http.version'));
