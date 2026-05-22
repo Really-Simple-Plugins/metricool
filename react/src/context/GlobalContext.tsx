@@ -110,8 +110,8 @@ const initialGlobalState: GlobalState = {
     metricoolDynamicUrl: new DynamicUrl({
         baseUrl: METRICOOL_DATA.metricool_base_url,
     }).setSearchParams({
-        blogId: METRICOOL_DATA.account.blog_id,
-        userId: METRICOOL_DATA.account.user_id,
+        ...(METRICOOL_DATA.account?.blog_id && { blogId: METRICOOL_DATA.account.blog_id }),
+        ...(METRICOOL_DATA.account?.user_id && { userId: METRICOOL_DATA.account.user_id }),
     }),
 };
 
