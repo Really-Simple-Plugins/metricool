@@ -54,8 +54,8 @@ type MetricoolData = {
     metricool_help_url: string,
     locale: string,
     account?: {
-        blogId: string,
-        userId: string,
+        blog_id: string,
+        user_id: string,
         is_premium: boolean,
         user: {
             id: number,
