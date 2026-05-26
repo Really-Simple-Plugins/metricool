@@ -18,7 +18,7 @@ class CreateAccountService
     private OnboardingService $onboarding;
     private OAuthService $oauth;
     private DashboardService $dashboard;
-    
+
     public function __construct(
         RspalApiClient $rspal,
         MetricoolApi $api,

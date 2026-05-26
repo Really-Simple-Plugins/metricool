@@ -93,8 +93,8 @@ class OnboardingService
             throw $e;
         }
 
-        $this->api->storeBlogId($blogId);
         $this->activateTrackingHash($brand);
+        $this->api->storeBlogId($blogId);
     }
 
     /**
