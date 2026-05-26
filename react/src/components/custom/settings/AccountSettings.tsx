@@ -8,26 +8,14 @@ import {
     Icon,
     Input,
     LoadingAndErrorState,
-    showToast,
     SignOut,
     Switch
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
 import { useBlocker } from "@tanstack/react-router";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { queryClient } from "@/main.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useAuthenticationData } from "@/hooks/useAuthenticationData.tsx";
-
-const userSettingsFormSchema = z.object({
-    sendToAlternativeEmail: z.boolean(),
-    alternativeEmail: z.email({
-        error: () => __("Please enter a valid email address", "metricool"),
-    }),
-}).required();
+import { useUserData } from "@/hooks/useUserData.tsx";
 
 /**
  * The Account Settings section in Settings.
@@ -37,80 +25,26 @@ const userSettingsFormSchema = z.object({
  * to be passed down to the button in the {@link FormFooter}. No other button
  * with type "submit" should be added anywhere in the subtree of this component.
  *
- * Contains a {@link useQuery} which fetches the user settings.
- *
- * Contains a {@link useMutation} which updates the user settings and sets the
- * forms error states if updating fails.
- *
- * Contains a {@link useForm} which implements the {@link userSettingsFormSchema}.
+ * Retrieves all Query, Mutation and Form data from {@link useUserData}.
  *
  * Contains a {@link useBlocker} which requests user confirmation to leave or
  * refresh the page if there are unsaved changes.
  *
  */
 const AccountSettings = () => {
-    const { httpClient, metricool, metricoolDynamicUrl } = useGlobalContext();
-    /**
-     * `data` is renamed to `values`, because `useForm` (below) expects this as
-     * the name of the object that holds the form values.
-     */
-    const { data: values, isLoading, error: queryError, errorUpdateCount, refetch } = useQuery({
-        queryKey: ["user_settings"],
-        queryFn: () => httpClient.setRoute("user_settings").get(),
-        staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): z.infer<typeof userSettingsFormSchema> => ({
-            sendToAlternativeEmail: data.data.sendToAlternativeEmail,
-            alternativeEmail: data.data.alternativeEmail,
-        })
-    });
+    const { metricool, metricoolDynamicUrl } = useGlobalContext();
 
     const {
-        handleSubmit,
-        formState: { errors: formValidationErrors, isDirty },
-        getValues,
-        resetField,
-        control,
-        setError,
-    } = useForm<z.infer<typeof userSettingsFormSchema>>({
-        resolver: zodResolver(userSettingsFormSchema),
-        defaultValues: {
-            sendToAlternativeEmail: false,
-            alternativeEmail: "",
+        userSettingsDataQuery: { data, isLoading, error: queryError, errorUpdateCount, refetch },
+        userSettingsFormData: {
+            handleSubmit,
+            formState: { errors: formValidationErrors, isDirty },
+            getValues,
+            resetField,
+            control,
         },
-        values,
-    });
-
-    const { mutate: onSubmit, isPending } = useMutation({
-        mutationFn: async ({ sendToAlternativeEmail, alternativeEmail }: z.infer<typeof userSettingsFormSchema>) => {
-            return httpClient.setRoute("user_settings").setPayload({
-                "sendToAlternativeEmail": sendToAlternativeEmail,
-                "alternativeEmail": alternativeEmail,
-            }).post();
-        },
-        onSuccess: (response) => {
-            queryClient.setQueryData(["user_settings"], { ...response });
-            showToast.success(__("Settings have been saved", "metricool"));
-        },
-        onError: (data: {
-            fields?: Record<keyof z.infer<typeof userSettingsFormSchema>, { message: string }>,
-        }) => {
-            showToast.error(__("There was an error updating your settings", "metricool"));
-            if (data.fields) {
-                try {
-                    (Object.entries(data.fields) as [keyof z.infer<typeof userSettingsFormSchema>, {
-                        message: string
-                    }][]).forEach(([fieldKey, fieldContent]) => {
-                        setError(fieldKey, {
-                            type: "custom",
-                            message: fieldContent?.message,
-                        });
-                    });
-                } catch (error) {
-                    console.error("There was an error setting the form errors: " + error);
-                }
-            }
-        }
-    });
+        updateUserSettingsDataMutation: { mutate: onSubmit, isPending }
+    } = useUserData();
 
     const {
         logoutMutation: { mutate: logoutUser }
@@ -145,7 +79,7 @@ const AccountSettings = () => {
                 </Block>
                 <Block className={"rounded-t-md rounded-b-none"}>
                     <BlockHeader title={__("Monthly summary", "metricool")}/>
-                    {!values ? (
+                    {!data ? (
                         <LoadingAndErrorState
                             error={queryError}
                             isLoading={isLoading}
