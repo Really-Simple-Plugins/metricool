@@ -18,8 +18,7 @@ class CreateAccountService
     private OnboardingService $onboarding;
     private OAuthService $oauth;
     private DashboardService $dashboard;
-
-
+    
     public function __construct(
         RspalApiClient $rspal,
         MetricoolApi $api,
@@ -100,8 +99,12 @@ class CreateAccountService
         }
 
         // Attempt to automatically set the blog information, complete the onboarding process on success
-        if ($this->onboarding->finalizeOnboarding()) {
-            $this->dashboard->setShowWelcomeScreen();
+        try {
+            if ($this->onboarding->finalizeOnboarding()) {
+                $this->dashboard->setShowWelcomeScreen();
+            }
+        } catch (GuzzleException $e) {
+            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
         }
 
         return true;

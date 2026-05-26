@@ -3,6 +3,7 @@
 namespace Metricool\Features\Onboarding;
 
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
@@ -29,12 +30,13 @@ class OnboardingService
      * set the onboarding as completed.
      *
      * @throws BrandAccessDeniedException
+     * @throws GuzzleException
      */
     public function finalizeOnboarding(?string $blogId = null): bool
     {
         if ($blogId !== null) {
             // When a blogId is provided, try to connect to the brand
-            $this->connectBlogId($blogId);
+            $this->connectBrand($blogId);
         } else {
             // Try to find the blog from the brands connected to the account and retrieve the necessary information
             $this->attemptToFindBlogIdFromApi();
@@ -48,9 +50,6 @@ class OnboardingService
         // Update the metricool user data from the API
         $this->metricoolUser->update();
 
-        // todo: REMOVED EXCEPTION WHEN THIS BRAND RETURNS 403 FOR TESTING -> We should show an error that the tracker couldn't be loaded, or add the exception back.
-        $this->maybeActivateTrackingHash($this->api->getBlogId());
-
         // When all the necessary information is retrieved, set the onboarding as completed
         return $this->dashboard->setOnboardingCompleted();
     }
@@ -60,6 +59,7 @@ class OnboardingService
      * the necessary onboarding information
      *
      * @throws BrandAccessDeniedException when the current user has no access to the brand
+     * @throws GuzzleException
      */
     private function attemptToFindBlogIdFromApi(): void
     {
@@ -75,28 +75,33 @@ class OnboardingService
             return;
         }
 
-        $this->connectBlogId((string) $brand['id']);
+        $this->connectBrand((string) $brand['id']);
     }
 
     /**
      * Store the necessary onboarding information from the Metricool brand
+     * @throws GuzzleException
      */
-    private function connectBlogId(string $blogId): void
-    {
-        $this->api->storeBlogId($blogId);
-    }
-
-    /**
-     * Activate the tracking hash for the given blog ID and store it in the database
-     */
-    private function maybeActivateTrackingHash(string $blogId): void
+    private function connectBrand(string $blogId): void
     {
         try {
             $brand = $this->api->brands()->get($blogId);
-        } catch (GuzzleException $e) {
-            return;
+        } catch (RequestException $e) {
+            if ($e->getResponse()->getStatusCode() === 403) {
+                throw new BrandAccessDeniedException();
+            }
+            throw $e;
         }
 
+        $this->api->storeBlogId($blogId);
+        $this->activateTrackingHash($brand);
+    }
+
+    /**
+     * Activate the tracking hash for the given brand and store it in the database
+     */
+    private function activateTrackingHash(array $brand): void
+    {
         $trackingId = isset($brand['hash']) ? (string) $brand['hash'] : null;
 
         if ($trackingId !== null) {
