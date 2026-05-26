@@ -117,6 +117,7 @@ final class EndpointManager extends AbstractManager
      *
      * @uses apply_filters metricool_rest_routes
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     public function registerWordPressRestRoutes(): void
     {
@@ -125,9 +126,9 @@ final class EndpointManager extends AbstractManager
         foreach ($routes as $route => $data) {
             $methods = ($data['methods'] ?? 'GET');
             $callback = ($data['callback'] ?? null);
-            $permissionCallback = ($data['permission_callback'] ?? null);
+            $permissionCallback = ($data['permission_callback'] ?? '__return_true');
             $middleware = ($data['middleware'] ?? []);
-            $applyDefaultMiddleware = $data['apply_default_middleware'] ?? true;
+            $applyDefaultMiddleware = ($data['apply_default_middleware'] ?? true);
             $version = ($data['version'] ?? $this->env->getString('http.version'));
             $args = ($data['args'] ?? null);
 
@@ -182,13 +183,14 @@ final class EndpointManager extends AbstractManager
     /**
      * Wrap the endpoint callback with the default middleware and any named middleware from the pipeline.
      * Each entry can be either a registered alias (e.g. 'auth:metricool') or a fully qualified class name (e.g. MetricoolAuthenticated::class).
+     * @throws \ReflectionException
      */
     public function callbackMiddleware(callable $callback, array $middlewares = []): callable
     {
-        return function (\WP_REST_Request $request) use ($callback, $middlewares) {
-            try {
-                $middlewareInstances = $this->resolveMiddleware($middlewares);
+        $middlewareInstances = $this->resolveMiddleware($middlewares);
 
+        return static function (\WP_REST_Request $request) use ($callback, $middlewareInstances) {
+            try {
                 foreach ($middlewareInstances as $middleware) {
                     $response = $middleware->handle($request);
                     if ($response instanceof \WP_REST_Response) {
@@ -223,7 +225,7 @@ final class EndpointManager extends AbstractManager
                 );
             }
 
-            $instance = App::getInstance()->make($class);
+            $instance = App::getInstance()->get($class);
 
             if (!$instance instanceof MiddlewareInterface) {
                 throw new \InvalidArgumentException(

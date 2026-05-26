@@ -124,7 +124,12 @@ class OnboardingController implements FeatureInterface
             try {
                 $this->onboarding->finalizeOnboarding($blogId);
             } catch (BrandAccessDeniedException $e) {
-                return $this->sendHttpErrorResponse(__('Brand Access denied, please select a different brand.', 'metricool'), [], 403);
+                return $this->sendHttpErrorResponse(__('Could not retrieve brand. Pick another brand, try again or contact support.', 'metricool'), [], 403);
+            } catch (GuzzleException $e) {
+                return $this->sendHttpErrorResponse(wp_kses_post(sprintf(
+                    __('Something went wrong. Please try again or <a href="%s" target="_blank">leave a support message</a>.', 'metricool'),
+                    $this->env->get('frontend.trusted_urls.new_support_ticket')
+                )));
             }
         }
 

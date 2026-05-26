@@ -9,7 +9,7 @@ use Metricool\Interfaces\MiddlewareInterface;
 use Metricool\Traits\HasRestAccess;
 
 /**
- * Checks if the current user is an administrator. If so, it returns a 403 Forbidden response.
+ * Checks if a brand / blog id is set. This is required for some Metricool API endpoints
  */
 class HasMetricoolBlogId implements MiddlewareInterface
 {
