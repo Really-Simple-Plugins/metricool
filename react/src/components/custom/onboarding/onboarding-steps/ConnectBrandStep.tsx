@@ -66,7 +66,25 @@ const ConnectBrandStep = () => {
             return httpClient.setRoute("logout").post();
         },
         onSuccess: () => {
-            window.location.href = metricool.dashboard_url;
+            // window.location.href = metricool.dashboard_url;
+            dispatch({
+                dispatchType: "setOnboardingState",
+                change: {
+                    metricool: {
+                        onboarding: {
+                            state: {
+                                completed: true,
+                                authenticated: false,
+                                blog_id_selected: false
+                            },
+                            mode: {
+                                show_welcome_screen: false,
+                                forced_login: false,
+                            }
+                        }
+                    }
+                }
+            });
         },
         onError: (error) => {
             console.error(error);
