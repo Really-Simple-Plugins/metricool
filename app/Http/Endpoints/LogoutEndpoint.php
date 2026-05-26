@@ -6,6 +6,7 @@ namespace Metricool\Http\Endpoints;
 
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -17,10 +18,12 @@ class LogoutEndpoint implements SingleEndpointInterface
     public const ROUTE = 'logout';
 
     private MetricoolApi $metricoolApi;
+    private DashboardService $dashboard;
 
-    public function __construct(MetricoolApi $metricoolApi)
+    public function __construct(MetricoolApi $metricoolApi, DashboardService $dashboard)
     {
         $this->metricoolApi = $metricoolApi;
+        $this->dashboard = $dashboard;
     }
 
     /**
@@ -59,6 +62,9 @@ class LogoutEndpoint implements SingleEndpointInterface
     {
         $this->metricoolApi->logout();
 
-        return $this->sendHttpResponse(['success' => true]);
+        return $this->sendHttpResponse([
+            'state' => $this->dashboard->state(),
+            'mode' => $this->dashboard->mode(),
+        ]);
     }
 }

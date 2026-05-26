@@ -50,8 +50,6 @@ class OnboardingService
         // Update the metricool user data from the API
         $this->metricoolUser->update();
 
-        $this->activateTrackingHash($this->api->getBlogId());
-
         // When all the necessary information is retrieved, set the onboarding as completed
         return $this->dashboard->setOnboardingCompleted();
     }
