@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
+use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class ConnectedNetworksEndpoint implements SingleEndpointInterface
 {
@@ -33,12 +34,11 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token.
+     * @inheritDoc
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication() && $this->metricoolApi->hasBlogId();
+        return $this->adminAccessAllowed();
     }
 
     /**
@@ -49,6 +49,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
 
@@ -70,6 +71,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
      * Build the specific ConnectedNetworksResponse response for the endpoint.
      * This response returns just the brand names that are connected to the user.
      * Filtering it server side prevents client-side complexity.
+     * @throws GuzzleException
      */
     public function buildResponse(\WP_REST_Request $request): array
     {

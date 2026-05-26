@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Traits\HasRestAccess;
-use Metricool\Services\AnalyticsService;
-use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
+use Metricool\Services\AnalyticsService;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class AnalyticsEndpoint implements SingleEndpointInterface
 {
@@ -36,12 +36,11 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
+     * @inheritDoc
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication() && $this->metricoolApi->hasBlogId();
+        return $this->adminAccessAllowed();
     }
 
     /**
@@ -52,6 +51,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
 
