@@ -6,6 +6,7 @@ import { __ } from "@wordpress/i18n";
 import { queryClient } from "@/main.tsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 
 const userSettingsFormSchema = z.object({
     sendToAlternativeEmail: z.boolean(),
@@ -26,6 +27,13 @@ const userSettingsFormSchema = z.object({
  */
 const useUserData = () => {
     const { httpClient } = useGlobalContext();
+
+    const connectedBrandsQuery = useQuery({
+        queryKey: ["connected_brands"],
+        queryFn: () => httpClient.setRoute("connected_brands").get(),
+        staleTime: Infinity,
+        select: (data): z.infer<typeof OnboardingSchema.shape.brand>[] => data.data,
+    });
 
     const userSettingsDataQuery = useQuery({
         queryKey: ["user_settings"],
@@ -79,6 +87,7 @@ const useUserData = () => {
     });
 
     return {
+        connectedBrandsQuery: connectedBrandsQuery,
         userSettingsDataQuery: userSettingsDataQuery,
         userSettingsFormData: userSettingsFormData,
         updateUserSettingsDataMutation: updateUserSettingsDataMutation,

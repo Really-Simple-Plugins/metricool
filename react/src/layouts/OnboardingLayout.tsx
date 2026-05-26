@@ -1,14 +1,11 @@
 import { __ } from "@wordpress/i18n";
 import { Alert, Button, Dialog, FlexContainer, Header } from "@/components/shared";
-import { useGlobalContext } from "@/context/GlobalContext.tsx";
+import { useGlobalContext, type MetricoolData } from "@/context/GlobalContext.tsx";
 import { ConnectBrandStep, LoadingStep, OnboardingForm, SignInStep } from "@/components/custom";
 import { useEffect, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
-import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
-import { z } from "zod";
 import { HeadContent } from "@tanstack/react-router";
-import { generateRecaptchaToken } from "@/support/functions/utils.ts";
 import DOMPurify from "dompurify";
+import { useAuthenticationData } from "@/hooks/useAuthenticationData.tsx";
 
 /**
  * The Onboarding Layout.
@@ -18,51 +15,43 @@ import DOMPurify from "dompurify";
  *
  * Contains a {@link Header}
  *
- * Contains a {@link useMutation} to make the sign-up request.
- *
  * Contains a {@link Dialog} to show the onboarding flow.
  *
  * Contains a {@link Dialog} to show the {@link SignInStep}
  *
  */
 export const OnboardingLayout = () => {
-    const { metricool, httpClient, dispatch } = useGlobalContext();
+    const { metricool, dispatch } = useGlobalContext();
     const [signInModalOpen, setSignInModalOpen] = useState<boolean>((metricool.onboarding.mode.forced_login || (metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected)));
     const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
-
     const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
 
+    const beforeSignUpCallback = () => {
+        setActiveOnboardingStep(0);
+        setOnboardingModalOpen(true);
+    };
 
-    const { mutate: onSignUp, error: signUpError, } = useMutation({
-        onMutate: () => {
-            setActiveOnboardingStep(0);
-            setOnboardingModalOpen(true);
-        },
-        mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
-            const token = await generateRecaptchaToken(metricool.google_recaptcha_key, "signup");
+    const onSignUpSuccessCallback = (onboarding: MetricoolData["onboarding"]) => {
+        if (onboarding.state.blog_id_selected === false) {
+            setActiveOnboardingStep(1);
+        } else {
+            dispatch({
+                dispatchType: "setOnboardingState",
+                change: { metricool: { onboarding: { ...onboarding } } }
+            });
+        }
+    };
 
-            return await httpClient.setRoute("onboarding/create_account").setPayload({
-                email: formValues.credentials.email,
-                password: formValues.credentials.password,
-                marketing: formValues.marketing,
-                captcha: token,
-                terms: formValues.terms,
-            }).post();
-        },
-        onSuccess: async (response) => {
-            if (response.data.onboarding.blog_id_selected === false) {
-                setActiveOnboardingStep(1);
-            } else {
-                dispatch({
-                    dispatchType: "setOnboardingState",
-                    change: { metricool: { onboarding: { ...response.data.onboarding } } }
-                });
-            }
-        },
-        onError: (error) => {
-            setOnboardingModalOpen(false);
-            setActiveOnboardingStep(0);
-            console.error(error);
+    const onSignUpErrorCallback = () => {
+        setOnboardingModalOpen(false);
+        setActiveOnboardingStep(0);
+    };
+
+    const { signUpMutation: { mutate: onSignUp, error: signUpError, } } = useAuthenticationData({
+        signUpCallbacks: {
+            beforeSignUpCallback,
+            onSignUpSuccessCallback,
+            onSignUpErrorCallback,
         }
     });
 
@@ -124,7 +113,7 @@ export const OnboardingLayout = () => {
                             <div
                                 dangerouslySetInnerHTML={{
                                     __html: DOMPurify.sanitize(signUpError.message, { ADD_ATTR: ["target"] })
-                            }}
+                                }}
                             />
                         </Alert>
                     )}
@@ -142,7 +131,7 @@ export const OnboardingLayout = () => {
                 {(!metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected) ? (
                     <SignInStep/>
                 ) : (
-                    <ConnectBrandStep setModalOpen={setSignInModalOpen} />
+                    <ConnectBrandStep setModalOpen={setSignInModalOpen}/>
                 )}
             </Dialog>
             <Dialog

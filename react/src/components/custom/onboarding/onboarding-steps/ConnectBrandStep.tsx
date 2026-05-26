@@ -17,10 +17,10 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import DOMPurify from "dompurify";
 import { useAuthenticationData } from "@/hooks/useAuthenticationData";
 import type { Dispatch, SetStateAction } from "react";
+import { useUserData } from "@/hooks/useUserData.tsx";
 
 const brandSchema = OnboardingSchema.shape.brand;
 
@@ -29,14 +29,7 @@ type ConnectBrandStepProps = {
 }
 
 const ConnectBrandStep = ({ setModalOpen }: ConnectBrandStepProps) => {
-    const { httpClient, dispatch, metricool } = useGlobalContext();
-
-    const { data: connectedBrands, isLoading, errorUpdateCount, error, refetch } = useQuery({
-        queryKey: ["connected_brands"],
-        queryFn: () => httpClient.setRoute("connected_brands").get(),
-        staleTime: Infinity,
-        select: (data): z.infer<typeof brandSchema>[] => data.data,
-    });
+    const { metricool } = useGlobalContext();
 
     const {
         handleSubmit,
@@ -49,25 +42,19 @@ const ConnectBrandStep = ({ setModalOpen }: ConnectBrandStepProps) => {
         },
     });
 
-    const { mutate: onSubmit, error: submitError } = useMutation({
-        mutationFn: async (formValues: z.infer<typeof brandSchema>) => {
-            return httpClient.setRoute("onboarding/finish_onboarding").setPayload({
-                blogId: formValues.id,
-            }).post();
-        },
-        onSuccess: (response) => {
-            dispatch({
-                dispatchType: "setOnboardingState",
-                change: { metricool: { onboarding: { ...response.data.onboarding } } }
-            });
-        },
-        onError: (error) => {
-            console.error(error);
+    const {
+        connectedBrandsQuery: {
+            data: connectedBrands,
+            isLoading,
+            errorUpdateCount,
+            error,
+            refetch,
         }
-    });
+    } = useUserData();
 
     const {
-        logoutMutation: { mutate: logoutUser }
+        logoutMutation: { mutate: logoutUser },
+        finishOnboardingMutation: { mutate: onSubmit, error: submitError },
     } = useAuthenticationData({ logoutCallback: () => setModalOpen(false) });
 
     /**
