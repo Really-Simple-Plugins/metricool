@@ -6,6 +6,7 @@ namespace Metricool\Managers;
 
 use Metricool\Bootstrap\App;
 use Metricool\Interfaces\FeatureInterface;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 /**
  * This manager dynamically fetches the features of the plugin. It differs from
@@ -18,6 +19,13 @@ use Metricool\Interfaces\FeatureInterface;
 final class FeatureManager extends AbstractManager
 {
     private const PRO_FEATURE_HANDLE = 'Pro:';
+
+    private EnvironmentConfig $env;
+
+    public function __construct(EnvironmentConfig $env)
+    {
+        $this->env = $env;
+    }
 
     /**
      * @inheritDoc

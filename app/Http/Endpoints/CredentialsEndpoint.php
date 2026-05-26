@@ -49,7 +49,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::EDITABLE,
             'callback' => [$this, 'callback'],
-            'permission_callback' => [$this->metricoolApi, 'hasAuthentication'],
+            'middleware' => ['metricool:auth'],
         ];
     }
 

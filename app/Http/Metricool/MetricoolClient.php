@@ -9,14 +9,25 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
+use InvalidArgumentException;
 use Metricool\Services\OptionsService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Psr\Http\Message\ResponseInterface;
 use RuntimeException;
-use InvalidArgumentException;
 
 class MetricoolClient
 {
+    private const OPTION_USER_ID = 'metricool_user_id';
+    private const OPTION_BLOG_ID = 'metricool_blog_id';
+    private const OPTION_AUTH_TOKEN = 'metricool_auth_token';
+    private const OPTION_REFRESH_TOKEN = 'metricool_refresh_token';
+    private const OPTION_AUTH_TOKEN_EXPIRES = 'metricool_auth_token_expires';
+    private const OPTION_REFRESH_LOCK = 'metricool_refresh_lock';
+
+    private const LOCK_STALE_MS = 15000;
+    private const LOCK_WAIT_SLEEP_MS = 100;
+    private const LOCK_WAIT_MAX_MS = 5000;
+
     private ?Client $client = null;
 
     private EnvironmentConfig $env;
@@ -68,7 +79,7 @@ class MetricoolClient
      */
     public function storeUserId(string $userId): void
     {
-        update_option('metricool_user_id', $userId);
+        update_option(self::OPTION_USER_ID, $userId);
 
         $this->setUserId($userId);
     }
@@ -78,7 +89,7 @@ class MetricoolClient
      */
     public function clearUserId(): void
     {
-        delete_option('metricool_user_id');
+        delete_option(self::OPTION_USER_ID);
 
         $this->setUserId('');
     }
@@ -104,7 +115,7 @@ class MetricoolClient
      */
     public function storeBlogId(string $blogId): void
     {
-        update_option('metricool_blog_id', $blogId);
+        update_option(self::OPTION_BLOG_ID, $blogId);
 
         $this->setBlogId($blogId);
     }
@@ -114,7 +125,7 @@ class MetricoolClient
      */
     public function clearBlogId(): void
     {
-        delete_option('metricool_blog_id');
+        delete_option(self::OPTION_BLOG_ID);
 
         $this->setBlogId('');
     }
@@ -156,7 +167,7 @@ class MetricoolClient
      */
     public function storeUserToken(string $token): void
     {
-        update_option('metricool_auth_token', $token);
+        update_option(self::OPTION_AUTH_TOKEN, $token);
 
         $this->setUserToken($token);
     }
@@ -166,7 +177,7 @@ class MetricoolClient
      */
     public function clearUserToken(): void
     {
-        delete_option('metricool_auth_token');
+        delete_option(self::OPTION_AUTH_TOKEN);
 
         $this->setUserToken('');
     }
@@ -176,7 +187,7 @@ class MetricoolClient
      */
     public function getRefreshToken(): string
     {
-        return get_option('metricool_refresh_token');
+        return get_option(self::OPTION_REFRESH_TOKEN);
     }
 
     /**
@@ -184,7 +195,7 @@ class MetricoolClient
      */
     public function storeRefreshToken(string $refreshToken): void
     {
-        update_option('metricool_refresh_token', $refreshToken);
+        update_option(self::OPTION_REFRESH_TOKEN, $refreshToken);
     }
 
     /**
@@ -192,8 +203,8 @@ class MetricoolClient
      */
     public function clearRefreshToken(): void
     {
-        delete_option('metricool_refresh_token');
-        delete_option('metricool_auth_token_expires');
+        delete_option(self::OPTION_REFRESH_TOKEN);
+        delete_option(self::OPTION_AUTH_TOKEN_EXPIRES);
     }
 
     /**
@@ -201,7 +212,15 @@ class MetricoolClient
      */
     public function getTokenExpires(): int
     {
-        return (int) get_option('metricool_auth_token_expires') ?: 0;
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        return (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+                self::OPTION_AUTH_TOKEN_EXPIRES
+            )
+        );
     }
 
     /**
@@ -228,7 +247,7 @@ class MetricoolClient
     {
         $expiresIn = Carbon::now()->addSeconds($expiresIn)->timestamp;
 
-        update_option('metricool_auth_token_expires', $expiresIn);
+        update_option(self::OPTION_AUTH_TOKEN_EXPIRES, $expiresIn);
     }
 
     /**
@@ -443,9 +462,102 @@ class MetricoolClient
 
     /**
      * Refresh the authentication token using the refresh token.
+     *
+     * Uses a MySQL lock to prevent concurrent processes from both attempting
+     * a refresh. The process that cannot acquire the lock waits in a loop
+     * until the token is refreshed by the lock holder.
+     *
      * @throws RuntimeException the user will be unauthenticated if the refresh token request fails.
      */
     public function refreshAuthToken(): void
+    {
+        $lockAcquired = $this->lockTokenRefresh();
+        if ($lockAcquired === false) {
+            $this->pollForNewUserToken();
+            return;
+        }
+
+        $this->performTokenRefresh();
+        $this->releaseRefreshLock();
+    }
+
+    /**
+     * Acquire a lock via wp_options to serialize token refresh attempts.
+     * Uses INSERT IGNORE for atomicity: only one process can create the row.
+     */
+    private function lockTokenRefresh(): bool
+    {
+        global $wpdb;
+
+        // Remove stale locks that might be left behind if a process crashes during refresh. We consider locks older than LOCK_STALE_MS as stale.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $wpdb->query(
+            $wpdb->prepare(
+                "DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value < %d",
+                self::OPTION_REFRESH_LOCK,
+                time() - (int) (self::LOCK_STALE_MS / 1000)
+            )
+        );
+
+        // Attempt to insert the lock row. INSERT IGNORE ensures only one process succeeds when racing concurrently.
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $result = $wpdb->query(
+            $wpdb->prepare(
+                "INSERT IGNORE INTO {$wpdb->options} (option_name, option_value, autoload) VALUES (%s, %d, 'no')",
+                self::OPTION_REFRESH_LOCK,
+                time()
+            )
+        );
+
+        return ($result !== false && $result > 0);
+    }
+
+    /**
+     * Wait for another process to refresh the token by polling if the token is expired
+     * @throws RuntimeException if the token is still expired after waiting for the maximum time.
+     */
+    private function pollForNewUserToken(): void
+    {
+        $maxWait = self::LOCK_WAIT_MAX_MS;
+        $sleepDuration = self::LOCK_WAIT_SLEEP_MS;
+        $waited = 0;
+
+        while ($waited < $maxWait) {
+            if ($this->isTokenExpired() === false) {
+                $this->setUserToken($this->fetchUserToken());
+                return;
+            }
+
+            usleep($sleepDuration * 1000);
+            $waited += $sleepDuration;
+        }
+
+        throw new \RuntimeException('Timed out waiting for token refresh. Please try again.');
+    }
+
+    /**
+     * Read the access token directly from the database, bypassing the
+     * WordPress object cache.
+     */
+    private function fetchUserToken(): string
+    {
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        return (string) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+                self::OPTION_AUTH_TOKEN
+            )
+        );
+    }
+
+    /**
+     * Perform the actual token refresh request against the Metricool OAuth endpoint.
+     *
+     * @throws RuntimeException when the refresh request fails or the response is invalid.
+     */
+    private function performTokenRefresh(): void
     {
         $headers = [
             'Accept' => 'application/json',
@@ -466,10 +578,9 @@ class MetricoolClient
                 $options
             );
         } catch (GuzzleException $e) {
-            // If the refresh token request fails, we need to log the user out.
             $this->logout();
             // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a Throwable passed as $previous, not output.
-            throw new RuntimeException('Failed to refresh authentication token. Please log in again.', 500, $e);
+            throw new RuntimeException('Failed to refresh authentication token. Please log in again.', 401, $e);
         }
 
         $data = $this->parseResponse($response);
@@ -481,6 +592,14 @@ class MetricoolClient
         $this->storeUserToken($data['access_token']);
         $this->storeRefreshToken($data['refresh_token']);
         $this->storeTokenExpires($data['expires_in']);
+    }
+
+    /**
+     * Release the wp_options lock after a token refresh.
+     */
+    private function releaseRefreshLock(): void
+    {
+        delete_option(self::OPTION_REFRESH_LOCK);
     }
 
     /**

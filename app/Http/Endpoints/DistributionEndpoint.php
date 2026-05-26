@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Support\Helpers\Collection;
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Endpoints\Responses\DistributionResponse;
+use Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse;
+use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Http\Metricool\DTOs\DistributionDTO;
-use Metricool\Http\Endpoints\Responses\DistributionResponse;
-use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
-use Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse;
+use Metricool\Support\Helpers\Collection;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class DistributionEndpoint implements SingleEndpointInterface
 {
@@ -42,12 +42,11 @@ class DistributionEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
+     * @inheritDoc
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication() && $this->metricoolApi->hasBlogId();
+        return $this->adminAccessAllowed();
     }
 
     /**
@@ -58,6 +57,7 @@ class DistributionEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
 
