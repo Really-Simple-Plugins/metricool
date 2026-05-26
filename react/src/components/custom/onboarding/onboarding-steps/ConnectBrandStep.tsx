@@ -65,7 +65,20 @@ const ConnectBrandStep = () => {
         logoutMutation: { mutate: logoutUser }
     } = useAuthenticationData();
 
-
+    /**
+     * Because we use `dangerouslySetInnerHTML` for the `Alert` content, we
+     * cannot directly pass an `onclick` to the `<a>` tag defined in the `sprintf`.
+     * It simply has no reference to any functions defined in React code.
+     * Therefor we set an onClick on its `<div>` parent, which only calls the
+     * `logoutUser` function if the click happened while the mouse was over the
+     * `<a>` tag.
+     */
+    const logoutUserWrapper = (event: React.MouseEvent<HTMLDivElement>) => {
+        //casting to HTMLElement to keep TS happy
+        if ((event.target as HTMLElement).tagName === "A") {
+            logoutUser();
+        }
+    };
 
     return (
         <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center"}>
@@ -84,7 +97,7 @@ const ConnectBrandStep = () => {
                     className={"text-left"}
                 >
                     <div
-                        onClick={() => doLogout()}
+                        onClick={logoutUserWrapper}
                         dangerouslySetInnerHTML={{
                             __html: DOMPurify.sanitize(
                                 sprintf(
@@ -93,7 +106,7 @@ const ConnectBrandStep = () => {
                                         "Don’t see the brand you’re looking for? %1$sGo to Metricool.com%2$s and make sure you’re logged into the correct account.",
                                         "metricool",
                                     ),
-                                    `<a onclick="${() => doLogout}" class="underline" href=${metricool.trusted_urls.base_url} target="_blank" rel="noopener noreferrer">`,
+                                    `<a class="underline" href=${metricool.trusted_urls.base_url} target="_blank" rel="noopener noreferrer">`,
                                     `</a>`
                                 ), { ADD_ATTR: ["target"] }
                             )
