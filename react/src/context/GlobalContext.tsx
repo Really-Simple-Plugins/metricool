@@ -19,7 +19,7 @@ export interface GlobalContext {
     metricoolDynamicUrl: GlobalState["metricoolDynamicUrl"],
 }
 
-type MetricoolData = {
+export type MetricoolData = {
     nonce: string,
     x_wp_nonce: string,
     ajax_url: string,
