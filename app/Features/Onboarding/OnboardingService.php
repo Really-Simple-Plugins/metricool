@@ -29,6 +29,7 @@ class OnboardingService
      * set the onboarding as completed.
      *
      * @throws BrandAccessDeniedException
+     * @throws GuzzleException
      */
     public function finalizeOnboarding(?string $blogId = null): bool
     {
@@ -48,8 +49,7 @@ class OnboardingService
         // Update the metricool user data from the API
         $this->metricoolUser->update();
 
-        // todo: REMOVED EXCEPTION WHEN THIS BRAND RETURNS 403 FOR TESTING -> We should show an error that the tracker couldn't be loaded, or add the exception back.
-        $this->maybeActivateTrackingHash($this->api->getBlogId());
+        $this->activateTrackingHash($this->api->getBlogId());
 
         // When all the necessary information is retrieved, set the onboarding as completed
         return $this->dashboard->setOnboardingCompleted();
@@ -60,6 +60,7 @@ class OnboardingService
      * the necessary onboarding information
      *
      * @throws BrandAccessDeniedException when the current user has no access to the brand
+     * @throws GuzzleException
      */
     private function attemptToFindBlogIdFromApi(): void
     {
@@ -80,23 +81,28 @@ class OnboardingService
 
     /**
      * Store the necessary onboarding information from the Metricool brand
+     * @throws GuzzleException
      */
     private function connectBlogId(string $blogId): void
     {
+        try {
+            $brand = $this->api->brands()->get('123');
+        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            if ($e->getResponse()->getStatusCode() === 403) {
+                throw new BrandAccessDeniedException();
+            }
+            throw $e;
+        }
+
         $this->api->storeBlogId($blogId);
+        $this->activateTrackingHash($brand);
     }
 
     /**
-     * Activate the tracking hash for the given blog ID and store it in the database
+     * Activate the tracking hash for the given brand and store it in the database
      */
-    private function maybeActivateTrackingHash(string $blogId): void
+    private function activateTrackingHash(array $brand): void
     {
-        try {
-            $brand = $this->api->brands()->get($blogId);
-        } catch (GuzzleException $e) {
-            return;
-        }
-
         $trackingId = isset($brand['hash']) ? (string) $brand['hash'] : null;
 
         if ($trackingId !== null) {

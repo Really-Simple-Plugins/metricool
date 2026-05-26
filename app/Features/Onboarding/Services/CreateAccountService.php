@@ -38,7 +38,7 @@ class CreateAccountService
 
     /**
      * Creates a new Metricool account and authenticate the MetricoolClient.
-     * @throws CreateAccountException
+     * @throws CreateAccountException|GuzzleException
      */
     public function createAccount(string $captcha, string $email, string $password, bool $newsletters): bool
     {
