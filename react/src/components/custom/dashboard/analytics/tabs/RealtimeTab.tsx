@@ -1,20 +1,22 @@
-import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 import { Button, FlexContainer, Icon, LineChart, LoadingAndErrorState } from "@/components/shared";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
+import { useAnalyticsData } from "@/hooks/useAnalyticsData.tsx";
 
 const RealtimeTab = () => {
-    const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();
+    const { metricoolDynamicUrl, metricool } = useGlobalContext();
     const lineChartXAxisDataKey = "label";
 
-    const { data: realTimeData, isLoading, error, refetch, errorUpdateCount } = useQuery({
-        queryKey: ["analytics", "realtime"],
-        queryFn: () => httpClient.setRoute("realtime").get(),
-        staleTime: 1000 * 60, // 1 minute
-        refetchInterval: 1000 * 60, // 1 minute
-        select: (data) => data.data,
-    });
+    const {
+        realtimeDataQuery: {
+            data: realTimeData,
+            isLoading,
+            error,
+            refetch,
+            errorUpdateCount
+        }
+    } = useAnalyticsData({ tab: "realtime" });
 
     const chartConfig = {
         pageViews: {

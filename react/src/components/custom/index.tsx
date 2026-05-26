@@ -1,7 +1,7 @@
 export { AnalyticsTab, type PeriodFilterOption } from "@/components/custom/dashboard/analytics/tabs/AnalyticsTab.tsx";
-export { CountriesTab } from "@/components/custom/dashboard/analytics/tabs/CountriesTab.tsx";
+export { CountriesTab, type CountriesDataTableColumns } from "@/components/custom/dashboard/analytics/tabs/CountriesTab.tsx";
 export { RealtimeTab } from "@/components/custom/dashboard/analytics/tabs/RealtimeTab.tsx";
-export { TrafficTab } from "@/components/custom/dashboard/analytics/tabs/TrafficTab.tsx";
+export { TrafficTab, type TrafficDataTableColumns } from "@/components/custom/dashboard/analytics/tabs/TrafficTab.tsx";
 export { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 export { WebsiteAnalytics } from "@/components/custom/dashboard/analytics/WebsiteAnalytics.tsx";
 export { ConnectedAccounts } from "@/components/custom/dashboard/ConnectedAccounts.tsx";
@@ -13,6 +13,6 @@ export { LoadingStep } from "@/components/custom/onboarding/onboarding-steps/Loa
 export { OnboardingForm } from "@/components/custom/onboarding/OnboardingForm.tsx";
 export { AccountSettings } from "@/components/custom/settings/AccountSettings.tsx";
 export { ConnectionsSettings } from "@/components/custom/settings/ConnectionsSettings.tsx";
-export { NotificationsSidebar, type Notice } from "@/components/custom/settings/NotificationsSidebar.tsx";
+export { NotificationsSidebar } from "@/components/custom/settings/NotificationsSidebar.tsx";
 export { SettingsMenu } from "@/components/custom/settings/SettingsMenu.tsx";
 export { SignInStep } from "@/components/custom/onboarding/sign-in-steps/SignInStep.tsx";

@@ -8,21 +8,13 @@ import {
     LoadingAndErrorState,
     Select,
     SelectOption,
-    showToast,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
-import { queryClient } from "@/main.tsx";
 import { cn } from "@/support/functions/utils";
-
-type MetricData = {
-    label: string,
-    totalAmount: number,
-    trend: "stable" | "up" | "down",
-}
+import { useAnalyticsData } from "@/hooks/useAnalyticsData.tsx";
 
 export type PeriodFilterOption = {
     label: string,
@@ -30,15 +22,6 @@ export type PeriodFilterOption = {
     isUpsell: boolean,
     xAxisInterval: number,
 }
-
-type TimelineData = {
-    date: string,
-    pageViews: number,
-    comments: number,
-    posts: number,
-    visits: number,
-    visitors: number,
-}[]
 
 const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activePeriodFilterInContext: PeriodFilterOption | undefined): PeriodFilterOption => {
     if (activePeriodFilterInContext) {
@@ -49,7 +32,7 @@ const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activeP
 };
 
 const AnalyticsTab = () => {
-    const { httpClient, metricool, dispatch, dashboardSettings, metricoolDynamicUrl } = useGlobalContext();
+    const { metricool, dispatch, dashboardSettings, metricoolDynamicUrl } = useGlobalContext();
 
     const periodFilterOptions: Record<string, PeriodFilterOption> = {
         lastWeek: {
@@ -133,13 +116,21 @@ const AnalyticsTab = () => {
     const lineChartXAxisDataKey = "label";
     const [xAxisInterval, setXAxisInterval] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.activePeriodFilter).xAxisInterval);
 
-    const { data: analyticsData, isLoading, error, isSuccess: hasAnalyticsData, refetch, errorUpdateCount } = useQuery({
-        queryKey: ["analytics"],
-        queryFn: () => httpClient.setRoute("analytics").setFilters({ period: periodFilter.option }).get(),
-        staleTime: 1000 * 60 * 60 * 12, // 12 hours
-        gcTime: 1000 * 60 * 60 * 12, // 12 hours
-        select: (data): { totals: Record<string, MetricData>, timelineData: TimelineData } => data.data,
-    });
+    const adjustXAxisInterval = (timelineDataLength: number) => {
+        if (periodFilter === periodFilterOptions.currentMonth) {
+            const maxPossibleDataPointsOnXAxis = 14;
+            const isCurrentMonthTooLongForXAxis = (timelineDataLength >= maxPossibleDataPointsOnXAxis);
+            let appropriateXAxisIntervalForCurrentMonth = periodFilterOptions.currentMonth.xAxisInterval;
+
+            if (isCurrentMonthTooLongForXAxis) {
+                appropriateXAxisIntervalForCurrentMonth = periodFilterOptions.previousMonth.xAxisInterval;
+            }
+
+            setXAxisInterval(appropriateXAxisIntervalForCurrentMonth);
+        } else {
+            setXAxisInterval(periodFilter.xAxisInterval);
+        }
+    };
 
     const toggleMetric = (dataKey: string) => {
         setChartConfig((prevState) => ({
@@ -148,32 +139,19 @@ const AnalyticsTab = () => {
         }));
     };
 
-    const { mutate: updateChartData, isPending } = useMutation({
-        mutationFn: async ({ period }: {
-            period: string,
-        }) => {
-            return httpClient.setRoute("analytics").setFilters({ period: period }).get();
+    const {
+        analyticsDataQuery: {
+            data: analyticsData,
+            isLoading,
+            error,
+            isSuccess: hasAnalyticsData,
+            refetch,
+            errorUpdateCount,
+            isRefetching,
         },
-        onSuccess: (response) => {
-            queryClient.setQueryData(["analytics"], { ...response });
-            if (periodFilter === periodFilterOptions.currentMonth) {
-                const maxPossibleDataPointsOnXAxis = 14;
-                const isCurrentMonthTooLongForXAxis = (response.data.timelineData.length >= maxPossibleDataPointsOnXAxis);
-                let appropriateXAxisIntervalForCurrentMonth = periodFilterOptions.currentMonth.xAxisInterval;
-
-                if (isCurrentMonthTooLongForXAxis) {
-                    appropriateXAxisIntervalForCurrentMonth = periodFilterOptions.previousMonth.xAxisInterval;
-                }
-
-                setXAxisInterval(appropriateXAxisIntervalForCurrentMonth);
-            } else {
-                setXAxisInterval(periodFilter.xAxisInterval);
-            }
-        },
-        onError: (error) => {
-            showToast.error(__("There was an fetching the chart data", "metricool"));
-            console.error(error.message);
-        }
+    } = useAnalyticsData({
+        tab: "analytics",
+        selectedAnalyticsPeriod: periodFilter.option,
     });
 
     return (
@@ -204,7 +182,7 @@ const AnalyticsTab = () => {
                         ))}
                     </FlexContainer>
                     <hr className={"-mx-2"}/>
-                    {isPending && (
+                    {isRefetching && (
                         <div className={"absolute w-full h-full bg-white opacity-45"}>
                             <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
                                 <Icon icon={"loading"} className={"size-5"}/>
@@ -212,7 +190,7 @@ const AnalyticsTab = () => {
                         </div>
                     )}
                     <LineChart
-                        className={cn(isPending && "opacity-45")}
+                        className={cn(isRefetching && "opacity-45")}
                         chartConfig={chartConfig}
                         chartSettings={{
                             xAxisKey: lineChartXAxisDataKey,
@@ -230,7 +208,10 @@ const AnalyticsTab = () => {
                         <>
                             <Select
                                 defaultValue={periodFilter.option}
-                                icon={!metricool.account?.is_premium ? { icon: "upsell", className: "bg-upsell size-2.5 p-0.5 text-black rounded-full" } : undefined}
+                                icon={!metricool.account?.is_premium ? {
+                                    icon: "upsell",
+                                    className: "bg-upsell size-2.5 p-0.5 text-black rounded-full"
+                                } : undefined}
                                 inputSize={"sm"}
                                 className={"border-neutral-200 font-semibold !text-black min-w-36 max-w-36 flex-row-reverse "}
                                 onValueChange={(value) => {
@@ -240,7 +221,7 @@ const AnalyticsTab = () => {
                                         dispatchType: "setDashboardSetting",
                                         change: { dashboardSettings: { activePeriodFilter: selectedPeriodFilter } }
                                     });
-                                    updateChartData({ period: value });
+                                    adjustXAxisInterval(analyticsData.timelineData.length);
                                 }}
                                 placeholder={periodFilter.label}
                             >

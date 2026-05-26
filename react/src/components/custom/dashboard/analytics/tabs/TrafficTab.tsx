@@ -9,36 +9,40 @@ import {
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import { useQuery } from "@tanstack/react-query";
+import { useAnalyticsData } from "@/hooks/useAnalyticsData.tsx";
 
-type DataTableColumns = { url: string, pageViews: number, percentage: number };
+type TrafficDataTableColumns = { url: string, pageViews: number, percentage: number };
 
 const columns = [
     {
         accessorKey: "url",
-        header: ({ column }: { column: Column<DataTableColumns> }) => (
+        header: ({ column }: { column: Column<TrafficDataTableColumns> }) => (
             <DataTableColumnHeader column={column} title={__("URL", "metricool")}/>),
     },
     {
         accessorKey: "pageViews",
-        header: ({ column }: { column: Column<DataTableColumns> }) => (
+        header: ({ column }: { column: Column<TrafficDataTableColumns> }) => (
             <DataTableColumnHeader column={column} title={__("Page Views", "metricool")}/>),
     },
     {
         accessorKey: "percentage",
-        header: ({ column }: { column: Column<DataTableColumns> }) => (
+        header: ({ column }: { column: Column<TrafficDataTableColumns> }) => (
             <DataTableColumnHeader column={column} title={__("Percent", "metricool")}/>),
     },
 ];
 
 const TrafficTab = () => {
-    const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();
-    const { data: trafficData, isLoading, error, refetch, errorUpdateCount } = useQuery({
-        queryKey: ["analytics", "traffic"],
-        queryFn: () => httpClient.setRoute("distribution/referers").get(),
-        staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): { tableData: DataTableColumns[] } => data.data,
-    });
+    const { metricoolDynamicUrl, metricool } = useGlobalContext();
+
+    const {
+        trafficDataQuery: {
+            data: trafficData,
+            isLoading,
+            error,
+            refetch,
+            errorUpdateCount
+        }
+    } = useAnalyticsData({ tab: "traffic" });
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
@@ -74,4 +78,4 @@ const TrafficTab = () => {
     );
 };
 
-export { TrafficTab };
+export { TrafficTab, type TrafficDataTableColumns };
