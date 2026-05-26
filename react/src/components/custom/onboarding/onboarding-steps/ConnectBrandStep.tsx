@@ -9,6 +9,7 @@ import {
     LoadingAndErrorState,
     Select,
     SelectOption,
+    showToast,
 } from "@/components/shared";
 import { __, sprintf } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -69,6 +70,7 @@ const ConnectBrandStep = () => {
         },
         onError: (error) => {
             console.error(error);
+            showToast.error(error.message);
         }
     });
 
