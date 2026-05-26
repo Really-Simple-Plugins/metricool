@@ -16,7 +16,7 @@ class IsWordPressAdminRequest implements MiddlewareInterface
 
     public function handle(\WP_REST_Request $request): ?\WP_REST_Response
     {
-        if (false === is_admin()) {
+        if (!is_admin()) {
             return $this->sendHttpErrorResponse(
                 __('Unauthorized. Please log in into the WordPress admin.', 'metricool'),
                 null,

@@ -24,9 +24,9 @@ class IsMetricoolAuthenticated implements MiddlewareInterface
 
     public function handle(\WP_REST_Request $request): ?\WP_REST_Response
     {
-        if (false === $this->client->hasAuthentication()) {
+        if (!$this->client->hasAuthentication()) {
             return $this->sendHttpErrorResponse(
-                __('Unauthorized. Please log in into the Metricool Plugin.', 'metricool'),
+                __('Unauthorized. Please log-in into the Metricool plugin.', 'metricool'),
                 null,
                 401
             );
