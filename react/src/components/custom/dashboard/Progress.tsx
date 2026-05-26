@@ -3,7 +3,6 @@ import {
     BlockHeader,
     FlexContainer,
     LoadingAndErrorState,
-    showToast,
     TabNavigation,
     Task,
     type TaskProps,
@@ -11,16 +10,16 @@ import {
 import { __, _n, sprintf } from "@wordpress/i18n";
 import { useState } from "react";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useTaskData } from "@/hooks/useTaskData";
+import { useConnectedAccountsData } from "@/hooks/useConnectedAccountsData.tsx";
 // import { queryClient } from "@/main.tsx";
 
 /**
  * The Progress block used in {@link DashboardLayout}.
  *
- * Contains a {@link useQuery} which fetches tasks, sorts and filters them based
- * on status and calculates the completionPercentage.
- *
- * Contains a {@link useMutation} which dismisses a task based on ID.
+ * Retrieves all data from {@link useTaskData}, which gets passed the `isSuccess`
+ * flag from {@link useConnectedAccountsData}'s `connectedAccountsQuery` to use
+ * as the `enabled` option on `taskDataQuery`.
  *
  * Contains the logic (state, array and callback) for the tabs
  * (All Tasks/Remaining Tasks), rendering the {@link TabNavigation} through
@@ -29,53 +28,17 @@ import { useMutation, useQuery } from "@tanstack/react-query";
  * Displays everything in a {@link Block} with a fixed height (500px)
  */
 const Progress = () => {
-    const { httpClient, metricool, dispatch, dashboardSettings } = useGlobalContext();
-    // The 'enabled' option ensures the connected accounts call, which updates the
-    // first_connection task in the database if a connection is detected, will
-    // always finish first before tasks are actually fetched so users receive
-    // accurate information on first page load
-    const { data: taskData, isLoading, error, refetch, errorUpdateCount } = useQuery({
-        // enabled: queryClient.getQueryData(["connected", "accounts"]) !== undefined,
-        queryKey: ["tasks"],
-        queryFn: () => httpClient.setRoute("get_tasks").get(),
-        staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): {
-            tasks: TaskProps[],
-            remainingTasks: TaskProps[],
-            completedTasks: TaskProps[],
-            completionPercentage: number
-        } => {
-            const allTasks = data.data.sort((a: TaskProps, b: TaskProps) => a.priority - b.priority);
-            const remainingTasks = allTasks.filter((task: TaskProps) => !(task.status === "completed" || task.status === "dismissed"));
-            const completedTasks = allTasks.filter(
-                (task: TaskProps) => task.status === "dismissed" || task.status === "completed",
-            );
-            const completionPercentage = Math.round((completedTasks.length / allTasks.length) * 100);
-            return {
-                tasks: allTasks,
-                remainingTasks: remainingTasks,
-                completedTasks: completedTasks,
-                completionPercentage: completionPercentage,
-            };
-        },
-    });
+    const { metricool, dispatch, dashboardSettings } = useGlobalContext();
 
-    const { mutate: dismissTask } = useMutation({
-        mutationFn: async ({ taskId }: {
-            taskId: string,
-        }) => {
-            return httpClient.setRoute("dismiss_task").setPayload({
-                "taskId": taskId,
-            }).post();
-        },
-        onSuccess: async () => {
-            await refetch();
-        },
-        onError: (error) => {
-            showToast.error(__("There was an error dismissing your task", "metricool"));
-            console.error(error.message);
-        }
-    });
+    const {
+        connectedAccountsQuery: { isSuccess: connectedAccountsLoaded }
+    } = useConnectedAccountsData();
+
+    const {
+        taskDataQuery: { data: taskData, isLoading, error, refetch, errorUpdateCount },
+        dismissTaskMutation: { mutate: dismissTask },
+    } = useTaskData({ hasConnectedAccountsDataLoaded: connectedAccountsLoaded });
+
 
     // This state saves the activeTab's index in the tabs array.
     // Initiated as 1 for the Remaining Tasks.
