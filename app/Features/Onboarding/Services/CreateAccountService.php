@@ -19,7 +19,6 @@ class CreateAccountService
     private OAuthService $oauth;
     private DashboardService $dashboard;
 
-
     public function __construct(
         RspalApiClient $rspal,
         MetricoolApi $api,
@@ -38,14 +37,14 @@ class CreateAccountService
 
     /**
      * Creates a new Metricool account and authenticate the MetricoolClient.
-     * @throws CreateAccountException|GuzzleException
+     * @throws CreateAccountException
      */
     public function createAccount(string $captcha, string $email, string $password, bool $newsletters): bool
     {
         // translators: %s is a url to the support page
         $globalError = sprintf(
             __('Something went wrong. Please try again or <a href="%s" target="_blank">leave a support message</a>.', 'metricool'),
-            $this->env->getUrl('support_url')
+            $this->env->get('frontend.trusted_urls.new_support_ticket')
         );
 
         // First, check if the password is valid
@@ -62,24 +61,24 @@ class CreateAccountService
                 'RSPAL-RecaptchaV3Token' => $captcha
             ]);
         } catch (GuzzleException $e) {
-            throw new CreateAccountException(esc_html($globalError), esc_html($e->getMessage()), 500);
+            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
         }
 
         // A 400 response means e-mail exists or the password is invalid
         if ($signupResponse->getStatusCode() == 400) {
-            throw new CreateAccountException(esc_html($globalError), 'Email or password error', 422);
+            throw new CreateAccountException(wp_kses_post($globalError), 'Email or password error', 422);
         }
 
         // Check if the response contains the required fields
         if (empty($signupResponse->data->accessToken) || empty($signupResponse->data->refreshToken)) {
-            throw new CreateAccountException(esc_html($globalError), 'Signup response is missing required fields', 500);
+            throw new CreateAccountException(wp_kses_post($globalError), 'Signup response is missing required fields', 500);
         }
 
         // Parse the user ID from the access token
         $userId = $this->oauth->parseUserIdFromAccessToken($signupResponse->data->accessToken);
 
         if (empty($userId)) {
-            throw new CreateAccountException(esc_html($globalError), 'Failed to parse user ID from access token', 500);
+            throw new CreateAccountException(wp_kses_post($globalError), 'Failed to parse user ID from access token', 500);
         }
 
         // Authenticate the Metricool API Client
@@ -96,12 +95,16 @@ class CreateAccountService
         } catch (GuzzleException $e) {
             $this->api->logout();
 
-            throw new CreateAccountException(esc_html($globalError), esc_html($e->getMessage()), 500);
+            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
         }
 
         // Attempt to automatically set the blog information, complete the onboarding process on success
-        if ($this->onboarding->finalizeOnboarding()) {
-            $this->dashboard->setShowWelcomeScreen();
+        try {
+            if ($this->onboarding->finalizeOnboarding()) {
+                $this->dashboard->setShowWelcomeScreen();
+            }
+        } catch (GuzzleException $e) {
+            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
         }
 
         return true;
