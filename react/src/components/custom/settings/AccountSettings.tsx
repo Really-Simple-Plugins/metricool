@@ -20,6 +20,7 @@ import { useBlocker } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { queryClient } from "@/main.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
+import { useAuthenticationData } from "@/hooks/useAuthenticationData.tsx";
 
 const userSettingsFormSchema = z.object({
     sendToAlternativeEmail: z.boolean(),
@@ -111,17 +112,9 @@ const AccountSettings = () => {
         }
     });
 
-    const { mutate: doLogout } = useMutation({
-        mutationFn: async () => {
-            return httpClient.setRoute("logout").post();
-        },
-        onSuccess: () => {
-            window.location.href = metricool.dashboard_url;
-        },
-        onError: (error) => {
-            console.error(error);
-        }
-    });
+    const {
+        logoutMutation: { mutate: logoutUser }
+    } = useAuthenticationData();
 
     useBlocker({
         shouldBlockFn: () => {
@@ -144,9 +137,9 @@ const AccountSettings = () => {
             <FlexContainer direction={"column"}>
                 <Block className={"rounded-md"}>
                     <BlockHeader title={__("Account settings", "metricool")}/>
-                    <SignOut onSignOut={() => doLogout()} currentUserEmail={metricool.account?.user.mail ?? ""}/>
+                    <SignOut onSignOut={() => logoutUser()} currentUserEmail={metricool.account?.user.mail ?? ""}/>
                     <Button variant={"primary-ghost"} className={"font-bold"} link={metricoolDynamicUrl.withPath("user-settings/access")}>
-                        {__("Change Password","metricool")}
+                        {__("Change Password", "metricool")}
                         <Icon icon={"external-link"}/>
                     </Button>
                 </Block>

@@ -9,7 +9,6 @@ import {
     LoadingAndErrorState,
     Select,
     SelectOption,
-    showToast,
 } from "@/components/shared";
 import { __, sprintf } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -20,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import DOMPurify from "dompurify";
+import { useAuthenticationData } from "@/hooks/useAuthenticationData";
 
 const brandSchema = OnboardingSchema.shape.brand;
 
@@ -61,36 +61,11 @@ const ConnectBrandStep = () => {
         }
     });
 
-    const { mutate: doLogout } = useMutation({
-        mutationFn: async () => {
-            return httpClient.setRoute("logout").post();
-        },
-        onSuccess: () => {
-            // window.location.href = metricool.dashboard_url;
-            dispatch({
-                dispatchType: "setOnboardingState",
-                change: {
-                    metricool: {
-                        onboarding: {
-                            state: {
-                                completed: true,
-                                authenticated: false,
-                                blog_id_selected: false
-                            },
-                            mode: {
-                                show_welcome_screen: false,
-                                forced_login: false,
-                            }
-                        }
-                    }
-                }
-            });
-        },
-        onError: (error) => {
-            console.error(error);
-            showToast.error(error.message);
-        }
-    });
+    const {
+        logoutMutation: { mutate: logoutUser }
+    } = useAuthenticationData();
+
+
 
     return (
         <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center"}>
@@ -165,7 +140,7 @@ const ConnectBrandStep = () => {
                     <Button
                         variant={"black-ghost"}
                         className={"border-0"}
-                        onClick={() => doLogout()}
+                        onClick={() => logoutUser()}
                     >
                         {__("Cancel", "metricool")}
                     </Button>
