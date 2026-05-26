@@ -1,35 +1,13 @@
-import {
-    Block,
-    BlockHeader,
-    Button,
-    FlexContainer,
-    Icon,
-    type IconProps,
-    LoadingAndErrorState,
-} from "@/components/shared";
+import { Block, BlockHeader, Button, FlexContainer, Icon, LoadingAndErrorState, } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
-import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-
-export type ConnectedAccount = {
-    label: string,
-    icon: IconProps["icon"],
-    connectedClasses: string,
-    unconnectedClasses: string,
-    upsell: boolean,
-    userName?: string,
-    link: string,
-    metricoolWebsitePath: string,
-    isConnected: boolean,
-};
+import { useConnectedAccountsData } from "@/hooks/useConnectedAccountsData.tsx";
 
 /**
  * The ConnectedAccounts block used in {@link DashboardLayout}.
  *
- * Contains a {@link useQuery} which fetches all connected networks, which it
- * then 'filters' using `select` by returning an array of {@link ConnectedAccount}
- * objects with only the 4 accounts we need to show on the dashboard.
+ * Retrieves all data from {@link useConnectedAccountsData}.
  *
  * Maps over this array to render a {@link AccountTile} for each of the selected
  * networks.
@@ -37,57 +15,17 @@ export type ConnectedAccount = {
  * Displays everything in a {@link Block} with a fixed height (14.5rem)
  */
 const ConnectedAccounts = () => {
-    const { httpClient, metricoolDynamicUrl, metricool } = useGlobalContext();
+    const { metricoolDynamicUrl, metricool } = useGlobalContext();
 
-    const { data: connectedAccountsData, isLoading, error, refetch, errorUpdateCount } = useQuery({
-        queryKey: ["connected", "accounts"],
-        queryFn: () => httpClient.setRoute("connected_networks").get(),
-        staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (response): ConnectedAccount[] => {
-            return ([
-                {
-                    label: "Web",
-                    icon: "web",
-                    connectedClasses: "text-web",
-                    unconnectedClasses: "bg-web border-web hover:bg-transparent hover:**:data-content:text-web",
-                    upsell: false,
-                    metricoolWebsitePath: "evolution/web",
-                    isConnected: !!response.data.web?.url,
-                    ...(response.data.web && response.data.web.url && { userName: response.data.web.url }),
-                },
-                {
-                    label: "Twitter / X",
-                    icon: "twitter",
-                    connectedClasses: "text-x",
-                    unconnectedClasses: "bg-x border-x hover:bg-transparent hover:**:data-content:text-x",
-                    upsell: !metricool.account?.is_premium,
-                    metricoolWebsitePath: "evolution/twitter",
-                    isConnected: !!response.data.twitter?.username,
-                    ...(response.data.twitter && { userName: response.data.twitter.username }),
-                },
-                {
-                    label: "YouTube",
-                    icon: "youtube",
-                    connectedClasses: "text-youtube",
-                    unconnectedClasses: "bg-youtube border-youtube hover:bg-transparent hover:**:data-content:text-youtube",
-                    upsell: false,
-                    metricoolWebsitePath: "evolution/youtube",
-                    isConnected: !!response.data.youtube?.username,
-                    ...(response.data.youtube && { userName: response.data.youtube.username }),
-                },
-                {
-                    label: "LinkedIn",
-                    icon: "linkedIn",
-                    connectedClasses: "text-linkedin",
-                    unconnectedClasses: "bg-linkedin border-linkedin hover:bg-transparent hover:**:data-content:text-linkedin",
-                    upsell: !metricool.account?.is_premium,
-                    metricoolWebsitePath: "/evolution/linkedin",
-                    isConnected: !!response.data.linkedin?.username,
-                    ...(response.data.linkedin && { userName: response.data.linkedin.username }),
-                },
-            ]);
+    const {
+        connectedAccountsQuery: {
+            data: connectedAccountsData,
+            isLoading,
+            error,
+            refetch,
+            errorUpdateCount
         }
-    });
+    } = useConnectedAccountsData({ useLimitedDashboardList: true });
 
     return (
         <Block className={"xl:min-h-58 xl:max-h-58"}>
