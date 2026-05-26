@@ -6,48 +6,15 @@ import {
     Notification
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
-import { useQuery } from "@tanstack/react-query";
-import { useLocation } from "@tanstack/react-router";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-
-export type Notice = {
-    action: {
-        text: string,
-        link: string,
-        target: string,
-    },
-    active: boolean,
-    id: string,
-    premium: boolean,
-    route: string,
-    text: string,
-    title: string,
-    visible: boolean,
-    type: "info" | "warning",
-};
+import { useNotificationData } from "@/hooks/useNotificationData.tsx";
 
 const NotificationsSidebar = () => {
-    const { httpClient, metricool } = useGlobalContext();
-    const pathname = useLocation({
-        select: (location) => location.pathname.split("/").at(-1),
-    });
-    const { data: noticeData, isLoading, error, isFetched, errorUpdateCount, refetch } = useQuery({
-        queryKey: ["notices"],
-        queryFn: () => httpClient.setRoute("get_notices").get(),
-        staleTime: Infinity, // never stale unless manually invalidated
-        gcTime: Infinity, // data is never garbage collected
-        select: (data): Record<string, Notice[]> => {
-            const noticesWithVisibility = data.data.map((notice: Notice) => ({
-                ...notice,
-                visible: notice.visible ? notice.visible : notice.active && (notice.route === "general" || notice.route === pathname)
-            }));
-            return {
-                allNotifications: noticesWithVisibility,
-                activeNotifications: noticesWithVisibility.filter((notice: Notice) => notice.active),
-                visibleNotifications: noticesWithVisibility.filter((notice: Notice) => notice.visible),
-            };
-        },
-    });
+    const { metricool } = useGlobalContext();
+
+    const {
+        notificationsDataQuery: { data: noticeData, isLoading, error, isFetched, errorUpdateCount, refetch }
+    } = useNotificationData()
 
     return (
         <Block variant={"transparent"} className={"px-0"}>
