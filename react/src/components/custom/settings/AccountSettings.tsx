@@ -114,7 +114,7 @@ const AccountSettings = () => {
 
     const {
         logoutMutation: { mutate: logoutUser }
-    } = useAuthenticationData();
+    } = useAuthenticationData({ reloadOnLogout: true });
 
     useBlocker({
         shouldBlockFn: () => {

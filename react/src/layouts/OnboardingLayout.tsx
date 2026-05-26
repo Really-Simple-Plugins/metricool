@@ -71,7 +71,7 @@ export const OnboardingLayout = () => {
             <LoadingStep/>
         ),
         (
-            <ConnectBrandStep/>
+            <ConnectBrandStep setModalOpen={setSignInModalOpen}/>
         ),
     ];
 
@@ -142,7 +142,7 @@ export const OnboardingLayout = () => {
                 {(!metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected) ? (
                     <SignInStep/>
                 ) : (
-                    <ConnectBrandStep/>
+                    <ConnectBrandStep setModalOpen={setSignInModalOpen} />
                 )}
             </Dialog>
             <Dialog

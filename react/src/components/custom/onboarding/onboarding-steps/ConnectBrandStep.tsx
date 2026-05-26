@@ -20,10 +20,15 @@ import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import DOMPurify from "dompurify";
 import { useAuthenticationData } from "@/hooks/useAuthenticationData";
+import type { Dispatch, SetStateAction } from "react";
 
 const brandSchema = OnboardingSchema.shape.brand;
 
-const ConnectBrandStep = () => {
+type ConnectBrandStepProps = {
+    setModalOpen: Dispatch<SetStateAction<boolean>>,
+}
+
+const ConnectBrandStep = ({ setModalOpen }: ConnectBrandStepProps) => {
     const { httpClient, dispatch, metricool } = useGlobalContext();
 
     const { data: connectedBrands, isLoading, errorUpdateCount, error, refetch } = useQuery({
@@ -63,7 +68,7 @@ const ConnectBrandStep = () => {
 
     const {
         logoutMutation: { mutate: logoutUser }
-    } = useAuthenticationData();
+    } = useAuthenticationData({ logoutCallback: () => setModalOpen(false) });
 
     /**
      * Because we use `dangerouslySetInnerHTML` for the `Alert` content, we

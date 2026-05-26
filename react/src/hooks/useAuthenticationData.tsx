@@ -2,7 +2,12 @@ import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation } from "@tanstack/react-query";
 import { showToast } from "@/components/shared";
 
-const useAuthenticationData = () => {
+type AuthenticationDataProps = {
+    reloadOnLogout?: boolean,
+    logoutCallback?: () => void,
+}
+
+const useAuthenticationData = ({ reloadOnLogout, logoutCallback }: AuthenticationDataProps = {}) => {
     const { httpClient, dispatch } = useGlobalContext();
 
     const logoutMutation = useMutation({
@@ -11,21 +16,17 @@ const useAuthenticationData = () => {
         },
         onSuccess: (response) => {
             console.log(response);
+            if (logoutCallback) {
+                logoutCallback();
+            }
+            if (reloadOnLogout) {
+                window.location.reload();
+            }
             dispatch({
                 dispatchType: "setOnboardingState",
                 change: {
                     metricool: {
-                        onboarding: {
-                            state: {
-                                completed: false,
-                                authenticated: false,
-                                blog_id_selected: false
-                            },
-                            mode: {
-                                show_welcome_screen: false,
-                                forced_login: false,
-                            }
-                        }
+                        onboarding: response.data
                     }
                 }
             });
