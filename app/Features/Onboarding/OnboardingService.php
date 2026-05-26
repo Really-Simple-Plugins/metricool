@@ -3,6 +3,7 @@
 namespace Metricool\Features\Onboarding;
 
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
@@ -86,8 +87,8 @@ class OnboardingService
     private function connectBlogId(string $blogId): void
     {
         try {
-            $brand = $this->api->brands()->get('123');
-        } catch (\GuzzleHttp\Exception\RequestException $e) {
+            $brand = $this->api->brands()->get($blogId);
+        } catch (RequestException $e) {
             if ($e->getResponse()->getStatusCode() === 403) {
                 throw new BrandAccessDeniedException();
             }
