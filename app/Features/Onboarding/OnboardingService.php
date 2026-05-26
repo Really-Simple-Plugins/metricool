@@ -79,7 +79,7 @@ class OnboardingService
     }
 
     /**
-     * Store the necessary onboarding information from the Metricool brand
+     * A brand is connected when it's retrieved from the API and the tracking hash is activated. The blogId is stored for future API calls.
      * @throws GuzzleException
      */
     private function connectBrand(string $blogId): void
