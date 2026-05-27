@@ -85,21 +85,6 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                         <Icon icon={"arrow-right"}/>
                     </FlexContainer>
                 </Button>
-                <span
-                    className={"text-xs text-gray-400"}
-                    dangerouslySetInnerHTML={{
-                        __html:
-                            DOMPurify.sanitize(
-                                sprintf(
-                                    /*translators: the two variables are links to Google's Privacy Policy and Terms of Service */
-                                    __("This page is protected by reCAPTCHA and the Google %1$s and %2$s apply.", "metricool"),
-                                    `<a href="${metricool.trusted_urls.google_privacy_policy_url}" target="_blank" rel="noopener noreferrer" class="underline">${__("Privacy Policy", "metricool")}</a>`,
-                                    `<a href="${metricool.trusted_urls.google_terms_url}" target="_blank" rel="noopener noreferrer" class="underline">${__("Terms of Service", "metricool")}</a>`
-                                ),
-                                { ADD_ATTR: ["target"] }
-                            )
-                    }}
-                />
             </FlexContainer>
             <FlexContainer direction={"column"}>
                 <FieldWrapper
