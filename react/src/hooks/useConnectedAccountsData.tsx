@@ -256,7 +256,7 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
             ];
 
-            return useLimitedDashboardList ? fullAccountsList.filter((account) => ["Web", "Twitter / X", "YouTube", "LinkedIn"].includes(account.label)) : fullAccountsList;
+            return useLimitedDashboardList ? fullAccountsList.filter((account) => ["WordPress", "Twitter / X", "YouTube", "LinkedIn"].includes(account.label)) : fullAccountsList;
         }
     });
 
