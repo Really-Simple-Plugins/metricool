@@ -18,7 +18,7 @@ type TimelineData = {
 }[]
 
 type UseAnalyticsDataProps = {
-    tab: string,
+    tab: "analytics" | "realtime" | "countries" | "traffic",
     selectedAnalyticsPeriod?: string,
 };
 /**
