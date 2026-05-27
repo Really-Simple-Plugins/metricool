@@ -146,10 +146,9 @@ const AnalyticsTab = () => {
             data: analyticsData,
             isLoading,
             error,
-            isSuccess: hasAnalyticsData,
             refetch,
             errorUpdateCount,
-            isRefetching,
+            isFetching,
         },
     } = useAnalyticsData({
         tab: "analytics",
@@ -158,116 +157,113 @@ const AnalyticsTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {!hasAnalyticsData ? (
-                <LoadingAndErrorState
-                    error={error}
-                    isLoading={isLoading}
-                    errorUpdateCount={errorUpdateCount}
-                    refetch={refetch}
-                    supportTicketLink={metricool.trusted_urls.new_support_ticket}
-                />
-            ) : (
-                <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
-                    <FlexContainer direction={"row"} className={"flex w-full justify-end !gap-2"}>
-                        {Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
-                            <MetricTile
-                                onClick={() => toggleMetric(metricKey)}
-                                metric={numberFormatter.format(metricData.totalAmount)}
-                                trend={metricData.trend}
-                                // @ts-expect-error tsc can't verify color is a valid variant
-                                variant={chartConfig[metricKey].color}
-                                inactive={chartConfig[metricKey].hidden}
-                                disabled={metricData.totalAmount === 0}
-                            >
-                                {chartConfig[metricKey].label}
-                            </MetricTile>
-                        ))}
-                    </FlexContainer>
-                    <hr className={"-mx-2"}/>
-                    {isRefetching && (
-                        <div className={"absolute w-full h-full bg-white opacity-45"}>
-                            <FlexContainer direction={"row"} className={"justify-center items-center w-full h-full"}>
-                                <Icon icon={"loading"} className={"size-5"}/>
-                            </FlexContainer>
-                        </div>
-                    )}
-                    <LineChart
-                        className={cn(isRefetching && "opacity-45")}
-                        chartConfig={chartConfig}
-                        chartSettings={{
-                            xAxisKey: lineChartXAxisDataKey,
-                            general: { height: 290 },
-                            xAxis: { interval: xAxisInterval },
-                        }}
-                        chartData={analyticsData.timelineData}
-                        linesSettings={{ type: "monotone" }}
-                    />
+            <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
+                <FlexContainer direction={"row"} className={"w-full min-h-12.5 justify-end !gap-2"}>
+                    {analyticsData && Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
+                        <MetricTile
+                            onClick={() => toggleMetric(metricKey)}
+                            metric={numberFormatter.format(metricData.totalAmount)}
+                            trend={metricData.trend}
+                            // @ts-expect-error tsc can't verify color is a valid variant
+                            variant={chartConfig[metricKey].color}
+                            inactive={chartConfig[metricKey].hidden}
+                            disabled={metricData.totalAmount === 0}
+                        >
+                            {chartConfig[metricKey].label}
+                        </MetricTile>
+                    ))}
                 </FlexContainer>
-            )}
+                <hr className={"-mx-2"}/>
+                <FlexContainer direction={"column"} className={"min-h-72.5 max-h-72.5"}>
+                    {isFetching && (
+                        <FlexContainer direction={"column"} className={"grow justify-center items-center bg-white opacity-45"}>
+                            <LoadingAndErrorState
+                                error={error}
+                                isLoading={isLoading}
+                                errorUpdateCount={errorUpdateCount}
+                                refetch={refetch}
+                                supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                            />
+                        </FlexContainer>
+                    )}
+                    {analyticsData && (
+                        <LineChart
+                            className={cn(isFetching && "opacity-45")}
+                            chartConfig={chartConfig}
+                            chartSettings={{
+                                xAxisKey: lineChartXAxisDataKey,
+                                general: { height: 290 },
+                                xAxis: { interval: xAxisInterval },
+                            }}
+                            chartData={analyticsData.timelineData}
+                            linesSettings={{ type: "monotone" }}
+                        />
+                    )}
+                </FlexContainer>
+            </FlexContainer>
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
                 <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
-                    {hasAnalyticsData && (
-                        <>
-                            <Select
-                                defaultValue={periodFilter.option}
-                                icon={!metricool.account?.is_premium ? {
-                                    icon: "upsell",
-                                    className: "bg-upsell size-2.5 p-0.5 text-black rounded-full"
-                                } : undefined}
-                                inputSize={"sm"}
-                                className={"border-neutral-200 font-semibold !text-black min-w-36 max-w-36 flex-row-reverse "}
-                                onValueChange={(value) => {
-                                    const selectedPeriodFilter = Object.values(periodFilterOptions).find((option) => option.option === value);
-                                    setPeriodFilter((prevState) => selectedPeriodFilter ?? prevState);
-                                    dispatch({
-                                        dispatchType: "setDashboardSetting",
-                                        change: { dashboardSettings: { activePeriodFilter: selectedPeriodFilter } }
-                                    });
-                                    adjustXAxisInterval(analyticsData.timelineData.length);
-                                }}
-                                placeholder={periodFilter.label}
-                            >
-                                {Object.values(periodFilterOptions).map((filterOption) =>
-                                    filterOption.isUpsell && !metricool.account?.is_premium ? (
-                                        <DisabledSelectOption
-                                            className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
-                                        >
-                                            <Button
-                                                variant={"link"}
-                                                link={metricoolDynamicUrl.withPath("user-settings/plan")}
-                                                className={"!no-underline font-semibold hover:text-black"}
-                                            >
-                                                <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                    <Select
+                        disabled={isFetching}
+                        defaultValue={periodFilter.option}
+                        icon={!metricool.account?.is_premium ? {
+                            icon: "upsell",
+                            className: "bg-upsell size-2.5 p-0.5 text-black rounded-full"
+                        } : undefined}
+                        inputSize={"sm"}
+                        className={"border-neutral-200 font-semibold !text-black min-w-36 max-w-36 flex-row-reverse "}
+                        onValueChange={(value) => {
+                            const selectedPeriodFilter = Object.values(periodFilterOptions).find((option) => option.option === value);
+                            setPeriodFilter((prevState) => selectedPeriodFilter ?? prevState);
+                            dispatch({
+                                dispatchType: "setDashboardSetting",
+                                change: { dashboardSettings: { activePeriodFilter: selectedPeriodFilter } }
+                            });
+                            if (analyticsData) {
+                                adjustXAxisInterval(analyticsData.timelineData.length);
+                            }
+                        }}
+                        placeholder={periodFilter.label}
+                    >
+                        {Object.values(periodFilterOptions).map((filterOption) =>
+                            filterOption.isUpsell && !metricool.account?.is_premium ? (
+                                <DisabledSelectOption
+                                    className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
+                                >
+                                    <Button
+                                        variant={"link"}
+                                        link={metricoolDynamicUrl.withPath("user-settings/plan")}
+                                        className={"!no-underline font-semibold hover:text-black"}
+                                    >
+                                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
                                                     <span className={"flex size-3.5 items-center justify-center"}>
                                                         <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
                                                     </span>
-                                                    {filterOption.label}
-                                                </FlexContainer>
-                                            </Button>
-                                        </DisabledSelectOption>
-                                    ) : (
-                                        <SelectOption
-                                            value={filterOption.option}
-                                            className={cn("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
-                                        >
                                             {filterOption.label}
-                                        </SelectOption>
-                                    )
-                                )}
-                            </Select>
-                            <Button
-                                variant={metricool.account?.is_premium ? "black-ghost" : "upsell"}
-                                className={cn(metricool.account?.is_premium && "border-neutral-200")}
-                                size={"sm"}
-                                link={metricoolDynamicUrl.withPath("evolution/reports")}
-                            >
-                                <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
-                                    <Icon icon={"file"}/>
-                                    {__("Report", "metricool")}
-                                </FlexContainer>
-                            </Button>
-                        </>
-                    )}
+                                        </FlexContainer>
+                                    </Button>
+                                </DisabledSelectOption>
+                            ) : (
+                                <SelectOption
+                                    value={filterOption.option}
+                                    className={cn("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
+                                >
+                                    {filterOption.label}
+                                </SelectOption>
+                            )
+                        )}
+                    </Select>
+                    <Button
+                        variant={metricool.account?.is_premium ? "black-ghost" : "upsell"}
+                        className={cn(metricool.account?.is_premium && "border-neutral-200")}
+                        size={"sm"}
+                        link={metricoolDynamicUrl.withPath("evolution/reports")}
+                    >
+                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                            <Icon icon={"file"}/>
+                            {__("Report", "metricool")}
+                        </FlexContainer>
+                    </Button>
                 </FlexContainer>
                 <Button
                     variant={"primary-gradient-ghost"}
