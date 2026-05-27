@@ -7,13 +7,7 @@ import { queryClient } from "@/main.tsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
-
-const userSettingsFormSchema = z.object({
-    sendToAlternativeEmail: z.boolean(),
-    alternativeEmail: z.email({
-        error: () => __("Please enter a valid email address", "metricool"),
-    }),
-}).required();
+import UserSettingsSchema from "@/support/form-schemas/UserSettingsSchema.ts";
 
 /**
  * Hook for retrieving UserData.
@@ -23,7 +17,7 @@ const userSettingsFormSchema = z.object({
  * Contains a {@link useMutation} which updates the user settings and sets the
  * forms error states if updating fails.
  *
- * Contains a {@link useForm} which implements the {@link userSettingsFormSchema}.
+ * Contains a {@link useForm} which implements the {@link UserSettingsSchema}.
  */
 const useUserData = () => {
     const { httpClient } = useGlobalContext();
@@ -39,14 +33,14 @@ const useUserData = () => {
         queryKey: ["user_settings"],
         queryFn: () => httpClient.setRoute("user_settings").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): z.infer<typeof userSettingsFormSchema> => ({
+        select: (data): z.infer<typeof UserSettingsSchema> => ({
             sendToAlternativeEmail: data.data.sendToAlternativeEmail,
             alternativeEmail: data.data.alternativeEmail,
         })
     });
 
-    const userSettingsFormData = useForm<z.infer<typeof userSettingsFormSchema>>({
-        resolver: zodResolver(userSettingsFormSchema),
+    const userSettingsFormData = useForm<z.infer<typeof UserSettingsSchema>>({
+        resolver: zodResolver(UserSettingsSchema),
         defaultValues: {
             sendToAlternativeEmail: false,
             alternativeEmail: "",
@@ -55,7 +49,7 @@ const useUserData = () => {
     });
 
     const updateUserSettingsDataMutation = useMutation({
-        mutationFn: async ({ sendToAlternativeEmail, alternativeEmail }: z.infer<typeof userSettingsFormSchema>) => {
+        mutationFn: async ({ sendToAlternativeEmail, alternativeEmail }: z.infer<typeof UserSettingsSchema>) => {
             return httpClient.setRoute("user_settings").setPayload({
                 "sendToAlternativeEmail": sendToAlternativeEmail,
                 "alternativeEmail": alternativeEmail,
@@ -66,12 +60,12 @@ const useUserData = () => {
             showToast.success(__("Settings have been saved", "metricool"));
         },
         onError: (data: {
-            fields?: Record<keyof z.infer<typeof userSettingsFormSchema>, { message: string }>,
+            fields?: Record<keyof z.infer<typeof UserSettingsSchema>, { message: string }>,
         }) => {
             showToast.error(__("There was an error updating your settings", "metricool"));
             if (data.fields) {
                 try {
-                    (Object.entries(data.fields) as [keyof z.infer<typeof userSettingsFormSchema>, {
+                    (Object.entries(data.fields) as [keyof z.infer<typeof UserSettingsSchema>, {
                         message: string
                     }][]).forEach(([fieldKey, fieldContent]) => {
                         userSettingsFormData.setError(fieldKey, {
@@ -91,7 +85,6 @@ const useUserData = () => {
         userSettingsDataQuery: userSettingsDataQuery,
         userSettingsFormData: userSettingsFormData,
         updateUserSettingsDataMutation: updateUserSettingsDataMutation,
-        userSettingsFormSchema: userSettingsFormSchema,
     };
 };
 
