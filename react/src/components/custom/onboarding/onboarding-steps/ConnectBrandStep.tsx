@@ -64,6 +64,8 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
 
     const onCancel = () => {
         logoutUser();
+        // For some reason adding clear() to the onSuccess for the logout mutation
+        // reloads the page, so adding it here.
         queryClient.getQueryCache().clear();
         if (resetSignInSteps) {
             resetSignInSteps();
