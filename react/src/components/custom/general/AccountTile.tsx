@@ -5,6 +5,7 @@ import { isFirstCharacterAVowel } from "@/support/functions/utils.ts";
 
 type AccountTileProps = {
     label: string,
+    unconnectedLabel: string,
     icon: IconProps["icon"],
     connectedClasses: string,
     unconnectedClasses: string,
@@ -16,6 +17,7 @@ type AccountTileProps = {
 
 const AccountTile = ({
     label,
+    unconnectedLabel,
     icon,
     connectedClasses,
     unconnectedClasses,
@@ -56,10 +58,7 @@ const AccountTile = ({
                         </>
                     ) : (
                         <span data-content className={"text-white transition-all duration-300 ease-in-out"}>
-                            {sprintf(
-                                /*translators: first variable is either 'a' or 'an', second is the name of a social media*/
-                                __("Connect %1$s %2$s Account", "metricool"), [(isFirstCharacterAVowel(label) ? "an" : "a"), label]
-                            )}
+                            {unconnectedLabel}
                         </span>
                     )}
                 </FlexContainer>
