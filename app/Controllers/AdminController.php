@@ -30,7 +30,22 @@ class AdminController implements ControllerInterface
         if ($this->adminAccessAllowed() === false) {
             return;
         }
+
+        add_action('admin_enqueue_scripts', [$this, 'enqueueGeneralAdminStyles']);
         add_filter('plugin_action_links_' . $this->env->getString('plugin.base_file'), [$this, 'addPluginSettingsAction']);
+    }
+
+    /**
+     * Method enqueues the css for general admin styles.
+     */
+    public function enqueueGeneralAdminStyles(): void
+    {
+        wp_enqueue_style(
+            'metricool-admin-general-styles',
+            $this->env->getUrl('plugin.url') . 'assets/css/admin.css',
+            [],
+            $this->env->getString('plugin.version')
+        );
     }
 
     /**

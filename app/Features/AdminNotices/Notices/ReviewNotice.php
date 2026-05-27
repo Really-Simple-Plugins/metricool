@@ -31,6 +31,7 @@ final class ReviewNotice extends AbstractAdminNotice
      */
     protected function canDisplay(): bool
     {
+        return true;
         return !$this->dashboard->isUserOnDashboard() &&
             $this->onboardingCompletedTimestampSuitableForReview();
     }

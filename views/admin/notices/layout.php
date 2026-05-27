@@ -40,7 +40,7 @@ if (!defined('ABSPATH')) {
             ?>
             <div class="rsp-metricool-buttons-row">
                 <?php if (!empty($ctaUrl)) : ?>
-                    <a class="button button-primary" href="<?php echo esc_url($ctaUrl); ?>">
+                    <a class="button" href="<?php echo esc_url($ctaUrl); ?>">
                         <?php echo esc_html($ctaLabel); ?>
                     </a>
                 <?php endif; ?>
