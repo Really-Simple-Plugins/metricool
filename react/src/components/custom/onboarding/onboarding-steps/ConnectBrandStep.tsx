@@ -19,16 +19,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import DOMPurify from "dompurify";
 import { useAuthenticationData } from "@/hooks/useAuthenticationData";
-import type { Dispatch, SetStateAction } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { useUserData } from "@/hooks/useUserData.tsx";
+import { queryClient } from "@/main.tsx";
 
 const brandSchema = OnboardingSchema.shape.brand;
 
 type ConnectBrandStepProps = {
     setModalOpen?: Dispatch<SetStateAction<boolean>>,
+    resetSignInSteps?: () => void,
 }
 
-const ConnectBrandStep = ({ setModalOpen }: ConnectBrandStepProps) => {
+const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepProps) => {
     const { metricool } = useGlobalContext();
 
     const {
@@ -55,7 +57,18 @@ const ConnectBrandStep = ({ setModalOpen }: ConnectBrandStepProps) => {
     const {
         logoutMutation: { mutate: logoutUser },
         finishOnboardingMutation: { mutate: onSubmit, error: submitError },
-    } = useAuthenticationData({ logoutCallback: () => setModalOpen(false) });
+    } = useAuthenticationData({
+        ...(setModalOpen && { logoutCallback: () => setModalOpen(false) }),
+        ...(!resetSignInSteps && { reloadOnLogout: true })
+    });
+
+    const onCancel = () => {
+        logoutUser();
+        queryClient.getQueryCache().clear();
+        if (resetSignInSteps) {
+            resetSignInSteps();
+        }
+    };
 
     /**
      * Because we use `dangerouslySetInnerHTML` for the `Alert` content, we
@@ -68,7 +81,7 @@ const ConnectBrandStep = ({ setModalOpen }: ConnectBrandStepProps) => {
     const logoutUserWrapper = (event: React.MouseEvent<HTMLDivElement>) => {
         //casting to HTMLElement to keep TS happy
         if ((event.target as HTMLElement).tagName === "A") {
-            logoutUser();
+            onCancel();
         }
     };
 
@@ -145,7 +158,7 @@ const ConnectBrandStep = ({ setModalOpen }: ConnectBrandStepProps) => {
                     <Button
                         variant={"black-ghost"}
                         className={"border-0"}
-                        onClick={() => logoutUser()}
+                        onClick={onCancel}
                     >
                         {__("Cancel", "metricool")}
                     </Button>
