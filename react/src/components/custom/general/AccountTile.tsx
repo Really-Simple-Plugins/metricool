@@ -1,17 +1,6 @@
-import { Button, FlexContainer, Icon, type IconProps } from "@/components/shared";
+import { Button, FlexContainer, Icon } from "@/components/shared";
 import { cn } from "@/support/functions/utils.ts";
-
-type AccountTileProps = {
-    label: string,
-    unconnectedLabel: string,
-    icon: IconProps["icon"],
-    connectedClasses: string,
-    unconnectedClasses: string,
-    upsell: boolean,
-    userName?: string,
-    link: string,
-    isConnected: boolean,
-}
+import { type ConnectedAccount } from "@/hooks/useConnectedAccountsData.tsx";
 
 const AccountTile = ({
     label,
@@ -23,7 +12,7 @@ const AccountTile = ({
     userName,
     link,
     isConnected,
-}: AccountTileProps) => {
+}: ConnectedAccount) => {
     const wrapperClasses = cn(
         "flex flex-row rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2",
         isConnected ? "border-neutral-200" : `${unconnectedClasses} cursor-pointer transition-all duration-300 ease-in-out`,
