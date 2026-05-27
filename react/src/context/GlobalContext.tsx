@@ -7,7 +7,6 @@ import DynamicUrl from "@/support/helpers/DynamicUrl.tsx";
 // @ts-expect-error the metricool variable is globally set in the DashboardController
 // but the tsc complains it can't find it
 const METRICOOL_DATA: MetricoolData = window.metricool.values;
-console.log(METRICOOL_DATA);
 const METRICOOL_API_URL = METRICOOL_DATA.api_url;
 
 export interface GlobalContext {
