@@ -190,6 +190,14 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
                 })
             };
         }
+        case "resetAccountData": {
+            const metricool = state.metricool;
+            delete metricool.account;
+            return {
+                ...state,
+                metricool: metricool,
+            }
+        }
         case "setDashboardModalClosed": {
             return {
                 ...state,
