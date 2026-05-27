@@ -37,9 +37,6 @@ class OnboardingService
         if ($blogId !== null) {
             // When a blogId is provided, try to connect to the brand
             $this->connectBrand($blogId);
-        } else {
-            // Try to find the blog from the brands connected to the account and retrieve the necessary information
-            $this->attemptToFindBlogIdFromApi();
         }
 
         // If the blogId is not set, the onboarding is not completed
@@ -55,31 +52,7 @@ class OnboardingService
     }
 
     /**
-     * Automatically find the blog from the connected brand and try to retrieve
-     * the necessary onboarding information
-     *
-     * @throws BrandAccessDeniedException when the current user has no access to the brand
-     * @throws GuzzleException
-     */
-    private function attemptToFindBlogIdFromApi(): void
-    {
-        try {
-            $brands = $this->api->brands()->all();
-        } catch (GuzzleException $e) {
-            return;
-        }
-
-        // Get the brand when there is only one, abort if there are more
-        $brand = (count($brands) === 1 ? (array) $brands[0] : []);
-        if (!isset($brand['id'])) {
-            return;
-        }
-
-        $this->connectBrand((string) $brand['id']);
-    }
-
-    /**
-     * Store the necessary onboarding information from the Metricool brand
+     * A brand is connected when it's retrieved from the API and the tracking hash is activated. The blogId is stored for future API calls.
      * @throws GuzzleException
      */
     private function connectBrand(string $blogId): void
