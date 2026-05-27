@@ -1,7 +1,5 @@
 import { Button, FlexContainer, Icon, type IconProps } from "@/components/shared";
-import { clsx } from "clsx";
-import { __, sprintf } from "@wordpress/i18n";
-import { isFirstCharacterAVowel } from "@/support/functions/utils.ts";
+import { cn } from "@/support/functions/utils.ts";
 
 type AccountTileProps = {
     label: string,
@@ -26,7 +24,7 @@ const AccountTile = ({
     link,
     isConnected,
 }: AccountTileProps) => {
-    const wrapperClasses = clsx(
+    const wrapperClasses = cn(
         "flex flex-row rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2",
         isConnected ? "border-neutral-200" : `${unconnectedClasses} cursor-pointer transition-all duration-300 ease-in-out`,
     );
@@ -43,14 +41,14 @@ const AccountTile = ({
                 <Icon
                     data-content
                     icon={icon}
-                    className={clsx(
+                    className={cn(
                         "size-6 transition-all duration-300 ease-in-out",
                         isConnected ? connectedClasses : "text-white"
                     )}
                 />
             </FlexContainer>
             <FlexContainer direction={"row"} className={"justify-between items-center grow"}>
-                <FlexContainer direction={"column"} className={clsx("text-sm justify-center !gap-0")}>
+                <FlexContainer direction={"column"} className={cn("text-sm justify-center !gap-0")}>
                     {isConnected ? (
                         <>
                             <span className={"text-gray-500"}>{label}</span>
