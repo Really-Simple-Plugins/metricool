@@ -40,7 +40,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
     });
 
     return (
-        <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col gap-4"}>
+        <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col gap-7.5"}>
             <FlexContainer direction={"column"}>
                 <FieldWrapper
                     required
