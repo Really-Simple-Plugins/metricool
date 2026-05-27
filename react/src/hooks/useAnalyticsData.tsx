@@ -21,6 +21,19 @@ type UseAnalyticsDataProps = {
     tab: string,
     selectedAnalyticsPeriod?: string,
 };
+/**
+ * Hook to retrieve Analytics data.
+ *
+ * Receives the `tab` making the request as a string, which ensures that only
+ * that request is enabled and fetched, not all.
+ *
+ * By passing in the `selectedAnalyticsPeriod` as a second arg in the `analytics`
+ * query key, each period has its own query data stored in the `queryCache`. This
+ * means we don't need a mutation to update the data, simply changing the
+ * `periodFilter` state in the {@link AnalyticsTab} is enough for React to know
+ * which data to display and only fetch it if the `queryCache` does not have
+ * any data for that period yet.
+ */
 const useAnalyticsData = ({ tab, selectedAnalyticsPeriod }: UseAnalyticsDataProps) => {
     const { httpClient } = useGlobalContext();
 
