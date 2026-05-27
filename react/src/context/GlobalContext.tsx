@@ -193,7 +193,8 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
         case "setDashboardModalClosed": {
             return {
                 ...state,
-                metricool: { ...state.metricool,
+                metricool: {
+                    ...state.metricool,
                     onboarding: {
                         ...state.metricool.onboarding,
                         mode: { ...state.metricool.onboarding.mode, show_welcome_screen: false }
@@ -207,7 +208,10 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
             }
             return {
                 ...state,
-                dashboardSettings: { ...state.dashboardSettings, ...action?.change?.dashboardSettings },
+                dashboardSettings: {
+                    ...state.dashboardSettings,
+                    ...action?.change?.dashboardSettings
+                },
             };
         }
         default: {
