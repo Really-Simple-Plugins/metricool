@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import UserSettingsSchema from "@/support/form-schemas/UserSettingsSchema.ts";
+import { useLocation } from "@tanstack/react-router";
 
 /**
  * Hook for retrieving UserData.
@@ -21,8 +22,10 @@ import UserSettingsSchema from "@/support/form-schemas/UserSettingsSchema.ts";
  */
 const useUserData = () => {
     const { httpClient } = useGlobalContext();
+    const location = useLocation()
 
     const connectedBrandsQuery = useQuery({
+        enabled: !location.pathname.includes("settings"),
         queryKey: ["connected_brands"],
         queryFn: () => httpClient.setRoute("connected_brands").get(),
         staleTime: Infinity,
@@ -30,6 +33,7 @@ const useUserData = () => {
     });
 
     const userSettingsDataQuery = useQuery({
+        enabled: location.pathname.includes("settings"),
         queryKey: ["user_settings"],
         queryFn: () => httpClient.setRoute("user_settings").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
