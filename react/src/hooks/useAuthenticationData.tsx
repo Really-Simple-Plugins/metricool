@@ -81,7 +81,6 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
             return httpClient.setRoute("logout").post();
         },
         onSuccess: (response) => {
-            console.log(response);
             if (logoutCallback) {
                 logoutCallback();
             }
