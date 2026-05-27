@@ -98,9 +98,11 @@ class CreateAccountService
             throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
         }
 
+        $blogId = $this->getBlogId();
+
         // Attempt to automatically set the blog information, complete the onboarding process on success
         try {
-            if ($this->onboarding->finalizeOnboarding()) {
+            if ($this->onboarding->finalizeOnboarding($blogId)) {
                 $this->dashboard->setShowWelcomeScreen();
             }
         } catch (GuzzleException $e) {
@@ -108,6 +110,27 @@ class CreateAccountService
         }
 
         return true;
+    }
+
+
+    /**
+     * Get the blogId from the API. This is needed to connect the brand and complete the onboarding process.
+     */
+    private function getBlogId(): ?string
+    {
+        try {
+            $brands = $this->api->brands()->all();
+        } catch (GuzzleException $e) {
+            return null;
+        }
+
+        // Get the brand when there is only one, abort if there are more
+        $brand = (count($brands) === 1 ? (array) $brands[0] : []);
+        if (!isset($brand['id'])) {
+            return null;
+        }
+
+        return $brand['id'];
     }
 
     /**
