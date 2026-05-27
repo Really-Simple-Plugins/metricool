@@ -52,8 +52,6 @@ return [
         'trusted_urls' => [
             'legal_terms' => 'https://metricool.com/legal-terms/',
             'new_support_ticket' => 'https://wordpress.org/support/plugin/metricool/#new-topic-0',
-            'google_privacy_policy_url' => 'https://policies.google.com/privacy',
-            'google_terms_url' => 'https://policies.google.com/terms',
         ],
     ]
 ];
