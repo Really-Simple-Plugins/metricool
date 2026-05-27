@@ -25,7 +25,7 @@ import { useUserData } from "@/hooks/useUserData.tsx";
 const brandSchema = OnboardingSchema.shape.brand;
 
 type ConnectBrandStepProps = {
-    setModalOpen: Dispatch<SetStateAction<boolean>>,
+    setModalOpen?: Dispatch<SetStateAction<boolean>>,
 }
 
 const ConnectBrandStep = ({ setModalOpen }: ConnectBrandStepProps) => {
