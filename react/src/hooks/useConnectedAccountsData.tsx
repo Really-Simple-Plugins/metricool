@@ -1,9 +1,11 @@
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useQuery } from "@tanstack/react-query";
 import type { IconProps } from "@/components/shared";
+import { __, sprintf } from "@wordpress/i18n";
 
 export type ConnectedAccount = {
     label: string,
+    unconnectedLabel: string,
     icon: IconProps["icon"],
     connectedClasses: string,
     unconnectedClasses: string,
@@ -35,7 +37,8 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
         select: (response): ConnectedAccount[] => {
             const fullAccountsList: ConnectedAccount[] = [
                 {
-                    label: "Web",
+                    label: "WordPress",
+                    unconnectedLabel: __("Connect Wordpress", "metricool"),
                     icon: "web",
                     connectedClasses: "text-web",
                     unconnectedClasses: "bg-web border-web hover:bg-transparent hover:**:data-content:text-web",
@@ -46,6 +49,7 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Blog",
+                    unconnectedLabel: __("Connect a Blog", "metricool"),
                     icon: "web",
                     connectedClasses: "text-blog",
                     unconnectedClasses: "bg-blog border-blog hover:bg-transparent hover:**:data-content:text-blog",
@@ -56,6 +60,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Facebook",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["Facebook"]
+                    ),
                     icon: "facebook",
                     connectedClasses: "text-facebook",
                     unconnectedClasses: "bg-facebook border-facebook hover:bg-transparent hover:**:data-content:text-facebook",
@@ -66,6 +74,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Instagram",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect an %1$s Account", "metricool"), ["Instagram"]
+                    ),
                     icon: "instagram",
                     connectedClasses: "text-instagram",
                     unconnectedClasses: "bg-instagram border-instagram hover:bg-transparent hover:**:data-content:text-instagram",
@@ -76,6 +88,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Threads",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["Threads"]
+                    ),
                     icon: "threads",
                     connectedClasses: "text-threads",
                     unconnectedClasses: "bg-threads border-threads hover:bg-transparent hover:**:data-content:text-threads",
@@ -86,6 +102,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Twitter / X",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["Twitter / X"]
+                    ),
                     icon: "twitter",
                     connectedClasses: "text-x",
                     unconnectedClasses: "bg-x border-x hover:bg-transparent hover:**:data-content:text-x",
@@ -96,6 +116,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Bluesky",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["Bluesky"]
+                    ),
                     icon: "bluesky",
                     connectedClasses: "text-bluesky",
                     unconnectedClasses: "bg-bluesky border-bluesky hover:bg-transparent hover:**:data-content:text-bluesky",
@@ -106,6 +130,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Pinterest",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["Pinterest"]
+                    ),
                     icon: "pinterest",
                     connectedClasses: "text-pinterest",
                     unconnectedClasses: "bg-pinterest border-pinterest hover:bg-transparent hover:**:data-content:text-pinterest",
@@ -116,6 +144,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: `TikTok ${response.data.tiktok ? response.data.tiktok.accountType.toLowerCase() : ""}`,
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), [`TikTok ${response.data.tiktok ? response.data.tiktok.accountType.toLowerCase() : ""}`]
+                    ),
                     icon: "tiktok",
                     connectedClasses: "text-tiktok",
                     unconnectedClasses: "bg-tiktok border-tiktok hover:bg-transparent hover:**:data-content:text-tiktok",
@@ -126,6 +158,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Google Business Profile",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["Google Business Profile"]
+                    ),
                     icon: "gbp",
                     connectedClasses: "text-gbp",
                     unconnectedClasses: "bg-gbp border-gbp hover:bg-transparent hover:**:data-content:text-gbp",
@@ -136,6 +172,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "YouTube",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["YouTube"]
+                    ),
                     icon: "youtube",
                     connectedClasses: "text-youtube",
                     unconnectedClasses: "bg-youtube border-youtube hover:bg-transparent hover:**:data-content:text-youtube",
@@ -146,6 +186,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "LinkedIn",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["LinkedIn"]
+                    ),
                     icon: "linkedIn",
                     connectedClasses: "text-linkedin",
                     unconnectedClasses: "bg-linkedin border-linkedin hover:bg-transparent hover:**:data-content:text-linkedin",
@@ -156,6 +200,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Twitch",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["Twitch"]
+                    ),
                     icon: "twitch",
                     connectedClasses: "text-twitch",
                     unconnectedClasses: "bg-twitch border-twitch hover:bg-transparent hover:**:data-content:text-twitch",
@@ -166,6 +214,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Meta Ads",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["Meta Ads"]
+                    ),
                     icon: "meta",
                     connectedClasses: "text-facebook",
                     unconnectedClasses: "bg-facebook border-facebook hover:bg-transparent hover:**:data-content:text-facebook",
@@ -176,6 +228,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "Google Ads",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["Google Ads"]
+                    ),
                     icon: "googleAds",
                     connectedClasses: "text-ga",
                     unconnectedClasses: "bg-ga border-ga hover:bg-transparent hover:**:data-content:text-ga",
@@ -186,6 +242,10 @@ const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccount
                 },
                 {
                     label: "TikTok Ads",
+                    unconnectedLabel: sprintf(
+                        /*translators: variable is the name of a social media*/
+                        __("Connect a %1$s Account", "metricool"), ["TikTok Ads"]
+                    ),
                     icon: "tiktok",
                     connectedClasses: "text-tiktok",
                     unconnectedClasses: "bg-tiktok border-tiktok hover:bg-transparent hover:**:data-content:text-tiktok",
