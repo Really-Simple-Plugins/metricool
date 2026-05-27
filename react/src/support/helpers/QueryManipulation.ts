@@ -1,4 +1,4 @@
-import type { Notice } from "@/components/custom";
+import type { Notice } from "@/hooks/useNotificationData.tsx";
 import { queryClient } from "../../main.tsx";
 
 export const setNoticeToVisible = (noticeId: string) => {
