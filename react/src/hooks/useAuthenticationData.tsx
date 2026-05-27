@@ -95,6 +95,7 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
                     }
                 }
             });
+            dispatch({ dispatchType: "resetAccountData" });
         },
         onError: (error) => {
             console.error(error);
