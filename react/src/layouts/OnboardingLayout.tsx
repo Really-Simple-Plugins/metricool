@@ -1,6 +1,6 @@
 import { __ } from "@wordpress/i18n";
 import { Alert, Button, Dialog, FlexContainer, Header } from "@/components/shared";
-import { useGlobalContext, type MetricoolData } from "@/context/GlobalContext.tsx";
+import { type MetricoolData, useGlobalContext } from "@/context/GlobalContext.tsx";
 import { ConnectBrandStep, LoadingStep, OnboardingForm, SignInStep } from "@/components/custom";
 import { useEffect, useState } from "react";
 import { HeadContent } from "@tanstack/react-router";
@@ -25,6 +25,7 @@ export const OnboardingLayout = () => {
     const [signInModalOpen, setSignInModalOpen] = useState<boolean>((metricool.onboarding.mode.forced_login || (metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected)));
     const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
     const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
+    const [activeSignInStep, setActiveSignInStep] = useState<number>((!metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected) ? 0 : 1);
 
     const beforeSignUpCallback = () => {
         setActiveOnboardingStep(0);
@@ -55,12 +56,29 @@ export const OnboardingLayout = () => {
         }
     });
 
+    /**
+     * The ConnectBrandStep is here purely as a contingency, just in case the
+     * `metricool.onboarding.state` ever returns the wring combination of
+     * booleans, but it should never appear to the user during onboarding.
+     */
     const onboardingSteps = [
         (
             <LoadingStep/>
         ),
         (
-            <ConnectBrandStep setModalOpen={setSignInModalOpen}/>
+            <ConnectBrandStep/>
+        ),
+    ];
+
+    const signInSteps = [
+        (
+            <SignInStep/>
+        ),
+        (
+            <ConnectBrandStep
+                setModalOpen={setSignInModalOpen}
+                resetSignInSteps={() => setActiveSignInStep(0)}
+            />
         ),
     ];
 
@@ -128,11 +146,7 @@ export const OnboardingLayout = () => {
                 showCloseButton={!(metricool.onboarding.mode.forced_login)}
                 className={"flex flex-col gap-6 justify-center items-center"}
             >
-                {(!metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected) ? (
-                    <SignInStep/>
-                ) : (
-                    <ConnectBrandStep setModalOpen={setSignInModalOpen}/>
-                )}
+                {signInSteps[activeSignInStep]}
             </Dialog>
             <Dialog
                 id={"onboarding-modal"}
