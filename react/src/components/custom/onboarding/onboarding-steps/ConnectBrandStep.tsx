@@ -23,8 +23,6 @@ import { type Dispatch, type SetStateAction } from "react";
 import { useUserData } from "@/hooks/useUserData.tsx";
 import { queryClient } from "@/main.tsx";
 
-const brandSchema = OnboardingSchema.shape.brand;
-
 type ConnectBrandStepProps = {
     setModalOpen?: Dispatch<SetStateAction<boolean>>,
     resetSignInSteps?: () => void,
@@ -37,8 +35,8 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
         handleSubmit,
         formState: { dirtyFields },
         control,
-    } = useForm<z.infer<typeof brandSchema>>({
-        resolver: zodResolver(brandSchema),
+    } = useForm<z.infer<typeof OnboardingSchema.shape.brand>>({
+        resolver: zodResolver(OnboardingSchema.shape.brand),
         defaultValues: {
             id: "",
         },
