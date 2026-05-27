@@ -1,4 +1,4 @@
-export { AnalyticsTab, type PeriodFilterOption } from "@/components/custom/dashboard/analytics/tabs/AnalyticsTab.tsx";
+export { AnalyticsTab, type PeriodFilterOption, defaultPeriodFilter, periodFilterOptions } from "@/components/custom/dashboard/analytics/tabs/AnalyticsTab.tsx";
 export { CountriesTab, type CountriesDataTableColumns } from "@/components/custom/dashboard/analytics/tabs/CountriesTab.tsx";
 export { RealtimeTab } from "@/components/custom/dashboard/analytics/tabs/RealtimeTab.tsx";
 export { TrafficTab, type TrafficDataTableColumns } from "@/components/custom/dashboard/analytics/tabs/TrafficTab.tsx";

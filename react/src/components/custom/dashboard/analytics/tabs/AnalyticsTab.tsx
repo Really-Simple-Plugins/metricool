@@ -23,6 +23,53 @@ export type PeriodFilterOption = {
     xAxisInterval: number,
 }
 
+export const periodFilterOptions: Record<string, PeriodFilterOption> = {
+    lastWeek: {
+        label: __("Last week", "metricool"),
+        option: "lastweek",
+        isUpsell: false,
+        xAxisInterval: 0,
+    },
+    currentMonth: {
+        label: __("Current month", "metricool"),
+        option: "currentmonth",
+        isUpsell: false,
+        xAxisInterval: 0,
+    },
+    last30Days: {
+        label: __("Last 30 days", "metricool"),
+        option: "last30days",
+        isUpsell: false,
+        xAxisInterval: 2,
+    },
+    previousMonth: {
+        label: __("Previous month", "metricool"),
+        option: "previousmonth",
+        isUpsell: false,
+        xAxisInterval: 2,
+    },
+    last3Months: {
+        label: __("Last 3 months", "metricool"),
+        option: "last3months",
+        isUpsell: false,
+        xAxisInterval: 6,
+    },
+    last6Months: {
+        label: __("Last 6 months", "metricool"),
+        option: "last6months",
+        isUpsell: true,
+        xAxisInterval: 29,
+    },
+    last12Months: {
+        label: __("Last 12 months", "metricool"),
+        option: "last12months",
+        isUpsell: true,
+        xAxisInterval: 29,
+    },
+};
+
+export const defaultPeriodFilter = periodFilterOptions.last30Days;
+
 const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activePeriodFilterInContext: PeriodFilterOption | undefined): PeriodFilterOption => {
     if (activePeriodFilterInContext) {
         return activePeriodFilterInContext;
@@ -34,57 +81,12 @@ const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activeP
 const AnalyticsTab = () => {
     const { metricool, dispatch, dashboardSettings, metricoolDynamicUrl } = useGlobalContext();
 
-    const periodFilterOptions: Record<string, PeriodFilterOption> = {
-        lastWeek: {
-            label: __("Last week", "metricool"),
-            option: "lastweek",
-            isUpsell: false,
-            xAxisInterval: 0,
-        },
-        currentMonth: {
-            label: __("Current month", "metricool"),
-            option: "currentmonth",
-            isUpsell: false,
-            xAxisInterval: 0,
-        },
-        last30Days: {
-            label: __("Last 30 days", "metricool"),
-            option: "last30days",
-            isUpsell: false,
-            xAxisInterval: 2,
-        },
-        previousMonth: {
-            label: __("Previous month", "metricool"),
-            option: "previousmonth",
-            isUpsell: false,
-            xAxisInterval: 2,
-        },
-        last3Months: {
-            label: __("Last 3 months", "metricool"),
-            option: "last3months",
-            isUpsell: false,
-            xAxisInterval: 6,
-        },
-        last6Months: {
-            label: __("Last 6 months", "metricool"),
-            option: "last6months",
-            isUpsell: !metricool.account?.is_premium,
-            xAxisInterval: 29,
-        },
-        last12Months: {
-            label: __("Last 12 months", "metricool"),
-            option: "last12months",
-            isUpsell: !metricool.account?.is_premium,
-            xAxisInterval: 29,
-        },
-    };
-
     const numberFormatter = Intl.NumberFormat(metricool.locale, {
         notation: "compact",
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
     });
-    const defaultPeriodFilter = periodFilterOptions.last30Days;
+
     const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.activePeriodFilter));
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
         pageViews: {
@@ -226,7 +228,7 @@ const AnalyticsTab = () => {
                                 placeholder={periodFilter.label}
                             >
                                 {Object.values(periodFilterOptions).map((filterOption) =>
-                                    filterOption.isUpsell ? (
+                                    filterOption.isUpsell && !metricool.account?.is_premium ? (
                                         <DisabledSelectOption
                                             className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
                                         >

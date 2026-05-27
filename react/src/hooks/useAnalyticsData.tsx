@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import { type CountriesDataTableColumns, type TrafficDataTableColumns } from "@/components/custom/";
+import { type CountriesDataTableColumns, type TrafficDataTableColumns, periodFilterOptions, defaultPeriodFilter } from "@/components/custom/";
 
 type MetricData = {
     label: string,
@@ -19,7 +19,7 @@ type TimelineData = {
 
 type UseAnalyticsDataProps = {
     tab: "analytics" | "realtime" | "countries" | "traffic",
-    selectedAnalyticsPeriod?: string,
+    selectedAnalyticsPeriod?: keyof typeof periodFilterOptions,
 };
 /**
  * Hook to retrieve Analytics data.
@@ -34,13 +34,13 @@ type UseAnalyticsDataProps = {
  * which data to display and only fetch it if the `queryCache` does not have
  * any data for that period yet.
  */
-const useAnalyticsData = ({ tab, selectedAnalyticsPeriod }: UseAnalyticsDataProps) => {
+const useAnalyticsData = ({ tab, selectedAnalyticsPeriod = defaultPeriodFilter.option }: UseAnalyticsDataProps) => {
     const { httpClient } = useGlobalContext();
 
     const analyticsDataQuery = useQuery({
         enabled: tab === "analytics",
         queryKey: ["analytics", selectedAnalyticsPeriod],
-        queryFn: () => httpClient.setRoute("analytics").setFilters({ ...(selectedAnalyticsPeriod && { period: selectedAnalyticsPeriod }) }).get(),
+        queryFn: () => httpClient.setRoute("analytics").setFilters({ period: selectedAnalyticsPeriod }).get(),
         staleTime: 1000 * 60 * 60 * 12, // 12 hours
         gcTime: 1000 * 60 * 60 * 12, // 12 hours
         select: (data): { totals: Record<string, MetricData>, timelineData: TimelineData } => data.data,
