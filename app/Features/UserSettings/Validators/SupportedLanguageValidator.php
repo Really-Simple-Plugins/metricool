@@ -18,9 +18,10 @@ class SupportedLanguageValidator extends AbstractValidator
         $availableLanguages = new Collection(MetricoolApi::supportedLanguages());
 
         if ($availableLanguages->where('value', $value)->count() == 0) {
-            // translators: %s is the invalid language code submitted by the user.
-            $message = esc_html(sprintf(__('%s is not a supported language', 'metricool'), $value));
-            throw new ValidatorFailedException($message);
+            throw new ValidatorFailedException(esc_html(
+                // translators: %s is the invalid language code submitted by the user.
+                sprintf(__('%s is not a supported language', 'metricool'), $value)
+            ));
         }
     }
 }
