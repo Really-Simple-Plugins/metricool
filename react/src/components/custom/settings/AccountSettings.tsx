@@ -11,7 +11,7 @@ import {
     SignOut,
     Switch
 } from "@/components/shared";
-import { __ } from "@wordpress/i18n";
+import { __, sprintf } from "@wordpress/i18n";
 import { useBlocker } from "@tanstack/react-router";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useAuthenticationData } from "@/hooks/useAuthenticationData.tsx";
@@ -115,17 +115,26 @@ const AccountSettings = () => {
                             />
                             {/* Render the email input field only if the value of sendToAlternativeEmail is true */}
                             {getValues().sendToAlternativeEmail && (
-                                <FieldWrapper
-                                    label={__("Custom e-mail for the monthly summary", "metricool")}
-                                    control={control}
-                                    name={"alternativeEmail"}
-                                    render={(props) => (
-                                        <Input
-                                            {...props}
-                                            placeholder={__("Placeholder", "metricool")}
-                                        />
+                                <FlexContainer direction={"column"} className={"gap-1!"}>
+                                    <FieldWrapper
+                                        label={__("Custom e-mail for the monthly summary", "metricool")}
+                                        control={control}
+                                        name={"alternativeEmail"}
+                                        render={(props) => (
+                                            <Input
+                                                {...props}
+                                            />
+                                        )}
+                                    />
+                                    {metricool.account?.user.mail && !data.alternativeEmail && (
+                                        <span className={"text-gray-400 pl-2"}>
+                                            {sprintf(
+                                                __("When this field is empty the monthly summary is sent to %1$s", "metricool"),
+                                                [metricool.account.user.mail]
+                                            )}
+                                        </span>
                                     )}
-                                />
+                                </FlexContainer>
                             )}
                         </FlexContainer>
                     )}
