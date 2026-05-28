@@ -86,6 +86,7 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
             }
             if (reloadOnLogout) {
                 window.location.reload();
+                return;
             }
             dispatch({
                 dispatchType: "setOnboardingState",
