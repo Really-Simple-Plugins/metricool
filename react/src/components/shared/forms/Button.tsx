@@ -10,7 +10,7 @@ const ButtonVariantStyling = {
     "primary": "bg-primary border-primary hover:bg-primary-light hover:text-primary hover:border-primary-light",
     "primary-ghost": "bg-transparent text-primary border-solid border-primary hover:bg-primary-light hover:border-primary-light hover:text-primary-dark",
     "primary-gradient": "bg-[image:var(--gradient-brand)] border-transparent [background-origin:border-box] hover:brightness-115",
-    "primary-gradient-ghost": "gradient-button-ghost hover:brightness-115",
+    "primary-gradient-ghost": "gradient-button-ghost hover:brightness-115 leading-loose",
     "secondary": "bg-secondary-dark border-secondary-dark hover:bg-secondary-light hover:text-secondary hover:border-secondary-light",
     "secondary-ghost": "bg-transparent text-secondary border-solid border-secondary hover:text-accent-foreground hover:bg-secondary-light hover:border-secondary-light hover:text-secondary-dark",
     "tertiary": "bg-tertiary border-tertiary hover:bg-tertiary-light hover:text-tertiary hover:border-tertiary-light",
