@@ -30,10 +30,15 @@ const SettingsMenu = () => {
                 <ListItem
                     className={cn("text-md cursor-pointer hover:underline", !metricool.account?.is_premium ? "text-upsell font-semibold" : "text-black")}
                     link={metricoolDynamicUrl.withPath("user-management/users")}
-                    {...(!metricool.account?.is_premium && {
+                    {...(!metricool.account?.is_premium ? {
                         iconProps: {
                             icon: "upsell",
                             iconClass: "rounded-full bg-upsell size-2.5 p-0.5 text-black",
+                            iconPosition: "right",
+                        }
+                    } : {
+                        iconProps: {
+                            icon: "inline-external-link",
                             iconPosition: "right",
                         }
                     })}
@@ -43,10 +48,15 @@ const SettingsMenu = () => {
                 <ListItem
                     className={cn("text-md cursor-pointer hover:underline", !metricool.account?.is_premium ? "text-upsell font-semibold" : "text-black")}
                     link={metricoolDynamicUrl.withPath("my-tasks/open")}
-                    {...(!metricool.account?.is_premium && {
+                    {...(!metricool.account?.is_premium ? {
                         iconProps: {
                             icon: "upsell",
                             iconClass: "rounded-full bg-upsell size-2.5 p-0.5 text-black",
+                            iconPosition: "right",
+                        }
+                    } : {
+                        iconProps: {
+                            icon: "inline-external-link",
                             iconPosition: "right",
                         }
                     })}
