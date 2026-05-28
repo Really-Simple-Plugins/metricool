@@ -16,7 +16,7 @@ class AdminNoticesLoader extends AbstractLoader
      */
     public function isEnabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return is_admin();
     }
 
     /**

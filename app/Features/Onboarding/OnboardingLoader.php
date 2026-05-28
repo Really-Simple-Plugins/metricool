@@ -18,12 +18,13 @@ class OnboardingLoader extends AbstractLoader
         $this->dashboard = $dashboard;
         parent::__construct($env, $request);
     }
+
     /**
      * @inheritDoc
      */
     public function isEnabled(): bool
     {
-        return $this->dashboard->isOnboardingCompleted() === false;
+        return $this->dashboard->isOnboardingCompleted() === false && current_user_can('manage_metricool');
     }
 
     /**
@@ -31,6 +32,6 @@ class OnboardingLoader extends AbstractLoader
      */
     public function inScope(): bool
     {
-        return (is_admin() && $this->userIsOnDashboard()) || $this->requestIsRestRequest();
+        return true;
     }
 }
