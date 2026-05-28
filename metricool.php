@@ -6,7 +6,7 @@
  * @license GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name: Metricool
+ * Plugin Name: Metricool - Social media and site statistics
  * Plugin URI: https://metricool.com/
  * Description: Site metrics and social media analytics for Instagram, Facebook, YouTube, LinkedIn, X Twitter. The single best tool for Social Media Managers!
  * Version: 2.0.0

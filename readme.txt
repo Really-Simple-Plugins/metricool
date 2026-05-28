@@ -3,7 +3,7 @@ Contributors: reallysimpleplugins, wimbraam, jeroenvdk, markwolters, rvvelthuijs
 Donate link: https://metricool.com
 Tags: instagram, facebook, analytics, meta, social
 Requires at least: 6.6
-Tested up to: 7
+Tested up to: 7.0
 Requires PHP: 7.4
 Stable tag: 2.0.0
 License: GPLv2 or later
