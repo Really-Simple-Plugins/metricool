@@ -147,7 +147,7 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
                                         value={brand.id}
                                         className={clsx("font-semibold hover:bg-primary-light/50 focus:bg-primary-light/50")}
                                     >
-                                        {brand.label}
+                                        {brand.label ?? __("Empty Brand", "metricool")}
                                     </SelectOption>
                                 ))}
                             </Select>
