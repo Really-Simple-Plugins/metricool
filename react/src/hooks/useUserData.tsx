@@ -39,7 +39,7 @@ const useUserData = () => {
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (data): z.infer<typeof UserSettingsSchema> => ({
             sendToAlternativeEmail: data.data.sendToAlternativeEmail,
-            alternativeEmail: data.data.alternativeEmail,
+            alternativeEmail: data.data.alternativeEmail ?? "",
         })
     });
 
