@@ -33,6 +33,11 @@ class ConnectedNetworksResponse extends Response
             $networks[$networkName] = $networkData;
         }
 
+        if (!isset($networks['web']['url'])) {
+            // Hardcode the "web" connection. This prevents an inactive WordPress connection after onboarding.
+            $networks['web']['url'] = home_url();
+        }
+
         return $networks;
     }
 
