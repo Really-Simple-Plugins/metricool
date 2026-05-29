@@ -13,18 +13,18 @@ class MetricoolUserService
     public const METRICOOL_USER_OPTION = 'metricool_user';
 
     private ?array $user;
-    private MetricoolApi $api;
+    private MetricoolApi $metricool;
 
-    public function __construct(MetricoolApi $api)
+    public function __construct(MetricoolApi $metricool)
     {
-        $this->api = $api;
+        $this->metricool = $metricool;
         $this->user = get_option(self::METRICOOL_USER_OPTION, null);
     }
 
     public function update(): self
     {
         try {
-            $user = $this->api->user()->get();
+            $user = $this->metricool->user()->get();
         } catch (GuzzleException $e) {
             // If the request fails, we don't want to update the user data, but we also don't want to break the plugin.
             return $this;
@@ -55,5 +55,18 @@ class MetricoolUserService
     {
         return isset($this->user['subscription']['plan']['id'])
             && $this->user['subscription']['plan']['id'] !== 'FREE';
+    }
+
+    /**
+     * Returns a serialized version of the account of this user to be used in the front-end
+     */
+    public function accountData(): array
+    {
+        return [
+            'user_id' => $this->metricool->getUserId(),
+            'blog_id' => $this->metricool->getBlogId(),
+            'is_premium' => $this->isPremium(),
+            'user' => $this->getUser(),
+        ];
     }
 }
