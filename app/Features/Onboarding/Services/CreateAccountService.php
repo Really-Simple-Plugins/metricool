@@ -41,11 +41,12 @@ class CreateAccountService
      */
     public function createAccount(string $captcha, string $email, string $password, bool $newsletters): bool
     {
-        // translators: %s is a url to the support page
-        $globalError = sprintf(
-            __('Something went wrong. Please try again or <a href="%s" target="_blank">leave a support message</a>.', 'metricool'),
-            $this->env->get('frontend.trusted_urls.new_support_ticket')
-        );
+        $globalError = wp_kses_post(sprintf(
+            /* translators: %1$s is opening link and %2$s is closing link */
+            __('Something went wrong. Please try again or %1$sleave a support message%2$s.', 'metricool'),
+            '<a href="' . $this->env->get('frontend.trusted_urls.new_support_ticket') . '" target="_blank">',
+            '</a>',
+        ));
 
         // First, check if the password is valid
         if (!$this->isValidPassword($password)) {
@@ -64,7 +65,7 @@ class CreateAccountService
             throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
         }
 
-        // A 400 response means e-mail exists or the password is invalid
+        // A 400 response means e-mail exists
         if ($signupResponse->getStatusCode() == 400) {
             throw new CreateAccountException(wp_kses_post($globalError), 'Email or password error', 422);
         }
@@ -76,7 +77,6 @@ class CreateAccountService
 
         // Parse the user ID from the access token
         $userId = $this->oauth->parseUserIdFromAccessToken($signupResponse->data->accessToken);
-
         if (empty($userId)) {
             throw new CreateAccountException(wp_kses_post($globalError), 'Failed to parse user ID from access token', 500);
         }
@@ -89,6 +89,7 @@ class CreateAccountService
             $signupResponse->data->expires ?? 300
         );
 
+        // Update the user's password
         try {
             $this->api->userCredentials()
                 ->updatePassword('', $password);
@@ -98,16 +99,14 @@ class CreateAccountService
             throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
         }
 
-        $blogId = $this->getBlogId();
-
         // Attempt to automatically set the blog information, complete the onboarding process on success
         try {
-            if ($this->onboarding->finalizeOnboarding($blogId)) {
-                $this->dashboard->setShowWelcomeScreen();
-            }
+            $this->onboarding->finalizeOnboarding($this->findConnectedBrandId());
         } catch (GuzzleException $e) {
             throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
         }
+
+        $this->dashboard->setShowWelcomeScreen();
 
         return true;
     }
@@ -115,14 +114,11 @@ class CreateAccountService
 
     /**
      * Get the blogId from the API. This is needed to connect the brand and complete the onboarding process.
+     * @throws GuzzleException
      */
-    private function getBlogId(): ?string
+    private function findConnectedBrandId(): ?string
     {
-        try {
-            $brands = $this->api->brands()->all();
-        } catch (GuzzleException $e) {
-            return null;
-        }
+        $brands = $this->api->brands()->all();
 
         // Get the brand when there is only one, abort if there are more
         $brand = (count($brands) === 1 ? (array) $brands[0] : []);
