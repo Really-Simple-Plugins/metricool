@@ -300,14 +300,8 @@ class DashboardController implements ControllerInterface
 
         if ($isOnboardingCompleted) {
             // Update the user from api so we always have the latest data
-            $this->metricoolUser->update();
-
-            $settings['account'] = [
-                'user_id' => $this->metricool->getUserId(),
-                'blog_id' => $this->metricool->getBlogId(),
-                'is_premium' => $this->metricoolUser->isPremium(),
-                'user' => $this->metricoolUser->getUser(),
-            ];
+            // And add account data for front-end
+            $settings['account'] = $this->metricoolUser->update()->accountData();
         }
 
         return apply_filters('metricool_localize_dashboard_script', $settings);

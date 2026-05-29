@@ -15,6 +15,7 @@ use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Features\Onboarding\Services\OAuthService;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\DashboardService;
+use Metricool\Services\MetricoolUserService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Traits\HasRestAccess;
 
@@ -27,19 +28,22 @@ class OnboardingController implements FeatureInterface
     private CreateAccountService $accounts;
     private OAuthService $oauth;
     private DashboardService $dashboard;
+    private MetricoolUserService $metricoolUser;
 
     public function __construct(
         OnboardingService $onboarding,
         CreateAccountService $accounts,
         EnvironmentConfig $env,
         OAuthService $oauth,
-        DashboardService $dashboard
+        DashboardService $dashboard,
+        MetricoolUserService $metricoolUser
     ) {
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
         $this->env = $env;
         $this->oauth = $oauth;
         $this->dashboard = $dashboard;
+        $this->metricoolUser = $metricoolUser;
     }
 
     public function register(): void
@@ -103,12 +107,7 @@ class OnboardingController implements FeatureInterface
             return $this->sendHttpErrorResponse($e->getMessage(), ['reason' => $e->reason], 422);
         }
 
-        return $this->sendHttpResponse([
-            'onboarding' => [
-                'state' => $this->dashboard->state(),
-                'mode' => $this->dashboard->mode(),
-            ],
-        ]);
+        return $this->onboardedResponse();
     }
 
     /**
@@ -133,12 +132,7 @@ class OnboardingController implements FeatureInterface
             }
         }
 
-        return $this->sendHttpResponse([
-            'onboarding' => [
-                'state' => $this->dashboard->state(),
-                'mode' => $this->dashboard->mode(),
-            ],
-        ]);
+        return $this->onboardedResponse();
     }
 
     /**
@@ -183,5 +177,20 @@ class OnboardingController implements FeatureInterface
         // Redirect to the WordPress dashboard
         wp_safe_redirect($this->env->getString('plugin.dashboard_url'));
         exit;
+    }
+
+    /**
+     * Response that is returned when the onboarding process has been completed successfully.
+     * Includes the onboarding state and mode, as well as the account data of the user.
+     */
+    private function onboardedResponse(): \WP_REST_Response
+    {
+        return $this->sendHttpResponse([
+            'onboarding' => [
+                'state' => $this->dashboard->state(),
+                'mode' => $this->dashboard->mode(),
+            ],
+            'account' => $this->metricoolUser->accountData(),
+        ]);
     }
 }
