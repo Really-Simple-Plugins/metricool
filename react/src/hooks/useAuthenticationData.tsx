@@ -10,7 +10,7 @@ type AuthenticationDataProps = {
     logoutCallback?: () => void,
     signUpCallbacks?: {
         beforeSignUpCallback: () => void,
-        onSignUpSuccessCallback: (onboarding: MetricoolData["onboarding"]) => void,
+        onSignUpSuccessCallback: (onboarding: MetricoolData["onboarding"], account: Pick<Required<MetricoolData>, "account">["account"] ) => void,
         onSignUpErrorCallback: () => void,
     }
 }
@@ -39,7 +39,7 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
             }).post();
         },
         onSuccess: async (response) => {
-            signUpCallbacks?.onSignUpSuccessCallback(response.data.onboarding);
+            signUpCallbacks?.onSignUpSuccessCallback(response.data.onboarding, response.data.account);
         },
         onError: (error) => {
             signUpCallbacks?.onSignUpErrorCallback();

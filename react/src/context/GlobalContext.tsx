@@ -172,7 +172,7 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
 type PartialGlobalState = Partial<Omit<GlobalState, "metricool"> & { metricool: Partial<MetricoolData> }>;
 
 interface ReducerAction {
-    dispatchType: "setOnboardingState" | "resetAccountData" | "setDashboardModalClosed" | "setDashboardSetting",
+    dispatchType: "setOnboardingState" | "setAccountData" | "resetAccountData" | "setDashboardModalClosed" | "setDashboardSetting",
     change?: PartialGlobalState,
 }
 
@@ -188,6 +188,17 @@ const globalStateReducer = (state: GlobalState, action: ReducerAction): GlobalSt
                     }
                 })
             };
+        }
+        case "setAccountData": {
+            return {
+                ...state,
+                ...(action?.change?.metricool && {
+                    metricool: {
+                        ...state.metricool,
+                        ...(action?.change?.metricool.account && { account: { ...action?.change?.metricool.account } })
+                    }
+                })
+            }
         }
         case "resetAccountData": {
             const metricool = state.metricool;

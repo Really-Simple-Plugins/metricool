@@ -32,7 +32,11 @@ export const OnboardingLayout = () => {
         setOnboardingModalOpen(true);
     };
 
-    const onSignUpSuccessCallback = (onboarding: MetricoolData["onboarding"]) => {
+    const onSignUpSuccessCallback = (onboarding: MetricoolData["onboarding"], account: Pick<Required<MetricoolData>, "account">["account"]) => {
+        dispatch({
+            dispatchType: "setAccountData",
+            change: { metricool: { account: { ...account } } }
+        });
         if (onboarding.state.blog_id_selected === false) {
             setActiveOnboardingStep(1);
         } else {
