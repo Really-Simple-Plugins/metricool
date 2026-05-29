@@ -7,13 +7,14 @@ namespace Metricool\Features\UserSettings\Validators;
 use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Support\Helpers\Collection;
+use WP_REST_Request;
 
 class SupportedLanguageValidator extends AbstractValidator
 {
     /**
      * This validator checks if the value is 1
      */
-    public function validate($value, \WP_REST_Request $request = null): void
+    public function validate($value, ?WP_REST_Request $request = null): void
     {
         $availableLanguages = new Collection(MetricoolApi::supportedLanguages());
 
