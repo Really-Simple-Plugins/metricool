@@ -16,7 +16,8 @@ class AdminNoticesLoader extends AbstractLoader
      */
     public function isEnabled(): bool
     {
-        return is_admin();
+        // Notifications can be shown to every logged-in user
+        return is_user_logged_in();
     }
 
     /**
