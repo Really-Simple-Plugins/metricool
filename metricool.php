@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @package Metricool
  * @author Really Simple Plugins
