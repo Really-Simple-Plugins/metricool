@@ -37,6 +37,7 @@ class AdminNoticesEndpoints
         $routes['/admin-notices/(?P<notice_id>[\w-]+)'] = [
             'methods' => 'POST',
             'callback' => [$this, 'handleRestRequest'],
+            'middleware' => ['user_can:administrator'],
             'args' => [
                 'notice_id' => [
                     'required' => true,
