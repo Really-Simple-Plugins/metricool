@@ -53,6 +53,8 @@
 .rsp-metricool-admin-notice .rsp-metricool-content .button {
     background: #000;
     border-color: #999;
+    color: #fff;
+    border: none;
 }
 
 .rsp-metricool-admin-notice .rsp-metricool-content button.link {
