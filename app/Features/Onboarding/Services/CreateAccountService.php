@@ -122,11 +122,8 @@ class CreateAccountService
 
         // Get the brand when there is only one, abort if there are more
         $brand = (count($brands) === 1 ? (array) $brands[0] : []);
-        if (!isset($brand['id'])) {
-            return null;
-        }
 
-        return $brand['id'];
+        return $brand['id'] ?? null;
     }
 
     /**
