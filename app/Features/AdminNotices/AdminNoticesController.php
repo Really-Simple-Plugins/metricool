@@ -42,8 +42,6 @@ class AdminNoticesController implements FeatureInterface
             return;
         }
 
-        add_action('admin_enqueue_scripts', [$this, 'enqueueStyles']);
-
         add_action('admin_notices', static function () use ($notices) {
 
             foreach ($notices as $notice) {

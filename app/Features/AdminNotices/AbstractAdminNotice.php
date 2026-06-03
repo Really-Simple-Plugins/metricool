@@ -13,9 +13,7 @@ abstract class AbstractAdminNotice
         render as protected traitRender;
     }
 
-    /**
-     * Override this constant to define the unique identifier of the notice.
-     */
+    /** @var string The id of the Notice */
     public const IDENTIFIER = '';
 
     /**
@@ -28,6 +26,10 @@ abstract class AbstractAdminNotice
 
     public function __construct(EnvironmentConfig $env)
     {
+        if (!defined('static::IDENTIFIER') || empty(static::IDENTIFIER)) {
+            throw new \InvalidArgumentException('The IDENTIFIER constant must be defined and not empty in the child class.');
+        }
+
         $this->env = $env;
     }
 
