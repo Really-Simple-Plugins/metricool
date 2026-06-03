@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "registry:init": "npx shadcn@latest add @RSPDS/base-styles @RSPDS/utils @RSPDS/npmrc-config @RSPDS/index",
-    "registry:add": "npx shadcn@latest add"
+    "registry:add": "func() { npx shadcn@latest add \"$1\" && cd ../scripts && ./text-domain.sh && cd ..; }; func"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
