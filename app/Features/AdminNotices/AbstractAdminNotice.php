@@ -76,14 +76,6 @@ abstract class AbstractAdminNotice
     }
 
     /**
-     * Returns whether the notice should be displayed
-     */
-    public function shouldDisplay(): bool
-    {
-        return $this->canDisplay() && !$this->isDismissed() && !$this->isSnoozed();
-    }
-
-    /**
      * Permanently dismiss the notice
      */
     public function dismiss(): void
@@ -174,7 +166,16 @@ abstract class AbstractAdminNotice
     }
 
     /**
-     * Notice-specific display conditions
+     * Returns whether the notice should be displayed
+     */
+    final public function shouldDisplay(): bool
+    {
+        return $this->canDisplay() && !$this->isDismissed() && !$this->isSnoozed();
+    }
+
+    /**
+     * Notice-specific display conditions, use this to check for things like
+     * required capabilities, specific admin pages, etc.
      */
     abstract protected function canDisplay(): bool;
 
