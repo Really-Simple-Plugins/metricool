@@ -26,7 +26,6 @@ final class UpgradeNotice extends AbstractAdminNotice
      */
     protected function canDisplay(): bool
     {
-        return true;
         return !$this->dashboard->isUserOnDashboard() &&
             $this->dashboard->isForcedLogin();
     }
