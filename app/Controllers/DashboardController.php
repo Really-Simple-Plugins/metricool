@@ -28,11 +28,11 @@ class DashboardController implements ControllerInterface
     private DashboardService $service;
     private MetricoolUserService $metricoolUser;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $dashboard, MetricoolUserService $metricoolUser)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $service, MetricoolUserService $metricoolUser)
     {
         $this->env = $env;
         $this->metricool = $metricool;
-        $this->service = $dashboard;
+        $this->service = $service;
         $this->metricoolUser = $metricoolUser;
     }
 
