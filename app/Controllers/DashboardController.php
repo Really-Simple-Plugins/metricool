@@ -96,7 +96,6 @@ class DashboardController implements ControllerInterface
             $menuPosition,
         );
 
-//        add_action("admin_print_styles-$pageHookSuffix", [$this, 'enqueueDashboardStyles']);
         add_action("admin_print_scripts-$pageHookSuffix", [$this, 'enqueueReactScripts']);
     }
 
@@ -289,9 +288,9 @@ class DashboardController implements ControllerInterface
                 'state' => $this->service->state(),
                 'mode' => $this->service->mode(),
             ],
-            'support' => $this->env->get('metricool.support'),
-            'metricool_base_url' => $this->env->get('metricool.base_url'),
-            'metricool_help_url' => $this->env->get('metricool.help_url'),
+            'support' => $this->env->getUrl('metricool.support'),
+            'metricool_base_url' => $this->env->getUrl('metricool.base_url'),
+            'metricool_help_url' => $this->env->getUrl('metricool.help_url'),
             'locale' => str_replace("_", "-", get_user_locale()),
             'supported_languages' => $this->metricool->supportedLanguages(),
             'google_recaptcha_url' => $this->getGoogleRecaptchaUrl(),
