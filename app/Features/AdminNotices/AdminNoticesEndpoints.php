@@ -29,14 +29,11 @@ class AdminNoticesEndpoints
         add_filter('metricool_rest_routes', [$this, 'addRestRoutes']);
     }
 
-    /**
-     * Add the rest routes to handle notice actions
-     */
     public function addRestRoutes(array $routes): array
     {
         $routes['/admin-notices/(?P<notice_id>[\w-]+)'] = [
             'methods' => 'POST',
-            'callback' => [$this, 'handleRestRequest'],
+            'callback' => [$this, 'handleNoticeAction'],
             'middleware' => ['user_can:administrator'],
             'args' => [
                 'notice_id' => [
@@ -55,10 +52,7 @@ class AdminNoticesEndpoints
         return $routes;
     }
 
-    /**
-     * Handle incoming rest request to do an action on a notice
-     */
-    public function handleRestRequest(\WP_REST_Request $wpRestRequest): \WP_REST_Response
+    public function handleNoticeAction(\WP_REST_Request $wpRestRequest): \WP_REST_Response
     {
         $request = new Storage(
             $wpRestRequest->get_params()
