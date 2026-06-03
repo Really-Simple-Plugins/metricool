@@ -43,21 +43,13 @@ class AdminNoticesController implements FeatureInterface
         }
 
         add_action('admin_enqueue_scripts', [$this, 'enqueueStyles']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueueScripts']);
 
-        add_action('admin_notices', function () use ($notices) {
+        add_action('admin_notices', static function () use ($notices) {
+
             foreach ($notices as $notice) {
                 $notice->render();
             }
         });
-    }
-
-    /**
-     * Enqueue the styles for the admin notices
-     */
-    public function enqueueStyles(): void
-    {
-        wp_enqueue_style('metricool-admin-notice', $this->env->getUrl('plugin.assets_url') . 'css/admin-notice.css', [], $this->env->getString('plugin.version'));
     }
 
     /**
