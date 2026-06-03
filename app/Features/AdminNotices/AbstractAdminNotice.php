@@ -24,8 +24,8 @@ abstract class AbstractAdminNotice
      * The dismiss value in the REST endpoint's action parameter
      * @var string
      */
-
     public const DISMISS_NOTICE_ACTION = 'dismiss';
+
     /**
      * The snooze value in the REST endpoint's action parameter
      * @var string

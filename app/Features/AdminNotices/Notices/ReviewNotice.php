@@ -32,7 +32,7 @@ final class ReviewNotice extends AbstractAdminNotice
     protected function canDisplay(): bool
     {
         return !$this->dashboard->isUserOnDashboard() &&
-            $this->onboardingCompletedTimestampSuitableForReview();
+            $this->onboardedThirtyDaysAgo();
     }
 
     /**
@@ -96,7 +96,7 @@ final class ReviewNotice extends AbstractAdminNotice
     /**
      * Check if the onboarding completion time is more than 30 days ago.
      */
-    private function onboardingCompletedTimestampSuitableForReview(): bool
+    private function onboardedThirtyDaysAgo(): bool
     {
         $onboardingCompletedTimestamp = get_option('metricool_onboarding_completed_at');
         if (empty($onboardingCompletedTimestamp)) {
