@@ -78,7 +78,7 @@ abstract class AbstractAdminNotice
     /**
      * Permanently dismiss the notice
      */
-    public function dismiss(): void
+    final public function dismiss(): void
     {
         update_option('metricool_notice_' . $this->getId() . '_dismissed', true, false);
     }
@@ -86,7 +86,7 @@ abstract class AbstractAdminNotice
     /**
      * Snooze the notice for the configured number of days
      */
-    public function snooze(): void
+    final public function snooze(): void
     {
         $snoozedUntil = time() + ($this->getSnoozeDays() * DAY_IN_SECONDS);
         update_option('metricool_notice_' . $this->getId() . '_snoozed_until', $snoozedUntil, false);
@@ -95,7 +95,7 @@ abstract class AbstractAdminNotice
     /**
      * Check if the notice has been permanently dismissed
      */
-    public function isDismissed(): bool
+    final public function isDismissed(): bool
     {
         return (bool) get_option('metricool_notice_' . $this->getId() . '_dismissed', false);
     }
@@ -103,7 +103,7 @@ abstract class AbstractAdminNotice
     /**
      * Check if the notice is currently snoozed
      */
-    public function isSnoozed(): bool
+    final public function isSnoozed(): bool
     {
         $snoozedUntil = (int) get_option('metricool_notice_' . $this->getId() . '_snoozed_until', 0);
 
