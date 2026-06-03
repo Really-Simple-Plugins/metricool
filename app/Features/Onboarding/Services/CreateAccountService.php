@@ -41,12 +41,12 @@ class CreateAccountService
      */
     public function createAccount(string $captcha, string $email, string $password, bool $newsletters): bool
     {
-        $globalError = wp_kses_post(sprintf(
+        $globalError = sprintf(
             /* translators: %1$s is opening link and %2$s is closing link */
             __('Something went wrong. Please try again or %1$sleave a support message%2$s.', 'metricool'),
             '<a href="' . $this->env->get('frontend.trusted_urls.new_support_ticket') . '" target="_blank">',
             '</a>',
-        ));
+        );
 
         // First, check if the password is valid
         if (!$this->isValidPassword($password)) {
