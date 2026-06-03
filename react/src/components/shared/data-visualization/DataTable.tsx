@@ -138,7 +138,7 @@ const DataTable = <TData, TValue>({ data, columns, tableSettings }: DataTablePro
                         ) : (
                             <PrimitiveTableRow>
                                 <PrimitiveTableCell colSpan={columns.length} className={"h-24 text-center"}>
-                                    No results.
+                                    {__("No results.", "metricool")}
                                 </PrimitiveTableCell>
                             </PrimitiveTableRow>
                         )}

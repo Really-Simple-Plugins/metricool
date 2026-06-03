@@ -129,6 +129,7 @@ const AccountSettings = () => {
                                     {metricool.account?.user.mail && !data.alternativeEmail && (
                                         <span className={"text-gray-400 pl-2"}>
                                             {sprintf(
+                                                /*translators: variable is number the user's email address*/
                                                 __("When this field is empty the monthly summary is sent to %1$s", "metricool"),
                                                 [metricool.account.user.mail]
                                             )}
