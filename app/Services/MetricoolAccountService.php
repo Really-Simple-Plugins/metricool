@@ -46,11 +46,17 @@ class MetricoolAccountService
         return $this->accountData();
     }
 
+    /**
+     * Return the Metricool user
+     */
     public function getUser(): ?array
     {
         return $this->user;
     }
 
+    /**
+     * Stores the Metricool user in the database
+     */
     public function storeUser(array $user): void
     {
         $this->user = $user;
@@ -58,7 +64,7 @@ class MetricoolAccountService
     }
 
     /**
-     * Returns if the user is paid
+     * Returns if the account is a paid / premium account
      */
     public function isPremium(): bool
     {
