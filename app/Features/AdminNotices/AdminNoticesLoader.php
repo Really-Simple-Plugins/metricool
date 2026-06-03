@@ -12,13 +12,13 @@ class AdminNoticesLoader extends AbstractLoader
     use HasAllowlistControl;
 
     /**
-     * @inheritDoc
+     * Feature enabled for every logged-in user
      */
     public function isEnabled(): bool
     {
-        // Notifications can be shown to every logged-in user
         return is_user_logged_in();
     }
+
 
     /**
      * @inheritDoc
