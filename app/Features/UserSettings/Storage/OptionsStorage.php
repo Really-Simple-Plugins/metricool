@@ -17,10 +17,10 @@ class OptionsStorage extends AbstractStorage
             throw new \InvalidArgumentException('Prefix is required for OptionsStorage: ' . esc_html($name));
         }
 
+        parent::__construct($name);
+
         $this->prefix = $config['prefix'];
         $this->casing = $config['casing'] ?? 'snakeCase';
-
-        parent::__construct($name);
     }
 
     /**

@@ -104,7 +104,7 @@ class OnboardingController implements FeatureInterface
         try {
             $this->accounts->createAccount($captcha, $email, $password, $marketing);
         } catch (CreateAccountException $e) {
-            return $this->sendHttpErrorResponse($e->getMessage(), ['reason' => $e->reason], 422);
+            return $this->sendHttpErrorResponse($e->getMessage(), ['reason' => $e->getReason()], 422);
         }
 
         return $this->onboardedResponse();

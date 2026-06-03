@@ -15,9 +15,9 @@ class ValidationFailedExceptions extends \RuntimeException
 
     public function __construct(array $validationErrors)
     {
-        $this->validationErrors = $validationErrors;
-
         parent::__construct('The validation of the settings failed');
+
+        $this->validationErrors = $validationErrors;
     }
 
     public function getErrors(): array
