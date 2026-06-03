@@ -35,8 +35,7 @@ class LogoutEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
+     * @inheritDoc
      */
     public function enabled(): bool
     {

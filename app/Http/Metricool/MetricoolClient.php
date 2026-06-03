@@ -232,12 +232,12 @@ class MetricoolClient
     }
 
     /**
-     * Determine whether the access token is expired.
+     * Determine whether the access token is expired. This uses a 1-minute buffer,
+     * to account for clock skew and request time.
      */
     public function isTokenExpired(): bool
     {
-        return Carbon::now()
-            ->gt($this->tokenExpiresAt()->subMinute()); // add 1-minute buffer so refreshing happens before the token expires
+        return Carbon::now()->gt($this->tokenExpiresAt()->subMinute());
     }
 
     /**

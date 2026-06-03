@@ -4,6 +4,13 @@ namespace Metricool\Services;
 
 class OptionsService
 {
+
+    public function getRaw()
+    {
+
+    }
+
+
     /**
      * Delete all plugin options from the wp_options table
      * @param bool $private Whether to delete private options (prefixed with _)
