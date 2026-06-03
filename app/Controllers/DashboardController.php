@@ -309,11 +309,7 @@ class DashboardController implements ControllerInterface
      */
     private function getGoogleRecaptchaUrl(): string
     {
-        return str_replace(
-            "{{KEY}}",
-            $this->env->getString('metricool.google_recaptcha_key'),
-            $this->env->getString('metricool.google_recaptcha_script_url')
-        );
+        return 'https://www.google.com/recaptcha/enterprise.js?render=' . $this->env->getString('metricool.google_recaptcha_key');
     }
 
     public function loadMainScriptsAsModule(string $tag, string $handle): string
