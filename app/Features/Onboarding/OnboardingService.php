@@ -7,7 +7,7 @@ use GuzzleHttp\Exception\RequestException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
-use Metricool\Services\MetricoolUserService;
+use Metricool\Services\MetricoolAccountService;
 use Metricool\Services\TrackingScriptService;
 
 class OnboardingService
@@ -15,14 +15,14 @@ class OnboardingService
     private MetricoolApi $api;
     private TrackingScriptService $tracking;
     private DashboardService $dashboard;
-    private MetricoolUserService $metricoolUser;
+    private MetricoolAccountService $account;
 
-    public function __construct(MetricoolApi $api, TrackingScriptService $tracking, DashboardService $dashboard, MetricoolUserService $metricoolUser)
+    public function __construct(MetricoolApi $api, TrackingScriptService $tracking, DashboardService $dashboard, MetricoolAccountService $account)
     {
         $this->api = $api;
         $this->tracking = $tracking;
         $this->dashboard = $dashboard;
-        $this->metricoolUser = $metricoolUser;
+        $this->account = $account;
     }
 
     /**
@@ -45,7 +45,7 @@ class OnboardingService
         }
 
         // Update the metricool user data from the API
-        $this->metricoolUser->update();
+        $this->account->fetch();
 
         // When all the necessary information is retrieved, set the onboarding as completed
         return $this->dashboard->setOnboardingCompleted();

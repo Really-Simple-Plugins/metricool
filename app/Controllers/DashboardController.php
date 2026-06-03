@@ -10,7 +10,7 @@ if (!defined('ABSPATH')) {
 
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
-use Metricool\Services\MetricoolUserService;
+use Metricool\Services\MetricoolAccountService;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasUserAccess;
 use Metricool\Traits\HasAllowlistControl;
@@ -26,14 +26,14 @@ class DashboardController implements ControllerInterface
     private EnvironmentConfig $env;
     private MetricoolApi $metricool;
     private DashboardService $service;
-    private MetricoolUserService $metricoolUser;
+    private MetricoolAccountService $account;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $service, MetricoolUserService $metricoolUser)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $service, MetricoolAccountService $account)
     {
         $this->env = $env;
         $this->metricool = $metricool;
         $this->service = $service;
-        $this->metricoolUser = $metricoolUser;
+        $this->account = $account;
     }
 
     public function register(): void
@@ -298,9 +298,7 @@ class DashboardController implements ControllerInterface
         ];
 
         if ($this->metricool->hasAuthentication()) {
-            // Update the user from api so we always have the latest data
-            // And add account data for front-end
-            $settings['account'] = $this->metricoolUser->update()->accountData();
+            $settings['account'] = $this->account->fetch();
         }
 
         return apply_filters('metricool_localize_dashboard_script', $settings);

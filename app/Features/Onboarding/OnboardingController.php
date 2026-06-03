@@ -15,7 +15,7 @@ use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Features\Onboarding\Services\OAuthService;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\DashboardService;
-use Metricool\Services\MetricoolUserService;
+use Metricool\Services\MetricoolAccountService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Traits\HasRestAccess;
 
@@ -28,7 +28,7 @@ class OnboardingController implements FeatureInterface
     private CreateAccountService $accounts;
     private OAuthService $oauth;
     private DashboardService $dashboard;
-    private MetricoolUserService $metricoolUser;
+    private MetricoolAccountService $account;
 
     public function __construct(
         OnboardingService $onboarding,
@@ -36,14 +36,14 @@ class OnboardingController implements FeatureInterface
         EnvironmentConfig $env,
         OAuthService $oauth,
         DashboardService $dashboard,
-        MetricoolUserService $metricoolUser
+        MetricoolAccountService $account
     ) {
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
         $this->env = $env;
         $this->oauth = $oauth;
         $this->dashboard = $dashboard;
-        $this->metricoolUser = $metricoolUser;
+        $this->account = $account;
     }
 
     public function register(): void
@@ -192,7 +192,7 @@ class OnboardingController implements FeatureInterface
                 'state' => $this->dashboard->state(),
                 'mode' => $this->dashboard->mode(),
             ],
-            'account' => $this->metricoolUser->accountData(),
+            'account' => $this->account->accountData(),
         ]);
     }
 }

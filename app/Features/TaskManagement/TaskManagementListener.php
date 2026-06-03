@@ -9,18 +9,18 @@ if (!defined('ABSPATH')) {
 }
 
 use Metricool\Features\TaskManagement\Tasks\HistoricalDataTask;
-use Metricool\Services\MetricoolUserService;
+use Metricool\Services\MetricoolAccountService;
 use Metricool\Support\Helpers\Event;
 
 class TaskManagementListener
 {
     private TaskManagementService $service;
-    private MetricoolUserService $metricoolUser;
+    private MetricoolAccountService $account;
 
-    public function __construct(TaskManagementService $service, MetricoolUserService $metricoolUser)
+    public function __construct(TaskManagementService $service, MetricoolAccountService $account)
     {
         $this->service = $service;
-        $this->metricoolUser = $metricoolUser;
+        $this->account = $account;
     }
 
     public function listen(): void
@@ -63,7 +63,7 @@ class TaskManagementListener
      */
     public function handleMetricoolUserUpdate(array $user): void
     {
-        $isPremium = $this->metricoolUser->isPremium();
+        $isPremium = $this->account->isPremium();
 
         // Complete or open the HistoricalDataTask based on subscription status
         if ($isPremium) {

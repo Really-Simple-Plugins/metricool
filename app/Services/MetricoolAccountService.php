@@ -8,7 +8,12 @@ use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Support\Helpers\Event;
 
-class MetricoolUserService
+/**
+ * Service that is responsible for getting the account information
+ * (premium, user details, etc) of the user that is currently authenticated
+ * with the Metricool API
+ */
+class MetricoolAccountService
 {
     public const METRICOOL_USER_OPTION = 'metricool_user';
 
@@ -21,20 +26,23 @@ class MetricoolUserService
         $this->user = get_option(self::METRICOOL_USER_OPTION, null);
     }
 
-    public function update(): self
+    /**
+     * Attempts to fetch account from LeadInfo, return the stale data on error
+     * @return array Account details from api
+     */
+    public function fetch(): array
     {
         try {
             $user = $this->metricool->user()->get();
         } catch (GuzzleException $e) {
-            // If the request fails, we don't want to update the user data, but we also don't want to break the plugin.
-            return $this;
+            return $this->accountData();
         }
 
         $this->storeUser($user);
 
         Event::dispatch(EVENT::METRICOOL_USER_UPDATED, $user);
 
-        return $this;
+        return $this->accountData();
     }
 
     public function getUser(): ?array
