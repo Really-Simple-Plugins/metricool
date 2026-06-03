@@ -13,13 +13,23 @@ abstract class AbstractAdminNotice
         render as protected traitRender;
     }
 
-    /** @var string The id of the Notice */
+    /**
+     * The unique id of the Notice should be defined in the child class as a
+     * constant. This is used to identify the notice in the database and actions.
+     * @var string
+     */
     public const IDENTIFIER = '';
 
     /**
-     * These constants can be used in the REST endpoint to identify the action being performed (dismiss or snooze)
+     * The dismiss value in the REST endpoint's action parameter
+     * @var string
      */
+
     public const DISMISS_NOTICE_ACTION = 'dismiss';
+    /**
+     * The snooze value in the REST endpoint's action parameter
+     * @var string
+     */
     public const SNOOZE_NOTICE_ACTION = 'snooze';
 
     protected EnvironmentConfig $env;
