@@ -14,7 +14,14 @@ if (!defined('ABSPATH')) {
 
 <p><strong><?php esc_html_e('You have just upgraded to the new Metricool plugin', 'metricool'); ?></strong></p>
 <p>
-    <?php echo wp_kses_post(sprintf(
-        __('Please <strong>sign in</strong> to discover all new functionality', 'metricool')
-    )); ?>
+    <?php
+    /* translators: 1: opening strong tag, 2: closing strong tag. */
+    echo wp_kses_post(
+        sprintf(
+            __('Please %1$ssign in%2$s to discover all new functionality', 'metricool'),
+            '<strong>',
+            '</strong>'
+        )
+    );
+    ?>
 </p>
