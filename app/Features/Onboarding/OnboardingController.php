@@ -118,20 +118,22 @@ class OnboardingController implements FeatureInterface
     {
         $blogId = (string) $request->get_param('blogId');
 
-        // Store the blogId if it was provided by the client, to store the necessary blog information
-        if (!empty($blogId)) {
-            try {
-                $this->onboarding->finalizeOnboarding($blogId);
-            } catch (BrandAccessDeniedException $e) {
-                return $this->sendHttpErrorResponse(__('Could not retrieve brand. Pick another brand, try again or contact support.', 'metricool'), [], 403);
-            } catch (GuzzleException $e) {
-                return $this->sendHttpErrorResponse(wp_kses_post(sprintf(
-                    /* translators: %1$s is opening link and %2$s is closing link */
-                    __('Something went wrong. Please try again or %1$sleave a support message%2$s.', 'metricool'),
-                    '<a href="' . $this->env->get('frontend.trusted_urls.new_support_ticket') . '" target="_blank">',
-                    '</a>',
-                )));
-            }
+        if (empty($blogId)) {
+            return $this->onboardedResponse();
+        }
+
+        // Store the blogId if it was provided by the client, to retrieve the necessary blog information
+        try {
+            $this->onboarding->finalizeOnboarding($blogId);
+        } catch (BrandAccessDeniedException $e) {
+            return $this->sendHttpErrorResponse(__('Could not retrieve brand. Pick another brand, try again or contact support.', 'metricool'), [], 403);
+        } catch (GuzzleException $e) {
+            return $this->sendHttpErrorResponse(wp_kses_post(sprintf(
+                /* translators: %1$s is opening link and %2$s is closing link */
+                __('Something went wrong. Please try again or %1$sleave a support message%2$s.', 'metricool'),
+                '<a href="' . $this->env->get('frontend.trusted_urls.new_support_ticket') . '" target="_blank">',
+                '</a>',
+            )));
         }
 
         return $this->onboardedResponse();
