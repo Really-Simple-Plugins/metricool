@@ -57,7 +57,7 @@ final class UpgradeNotice extends AbstractAdminNotice
     /**
      * @inheritDoc
      */
-    public function getContentView(): string
+    protected function getContentView(): string
     {
         return 'admin/notices/upgrade-notice';
     }
@@ -65,7 +65,7 @@ final class UpgradeNotice extends AbstractAdminNotice
     /**
      * @inheritDoc
      */
-    public function getContentVariables(): array
+    protected function getContentVariables(): array
     {
         return [];
     }

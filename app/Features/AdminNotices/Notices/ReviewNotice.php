@@ -78,7 +78,7 @@ final class ReviewNotice extends AbstractAdminNotice
     /**
      * @inheritDoc
      */
-    public function getContentView(): string
+    protected function getContentView(): string
     {
         return 'admin/notices/review-notice';
     }
@@ -86,7 +86,7 @@ final class ReviewNotice extends AbstractAdminNotice
     /**
      * @inheritDoc
      */
-    public function getContentVariables(): array
+    protected function getContentVariables(): array
     {
         return [
             'reviewMessage' => $this->getReviewNoticeMessage(),

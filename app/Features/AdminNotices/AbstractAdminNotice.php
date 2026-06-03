@@ -103,7 +103,7 @@ abstract class AbstractAdminNotice
     /**
      * Check if the notice has been permanently dismissed
      */
-    protected function isDismissed(): bool
+    public function isDismissed(): bool
     {
         return (bool) get_option('metricool_notice_' . $this->getId() . '_dismissed', false);
     }
@@ -111,7 +111,7 @@ abstract class AbstractAdminNotice
     /**
      * Check if the notice is currently snoozed
      */
-    protected function isSnoozed(): bool
+    public function isSnoozed(): bool
     {
         $snoozedUntil = (int) get_option('metricool_notice_' . $this->getId() . '_snoozed_until', 0);
 
@@ -181,10 +181,10 @@ abstract class AbstractAdminNotice
     /**
      * Returns the view path for the inner content of the notice
      */
-    abstract public function getContentView(): string;
+    abstract protected function getContentView(): string;
 
     /**
      * Returns the variables passed to the content view
      */
-    abstract public function getContentVariables(): array;
+    abstract protected function getContentVariables(): array;
 }
