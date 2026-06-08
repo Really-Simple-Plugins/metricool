@@ -193,6 +193,7 @@ const AnalyticsTab = () => {
                                 general: { height: 290 },
                                 xAxis: { interval: xAxisInterval },
                             }}
+                            maxHeightClass={"max-h-72.5"}
                             chartData={analyticsData.timelineData}
                             linesSettings={{ type: "monotone" }}
                         />

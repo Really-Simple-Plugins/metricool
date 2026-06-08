@@ -27,7 +27,7 @@ type LineChartProps = {
     chartSettings: {
         xAxisKey: string,
         general?: {
-            height?: 290 | number,
+            height?: number,
             displayTooltip?: boolean,
             hideTooltipLabel?: boolean,
             margin?: {
@@ -38,6 +38,7 @@ type LineChartProps = {
         yAxis?: RechartYAxisProps,
     },
     className?: string,
+    maxHeightClass: `max-h-${number}`
     linesSettings?: RechartLineProps,
 }
 
@@ -45,9 +46,20 @@ type LineChartProps = {
  *
  * @version 1.0.0
  */
-const LineChart = ({ chartConfig, chartData, chartSettings, linesSettings, className }: LineChartProps) => {
+const LineChart = ({
+    chartConfig,
+    chartData,
+    chartSettings,
+    maxHeightClass,
+    linesSettings,
+    className
+}: LineChartProps) => {
     return (
-        <PrimitiveChartContainer config={chartConfig} className={cn(className, chartSettings?.general?.height === 290 && "max-h-72.5")} {...(chartSettings?.general?.height && { height: chartSettings.general.height })} >
+        <PrimitiveChartContainer
+            config={chartConfig}
+            className={cn(className, maxHeightClass)}
+            {...(chartSettings?.general?.height && { height: chartSettings.general.height })}
+        >
             <RechartLineChart
                 accessibilityLayer
                 data={chartData}
