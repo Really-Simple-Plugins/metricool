@@ -36,8 +36,8 @@ const useNotificationData = () => {
         queryFn: () => httpClient.setRoute("get_notices").get(),
         staleTime: Infinity, // never stale unless manually invalidated
         gcTime: Infinity, // data is never garbage collected
-        select: (data): Record<string, Notice[]> => {
-            const noticesWithVisibility = data.data.map((notice: Notice) => ({
+        select: (response): Record<string, Notice[]> => {
+            const noticesWithVisibility = response.data.map((notice: Notice) => ({
                 ...notice,
                 visible: notice.visible ? notice.visible : notice.active && (notice.route === "general" || notice.route === pathname)
             }));
