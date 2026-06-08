@@ -23,7 +23,7 @@ const SignOut = ({
                 <Input id={"current-user-email"} disabled value={currentUserEmail}/>
                 <Button
                     variant={"primary"}
-                    onClick={() => onSignOut()}
+                    onClick={onSignOut}
                     size={"lg"}
                 >
                     {__("Log Out", "metricool")}
