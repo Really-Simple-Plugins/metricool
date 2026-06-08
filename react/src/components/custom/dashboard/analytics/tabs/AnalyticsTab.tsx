@@ -144,7 +144,6 @@ const AnalyticsTab = () => {
     const {
         webAnalyticsDataQuery: {
             data: analyticsData,
-            isLoading,
             error,
             refetch,
             errorUpdateCount,
@@ -174,11 +173,11 @@ const AnalyticsTab = () => {
                 </FlexContainer>
                 <hr className={"-mx-2"}/>
                 <FlexContainer direction={"column"} className={"min-h-72.5 max-h-72.5"}>
-                    {isFetching && (
+                    {(isFetching || error) && (
                         <FlexContainer direction={"column"} className={"grow justify-center items-center bg-white opacity-45"}>
                             <LoadingAndErrorState
                                 error={error}
-                                isLoading={isLoading}
+                                isLoading={isFetching}
                                 errorUpdateCount={errorUpdateCount}
                                 refetch={refetch}
                                 supportTicketLink={metricool.trusted_urls.new_support_ticket}
