@@ -39,7 +39,7 @@ const router = createRouter({
                     supportTicketLink={METRICOOL_SUPPORT_TICKET_LINK}
                 />
                 <ToastContainer/>
-            </>)
+            </>);
     },
     history: hashHistory,
     context: {
