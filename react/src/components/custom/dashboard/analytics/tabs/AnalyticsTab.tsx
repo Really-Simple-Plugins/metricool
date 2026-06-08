@@ -14,7 +14,7 @@ import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useState } from "react";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 import { cn } from "@/support/functions/utils";
-import { useAnalyticsData } from "@/hooks/useAnalyticsData.tsx";
+import { useWebAnalyticsData } from "@/hooks/analytics/useWebAnalyticsData.tsx";
 
 export type PeriodFilterOption = {
     label: string,
@@ -142,7 +142,7 @@ const AnalyticsTab = () => {
     };
 
     const {
-        analyticsDataQuery: {
+        webAnalyticsDataQuery: {
             data: analyticsData,
             isLoading,
             error,
@@ -150,8 +150,7 @@ const AnalyticsTab = () => {
             errorUpdateCount,
             isFetching,
         },
-    } = useAnalyticsData({
-        tab: "analytics",
+    } = useWebAnalyticsData({
         selectedAnalyticsPeriod: periodFilter.option,
     });
 
