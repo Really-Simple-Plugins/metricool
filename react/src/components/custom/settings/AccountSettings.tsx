@@ -126,7 +126,7 @@ const AccountSettings = () => {
                                             />
                                         )}
                                     />
-                                    {metricool.account?.user.mail && !data.alternativeEmail && (
+                                    {metricool.account?.user.mail && !getValues().alternativeEmail && (
                                         <span className={"text-gray-400 pl-2"}>
                                             {sprintf(
                                                 /*translators: variable is number the user's email address*/
