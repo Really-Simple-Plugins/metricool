@@ -10,7 +10,7 @@ import {
 import { Chart } from "react-google-charts";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { useAnalyticsData } from "@/hooks/useAnalyticsData.tsx";
+import { useCountriesAnalyticsData } from "@/hooks/analytics/useCountriesAnalyticsData.tsx";
 
 type CountriesDataTableColumns = { country: string, visitors: number, percentage: number };
 
@@ -43,7 +43,7 @@ const CountriesTab = () => {
             refetch,
             errorUpdateCount
         }
-    } = useAnalyticsData({ tab: "countries" });
+    } = useCountriesAnalyticsData();
 
     const geochartOptions = {
         datalessRegionColor: "white",
