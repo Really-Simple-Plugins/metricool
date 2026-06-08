@@ -22,6 +22,26 @@ class Uninstall
      */
     public function handlePluginUninstall(): void
     {
+        $this->deleteAllOptions();
+        $this->deleteCapability();
+    }
+
+    /**
+     * Delete all Plugin options from wp_options
+     */
+    private function deleteAllOptions(): void
+    {
         $this->options->wipe(true);
+    }
+
+    /**
+     * Remove the 'manage_metricool' capability from the administrator role if it exists
+     */
+    private function deleteCapability(): void
+    {
+        $role = get_role('administrator');
+        if($role && $role->has_cap('manage_metricool')) {
+            $role->remove_cap('manage_metricool');
+        }
     }
 }
