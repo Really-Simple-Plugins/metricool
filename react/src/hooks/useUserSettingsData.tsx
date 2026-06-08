@@ -6,12 +6,10 @@ import { __ } from "@wordpress/i18n";
 import { queryClient } from "@/main.tsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import UserSettingsSchema from "@/support/form-schemas/UserSettingsSchema.ts";
-import { useLocation } from "@tanstack/react-router";
 
 /**
- * Hook for retrieving UserData.
+ * Hook for retrieving User Settings.
  *
  * Contains a {@link useQuery} which fetches the user settings.
  *
@@ -20,26 +18,16 @@ import { useLocation } from "@tanstack/react-router";
  *
  * Contains a {@link useForm} which implements the {@link UserSettingsSchema}.
  */
-const useUserData = () => {
+const useUserSettingsData = () => {
     const { httpClient } = useGlobalContext();
-    const location = useLocation()
-
-    const connectedBrandsQuery = useQuery({
-        enabled: !location.pathname.includes("settings"),
-        queryKey: ["connected_brands"],
-        queryFn: () => httpClient.setRoute("connected_brands").get(),
-        staleTime: Infinity,
-        select: (data): z.infer<typeof OnboardingSchema.shape.brand>[] => data.data,
-    });
 
     const userSettingsDataQuery = useQuery({
-        enabled: location.pathname.includes("settings"),
         queryKey: ["user_settings"],
         queryFn: () => httpClient.setRoute("user_settings").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): z.infer<typeof UserSettingsSchema> => ({
-            sendToAlternativeEmail: data.data.sendToAlternativeEmail,
-            alternativeEmail: data.data.alternativeEmail ?? "",
+        select: (response): z.infer<typeof UserSettingsSchema> => ({
+            sendToAlternativeEmail: response.data.sendToAlternativeEmail,
+            alternativeEmail: response.data.alternativeEmail ?? "",
         })
     });
 
@@ -85,11 +73,10 @@ const useUserData = () => {
     });
 
     return {
-        connectedBrandsQuery: connectedBrandsQuery,
         userSettingsDataQuery: userSettingsDataQuery,
         userSettingsFormData: userSettingsFormData,
         updateUserSettingsDataMutation: updateUserSettingsDataMutation,
     };
 };
 
-export { useUserData };
+export { useUserSettingsData };
