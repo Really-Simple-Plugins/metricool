@@ -62,7 +62,7 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
     useEffect(() => {
         updateScrollProgress();
         if (isPageScrollable) {
-            window.addEventListener("scroll", updateScrollProgress);
+            window.addEventListener("scroll", updateScrollProgress, { passive: true });
         } else {
             window.removeEventListener("scroll", updateScrollProgress);
         }
