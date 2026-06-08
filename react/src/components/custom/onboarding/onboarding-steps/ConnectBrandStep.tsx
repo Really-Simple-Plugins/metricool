@@ -20,8 +20,8 @@ import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import DOMPurify from "dompurify";
 import { useAuthenticationData } from "@/hooks/useAuthenticationData";
 import { type Dispatch, type SetStateAction } from "react";
-import { useUserData } from "@/hooks/useUserData.tsx";
 import { queryClient } from "@/main.tsx";
+import { useConnectedBrandsData } from "@/hooks/useConnectedBrandsData.tsx";
 
 type ConnectBrandStepProps = {
     setModalOpen?: Dispatch<SetStateAction<boolean>>,
@@ -50,7 +50,7 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
             error,
             refetch,
         }
-    } = useUserData();
+    } = useConnectedBrandsData();
 
     const {
         logoutMutation: { mutate: logoutUser },
