@@ -8,13 +8,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use Metricool\Controllers;
 use Metricool\Http;
-use Metricool\Managers\ControllerManager;
-use Metricool\Managers\EndpointManager;
+use Metricool\Providers;
+use Metricool\Controllers;
 use Metricool\Managers\FeatureManager;
 use Metricool\Managers\ProviderManager;
-use Metricool\Providers;
+use Metricool\Managers\EndpointManager;
+use Metricool\Managers\ControllerManager;
 
 class Plugin
 {
@@ -46,7 +46,7 @@ class Plugin
         register_deactivation_hook($pluginBaseFile, [$this, 'deactivation']);
         register_uninstall_hook($pluginBaseFile, 'Metricool\Bootstrap\Plugin::uninstall');
 
-        add_action('init', [$this, 'loadPluginTextDomain']);
+        add_action('plugins_loaded', [$this, 'loadPluginTextDomain']);
         add_action('plugins_loaded', [$this, 'registerProviders']); // Provide functionality to the plugin
         add_action('metricool_providers_loaded', [$this->featureManager, 'registerFeatures']); // Makes sure features exist when Controllers need them
         add_action('metricool_features_loaded', [$this, 'registerControllers']); // Control the functionality of the plugin
@@ -59,7 +59,6 @@ class Plugin
      */
     public function loadPluginTextDomain(): void
     {
-        // phpcs:ignore PluginCheck.CodeAnalysis.DiscouragedFunctions.load_plugin_textdomainFound -- Required for self-hosted installs not on WordPress.org.
         load_plugin_textdomain('metricool');
     }
 
