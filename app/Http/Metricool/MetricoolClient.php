@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Metricool\Http\Metricool;
 
 use Carbon\Carbon;
+use RuntimeException;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use InvalidArgumentException;
 use Metricool\Services\OptionsService;
-use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Psr\Http\Message\ResponseInterface;
-use RuntimeException;
+use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class MetricoolClient
 {
@@ -208,7 +208,9 @@ class MetricoolClient
     }
 
     /**
-     * Get the token expiration timestamp.
+     * Get the token expiration timestamp with a raw query to avoid retrieving
+     * the option from the WordPress object cache.
+     * @internal Not using get_option() is on purpose!
      */
     public function getTokenExpires(): int
     {
