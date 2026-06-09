@@ -8,13 +8,13 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Services\DashboardService;
-use Metricool\Services\MetricoolAccountService;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasUserAccess;
+use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\ControllerInterface;
+use Metricool\Services\MetricoolAccountService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class DashboardController implements ControllerInterface
@@ -38,10 +38,6 @@ class DashboardController implements ControllerInterface
 
     public function register(): void
     {
-        if ($this->userCanManage() === false) {
-            return;
-        }
-
         // Show forced login screen when coming from legacy
         add_action('metricool_plugin_legacy_upgrade', [$this->service, 'enableForcedLogin']);
         add_action('metricool_onboarding_completed', [$this->service, 'disableForcedLogin']);
