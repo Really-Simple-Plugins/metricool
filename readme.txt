@@ -22,6 +22,7 @@ The plugin adds a lightweight tracking script to your front-end, enabling precis
 Getting started is effortless thanks to the built-in onboarding flow. You can quickly create a free Metricool account or connect an existing one, allowing you to start collecting analytics and statistics immediately. From there, you’ll have access to a complete overview of your social media and website performance in one place.
 
 Metricool supports a wide range of social media platforms, advertising channels, and reporting tools, allowing you to centralize all your analytics and statistics:
+
 * Instagram
 * Facebook
 * YouTube
@@ -48,6 +49,7 @@ If you’re familiar with tools like Google Analytics or plugins like Smash, Met
 Metricool is built to simplify analytics and make social media statistics accessible, visual, and actionable. Instead of juggling multiple tools for your website and your social media channels, Metricool gives you everything in one place.
 
 With Metricool, you can:
+
 * Track your website analytics and user behavior with accurate, real-time statistics
 * Measure performance across all major social media platforms, including Instagram, Facebook, TikTok, LinkedIn, YouTube, and X (Twitter)
 * Analyze advertising statistics from Meta Ads, Google Ads, and TikTok Ads
@@ -73,11 +75,11 @@ For users coming from Google Analytics or using tools like Smash, Metricool prov
 
 Whether you’re growing your brand on Instagram, managing campaigns on Facebook, creating content for TikTok, publishing on YouTube, networking on LinkedIn, engaging on X (Twitter), or exploring newer platforms like Threads and Bluesky, Metricool gives you the analytics and statistics you need to succeed.
 
-
 = About Really Simple Plugins: =
 Really Simple Plugins is the creator of most-used plugins Really Simple Security and Complianz. With a total of ~6 million installs, we focus on making the most user-friendly and easy-to-use plugins. We work with Metricool to make the very best social media metrics and planning tool available directly in your WordPress dashboard.
 
 == Installation ==
+
 1. Upload `metricool.zip` via WordPress -> Plugins -> Add New or the unzipped file via FTP to the `/wp-content/plugins/` directory
 2. Activate the plugin through the Plugins menu in WordPress
 3. Follow the short plugin onboarding and immediately enjoy useful site and social media analytics!
@@ -104,9 +106,9 @@ You can skip the onboarding and login with your existing login credentials.
 
 == Changelog ==
 
-= 2.0.0 =
+= 2.0.0 - 2026-06-09 =
 * Major refactor of the plugin by Really Simple Plugins.
-* Added: wimbraam, jeroenvdk, markwolters, rvvelthuijsen, kelvink
+* Added: wimbraam, rvvelthuijsen, kelvink as contributors
 
 = 1.24 =
 * Tested 6.8
