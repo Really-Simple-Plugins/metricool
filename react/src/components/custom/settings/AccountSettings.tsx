@@ -15,7 +15,7 @@ import { __, sprintf } from "@wordpress/i18n";
 import { useBlocker } from "@tanstack/react-router";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useAuthenticationData } from "@/hooks/useAuthenticationData.tsx";
-import { useUserData } from "@/hooks/useUserData.tsx";
+import { useUserSettingsData } from "@/hooks/useUserSettingsData.tsx";
 
 /**
  * The Account Settings section in Settings.
@@ -25,7 +25,7 @@ import { useUserData } from "@/hooks/useUserData.tsx";
  * to be passed down to the button in the {@link FormFooter}. No other button
  * with type "submit" should be added anywhere in the subtree of this component.
  *
- * Retrieves all Query, Mutation and Form data from {@link useUserData}.
+ * Retrieves all Query, Mutation and Form data from {@link useUserSettingsData}.
  *
  * Contains a {@link useBlocker} which requests user confirmation to leave or
  * refresh the page if there are unsaved changes.
@@ -44,7 +44,7 @@ const AccountSettings = () => {
             control,
         },
         updateUserSettingsDataMutation: { mutate: onSubmit, isPending }
-    } = useUserData();
+    } = useUserSettingsData();
 
     const {
         logoutMutation: { mutate: logoutUser }
@@ -126,9 +126,10 @@ const AccountSettings = () => {
                                             />
                                         )}
                                     />
-                                    {metricool.account?.user.mail && !data.alternativeEmail && (
+                                    {metricool.account?.user.mail && !getValues().alternativeEmail && (
                                         <span className={"text-gray-400 pl-2"}>
                                             {sprintf(
+                                                /*translators: variable is number the user's email address*/
                                                 __("When this field is empty the monthly summary is sent to %1$s", "metricool"),
                                                 [metricool.account.user.mail]
                                             )}

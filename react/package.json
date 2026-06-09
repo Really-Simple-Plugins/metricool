@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "registry:init": "npx shadcn@latest add @RSPDS/base-styles @RSPDS/utils @RSPDS/npmrc-config @RSPDS/index",
-    "registry:add": "npx shadcn@latest add"
+    "registry:add": "func() { npx shadcn@latest add \"$1\" && cd ../scripts && ./text-domain.sh && cd ..; }; func"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
@@ -33,7 +33,7 @@
     "@tanstack/react-table": "^8.21.3",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "dompurify": "^3.3.3",
+    "dompurify": "^3.4.7",
     "next-themes": "^0.4.6",
     "radix-ui": "^1.4.3",
     "react": "^18.3.1",
@@ -41,7 +41,7 @@
     "react-google-charts": "^5.2.1",
     "react-hook-form": "^7.71.2",
     "react-remove-scroll": "^2.7.2",
-    "recharts": "^2.15.4",
+    "recharts": "^3.8.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
     "tailwindcss": "^4.1.12",
@@ -59,7 +59,7 @@
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^5.0.1",
-    "@wordpress/i18n": "^6.19.0",
+    "@wordpress/i18n": "^6.21.0",
     "concurrently": "^9.2.0",
     "eslint": "^9.33.0",
     "eslint-plugin-react-hooks": "^5.2.0",

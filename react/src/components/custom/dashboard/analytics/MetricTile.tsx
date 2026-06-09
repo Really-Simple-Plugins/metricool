@@ -3,11 +3,11 @@ import { Button, FlexContainer, Icon } from "@/components/shared";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const MetricTileVariantStyling = {
-    "primary": "bg-primary",
-    "primary-dark": "bg-primary-dark",
-    "secondary": "bg-secondary",
-    "tertiary": "bg-tertiary",
-    "light-green": "bg-light-green"
+    "primary": "bg-primary hover:bg-primary/80",
+    "primary-dark": "bg-primary-dark hover:bg-primary-dark/80",
+    "secondary": "bg-secondary hover:bg-secondary/80",
+    "tertiary": "bg-tertiary hover:bg-tertiary/80",
+    "light-green": "bg-light-green hover:bg-light-green/80"
 };
 
 const MetricTileVariants = cva(

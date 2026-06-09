@@ -2,7 +2,7 @@ import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 import { Button, FlexContainer, Icon, LineChart, LoadingAndErrorState } from "@/components/shared";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
-import { useAnalyticsData } from "@/hooks/useAnalyticsData.tsx";
+import { useRealtimeAnalyticsData } from "@/hooks/analytics/useRealtimeAnalyticsData.tsx";
 
 const RealtimeTab = () => {
     const { metricoolDynamicUrl, metricool } = useGlobalContext();
@@ -16,7 +16,7 @@ const RealtimeTab = () => {
             refetch,
             errorUpdateCount
         }
-    } = useAnalyticsData({ tab: "realtime" });
+    } = useRealtimeAnalyticsData();
 
     const chartConfig = {
         pageViews: {
@@ -54,6 +54,7 @@ const RealtimeTab = () => {
                             xAxisKey: lineChartXAxisDataKey,
                             general: { height: 290 },
                         }}
+                        maxHeightClass={"max-h-72.5"}
                         chartConfig={chartConfig}
                         chartData={realTimeData.timelineData}
                     />

@@ -7,10 +7,10 @@ import {
     Icon,
     LoadingAndErrorState,
 } from "@/components/shared";
-import { Chart } from "react-google-charts";
+import { GeoChart } from "@/components/custom";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { useAnalyticsData } from "@/hooks/useAnalyticsData.tsx";
+import { useCountriesAnalyticsData } from "@/hooks/analytics/useCountriesAnalyticsData.tsx";
 
 type CountriesDataTableColumns = { country: string, visitors: number, percentage: number };
 
@@ -43,7 +43,7 @@ const CountriesTab = () => {
             refetch,
             errorUpdateCount
         }
-    } = useAnalyticsData({ tab: "countries" });
+    } = useCountriesAnalyticsData();
 
     const geochartOptions = {
         datalessRegionColor: "white",
@@ -67,13 +67,9 @@ const CountriesTab = () => {
                 <FlexContainer direction={"column"} className={"!gap-2"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>
                         <div className={"min-h-[185px]"}>
-                            <Chart
-                                data={countryData.chartData}
-                                chartType={"GeoChart"}
-                                options={geochartOptions}
-                                height={"185px"}
-                                width={"100%"}
-                                chartVersion={"51"}
+                            <GeoChart
+                                chartData={countryData.chartData}
+                                chartOptions={geochartOptions}
                             />
                         </div>
                     </FlexContainer>

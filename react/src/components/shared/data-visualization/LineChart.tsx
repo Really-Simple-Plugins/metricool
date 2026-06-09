@@ -12,7 +12,8 @@ import {
     ChartContainer as PrimitiveChartContainer,
     ChartTooltip as PrimitiveChartTooltip,
     ChartTooltipContent as PrimitiveChartTooltipContent,
-} from "@/components/shared/primitives/chart.tsx";
+} from "@/components/shared/primitives/chart";
+import { cn } from "@/support/functions/utils";
 
 type ChartConfig = PrimitiveChartConfig & {
     [k in string]: {
@@ -37,6 +38,7 @@ type LineChartProps = {
         yAxis?: RechartYAxisProps,
     },
     className?: string,
+    maxHeightClass: `max-h-${number}`
     linesSettings?: RechartLineProps,
 }
 
@@ -44,9 +46,20 @@ type LineChartProps = {
  *
  * @version 1.0.0
  */
-const LineChart = ({ chartConfig, chartData, chartSettings, linesSettings, className }: LineChartProps) => {
+const LineChart = ({
+    chartConfig,
+    chartData,
+    chartSettings,
+    maxHeightClass,
+    linesSettings,
+    className
+}: LineChartProps) => {
     return (
-        <PrimitiveChartContainer config={chartConfig} className={className} {...(chartSettings?.general?.height && { height: chartSettings.general.height })} >
+        <PrimitiveChartContainer
+            config={chartConfig}
+            className={cn(className, maxHeightClass)}
+            {...(chartSettings?.general?.height && { height: chartSettings.general.height })}
+        >
             <RechartLineChart
                 accessibilityLayer
                 data={chartData}
@@ -78,6 +91,7 @@ const LineChart = ({ chartConfig, chartData, chartSettings, linesSettings, class
                 />
                 {Object.entries(chartConfig).map(([key, data]) => (
                     <RechartLine
+                        isAnimationActive={false}
                         dataKey={key}
                         type={linesSettings?.type ?? "monotone"}
                         stroke={data.color?.startsWith("#") ? data.color : `var(--color-${data.color})`}

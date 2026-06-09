@@ -9,7 +9,7 @@ import {
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-import { useAnalyticsData } from "@/hooks/useAnalyticsData.tsx";
+import { useTrafficAnalyticsData } from "@/hooks/analytics/useTrafficAnalyticsData.tsx";
 
 type TrafficDataTableColumns = { url: string, pageViews: number, percentage: number };
 
@@ -42,7 +42,7 @@ const TrafficTab = () => {
             refetch,
             errorUpdateCount
         }
-    } = useAnalyticsData({ tab: "traffic" });
+    } = useTrafficAnalyticsData();
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>

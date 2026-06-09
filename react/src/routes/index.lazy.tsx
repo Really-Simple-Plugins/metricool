@@ -29,6 +29,13 @@ export const Route = createLazyFileRoute("/")({
 function Index() {
     const { metricool } = useGlobalContext();
 
+    /**
+     * DOMPurify is used when `dangerouslySetInnerHtml` is required. This extra
+     * function hooks in to the `afterSanitizeAttributes` step, and compares
+     * the href attribute on elements added through `dangerouslySetInnerHtml` to
+     * the list of trusted_urls passed through the localized settings in the
+     * backend. If the href doesn't match any of the urls, the element is removed.
+     */
     DOMPurify.addHook("afterSanitizeAttributes", (node) => {
         const listOfAcceptedLinks = Object.values(metricool.trusted_urls);
         const href = node.getAttribute("href");

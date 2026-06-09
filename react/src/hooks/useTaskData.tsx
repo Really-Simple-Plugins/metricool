@@ -26,13 +26,13 @@ const useTaskData = ({hasConnectedAccountsDataLoaded}: UseTaskDataProps) => {
         queryKey: ["tasks"],
         queryFn: () => httpClient.setRoute("get_tasks").get(),
         staleTime: 1000 * 60 * 5, // 5 minutes
-        select: (data): {
+        select: (response): {
             tasks: TaskProps[],
             remainingTasks: TaskProps[],
             completedTasks: TaskProps[],
             completionPercentage: number
         } => {
-            const allTasks = data.data.sort((a: TaskProps, b: TaskProps) => a.priority - b.priority);
+            const allTasks = response.data.sort((a: TaskProps, b: TaskProps) => a.priority - b.priority);
             const remainingTasks = allTasks.filter((task: TaskProps) => !(task.status === "completed" || task.status === "dismissed"));
             const completedTasks = allTasks.filter(
                 (task: TaskProps) => task.status === "dismissed" || task.status === "completed",

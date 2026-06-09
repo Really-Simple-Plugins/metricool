@@ -14,7 +14,7 @@ import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useState } from "react";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 import { cn } from "@/support/functions/utils";
-import { useAnalyticsData } from "@/hooks/useAnalyticsData.tsx";
+import { useWebAnalyticsData } from "@/hooks/analytics/useWebAnalyticsData.tsx";
 
 export type PeriodFilterOption = {
     label: string,
@@ -142,16 +142,14 @@ const AnalyticsTab = () => {
     };
 
     const {
-        analyticsDataQuery: {
+        webAnalyticsDataQuery: {
             data: analyticsData,
-            isLoading,
             error,
             refetch,
             errorUpdateCount,
             isFetching,
         },
-    } = useAnalyticsData({
-        tab: "analytics",
+    } = useWebAnalyticsData({
         selectedAnalyticsPeriod: periodFilter.option,
     });
 
@@ -175,11 +173,11 @@ const AnalyticsTab = () => {
                 </FlexContainer>
                 <hr className={"-mx-2"}/>
                 <FlexContainer direction={"column"} className={"min-h-72.5 max-h-72.5"}>
-                    {isFetching && (
+                    {(isFetching || error) && (
                         <FlexContainer direction={"column"} className={"grow justify-center items-center bg-white opacity-45"}>
                             <LoadingAndErrorState
                                 error={error}
-                                isLoading={isLoading}
+                                isLoading={isFetching}
                                 errorUpdateCount={errorUpdateCount}
                                 refetch={refetch}
                                 supportTicketLink={metricool.trusted_urls.new_support_ticket}
@@ -195,6 +193,7 @@ const AnalyticsTab = () => {
                                 general: { height: 290 },
                                 xAxis: { interval: xAxisInterval },
                             }}
+                            maxHeightClass={"max-h-72.5"}
                             chartData={analyticsData.timelineData}
                             linesSettings={{ type: "monotone" }}
                         />

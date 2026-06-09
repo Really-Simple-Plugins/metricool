@@ -3,6 +3,7 @@ export { CountriesTab, type CountriesDataTableColumns } from "@/components/custo
 export { RealtimeTab } from "@/components/custom/dashboard/analytics/tabs/RealtimeTab.tsx";
 export { TrafficTab, type TrafficDataTableColumns } from "@/components/custom/dashboard/analytics/tabs/TrafficTab.tsx";
 export { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
+export { GeoChart } from "@/components/custom/dashboard/analytics/GeoChart.tsx";
 export { WebsiteAnalytics } from "@/components/custom/dashboard/analytics/WebsiteAnalytics.tsx";
 export { ConnectedAccounts } from "@/components/custom/dashboard/ConnectedAccounts.tsx";
 export { OtherPlugins } from "@/components/custom/dashboard/OtherPlugins.tsx";
