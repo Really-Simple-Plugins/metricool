@@ -52,7 +52,13 @@ export const OnboardingLayout = () => {
         setActiveOnboardingStep(0);
     };
 
-    const { signUpMutation: { mutate: onSignUp, error: signUpError, } } = useAuthenticationData({
+    const {
+        signUpMutation: {
+            mutate: onSignUp,
+            error: signUpError,
+            isPending: isSignUpPending,
+        }
+    } = useAuthenticationData({
         signUpCallbacks: {
             beforeSignUpCallback,
             onSignUpSuccessCallback,
@@ -139,7 +145,7 @@ export const OnboardingLayout = () => {
                             />
                         </Alert>
                     )}
-                    <OnboardingForm onSubmit={(values) => onSignUp(values)}/>
+                    <OnboardingForm onSubmit={(values) => onSignUp(values)} isSignUpPending={isSignUpPending}/>
                 </FlexContainer>
                 <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={__("Laptop and phone displaying the Metricool app", "metricool")}/>
             </FlexContainer>

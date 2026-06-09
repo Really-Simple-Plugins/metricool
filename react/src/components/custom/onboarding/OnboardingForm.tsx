@@ -11,6 +11,7 @@ const onboardingFormSchema = OnboardingSchema.omit({ brand: true });
 
 type OnboardingFormProps = {
     onSubmit: (values: z.infer<typeof onboardingFormSchema>) => void,
+    isSignUpPending: boolean,
 };
 
 /**
@@ -21,7 +22,7 @@ type OnboardingFormProps = {
  * Contains a {@link useForm} which implements the {@link OnboardingSchema}
  *
  */
-const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
+const OnboardingForm = ({ onSubmit, isSignUpPending }: OnboardingFormProps) => {
     const { metricool } = useGlobalContext();
     const {
         handleSubmit,
@@ -78,7 +79,7 @@ const OnboardingForm = ({ onSubmit }: OnboardingFormProps) => {
                 <Button
                     variant={"primary-gradient"}
                     type={"submit"}
-                    disabled={!(dirtyFields.credentials?.email && dirtyFields.credentials?.password)}
+                    disabled={(!(dirtyFields.credentials?.email && dirtyFields.credentials?.password) || isSignUpPending)}
                 >
                     <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
                         {__("Create your free account", "metricool")}
