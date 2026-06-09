@@ -43,7 +43,6 @@ class AdminNoticesController implements FeatureInterface
         }
 
         add_action('admin_notices', static function () use ($notices) {
-
             foreach ($notices as $notice) {
                 $notice->render();
             }
