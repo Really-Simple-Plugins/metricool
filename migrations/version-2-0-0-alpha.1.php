@@ -8,10 +8,11 @@ if (!defined('ABSPATH')) {
 
 use Metricool\Interfaces\MigrationInterface;
 
-return new class() implements MigrationInterface {
+return new class () implements MigrationInterface
+{
     public function version(): string
     {
-        return '2.0.0-alpha.1'; // first version in the 2.x series
+        return '2.0.0'; // first version in the 2.x series
     }
 
     /**
