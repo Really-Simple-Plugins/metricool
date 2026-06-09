@@ -8,16 +8,16 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use GuzzleHttp\Exception\GuzzleException;
-use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
-use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
-use Metricool\Features\Onboarding\Services\CreateAccountService;
-use Metricool\Features\Onboarding\Services\OAuthService;
-use Metricool\Interfaces\FeatureInterface;
-use Metricool\Services\DashboardService;
-use Metricool\Services\MetricoolAccountService;
-use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Traits\HasRestAccess;
+use Metricool\Services\DashboardService;
+use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Interfaces\FeatureInterface;
+use Metricool\Services\MetricoolAccountService;
+use Metricool\Features\Onboarding\Services\OAuthService;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Metricool\Features\Onboarding\Services\CreateAccountService;
+use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
+use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 
 class OnboardingController implements FeatureInterface
 {
@@ -104,7 +104,7 @@ class OnboardingController implements FeatureInterface
         try {
             $this->accounts->createAccount($captcha, $email, $password, $marketing);
         } catch (CreateAccountException $e) {
-            return $this->sendHttpErrorResponse($e->getMessage(), ['reason' => $e->getReason()], 422);
+            return $this->sendHttpErrorResponse($e->getMessage(), ['reason' => $e->getReason()], $e->getCode());
         }
 
         return $this->onboardedResponse();
