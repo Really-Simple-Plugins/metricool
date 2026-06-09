@@ -13,7 +13,7 @@ use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class UpgradeController implements ControllerInterface
 {
-    public const LEGACY_VERSION = '1.24';
+    public const LEGACY_VERSION = '1.27';
 
     private EnvironmentConfig $env;
 
