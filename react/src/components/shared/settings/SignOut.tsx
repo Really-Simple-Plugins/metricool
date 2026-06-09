@@ -17,7 +17,7 @@ const SignOut = ({
     return (
         <>
             <PrimitiveFieldLabel htmlFor={"current-user-email"} className={"text-md font-semibold"}>
-                {__("Currently logged in as", "{{TEXT_DOMAIN}}")}
+                {__("Currently logged in as", "metricool")}
             </PrimitiveFieldLabel>
             <PrimitiveButtonGroup className={"w-full"}>
                 <Input id={"current-user-email"} disabled value={currentUserEmail}/>
@@ -26,7 +26,7 @@ const SignOut = ({
                     onClick={() => onSignOut()}
                     size={"lg"}
                 >
-                    {__("Log Out", "{{TEXT_DOMAIN}}")}
+                    {__("Log Out", "metricool")}
                     <Icon icon={"sign-out"}/>
                 </Button>
             </PrimitiveButtonGroup>

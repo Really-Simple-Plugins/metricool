@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-08T13:15:01+00:00\n"
+"POT-Creation-Date: 2026-06-08T13:33:06+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: metricool\n"
@@ -40,8 +40,8 @@ msgid "https://really-simple-plugins.com"
 msgstr ""
 
 #: app/Controllers/AdminController.php:60
-#: react/build/assets/eIPV4O0q.js:1
-#: react/build/assets/hUiQVZ5-.js:1
+#: react/build/assets/3HsPM8ON.js:1
+#: react/build/assets/DbglQwm-.js:1
 msgid "Settings"
 msgstr ""
 
@@ -210,8 +210,8 @@ msgid "Gain access to analytics with unlimited historical data."
 msgstr ""
 
 #: app/Features/TaskManagement/Tasks/HistoricalDataTask.php:45
-#: react/build/assets/DHJrrvLd.js:1
-#: react/build/assets/eIPV4O0q.js:1
+#: react/build/assets/3HsPM8ON.js:1
+#: react/build/assets/C6ArMWTJ.js:1
 msgid "Upgrade"
 msgstr ""
 
@@ -319,25 +319,25 @@ msgid "Page views"
 msgstr ""
 
 #: app/Http/Endpoints/AnalyticsEndpoint.php:93
-#: react/build/assets/DHJrrvLd.js:1
+#: react/build/assets/C6ArMWTJ.js:1
 msgid "Visits"
 msgstr ""
 
 #: app/Http/Endpoints/AnalyticsEndpoint.php:97
 #: app/Http/Endpoints/RealtimeEndpoint.php:98
 #: app/Http/Endpoints/Responses/Statistics/CountriesResponse.php:22
-#: react/build/assets/BqWpDlxG.js:3
-#: react/build/assets/DHJrrvLd.js:1
+#: react/build/assets/BAMLrxpc.js:3
+#: react/build/assets/C6ArMWTJ.js:1
 msgid "Visitors"
 msgstr ""
 
 #: app/Http/Endpoints/AnalyticsEndpoint.php:101
-#: react/build/assets/DHJrrvLd.js:1
+#: react/build/assets/C6ArMWTJ.js:1
 msgid "Posts"
 msgstr ""
 
 #: app/Http/Endpoints/AnalyticsEndpoint.php:105
-#: react/build/assets/DHJrrvLd.js:1
+#: react/build/assets/C6ArMWTJ.js:1
 msgid "Comments"
 msgstr ""
 
@@ -363,7 +363,7 @@ msgid "Failed to load Realtime data"
 msgstr ""
 
 #: app/Http/Endpoints/Responses/Statistics/CountriesResponse.php:21
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Country"
 msgstr ""
 
@@ -457,542 +457,550 @@ msgstr ""
 msgid "Please %1$ssign in%2$s to discover all new functionality"
 msgstr ""
 
-#: react/build/assets/BlhNHS1t.js:1
-msgid "Connect Wordpress"
+#: react/build/assets/3HsPM8ON.js:1
+msgid "Dashboard"
 msgstr ""
 
-#: react/build/assets/BlhNHS1t.js:1
-msgid "Connect a Blog"
+#: react/build/assets/3HsPM8ON.js:1
+msgid "Planner"
 msgstr ""
 
-#. translators: variable is the name of a social media
-#: react/build/assets/BlhNHS1t.js:3
-#: react/build/assets/BlhNHS1t.js:7
-#: react/build/assets/BlhNHS1t.js:9
-#: react/build/assets/BlhNHS1t.js:11
-#: react/build/assets/BlhNHS1t.js:13
-#: react/build/assets/BlhNHS1t.js:15
-#: react/build/assets/BlhNHS1t.js:17
-#: react/build/assets/BlhNHS1t.js:19
-#: react/build/assets/BlhNHS1t.js:21
-#: react/build/assets/BlhNHS1t.js:23
-#: react/build/assets/BlhNHS1t.js:25
-#: react/build/assets/BlhNHS1t.js:27
-#: react/build/assets/BlhNHS1t.js:29
-#, js-format
-msgid "Connect a %1$s Account"
+#: react/build/assets/3HsPM8ON.js:1
+msgid "Help Center"
 msgstr ""
 
-#. translators: variable is the name of a social media
-#: react/build/assets/BlhNHS1t.js:5
-#, js-format
-msgid "Connect an %1$s Account"
+#: react/build/assets/3HsPM8ON.js:1
+#: react/build/assets/BAMLrxpc.js:7
+msgid "Metricool logo"
 msgstr ""
 
 #. translators: variables are page numbers
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 #, js-format
 msgid "Page %1$s of %2$s"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Percent"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
-#: react/build/assets/DHJrrvLd.js:1
+#: react/build/assets/BAMLrxpc.js:3
+#: react/build/assets/C6ArMWTJ.js:1
 msgid "View Analytics"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
-#: react/build/assets/DHJrrvLd.js:1
+#: react/build/assets/BAMLrxpc.js:3
+#: react/build/assets/C6ArMWTJ.js:1
 msgid "Page Views"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Last 30 Minutes"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "URL"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Real-time"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Analytics"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Traffic"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Countries"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Website Analytics"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
-#: react/build/assets/CaeYLIRY.js:1
+#: react/build/assets/BAMLrxpc.js:3
+#: react/build/assets/En4QvEQ5.js:1
 msgid "Connected Accounts"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Other Plugins"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Really Simple Plugins logo"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "There was an error dismissing your task"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "All Tasks"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Remaining Tasks"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "Progress"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:3
+#: react/build/assets/BAMLrxpc.js:3
 msgid "You're all set! Great job!"
 msgstr ""
 
 #. translators: variable is number of tasks
-#: react/build/assets/BqWpDlxG.js:5
+#: react/build/assets/BAMLrxpc.js:5
 #, js-format
 msgid "You're on your way. You still have %1$s task open."
 msgid_plural "You're on your way. You still have %1$s tasks open."
 msgstr[0] ""
 msgstr[1] ""
 
-#: react/build/assets/BqWpDlxG.js:5
+#: react/build/assets/BAMLrxpc.js:5
 msgid "Link icon"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:5
+#: react/build/assets/BAMLrxpc.js:5
 msgid "Connect your brand"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:5
+#: react/build/assets/BAMLrxpc.js:5
 msgid "Choose the brand that you want to connect to this website"
 msgstr ""
 
 #. translators: the two variables are opening and closing anchor tags
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 #, js-format
 msgid "Don’t see the brand you’re looking for? %1$sGo to Metricool.com%2$s and make sure you’re logged into the correct account."
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Choose your brand"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Select a brand"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Empty Brand"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Cancel"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Finish"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Metricool logo with cog icon"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Creating Awesomeness"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "We’re setting up your Metricool account."
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
-#: react/build/assets/eIPV4O0q.js:1
-msgid "Metricool logo"
-msgstr ""
-
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Sign In"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Sign in to discover the new Metricool plugin!"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Sign in to link WordPress to your Metricool account"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Sign in on Metricool"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Metricool logo icon"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "The digital Swiss Army Knife for social media marketers"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Already a Metricooler?"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Sign in here"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Join more than 2 million professionals, agencies and brands that use Metricool as their one-stop shop for social media and online ad management."
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Laptop and phone displaying the Metricool app"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Checkmark icon"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "You're all set!"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Welcome to the Metricool Wordpress plugin"
 msgstr ""
 
-#: react/build/assets/BqWpDlxG.js:7
+#: react/build/assets/BAMLrxpc.js:7
 msgid "Let's go to your dashboard!"
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:2
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Last week"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Current month"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Last 30 days"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Previous month"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Last 3 months"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Last 6 months"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Last 12 months"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Report"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Installed"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Install"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Activate"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Activating..."
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Downloading..."
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "There was an unexpected error executing the action for the selected plugin"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Email"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Enter your email"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Password"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Write your password here"
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:1
+msgid "Create your free account"
+msgstr ""
+
+#. translators: the two variables are opening and closing anchor tags
+#: react/build/assets/C6ArMWTJ.js:3
+#, js-format
+msgid "I have read and accept the %1$sLegal Terms%2$s by Metricool."
+msgstr ""
+
+#: react/build/assets/C6ArMWTJ.js:3
+msgid "I wish to receive communications about news and/or promotions from Metricool Software."
+msgstr ""
+
+#: react/build/assets/C29zv-lC.js:1
+msgid "Connect Wordpress"
+msgstr ""
+
+#: react/build/assets/C29zv-lC.js:1
+msgid "Connect a Blog"
+msgstr ""
+
+#. translators: variable is the name of a social media
+#: react/build/assets/C29zv-lC.js:3
+#: react/build/assets/C29zv-lC.js:7
+#: react/build/assets/C29zv-lC.js:9
+#: react/build/assets/C29zv-lC.js:11
+#: react/build/assets/C29zv-lC.js:13
+#: react/build/assets/C29zv-lC.js:15
+#: react/build/assets/C29zv-lC.js:17
+#: react/build/assets/C29zv-lC.js:19
+#: react/build/assets/C29zv-lC.js:21
+#: react/build/assets/C29zv-lC.js:23
+#: react/build/assets/C29zv-lC.js:25
+#: react/build/assets/C29zv-lC.js:27
+#: react/build/assets/C29zv-lC.js:29
+#, js-format
+msgid "Connect a %1$s Account"
+msgstr ""
+
+#. translators: variable is the name of a social media
+#: react/build/assets/C29zv-lC.js:5
+#, js-format
+msgid "Connect an %1$s Account"
+msgstr ""
+
+#: react/build/assets/CAN-xO4k.js:2
 msgid "Route is not set"
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:2
+#: react/build/assets/CAN-xO4k.js:2
 msgid "Payload is not set"
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:2
+#: react/build/assets/CAN-xO4k.js:2
 msgid "Route not set. Please use setRoute before using setFilters."
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:2
+#: react/build/assets/CAN-xO4k.js:2
 msgid "An error occurred"
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:2
+#: react/build/assets/CAN-xO4k.js:2
 msgid "Uh-oh! We stumbled upon an error."
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:2
+#: react/build/assets/CAN-xO4k.js:2
 msgid "Error was copied"
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:2
-#: react/build/assets/Bu5lOf8T.js:4
+#: react/build/assets/CAN-xO4k.js:2
+#: react/build/assets/CAN-xO4k.js:4
 msgid "Copy Error"
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:2
+#: react/build/assets/CAN-xO4k.js:2
 msgid "We're sorry for the trouble. Please take a moment to report this issue on the WordPress forums so we can work on fixing it. Here’s how you can report the issue:"
 msgstr ""
 
 #. translators: variable is translated string of `Copy Error`
-#: react/build/assets/Bu5lOf8T.js:4
+#: react/build/assets/CAN-xO4k.js:4
 #, js-format
 msgid "Copy the error details by clicking the %1$s button above."
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:4
+#: react/build/assets/CAN-xO4k.js:4
 msgid "Navigate to the Support Forum."
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:4
+#: react/build/assets/CAN-xO4k.js:4
 msgid "If you haven’t already, log in to your WordPress.org account or create a new account."
 msgstr ""
 
 #. translators: variable is a string that should not be translated
-#: react/build/assets/Bu5lOf8T.js:6
+#: react/build/assets/CAN-xO4k.js:6
 #, js-format
 msgid "Once logged in, click on %1$s."
 msgstr ""
 
 #. translators: variable is a string that should not be translated
-#: react/build/assets/Bu5lOf8T.js:8
+#: react/build/assets/CAN-xO4k.js:8
 #, js-format
 msgid "Title: Mention %1$s along with a brief hint of the error."
 msgstr ""
 
-#: react/build/assets/Bu5lOf8T.js:8
+#: react/build/assets/CAN-xO4k.js:8
 msgid "Description: Paste the copied error details and explain what you were doing when the error occurred."
 msgstr ""
 
 #. translators: variable is a string that should not be translated
-#: react/build/assets/Bu5lOf8T.js:10
+#: react/build/assets/CAN-xO4k.js:10
 #, js-format
 msgid "Click %1$s to post your topic. Our team will look into the issue and provide assistance."
 msgstr ""
 
-#: react/build/assets/C1Xl9bqk.js:1
-msgid "Try again"
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:1
-msgid "Refresh page"
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:1
-msgid "There was an error fetching this data."
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:1
-msgid "Please try refreshing the page."
-msgstr ""
-
-#. translators: the two variables are opening and closing anchor tags
-#: react/build/assets/C1Xl9bqk.js:3
-#, js-format
-msgid "If the error persists, please contact our %1$ssupport team%2$s."
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:3
-msgid "Please enter a valid email address"
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:3
-msgid "Password must be at least 8 characters"
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:3
-msgid "Password cannot be longer than 20 characters"
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:3
-msgid "Password must contain at least one upper case letter"
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:3
-msgid "Password must contain at least one lower case letter"
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:3
-msgid "Password must contain at least one number"
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:3
-msgid "Password must contain at least one special character"
-msgstr ""
-
-#: react/build/assets/C1Xl9bqk.js:3
-msgid "Please read and accept the Legal Terms"
-msgstr ""
-
-#: react/build/assets/CaeYLIRY.js:1
-#: react/build/assets/hUiQVZ5-.js:1
-msgid "Connections"
-msgstr ""
-
-#: react/build/assets/CaeYLIRY.js:1
-msgid "The accounts that are connected to Metricool"
-msgstr ""
-
-#: react/build/assets/CyXUWTyb.js:1
+#: react/build/assets/D7-3QmWW.js:1
 msgid "Saving..."
 msgstr ""
 
-#: react/build/assets/CyXUWTyb.js:1
+#: react/build/assets/D7-3QmWW.js:1
 msgid "Form contains errors"
 msgstr ""
 
-#: react/build/assets/CyXUWTyb.js:1
+#: react/build/assets/D7-3QmWW.js:1
 msgid "You have unsaved changes"
 msgstr ""
 
-#: react/build/assets/CyXUWTyb.js:1
+#: react/build/assets/D7-3QmWW.js:1
 msgid "Save changes"
 msgstr ""
 
+#: react/build/assets/D7-3QmWW.js:1
+msgid "Currently logged in as"
+msgstr ""
+
+#: react/build/assets/D7-3QmWW.js:1
+msgid "Log Out"
+msgstr ""
+
 #. translators: this text is taken directly from FireFox's native pop-up for unsaved changes. Please use that text for your language.
-#: react/build/assets/CyXUWTyb.js:3
+#: react/build/assets/D7-3QmWW.js:3
 msgid "This page is asking you to confirm that you want to leave — information you’ve entered may not be saved."
 msgstr ""
 
-#: react/build/assets/CyXUWTyb.js:3
+#: react/build/assets/D7-3QmWW.js:3
 msgid "Account settings"
 msgstr ""
 
-#: react/build/assets/CyXUWTyb.js:3
+#: react/build/assets/D7-3QmWW.js:3
 msgid "Change Password"
 msgstr ""
 
-#: react/build/assets/CyXUWTyb.js:3
+#: react/build/assets/D7-3QmWW.js:3
 msgid "Monthly summary"
 msgstr ""
 
-#: react/build/assets/CyXUWTyb.js:3
+#: react/build/assets/D7-3QmWW.js:3
 msgid "Receive monthly summary"
 msgstr ""
 
-#: react/build/assets/CyXUWTyb.js:3
+#: react/build/assets/D7-3QmWW.js:3
 msgid "Custom e-mail for the monthly summary"
 msgstr ""
 
-#: react/build/assets/CyXUWTyb.js:3
+#: react/build/assets/D7-3QmWW.js:3
 #, js-format
 msgid "When this field is empty the monthly summary is sent to %1$s"
 msgstr ""
 
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Last week"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Current month"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Last 30 days"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Previous month"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Last 3 months"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Last 6 months"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Last 12 months"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Report"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Installed"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Install"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Activate"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Activating..."
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Downloading..."
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "There was an unexpected error executing the action for the selected plugin"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Email"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Enter your email"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Password"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Write your password here"
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:1
-msgid "Create your free account"
-msgstr ""
-
-#. translators: the two variables are opening and closing anchor tags
-#: react/build/assets/DHJrrvLd.js:3
-#, js-format
-msgid "I have read and accept the %1$sLegal Terms%2$s by Metricool."
-msgstr ""
-
-#: react/build/assets/DHJrrvLd.js:3
-msgid "I wish to receive communications about news and/or promotions from Metricool Software."
-msgstr ""
-
-#: react/build/assets/eIPV4O0q.js:1
-msgid "Dashboard"
-msgstr ""
-
-#: react/build/assets/eIPV4O0q.js:1
-msgid "Planner"
-msgstr ""
-
-#: react/build/assets/eIPV4O0q.js:1
-msgid "Help Center"
-msgstr ""
-
-#: react/build/assets/hUiQVZ5-.js:1
+#: react/build/assets/DbglQwm-.js:1
 msgid "Notifications"
 msgstr ""
 
-#: react/build/assets/hUiQVZ5-.js:1
+#: react/build/assets/DbglQwm-.js:1
 msgid "You currently have no notifications."
 msgstr ""
 
-#: react/build/assets/hUiQVZ5-.js:1
+#: react/build/assets/DbglQwm-.js:1
 msgid "Account Settings"
 msgstr ""
 
-#: react/build/assets/hUiQVZ5-.js:1
+#: react/build/assets/DbglQwm-.js:1
+#: react/build/assets/En4QvEQ5.js:1
+msgid "Connections"
+msgstr ""
+
+#: react/build/assets/DbglQwm-.js:1
 msgid "Affiliation Program"
 msgstr ""
 
-#: react/build/assets/hUiQVZ5-.js:1
+#: react/build/assets/DbglQwm-.js:1
 msgid "User Management"
 msgstr ""
 
-#: react/build/assets/hUiQVZ5-.js:1
+#: react/build/assets/DbglQwm-.js:1
 msgid "My Tasks"
 msgstr ""
 
-#: react/build/assets/X-d-26Ry.js:1
+#: react/build/assets/DbuPGZtV.js:1
 msgid "Settings have been saved"
 msgstr ""
 
-#: react/build/assets/X-d-26Ry.js:1
+#: react/build/assets/DbuPGZtV.js:1
 msgid "There was an error updating your settings"
+msgstr ""
+
+#: react/build/assets/En4QvEQ5.js:1
+msgid "The accounts that are connected to Metricool"
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:1
+msgid "Try again"
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:1
+msgid "Refresh page"
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:1
+msgid "There was an error fetching this data."
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:1
+msgid "Please try refreshing the page."
+msgstr ""
+
+#. translators: the two variables are opening and closing anchor tags
+#: react/build/assets/lI4ESXJ0.js:3
+#, js-format
+msgid "If the error persists, please contact our %1$ssupport team%2$s."
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:3
+msgid "Please enter a valid email address"
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:3
+msgid "Password must be at least 8 characters"
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:3
+msgid "Password cannot be longer than 20 characters"
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:3
+msgid "Password must contain at least one upper case letter"
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:3
+msgid "Password must contain at least one lower case letter"
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:3
+msgid "Password must contain at least one number"
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:3
+msgid "Password must contain at least one special character"
+msgstr ""
+
+#: react/build/assets/lI4ESXJ0.js:3
+msgid "Please read and accept the Legal Terms"
 msgstr ""
