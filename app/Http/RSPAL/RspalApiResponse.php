@@ -21,6 +21,10 @@ class RspalApiResponse
         $body = $response->getBody()->getContents();
         $data = json_decode($body, false);
 
+        if (!is_object($data)) {
+            throw new \RuntimeException('Invalid or empty response from the API');
+        }
+
         if ($data->status && $data->status == 'OK') {
             throw new \RuntimeException('Al Error Occurred');
         }
