@@ -142,11 +142,11 @@ class Plugin
     public function registerControllers(): void
     {
         $this->controllerManager->register([
+            Controllers\CapabilityController::class,
             Controllers\MigrationsController::class,
             Controllers\UpgradeController::class,
             Controllers\AdminController::class,
             Controllers\DashboardController::class,
-            Controllers\CapabilityController::class,
             Controllers\TrackingScriptController::class,
             Controllers\SharePostController::class,
         ]);
