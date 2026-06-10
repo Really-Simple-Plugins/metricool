@@ -12,7 +12,7 @@ use Metricool\Traits\HasAllowlistControl;
 final class UpgradeNotice extends AbstractAdminNotice
 {
     use HasAllowlistControl;
-    
+
     public const IDENTIFIER = 'upgrade';
 
     private DashboardService $dashboard;
