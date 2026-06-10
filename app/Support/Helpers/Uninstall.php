@@ -35,13 +35,13 @@ class Uninstall
     }
 
     /**
-     * Remove the 'manage_metricool' capability from the administrator role if it exists
+     * Remove the 'metricool_manage' capability from the administrator role if it exists
      */
     private function deleteCapability(): void
     {
         $role = get_role('administrator');
-        if ($role && $role->has_cap('manage_metricool')) {
-            $role->remove_cap('manage_metricool');
+        if ($role && $role->has_cap('metricool_manage')) {
+            $role->remove_cap('metricool_manage');
         }
     }
 }
