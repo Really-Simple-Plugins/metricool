@@ -4,10 +4,8 @@ namespace Metricool\Services;
 
 class OptionsService
 {
-
     public function getRaw()
     {
-
     }
 
 
