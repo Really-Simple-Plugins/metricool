@@ -9,9 +9,12 @@ use Metricool\Features\AdminNotices\AbstractAdminNotice;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Metricool\Traits\HasAllowlistControl;
 
 final class ReviewNotice extends AbstractAdminNotice
 {
+    use HasAllowlistControl;
+
     public const IDENTIFIER = 'review';
     private const MIN_SESSIONS_COUNT = 20;
 
@@ -32,7 +35,7 @@ final class ReviewNotice extends AbstractAdminNotice
     protected function canDisplay(): bool
     {
         return !$this->dashboard->isUserOnDashboard() &&
-            $this->onboardedThirtyDaysAgo() && current_user_can('metricool_manage');
+            $this->onboardedThirtyDaysAgo() && $this->userCanManage();
     }
 
     /**

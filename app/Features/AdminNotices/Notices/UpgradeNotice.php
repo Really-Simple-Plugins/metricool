@@ -7,9 +7,12 @@ namespace Metricool\Features\AdminNotices\Notices;
 use Metricool\Features\AdminNotices\AbstractAdminNotice;
 use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Metricool\Traits\HasAllowlistControl;
 
 final class UpgradeNotice extends AbstractAdminNotice
 {
+    use HasAllowlistControl;
+    
     public const IDENTIFIER = 'upgrade';
 
     private DashboardService $dashboard;
@@ -27,7 +30,7 @@ final class UpgradeNotice extends AbstractAdminNotice
     protected function canDisplay(): bool
     {
         return !$this->dashboard->isUserOnDashboard() &&
-            $this->dashboard->isForcedLogin() && current_user_can('metricool_manage');
+            $this->dashboard->isForcedLogin() && $this->userCanManage();
     }
 
     /**
