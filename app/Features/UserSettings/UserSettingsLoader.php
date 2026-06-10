@@ -16,7 +16,7 @@ class UserSettingsLoader extends AbstractLoader
     public function __construct(EnvironmentConfig $env, RequestStorage $request, DashboardService $dashboard)
     {
         parent::__construct($env, $request);
-        
+
         $this->dashboard = $dashboard;
     }
 
