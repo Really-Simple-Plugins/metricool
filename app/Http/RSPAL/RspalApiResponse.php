@@ -22,7 +22,7 @@ class RspalApiResponse
         $data = json_decode($body, false);
 
         if (!is_object($data)) {
-            throw new \RuntimeException('Invalid or empty response from the API');
+            throw new \RuntimeException('Invalid or empty response from the API: ' . $body);
         }
 
         if ($data->status && $data->status == 'OK') {
