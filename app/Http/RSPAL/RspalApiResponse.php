@@ -9,7 +9,7 @@ class RspalApiResponse
     public int $statusCode;
     public object $data;
 
-    public function __construct(int $statusCode, ?object $data)
+    public function __construct(int $statusCode, object $data)
     {
         $this->statusCode = $statusCode;
         $this->data = $data;
