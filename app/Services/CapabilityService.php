@@ -36,6 +36,10 @@ class CapabilityService
             }
         }
 
+        // Refresh the current user's cached capabilities so the new cap is
+        // available in the same request (e.g. for admin_menu checks).
+        wp_get_current_user()->get_role_caps();
+
         if ($handleSubsites && is_multisite()) {
             $this->addCapabilityToSubsites($capability);
         }

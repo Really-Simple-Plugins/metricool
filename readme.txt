@@ -1,5 +1,5 @@
 === Metricool - Social media and site statistics ===
-Contributors: reallysimpleplugins, wimbraam, rvvelthuijsen, kelvink
+Contributors: reallysimpleplugins, wimbraam, rvvelthuijsen, kelvink, juan.pablo.tejela, lucadipaola, marcoscacabelos, mredondometricool
 Donate link: https://metricool.com
 Tags: instagram, facebook, analytics, meta, social
 Requires at least: 6.6
