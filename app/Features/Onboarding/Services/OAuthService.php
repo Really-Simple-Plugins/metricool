@@ -149,7 +149,8 @@ class OAuthService
         }
 
         // Step 2 – if compressed, decompress (zlib DEFLATE with header, wbits = 15)
-        $json = zlib_decode($payloadBytes) ?: $payloadBytes;
+        $decoded = zlib_decode($payloadBytes);
+        $json = $decoded !== false ? $decoded : $payloadBytes;
         if (empty($json)) {
             return null;
         }
