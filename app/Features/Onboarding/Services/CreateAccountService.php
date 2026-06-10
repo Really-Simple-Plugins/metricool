@@ -63,7 +63,7 @@ class CreateAccountService
             ], [
                 'RSPAL-RecaptchaV3Token' => $captcha
             ]);
-        } catch (GuzzleException | Throwable $e) {
+        } catch (Throwable $e) {
             throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
         }
 
