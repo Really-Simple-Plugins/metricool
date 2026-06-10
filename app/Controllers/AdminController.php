@@ -27,10 +27,6 @@ class AdminController implements ControllerInterface
 
     public function register(): void
     {
-        if ($this->adminAccessAllowed() === false) {
-            return;
-        }
-
         add_action('admin_enqueue_scripts', [$this, 'enqueueGeneralAdminStyles']);
         add_filter('plugin_action_links_' . $this->env->getString('plugin.base_file'), [$this, 'addPluginSettingsAction']);
     }

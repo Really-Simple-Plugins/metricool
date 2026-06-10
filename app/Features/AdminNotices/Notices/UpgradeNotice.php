@@ -27,7 +27,7 @@ final class UpgradeNotice extends AbstractAdminNotice
     protected function canDisplay(): bool
     {
         return !$this->dashboard->isUserOnDashboard() &&
-            $this->dashboard->isForcedLogin();
+            $this->dashboard->isForcedLogin() && current_user_can('metricool_manage');
     }
 
     /**

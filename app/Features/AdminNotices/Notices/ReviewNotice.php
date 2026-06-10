@@ -32,7 +32,7 @@ final class ReviewNotice extends AbstractAdminNotice
     protected function canDisplay(): bool
     {
         return !$this->dashboard->isUserOnDashboard() &&
-            $this->onboardedThirtyDaysAgo();
+            $this->onboardedThirtyDaysAgo() && current_user_can('metricool_manage');
     }
 
     /**
