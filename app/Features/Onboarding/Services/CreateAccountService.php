@@ -10,7 +10,7 @@ use Metricool\Http\RSPAL\RspalApiClient;
 use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
-use RuntimeException;
+use Throwable;
 
 class CreateAccountService
 {
@@ -63,7 +63,7 @@ class CreateAccountService
             ], [
                 'RSPAL-RecaptchaV3Token' => $captcha
             ]);
-        } catch (GuzzleException | RuntimeException $e) {
+        } catch (GuzzleException | Throwable $e) {
             throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
         }
 
