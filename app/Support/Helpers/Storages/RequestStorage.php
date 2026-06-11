@@ -14,7 +14,9 @@ final class RequestStorage extends Storage
     public function __construct()
     {
         parent::__construct([
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce verification is handled at the endpoint level.
             'global' => $_REQUEST,
+            // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verification is handled at the endpoint level.
             'files' => $_FILES,
         ]);
     }

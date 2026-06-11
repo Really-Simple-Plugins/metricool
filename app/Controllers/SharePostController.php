@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Support\Helpers\Event;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasNonces;
@@ -41,7 +45,6 @@ class SharePostController implements ControllerInterface
         add_action('init', [$this, 'registerSharePostColumn']);
         add_action('admin_init', [$this, 'processShareAction']);
         add_action('add_meta_boxes', [$this, 'addShareMetaBox']);
-        add_action('admin_enqueue_scripts', [$this, 'enqueueGeneralAdminStyles']);
         add_filter('default_hidden_columns', [$this, 'filterDefaultHiddenColumns'], 10, 2);
     }
 
@@ -112,7 +115,7 @@ class SharePostController implements ControllerInterface
         // Validate nonce or wp_die on empty
         $nonce = $this->request->getString('global._metricool_action_nonce');
         if (empty($nonce) || !$this->verifyNonce($nonce, 'metricool_action')) {
-            wp_die(__('Invalid nonce.', 'metricool'));
+            wp_die(esc_html__('Invalid nonce.', 'metricool'));
         }
 
         $this->handleSharePostAction();
@@ -127,20 +130,6 @@ class SharePostController implements ControllerInterface
             'label' => __('Metricool', 'metricool')
         ]);
         return $columns;
-    }
-
-    /**
-     * Method enqueues the css for general admin styles. With it, we style
-     * the metricool post table column width.
-     */
-    public function enqueueGeneralAdminStyles(): void
-    {
-        wp_enqueue_style(
-            'metricool-admin-general-styles',
-            $this->env->getUrl('plugin.url') . 'assets/css/admin.css',
-            [],
-            $this->env->getString('plugin.version')
-        );
     }
 
     /**

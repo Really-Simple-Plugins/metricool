@@ -21,7 +21,7 @@ class FieldFactory
         $fieldClass = self::FIELDS_NAMESPACE . $fieldClassName;
 
         if (!class_exists($fieldClass)) {
-            throw new \InvalidArgumentException('Field "' . $fieldClass . '" not found');
+            throw new \InvalidArgumentException('Field "' . esc_html($fieldClass) . '" not found');
         }
 
         $field = new $fieldClass($name);

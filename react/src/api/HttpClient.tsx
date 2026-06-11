@@ -15,9 +15,9 @@ class HttpClient {
 
     private httpClientSettings: HttpClientSettings;
 
-    private getMethodHeaders: Record<string, string>;
+    private headers: Record<string, Record<string, string>>;
 
-    private postMethodHeaders: Record<string, string>;
+    private originalHeaders: Record<string, Record<string, string>>;
 
     private payload: Record<string, unknown>;
 
@@ -33,15 +33,18 @@ class HttpClient {
             X_WP_NONCE: settings.X_WP_NONCE
         };
 
-        this.getMethodHeaders = {
-            "X-WP-NONCE": settings.X_WP_NONCE,
+        this.headers = {
+            get: {
+                "X-WP-NONCE": settings.X_WP_NONCE,
+            },
+            post: {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "X-WP-NONCE": settings.X_WP_NONCE,
+            },
         };
 
-        this.postMethodHeaders = {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-            "X-WP-NONCE": settings.X_WP_NONCE,
-        };
+        this.originalHeaders = this.headers;
 
         this.payload = {
             "nonce": settings.NONCE,
@@ -97,9 +100,12 @@ class HttpClient {
         this.resetRoute();
         this.resetPayload();
 
+        const headers = this.getHeaders(method);
+        this.resetHeaders();
+
         const response = await fetch(route, {
             method: method,
-            headers: this.postMethodHeaders,
+            headers: headers,
             ...(payload && {
                 body: JSON.stringify({
                     ...payload,
@@ -109,6 +115,12 @@ class HttpClient {
         });
 
         if (!response.ok) {
+            
+            if(response.status == 401) {
+                // todo: gracefully log the user out when this happens
+                window.location.reload();
+            }
+
             const errorData = await response.json();
             return this.handleError(errorData);
         }
@@ -126,29 +138,37 @@ class HttpClient {
     }
 
     /**
-     * Sets custom headers for GET or POST requests.
+     * Sets custom headers for requests.
      * @param headers - The headers to be set.
-     * @param method - The HTTP method ('get' or 'post').
+     * @param method - The HTTP method ("GET", "PUT", "POST", "DELETE").
      * @returns The HttpClient instance.
      */
-    public setHeaders(headers: Record<string, string>, method: "get" | "post") {
-        if (method === "get") {
-            this.getMethodHeaders = {
-                ...this.getMethodHeaders,
+    public setHeaders(headers: Record<string, string>, method: "GET" | "PUT" | "POST" | "DELETE") {
+        if (method === "GET") {
+            this.headers.get = {
+                ...this.headers.get,
                 ...headers,
             };
             return this;
         }
 
-        if (method === "post") {
-            this.postMethodHeaders = {
-                ...this.postMethodHeaders,
-                ...headers,
-            };
-            return this;
-        }
-
+        this.headers.post = {
+            ...this.headers.post,
+            ...headers,
+        };
         return this;
+    }
+
+    /**
+     * Retrieves the right headers based on the method passed.
+     * @param method - The HTTP method, "GET" | "PUT" | "POST" | "DELETE"
+     * @private
+     */
+    private getHeaders(method: "GET" | "PUT" | "POST" | "DELETE") {
+        if (method === "GET") {
+            return this.headers.get;
+        }
+        return this.headers.post;
     }
 
     /**
@@ -202,6 +222,15 @@ class HttpClient {
     }
 
     /**
+     * Reset headers back to {@link this.originalHeaders}.
+     * Needs to be called after every request, as one client instance can
+     * be used for multiple different endpoints.
+     */
+    private resetHeaders() {
+        this.headers = this.originalHeaders;
+    }
+
+    /**
      * Handles errors from the server response.
      * @param errorData - The error data from the server.
      * @throws An error with a message.
@@ -214,7 +243,7 @@ class HttpClient {
             error = errorData;
         }
 
-        if (typeof errorData === 'object') {
+        if (typeof errorData === "object") {
             if (errorData.message && typeof errorData.message === "string") {
                 error = errorData.message;
             }
@@ -223,7 +252,7 @@ class HttpClient {
                 error = errorData.error;
             }
 
-            if (typeof errorData.data === "object" && errorData.data.errors) {
+            if (errorData.data && typeof errorData.data === "object" && errorData.data.errors) {
                 fields = errorData.data.errors;
             }
         }

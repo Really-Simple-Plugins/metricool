@@ -51,7 +51,7 @@ class TimelineStatistics
         $this->metric = $metric;
 
         if (!in_array($this->metric, $this->compatibleMetrics)) {
-            throw new \InvalidArgumentException("Incompatible metric given: $this->metric");
+            throw new \InvalidArgumentException(esc_html("Incompatible metric given: $this->metric"));
         }
 
         $this->client = $client;

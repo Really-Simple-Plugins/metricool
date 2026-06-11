@@ -1,5 +1,9 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router';
-import { GlobalContextProvider } from "../context/GlobalContext.tsx";
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import { type GlobalContext } from "@/context/GlobalContext.tsx";
+import type { QueryClient } from "@tanstack/react-query";
+
+// @ts-expect-error window.metricool is globally defined
+const GOOGLE_RECAPTCHA_URL = window.metricool.values.google_recaptcha_url;
 
 /**
  * Tanstack Router's entry into the entire app, from which it generates
@@ -11,12 +15,17 @@ import { GlobalContextProvider } from "../context/GlobalContext.tsx";
  * as {@link Index} needs to immediately access the context data.
  *
  */
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<GlobalContext & { queryClient: QueryClient }>()({
+    head: () => ({
+        scripts: [
+            {
+                src: GOOGLE_RECAPTCHA_URL,
+            },
+        ],
+    }),
     component: () => {
         return (
-            <GlobalContextProvider>
-                <Outlet/>
-            </GlobalContextProvider>
+            <Outlet/>
         )
     },
 });

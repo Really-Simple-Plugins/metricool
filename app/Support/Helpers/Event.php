@@ -15,8 +15,11 @@ class Event
     /**
      * Event names
      */
+    /** @var string Event triggered when connections are loaded from Metricool API */
     public const CONNECTED_SOCIAL_NETWORKS_DATA_LOADED = 'connected_social_networks_data_loaded';
-    public const SUBSCRIPTION_DATA_LOADED = 'subscription_data_loaded';
+    /** @var string Event triggered when the user data is updated from Metricool API */
+    public const METRICOOL_USER_UPDATED = 'metricool_user_updated';
+    /** @var string Event triggered when the user scheduled a post through the plugin */
     public const POST_SCHEDULED = 'post_scheduled';
 
     /**

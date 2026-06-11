@@ -97,7 +97,7 @@ abstract class AbstractStorage
             case '':
                 return $key;
             default:
-                throw new \InvalidArgumentException('Unknown casing type: ' . $this->casing . ' for storage: ' . $this->name . '.');
+                throw new \InvalidArgumentException('Unknown casing type: ' . esc_html($this->casing) . ' for storage: ' . esc_html($this->name) . '.');
         }
     }
 }

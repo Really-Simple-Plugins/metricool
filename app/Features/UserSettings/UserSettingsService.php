@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Metricool\Features\UserSettings;
 
-use Metricool\Support\Helpers\Collection;
-use Metricool\Features\UserSettings\Fields\Field;
 use Metricool\Features\UserSettings\Exceptions\StorageSubmitException;
-use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
+use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
+use Metricool\Features\UserSettings\Fields\Field;
+use Metricool\Support\Helpers\Collection;
 
 /**
  * This service is responsible for storing and retrieving user settings.
@@ -88,6 +88,7 @@ class UserSettingsService
         // Still throw validation errors if any, this should not block storage
         // submission for valid fields
         if (count($validationErrors) > 0) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $validationErrors contains ValidatorFailedException objects with pre-escaped messages.
             throw new ValidationFailedExceptions($validationErrors);
         }
 

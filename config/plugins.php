@@ -1,4 +1,6 @@
-<?php if (!defined('ABSPATH')) {
+<?php
+
+if (!defined('ABSPATH')) {
     exit;
 }
 
@@ -12,8 +14,17 @@ return [
         'constant_premium' => 'rsssl_pro',
         'url' => 'https://wordpress.org/plugins/really-simple-ssl/',
         'upgrade_url' => 'https://really-simple-ssl.com/pro?src=metricool-plugin',
-        'title' => "Really Simple Security - " . __("Lightweight plugin. Heavyweight security features.", "metricool" ),
+        'title' => "Really Simple Security - " . __("Lightweight plugin. Heavyweight security features.", "metricool"),
         'color' => '#f4bf3e',
+    ],
+    'simplybook' => [
+        'slug' => 'simplybook',
+        'options_prefix' => 'simplybook',
+        'activation_slug' => 'simplybook/simplybook.php',
+        'create' => admin_url('admin.php?page=simplybook-integration'),
+        'url' => 'https://wordpress.org/plugins/simplybook/',
+        'title' => 'SimplyBook.me - ' . __('Online Booking System', 'metricool'),
+        'color' => '#06ADEF',
     ],
     'complianz-gdpr' => [
         'slug' => 'complianz-gdpr',
@@ -35,16 +46,7 @@ return [
         'create' => admin_url('admin.php?page=terms-conditions'),
         'url' => 'https://wordpress.org/plugins/complianz-terms-conditions/',
         'upgrade_url' => 'https://complianz.io?metricool=cmplz-plugin',
-        'title' => 'Complianz - '. __("Terms & Conditions", "metricool"),
+        'title' => 'Complianz - ' . __("Terms & Conditions", "metricool"),
         'color' => '#000000',
-    ],
-    'simplybook' => [
-        'slug' => 'simplybook',
-        'options_prefix' => 'simplybook',
-        'activation_slug' => 'simplybook/simplybook.php',
-        'create' => admin_url('admin.php?page=simplybook-integration'),
-        'url' => 'https://wordpress.org/plugins/simplybook/',
-        'title' => 'SimplyBook.me - ' . __('Online Booking System', 'metricool'),
-        'color' => '#06ADEF',
     ],
 ];

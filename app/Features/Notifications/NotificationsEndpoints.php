@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Notifications;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
 

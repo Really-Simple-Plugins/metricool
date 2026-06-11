@@ -115,9 +115,11 @@ class StatsTimelineBuilder
      */
     protected function createRow(int $timestamp): array
     {
+        $date = Carbon::createFromTimestampMs($timestamp)->setTimezone(wp_timezone());
+
         $row = [
             'timestamp' => $timestamp,
-            'label' => Carbon::createFromTimestampMs($timestamp)->isoFormat($this->isoDateFormat),
+            'label' => $date->isoFormat($this->isoDateFormat),
         ];
 
         // initialize the properties for each metric, these are the keys of the metrics

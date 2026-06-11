@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Traits\HasViews;
 use Metricool\Services\TrackingScriptService;
 use Metricool\Interfaces\ControllerInterface;
@@ -11,7 +15,7 @@ use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class TrackingScriptController implements ControllerInterface
 {
-    use hasViews;
+    use HasViews;
 
     private EnvironmentConfig $env;
     private TrackingScriptService $service;

@@ -27,7 +27,7 @@ class ValidatorFactory
 
         $validatorClass = self::VALIDATORS_NAMESPACE . ucfirst($validatorInfo['className']);
         if (!class_exists($validatorClass)) {
-            throw new \InvalidArgumentException('Validator "' . $validatorInfo ['className'] . '" not found');
+            throw new \InvalidArgumentException('Validator "' . esc_html($validatorClass) . '" not found');
         }
 
         return new $validatorClass($field, ...$validatorInfo ['params']);

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Traits\HasRestAccess;
-use Metricool\Services\AnalyticsService;
-use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
+use Metricool\Services\AnalyticsService;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class AnalyticsEndpoint implements SingleEndpointInterface
 {
@@ -28,15 +28,6 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
-     */
-    public function enabled(): bool
-    {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication();
-    }
-
-    /**
      * @inheritDoc
      */
     public function registerRoute(): string
@@ -47,11 +38,20 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function registerArguments(): array
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
 
@@ -66,7 +66,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
         try {
             $response = $this->buildResponse($request);
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(__('Failed to load Analytics data', 'metricool'), $e->getMessage());
+            return $this->sendHttpErrorResponse(__('Failed to load Analytics data', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
         return $this->sendHttpResponse($response);

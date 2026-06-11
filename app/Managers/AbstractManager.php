@@ -5,12 +5,9 @@ declare(strict_types=1);
 namespace Metricool\Managers;
 
 use Metricool\Bootstrap\App;
-use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 abstract class AbstractManager
 {
-    protected EnvironmentConfig $env;
-
     /**
      * Overwrite this property to true when the entries that the child Manager
      * registers should be added to the container registry. For details see:
@@ -24,14 +21,6 @@ abstract class AbstractManager
      * For details see: {@see App::make}
      */
     protected bool $useRegistryForDependencies = true;
-
-    /**
-     * Bind the container
-     */
-    public function __construct(EnvironmentConfig $env)
-    {
-        $this->env = $env;
-    }
 
     /**
      * Child class should check if the given class can be registered. For
@@ -64,13 +53,13 @@ abstract class AbstractManager
         foreach ($classes as $fullyClassifiedName) {
             if (is_string($fullyClassifiedName) === false) {
                 $type = gettype($fullyClassifiedName);
-                throw new \LogicException("Class must be a fully qualified name. Given type: $type");
+                throw new \LogicException(esc_html("Class must be a fully qualified name. Given type: $type"));
             }
 
             $class = App::getInstance()->make($fullyClassifiedName, $this->useRegistry, $this->useRegistryForDependencies);
 
             if ($this->isRegistrable($class) === false) {
-                throw new \LogicException("Class is not registrable: " . $fullyClassifiedName);
+                throw new \LogicException('Class is not registrable: ' . esc_html($fullyClassifiedName));
             }
 
             $this->registerClass($class);

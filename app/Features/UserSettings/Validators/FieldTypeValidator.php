@@ -24,7 +24,7 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
-            throw new ValidatorFailedException(__('Please enter a valid boolean', 'metricool'), $this);
+            throw new ValidatorFailedException(esc_html__('Please enter a valid boolean', 'metricool'));
         }
 
         if ($this->field->isInteger()) {
@@ -32,7 +32,7 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
-            throw new ValidatorFailedException(__('Please enter a valid integer', 'metricool'), $this);
+            throw new ValidatorFailedException(esc_html__('Please enter a valid integer', 'metricool'));
         }
 
         if ($this->field->isFloat()) {
@@ -40,7 +40,7 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
-            throw new ValidatorFailedException(__('Please enter a valid float', 'metricool'), $this);
+            throw new ValidatorFailedException(esc_html__('Please enter a valid float', 'metricool'));
         }
 
         if ($this->field->isString()) {
@@ -48,7 +48,7 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
-            throw new ValidatorFailedException(__('Please enter a valid string', 'metricool'), $this);
+            throw new ValidatorFailedException(esc_html__('Please enter a valid string', 'metricool'));
         }
 
         if ($this->field->isArray()) {
@@ -56,7 +56,7 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
-            throw new ValidatorFailedException(__('Please enter a valid array', 'metricool'), $this);
+            throw new ValidatorFailedException(esc_html__('Please enter a valid array', 'metricool'));
         }
 
         if ($this->field->isObject()) {
@@ -64,9 +64,9 @@ class FieldTypeValidator extends AbstractValidator
                 return; // valid
             }
 
-            throw new ValidatorFailedException(__('Please enter a valid object', 'metricool'), $this);
+            throw new ValidatorFailedException(esc_html__('Please enter a valid object', 'metricool'));
         }
 
-        throw new ValidatorFailedException(__('Please enter a valid value', 'metricool'), $this);
+        throw new ValidatorFailedException(esc_html__('Please enter a valid value', 'metricool'));
     }
 }

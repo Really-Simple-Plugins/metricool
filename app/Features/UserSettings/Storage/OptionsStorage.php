@@ -14,13 +14,13 @@ class OptionsStorage extends AbstractStorage
     public function __construct(string $name, array $config)
     {
         if (!isset($config['prefix'])) {
-            throw new \InvalidArgumentException('Prefix is required for OptionsStorage: ' . $name);
+            throw new \InvalidArgumentException('Prefix is required for OptionsStorage: ' . esc_html($name));
         }
+
+        parent::__construct($name);
 
         $this->prefix = $config['prefix'];
         $this->casing = $config['casing'] ?? 'snakeCase';
-
-        parent::__construct($name);
     }
 
     /**
@@ -28,7 +28,7 @@ class OptionsStorage extends AbstractStorage
      */
     public function get(string $key)
     {
-        return get_option($this->prefix . $key) ?? null;
+        return get_option($this->prefix . $this->convertCase($key)) ?? null;
     }
 
     /**
