@@ -1,10 +1,6 @@
-import Header from "../custom/Header.tsx";
-import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer } from "../components";
-import Progress from "../custom/Progress.tsx";
-import WebsiteAnalytics from "../custom/WebsiteAnalytics.tsx";
-import ConnectedAccounts from "../custom/ConnectedAccounts.tsx";
-import OtherPlugins from "../custom/OtherPlugins.tsx";
-import { useGlobalContext } from "../context/GlobalContext.tsx";
+import { ConnectedAccounts, OtherPlugins, Progress, WebsiteAnalytics, } from "@/components/custom";
+import { Button, Dialog, DialogHeader, DialogTitle, FlexContainer, Icon } from "@/components/shared";
+import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 
 /**
@@ -19,8 +15,7 @@ import { __ } from "@wordpress/i18n";
 export const DashboardLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
     return (
-        <FlexContainer direction={"column"} className={"h-full w-full min-[125rem]:items-center"}>
-            <Header/>
+        <>
             <FlexContainer direction={"column"} className={"px-4 w-full max-w-[125rem]"}>
                 <FlexContainer direction={"column"} className={"w-full h-full justify-around xl:flex-row"}>
                     <Progress/>
@@ -33,7 +28,7 @@ export const DashboardLayout = () => {
             </FlexContainer>
             <Dialog
                 id={"onboarding-completed-modal"}
-                open={!metricool.was_dashboard_modal_closed}
+                open={metricool.onboarding.mode.show_welcome_screen}
                 showCloseButton={true}
                 onOpenChange={() => dispatch({ dispatchType: "setDashboardModalClosed" })}
                 className={"flex flex-col justify-center items-center"}
@@ -53,12 +48,14 @@ export const DashboardLayout = () => {
                     <Button
                         variant={"black"}
                         onClick={() => dispatch({ dispatchType: "setDashboardModalClosed" })}
-                        icon={"arrow-right"}
-                        iconPosition={"right"}>
-                        {__("Let's go to your dashboard!", "metricool")}
+                    >
+                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                            {__("Let's go to your dashboard!", "metricool")}
+                            <Icon icon={"arrow-right"}/>
+                        </FlexContainer>
                     </Button>
                 </FlexContainer>
             </Dialog>
-        </FlexContainer>
+        </>
     );
 };

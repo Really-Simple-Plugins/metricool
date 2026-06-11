@@ -24,7 +24,7 @@ use Metricool\Support\Helpers\Collection;
  */
 class StatsChartTableBuilder
 {
-    /** @var Collection  */
+    /** @var Collection */
     private Collection $results;
     private array $columns;
 
@@ -60,6 +60,10 @@ class StatsChartTableBuilder
     public function build(): array
     {
         $chartTable = [];
+
+        if ($this->results->count() === 0) {
+            return $chartTable;
+        }
 
         $chartTable[] = $this->getColumnLabels();
 

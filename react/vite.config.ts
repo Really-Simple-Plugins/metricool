@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-vite-plugin";
 import { devtools } from "@tanstack/devtools-vite";
+import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -19,12 +20,20 @@ export default defineConfig({
         sourcemap: false,
         rollupOptions: {
             input: "./src/main.tsx",
+            output: {
+                assetFileNames: 'assets/[hash][extname]',
+                chunkFileNames: 'assets/[hash].js',
+                entryFileNames: 'assets/[hash].js'
+            },
         },
         modulePreload: {
             polyfill: false,
         },
         minify: "terser",
         terserOptions: {
+            format: {
+                comments: /^translators:/
+            },
             compress: {
                 passes: 2,
             },
@@ -35,9 +44,9 @@ export default defineConfig({
     },
     base: "./",
     resolve: {
-        alias: [
-            { find: "@", replacement: "./src" },
-        ],
+        alias: {
+            "@": path.resolve(__dirname, "./src"),
+        },
         dedupe: ["react", "react-dom"]
     },
 });

@@ -5,18 +5,27 @@ declare(strict_types=1);
 namespace Metricool\Features\Onboarding;
 
 use Metricool\Features\AbstractLoader;
+use Metricool\Services\DashboardService;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Metricool\Support\Helpers\Storages\RequestStorage;
 
 class OnboardingLoader extends AbstractLoader
 {
+    private DashboardService $dashboard;
+
+    public function __construct(EnvironmentConfig $env, RequestStorage $request, DashboardService $dashboard)
+    {
+        parent::__construct($env, $request);
+
+        $this->dashboard = $dashboard;
+    }
+
     /**
      * @inheritDoc
      */
     public function isEnabled(): bool
     {
-        // todo
-        // return get_option('metricool_onboarding_completed', false) === false;
-
-        return false;
+        return $this->dashboard->isOnboardingCompleted() === false && current_user_can('metricool_manage');
     }
 
     /**
@@ -24,6 +33,6 @@ class OnboardingLoader extends AbstractLoader
      */
     public function inScope(): bool
     {
-        return (is_admin() && $this->userIsOnDashboard()) || $this->requestIsRestRequest();
+        return true;
     }
 }

@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Metricool\Bootstrap;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Http;
 use Metricool\Providers;
 use Metricool\Controllers;
 use Metricool\Managers\FeatureManager;
-use Metricool\Managers\EndpointManager;
 use Metricool\Managers\ProviderManager;
+use Metricool\Managers\EndpointManager;
 use Metricool\Managers\ControllerManager;
 
 class Plugin
@@ -37,8 +41,6 @@ class Plugin
      */
     public function boot(): void
     {
-        $this->registerEnvironment();
-
         $pluginBaseFile = (plugin_basename(dirname(__DIR__)) . DIRECTORY_SEPARATOR . plugin_basename(dirname(__DIR__)) . '.php');
         register_activation_hook($pluginBaseFile, [$this, 'activation']);
         register_deactivation_hook($pluginBaseFile, [$this, 'deactivation']);
@@ -50,19 +52,6 @@ class Plugin
         add_action('metricool_features_loaded', [$this, 'registerControllers']); // Control the functionality of the plugin
         add_action('rest_api_init', [$this, 'registerEndpoints']);
         add_action('admin_init', [$this, 'fireActivationHook']);
-    }
-
-    /**
-     * Register the plugin environment. The value of the environment will
-     * determine which domain and app_key are used for the API calls. The
-     * default value is production and can be [production|development].
-     * See {@see config/environment.php} for the actual values.
-     */
-    public function registerEnvironment(): void
-    {
-        if (!defined('METRICOOL_ENV')) {
-            define('METRICOOL_ENV', 'development');
-        }
     }
 
     /**
@@ -127,7 +116,7 @@ class Plugin
      */
     public static function uninstall(): void
     {
-        $uninstallInstance = new \Metricool\Support\Helpers\Uninstall();
+        $uninstallInstance = App::getInstance()->make('\Metricool\Support\Helpers\Uninstall');
         $uninstallInstance->handlePluginUninstall();
     }
 
@@ -153,12 +142,11 @@ class Plugin
     public function registerControllers(): void
     {
         $this->controllerManager->register([
+            Controllers\CapabilityController::class,
             Controllers\MigrationsController::class,
             Controllers\UpgradeController::class,
             Controllers\AdminController::class,
             Controllers\DashboardController::class,
-            Controllers\CapabilityController::class,
-            Controllers\ReviewController::class,
             Controllers\TrackingScriptController::class,
             Controllers\SharePostController::class,
         ]);
@@ -174,11 +162,11 @@ class Plugin
         $this->endpointManager->register([
             Http\Endpoints\ConnectedBrandsEndpoint::class,
             Http\Endpoints\ConnectedNetworksEndpoint::class,
-            Http\Endpoints\SubscriptionEndpoint::class,
             Http\Endpoints\DistributionEndpoint::class,
             Http\Endpoints\AnalyticsEndpoint::class,
             Http\Endpoints\RealtimeEndpoint::class,
             Http\Endpoints\OtherPluginsEndpoints::class,
+            Http\Endpoints\LogoutEndpoint::class,
         ]);
     }
 }

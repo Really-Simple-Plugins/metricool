@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Interfaces\ControllerInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class UpgradeController implements ControllerInterface
 {
-    private const LEGACY_VERSION = '1.24';
+    public const LEGACY_VERSION = '1.27';
 
     private EnvironmentConfig $env;
 
@@ -40,42 +44,27 @@ class UpgradeController implements ControllerInterface
     public function checkForUpgrades(): void
     {
         $previousSavedVersion = (string) get_option('_metricool_current_version', '');
-        if ($previousSavedVersion === $this->env->getString('plugin.version')) {
+        $currentVersion = $this->env->getString('plugin.version');
+
+        if ($previousSavedVersion === $currentVersion) {
             return; // Nothing to do
         }
 
-        // This could be one if-statement, but this makes it readable that we
-        // do not query the database if we do not need to.
-        if (empty($previousSavedVersion)) {
-            if ($this->isUpgradeFromLegacy()) {
-                $previousSavedVersion = self::LEGACY_VERSION;
-            }
+        // Legacy upgrade
+        if (empty($previousSavedVersion) && $this->isLegacyUpgrade()) {
+            $previousSavedVersion = self::LEGACY_VERSION;
+            do_action('metricool_plugin_legacy_upgrade', $currentVersion);
         }
 
-        // Trigger upgrade hook if we are upgrading from a previous version.
-        if (!empty($previousSavedVersion)) {
-            do_action('metricool_plugin_version_upgrade', $previousSavedVersion, $this->env->getString('plugin.version'));
-        }
-
-        // Also makes sure $previousSavedVersion will only be empty one time
-        update_option('_metricool_current_version', $this->env->getString('plugin.version'), false);
+        do_action('metricool_plugin_version_upgrade', $previousSavedVersion, $currentVersion);
+        update_option('_metricool_current_version', $currentVersion, false);
     }
 
     /**
-     * Check if the plugin is being upgraded from a legacy version.
-     * @internal Ideally this method should be removed in the future.
-     * @since 2.0.0
+     * Determine if this is an upgrade from the legacy plugin by checking for the existence of the old metricool_id option.
      */
-    private function isUpgradeFromLegacy(): bool
+    private function isLegacyUpgrade(): bool
     {
-        if ($cache = wp_cache_get('metricool_was_legacy_plugin_active', 'metricool')) {
-            return $cache;
-        }
-
-        $legacyOptionExistsIfNotNull = get_option('metricool_profile_id', null);
-        $upgradeWasFromLegacy = ($legacyOptionExistsIfNotNull !== null);
-
-        wp_cache_set('metricool_was_legacy_plugin_active', $upgradeWasFromLegacy, 'metricool');
-        return $upgradeWasFromLegacy;
+        return get_option('metricool_profile_id', false) !== false;
     }
 }

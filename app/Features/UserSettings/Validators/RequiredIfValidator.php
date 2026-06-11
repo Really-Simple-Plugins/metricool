@@ -20,10 +20,10 @@ class RequiredIfValidator extends AbstractValidator
      */
     public function __construct(Field $field, string $requiredParam, $requiredValue)
     {
+        parent::__construct($field);
+
         $this->requiredParam = $requiredParam;
         $this->requiredValue = $requiredValue;
-
-        parent::__construct($field);
     }
 
     /**

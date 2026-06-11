@@ -15,7 +15,7 @@ class EmailValidator extends AbstractValidator
     public function validate($value, ?\WP_REST_Request $request = null): void
     {
         if (!$this->isEmptyValue($value) && is_email($value) === false) {
-            throw new ValidatorFailedException(__('Please enter a valid email', 'metricool'), $this);
+            throw new ValidatorFailedException(esc_html__('Please enter a valid email', 'metricool'));
         }
     }
 }

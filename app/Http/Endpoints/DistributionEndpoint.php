@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Support\Helpers\Collection;
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Endpoints\Responses\DistributionResponse;
+use Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse;
+use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Http\Metricool\DTOs\DistributionDTO;
-use Metricool\Http\Endpoints\Responses\DistributionResponse;
-use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
-use Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse;
+use Metricool\Support\Helpers\Collection;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class DistributionEndpoint implements SingleEndpointInterface
 {
@@ -34,15 +34,6 @@ class DistributionEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
-     */
-    public function enabled(): bool
-    {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication();
-    }
-
-    /**
      * @inheritDoc
      */
     public function registerRoute(): string
@@ -53,11 +44,20 @@ class DistributionEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function registerArguments(): array
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
 
@@ -72,7 +72,7 @@ class DistributionEndpoint implements SingleEndpointInterface
         try {
             $response = $this->buildResponse($request);
         } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(__('Failed to load Analytics data', 'metricool'), $e->getMessage(), 500);
+            return $this->sendHttpErrorResponse(__('Failed to load Analytics data', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
         return $this->sendHttpResponse($response);
@@ -124,7 +124,7 @@ class DistributionEndpoint implements SingleEndpointInterface
     protected function createResponseObjectFromMetric(string $metric, Collection $statistics): DistributionResponse
     {
         if (!array_key_exists($metric, self::METRICS_RESPONSE_MAPPER)) {
-            throw new \InvalidArgumentException("Metric $metric is not accepted by this endpoint");
+            throw new \InvalidArgumentException(esc_html("Metric $metric is not accepted by this endpoint"));
         }
 
         $response = self::METRICS_RESPONSE_MAPPER[$metric];

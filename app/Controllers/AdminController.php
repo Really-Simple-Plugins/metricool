@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\ControllerInterface;
@@ -12,7 +16,7 @@ use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 class AdminController implements ControllerInterface
 {
     use HasAllowlistControl;
-    use hasViews;
+    use HasViews;
 
     private EnvironmentConfig $env;
 
@@ -23,10 +27,21 @@ class AdminController implements ControllerInterface
 
     public function register(): void
     {
-        if ($this->adminAccessAllowed() === false) {
-            return;
-        }
+        add_action('admin_enqueue_scripts', [$this, 'enqueueGeneralAdminStyles']);
         add_filter('plugin_action_links_' . $this->env->getString('plugin.base_file'), [$this, 'addPluginSettingsAction']);
+    }
+
+    /**
+     * Method enqueues the css for general admin styles.
+     */
+    public function enqueueGeneralAdminStyles(): void
+    {
+        wp_enqueue_style(
+            'metricool-admin-general-styles',
+            $this->env->getUrl('plugin.url') . 'assets/css/admin.css',
+            [],
+            $this->env->getString('plugin.version')
+        );
     }
 
     /**

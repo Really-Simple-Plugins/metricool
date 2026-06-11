@@ -3,15 +3,15 @@
 /**
  * @package Metricool
  * @author Really Simple Plugins
- * @copyright 2025 Really Simple Plugins
+ * @copyright 2026 Really Simple Plugins
  * @license GPL-2.0-or-later
  *
  * @wordpress-plugin
- * Plugin Name: Metricool
+ * Plugin Name: Metricool - Social media and site statistics
  * Plugin URI: https://metricool.com/
- * Description: Allows you to track your users and readers using metricool.com
- * Version: 2.0.0-alpha.3
- * Requires at least: 6.0
+ * Description: Site metrics and social media analytics for Instagram, Facebook, YouTube, LinkedIn, X Twitter. The single best tool for Social Media Managers!
+ * Version: 2.0.0
+ * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author: Really Simple Plugins
  * Author URI: https://really-simple-plugins.com
@@ -19,6 +19,10 @@
  * Text Domain: metricool
  * Domain Path: /assets/languages
  */
+
+if (!defined('ABSPATH')) {
+    exit;
+}
 
 /**
  * Load the Jetpack packages autoloader.

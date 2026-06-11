@@ -4,15 +4,46 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+use Metricool\Traits\HasRestAccess;
+use Metricool\Services\DashboardService;
+use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Interfaces\FeatureInterface;
+use Metricool\Services\MetricoolAccountService;
+use Metricool\Features\Onboarding\Services\OAuthService;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Metricool\Features\Onboarding\Services\CreateAccountService;
+use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
+use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 
 class OnboardingController implements FeatureInterface
 {
-    private OnboardingService $service;
+    use HasRestAccess;
 
-    public function __construct(OnboardingService $service)
-    {
-        $this->service = $service;
+    private OnboardingService $onboarding;
+    private EnvironmentConfig $env;
+    private CreateAccountService $accounts;
+    private OAuthService $oauth;
+    private DashboardService $dashboard;
+    private MetricoolAccountService $account;
+
+    public function __construct(
+        OnboardingService $onboarding,
+        CreateAccountService $accounts,
+        EnvironmentConfig $env,
+        OAuthService $oauth,
+        DashboardService $dashboard,
+        MetricoolAccountService $account
+    ) {
+        $this->onboarding = $onboarding;
+        $this->accounts = $accounts;
+        $this->env = $env;
+        $this->oauth = $oauth;
+        $this->dashboard = $dashboard;
+        $this->account = $account;
     }
 
     public function register(): void
@@ -25,17 +56,58 @@ class OnboardingController implements FeatureInterface
      */
     public function addRoutes(array $routes): array
     {
+        $routes['onboarding/create_account'] = [
+            'methods' => 'POST',
+            'callback' => [$this, 'createAccount'],
+        ];
+
         $routes['onboarding/finish_onboarding'] = [
             'methods' => 'POST',
             'callback' => [$this, 'finishOnboarding'],
         ];
 
-        $routes['onboarding/retry_onboarding'] = [
-            'methods' => 'POST',
-            'callback' => [$this, 'retryOnboarding'],
+        $routes['onboarding/oauth_redirect'] = [
+            'methods' => 'GET',
+            'callback' => [$this, 'oauthRedirect'],
+        ];
+
+        $routes['onboarding/oauth_callback'] = [
+            'methods' => 'GET',
+            'callback' => [$this, 'oauthCallback'],
         ];
 
         return $routes;
+    }
+
+    /**
+     * Create a new Metricool account. The created user is authenticated
+     * automatically.
+     */
+    public function createAccount(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $email = (string) $request->get_param('email');
+        $password = (string) $request->get_param('password');
+        $marketing = (bool) $request->get_param('marketing');
+        $terms = (bool) $request->get_param('terms');
+        $captcha = (string) $request->get_param('captcha');
+
+        // Validate fields
+        if (!is_email($email) || empty($password) || empty($captcha) || !$terms) {
+            return $this->sendHttpErrorResponse(
+                __('Validation failed.', 'metricool'),
+                [],
+                422
+            );
+        }
+
+        // Attempt to create the account
+        try {
+            $this->accounts->createAccount($captcha, $email, $password, $marketing);
+        } catch (CreateAccountException $e) {
+            return $this->sendHttpErrorResponse($e->getMessage(), ['reason' => $e->getReason()], $e->getCode());
+        }
+
+        return $this->onboardedResponse();
     }
 
     /**
@@ -44,32 +116,85 @@ class OnboardingController implements FeatureInterface
      */
     public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
-        $code = 200;
-        $message = __('Successfully finished onboarding!', 'metricool');
+        $blogId = (string) $request->get_param('blogId');
 
-        $success = $this->service->setOnboardingCompleted();
-        if (!$success) {
-            $message = __('An error occurred while finishing the onboarding process', 'metricool');
-            $code = 500;
+        if (empty($blogId)) {
+            return $this->onboardedResponse();
         }
 
-        return $this->service->sendHttpResponse([], $success, $message, $code);
+        // Store the blogId if it was provided by the client, to retrieve the necessary blog information
+        try {
+            $this->onboarding->finalizeOnboarding($blogId);
+        } catch (BrandAccessDeniedException $e) {
+            return $this->sendHttpErrorResponse(__('Could not retrieve brand. Pick another brand, try again or contact support.', 'metricool'), [], 403);
+        } catch (GuzzleException $e) {
+            return $this->sendHttpErrorResponse(wp_kses_post(sprintf(
+                /* translators: %1$s is opening link and %2$s is closing link */
+                __('Something went wrong. Please try again or %1$sleave a support message%2$s.', 'metricool'),
+                '<a href="' . $this->env->get('frontend.trusted_urls.new_support_ticket') . '" target="_blank">',
+                '</a>',
+            )));
+        }
+
+        return $this->onboardedResponse();
     }
 
     /**
-     * Method is used to retry the onboarding process. It is called when the
-     * user has completed the onboarding process and wants to retry it.
+     * Build and return the Metricool OAuth authorize URL.
      */
-    public function retryOnboarding(\WP_REST_Request $request): \WP_REST_Response
+    public function oauthRedirect(\WP_REST_Request $request): \WP_REST_Response
     {
-//        $success = $this->service->delete_all_options(); // todo
-        $success = (bool) random_int(0, 1); // todo
-        $message = __('Successfully removed all previous data.', 'metricool');
-
-        if (!$success) {
-            $message = __('An error occurred while trying to remove previous data.', 'metricool');
+        // Check if authorizationUrl is a secure URL, otherwise redirect to the dashboard
+        if (is_ssl() === false) {
+            return $this->sendHttpErrorResponse(__('HTTPS is required to be able to authorize this website.', 'metricool'), [], 400);
         }
 
-        return $this->service->sendHttpResponse([], $success, $message);
+        return $this->sendHttpResponse([
+            'redirect_url' => $this->oauth->getAuthorizationUrl(),
+        ]);
+    }
+
+    /**
+     * Handle the OAuth callback from Metricool. Exchanges the authorization
+     * code for tokens, authenticates the user, and redirects to the dashboard.
+     */
+    public function oauthCallback(\WP_REST_Request $request): \WP_REST_Response
+    {
+        $code = (string) $request->get_param('code');
+        $state = (string) $request->get_param('state');
+
+        try {
+            $this->oauth->authenticateWithCode($code, $state);
+        } catch (\Exception $e) {
+            wp_safe_redirect(add_query_arg('oauth_error', $e->getMessage(), $this->env->getString('plugin.dashboard_url')));
+            exit;
+        }
+
+        // Attempt to automatically set the blog information, completes the onboarding process on success
+        try {
+            $this->onboarding->finalizeOnboarding();
+        } catch (BrandAccessDeniedException | GuzzleException $e) {
+            wp_safe_redirect(add_query_arg('oauth_error', 'onboarding_failed', $this->env->getString('plugin.dashboard_url')));
+            exit;
+        }
+
+        // Redirect to the WordPress dashboard
+        wp_safe_redirect($this->env->getString('plugin.dashboard_url'));
+        exit;
+    }
+
+    /**
+     * Response that is returned when the onboarding process has been completed successfully.
+     * Includes the onboarding state and mode, as well as the account data of the user.
+     */
+    private function onboardedResponse(): \WP_REST_Response
+    {
+        return $this->sendHttpResponse([
+            'onboarding' => [
+                'state' => $this->dashboard->state(),
+                'mode' => $this->dashboard->mode(),
+            ],
+            'account' => $this->account->accountData(),
+        ]);
     }
 }

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class ConnectedBrandsEndpoint implements SingleEndpointInterface
 {
@@ -24,12 +24,11 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token.
+     * @inheritDoc
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasUserToken();
+        return $this->adminAccessAllowed();
     }
 
     /**
@@ -48,6 +47,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'middleware' => ['metricool:auth'],
         ];
     }
 
@@ -57,11 +57,9 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
-            $response = $this->metricoolApi->connectedBrands()->get();
+            $response = $this->metricoolApi->brands()->all();
         } catch (\Throwable $e) {
-            echo '<pre>';
-            var_dump($e->getMessage()); // todo
-            exit();
+            return $this->sendHttpErrorResponse(__('Failed to load brands data', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
         return $this->sendHttpResponse($response);

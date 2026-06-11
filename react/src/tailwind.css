@@ -6,11 +6,11 @@
 @import "tailwindcss/theme.css" layer(theme);
 @import "tailwindcss/utilities.css";
 
-@import "./components/src/base.css";
+@import "./base.css";
 
 @font-face {
     font-family: "Nunito";
-    src: url("../../assets/fonts/Nunito-Variable.woff2")
+    src: url("../assets/fonts/Nunito-Variable.woff2")
     format("woff2");
     font-weight: 700;
     font-style: normal;
@@ -66,4 +66,8 @@ Metricool Brand Style Guide
     --color-blog: #5f9ea0;
 
     --gradient-brand-secondary: linear-gradient(90deg,#589CBC 0%,#EE5B91 53.02%,#F5CA32 100%);
+}
+
+.grecaptcha-badge {
+    visibility: hidden;
 }

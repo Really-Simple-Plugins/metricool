@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Metricool\Features\UserSettings\Fields;
 
-use Metricool\Features\UserSettings\Storage\AbstractStorage;
+use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 use Metricool\Features\UserSettings\Factories\ValidatorFactory;
+use Metricool\Features\UserSettings\Storage\AbstractStorage;
 use Metricool\Features\UserSettings\Validators\AbstractValidator;
 use Metricool\Features\UserSettings\Validators\FieldTypeValidator;
-use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 
 class Field
 {
@@ -138,7 +138,7 @@ class Field
     public function setValue($value, ?\WP_REST_Request $request = null): void
     {
         if (empty($this->storage)) {
-            throw new \LogicException('Storage not set for field: ' . $this->name . '. First call setStorage() before setValue().');
+            throw new \LogicException('Storage not set for field: ' . esc_html($this->name) . '. First call setStorage() before setValue().');
         }
 
         $this->validate($value, $request);
@@ -151,6 +151,7 @@ class Field
      * returns default value when no value is found in storage.
      * @return mixed
      * @throws \LogicException when storage is not set by developer
+     * @throws \Exception
      */
     public function getValue()
     {
@@ -159,14 +160,10 @@ class Field
         }
 
         if (empty($this->storage)) {
-            throw new \LogicException('Storage not set for field: ' . $this->name . '. First call setStorage() before getValue().');
+            throw new \LogicException('Storage not set for field: ' . esc_html($this->name) . '. First call setStorage() before getValue().');
         }
 
-        try {
-            $value = $this->storage->get($this->getSettingName());
-        } catch (\Exception $e) {
-            $value = $this->getDefaultValue();
-        }
+        $value = $this->storage->get($this->getSettingName());
 
         return is_null($value) ? $this->getDefaultValue() : $this->castValue($value);
     }

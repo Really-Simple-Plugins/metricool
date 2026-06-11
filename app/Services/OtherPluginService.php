@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Services;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Support\Helpers\Storage;
 
 class OtherPluginService
@@ -45,6 +49,14 @@ class OtherPluginService
     }
 
     /**
+     * Method returns if the plugin is active.
+     */
+    public function getPluginActive(): bool
+    {
+        return $this->pluginIsActive() || $this->premiumPluginIsInstalled();
+    }
+
+    /**
      * Method returns the action fitting for the context of the plugin.
      */
     public function getAvailablePluginAction(): string
@@ -70,6 +82,7 @@ class OtherPluginService
 
     /**
      * Execute action for another plugin
+     * @throws \Exception If the plugin info could not be retrieved
      */
     public function executeAction(string $action): void
     {
@@ -96,6 +109,7 @@ class OtherPluginService
     /**
      * Download the other plugin currently stored in the plugin config
      * property.
+     * @throws \Exception If the plugin info could not be retrieved
      */
     protected function downloadCurrentPlugin(): bool
     {
@@ -150,6 +164,7 @@ class OtherPluginService
         //when activated from the network admin, we assume the user wants network activated
         $networkwide = is_multisite() && is_network_admin();
         if (!defined('DOING_CRON')) {
+            // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound -- DOING_CRON is a WordPress core constant.
             define('DOING_CRON', true);
         }
 
@@ -172,7 +187,8 @@ class OtherPluginService
      */
     protected function premiumPluginIsInstalled(): bool
     {
-        return $this->pluginConfig->has('constant_premium') && defined($this->pluginConfig->getString('constant_premium'));
+        return $this->pluginConfig->has('constant_premium')
+            && defined($this->pluginConfig->getString('constant_premium'));
     }
 
     /**
@@ -197,7 +213,8 @@ class OtherPluginService
      */
     protected function pluginCanBeUpgraded(): bool
     {
-        return $this->pluginConfig->has('constant_premium') && !defined($this->pluginConfig->getString('constant_premium'));
+        return $this->pluginConfig->has('constant_premium')
+            && !defined($this->pluginConfig->getString('constant_premium'));
     }
 
     /**
@@ -205,9 +222,7 @@ class OtherPluginService
      */
     protected function pluginFileExists(): bool
     {
-        return file_exists(
-            trailingslashit(WP_PLUGIN_DIR) . $this->pluginConfig->getString('activation_slug')
-        );
+        return file_exists(trailingslashit(WP_PLUGIN_DIR) . $this->pluginConfig->getString('activation_slug'));
     }
 
     /**

@@ -17,13 +17,13 @@ class StorageFactory
     public static function createFromConfig(string $name, array $options): AbstractStorage
     {
         if (!isset($options['class'])) {
-            throw new \InvalidArgumentException('Class for "' . $name . '" not mapped, please add it to the config');
+            throw new \InvalidArgumentException('Class for "' . esc_html($name) . '" not mapped, please add it to the config');
         }
 
         $storageClass = self::STORAGE_NAMESPACE . ucfirst($options['class']);
 
         if (!class_exists($storageClass)) {
-            throw new \InvalidArgumentException('Storage "' . $storageClass . '" not found');
+            throw new \InvalidArgumentException('Storage "' . esc_html($storageClass) . '" not found');
         }
 
         return new $storageClass($name, $options);

@@ -1,67 +1,85 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Metricool\Features\Onboarding;
 
-use Metricool\Support\Helpers\Storage;
-use Metricool\Traits\HasRestAccess;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
+use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Services\DashboardService;
+use Metricool\Services\MetricoolAccountService;
+use Metricool\Services\TrackingScriptService;
 
 class OnboardingService
 {
-    use HasRestAccess;
+    private MetricoolApi $api;
+    private TrackingScriptService $tracking;
+    private DashboardService $dashboard;
+    private MetricoolAccountService $account;
 
-    /**
-     * Store the onboarding step in the general options without autoload
-     */
-    public function setCompletedStep(int $step): void
+    public function __construct(MetricoolApi $api, TrackingScriptService $tracking, DashboardService $dashboard, MetricoolAccountService $account)
     {
-        update_option('metricool_completed_step', $step, false);
+        $this->api = $api;
+        $this->tracking = $tracking;
+        $this->dashboard = $dashboard;
+        $this->account = $account;
     }
 
     /**
-     * Set the onboarding as completed in the general options without autoload
+     * Attempt to finish the onboarding process. When the necessary information is provided or retrieved,
+     * set the onboarding as completed.
+     *
+     * @throws BrandAccessDeniedException
+     * @throws GuzzleException
      */
-    public function setOnboardingCompleted(): bool
+    public function finalizeOnboarding(?string $blogId = null): bool
     {
-        $this->setCompletedStep(5); // todo
-        $this->clearTemporaryData();
-
-        $completedPreviously = get_option('metricool_onboarding_completed', false);
-        if ($completedPreviously) {
-            return true;
+        if ($blogId !== null) {
+            // When a blogId is provided, try to connect to the brand
+            $this->connectBrand($blogId);
         }
 
-        update_option('metricool_onboarding_completed_unix_timestamp', time(), false);
-        return update_option('metricool_onboarding_completed', true, false);
+        // If the blogId is not set, the onboarding is not completed
+        if ($this->api->hasBlogId() === false) {
+            return false;
+        }
+
+        // Update the metricool user data from the API
+        $this->account->fetch();
+
+        // When all the necessary information is retrieved, set the onboarding as completed
+        return $this->dashboard->setOnboardingCompleted();
     }
 
     /**
-     * Method can be used to set temporary data for the onboarding process.
+     * A brand is connected when it's retrieved from the API and the tracking hash is activated. The blogId is stored for future API calls.
+     * @throws GuzzleException
      */
-    public function setTemporaryData(array $data): void
+    private function connectBrand(string $blogId): void
     {
-        $options = get_option('metricool_temporary_onboarding_data', []);
-        $options = array_merge($options, $data);
-        update_option('metricool_temporary_onboarding_data', $options, false);
+        try {
+            $brand = $this->api->brands()->get($blogId);
+        } catch (RequestException $e) {
+            if ($e->getResponse()->getStatusCode() === 403) {
+                throw new BrandAccessDeniedException();
+            }
+            throw $e;
+        }
+
+        $this->activateTrackingHash($brand);
+        $this->api->storeBlogId($blogId);
     }
 
     /**
-     * Method can be used to retrieve temporary data for the onboarding process.
-     * Returns the array of data as a Storage object for easier access.
+     * Activate the tracking hash for the given brand and store it in the database
      */
-    public function getTemporaryDataStorage(): Storage
+    private function activateTrackingHash(array $brand): void
     {
-        return new Storage(
-            get_option('metricool_temporary_onboarding_data', [])
-        );
-    }
+        $trackingId = isset($brand['hash']) ? (string) $brand['hash'] : null;
 
-    /**
-     * Method should be used to clear the temporary data for the onboarding.
-     */
-    public function clearTemporaryData(): void
-    {
-        delete_option('metricool_temporary_onboarding_data');
+        if ($trackingId !== null) {
+            $this->tracking->storeTrackingHash($trackingId)
+                ->activateTrackingWidget();
+        }
     }
 }

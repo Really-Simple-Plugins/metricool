@@ -85,7 +85,7 @@ class AnalyticsService
     public function getResults(string $metric): Collection
     {
         if (array_key_exists($metric, $this->metrics) === false) {
-            throw new InvalidArgumentException("Incompatible metric given: $metric");
+            throw new InvalidArgumentException(esc_html("Incompatible metric given: $metric"));
         }
 
         return $this->metrics[$metric]['results'];
@@ -98,7 +98,7 @@ class AnalyticsService
     public function getTimelineStatistics(string $metric): TimelineStatistics
     {
         if (array_key_exists($metric, $this->metrics) === false) {
-            throw new InvalidArgumentException("Incompatible metric given: $metric");
+            throw new InvalidArgumentException(esc_html("Incompatible metric given: $metric"));
         }
 
         return $this->metrics[$metric]['statistics'];

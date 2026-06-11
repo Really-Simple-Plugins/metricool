@@ -24,7 +24,7 @@ class FirstConnectionNotice extends AbstractNotice
      */
     public function getTitle(): string
     {
-        return __('No connections detected', 'metricool');
+        return __('Get the most out of Metricool', 'metricool');
     }
 
     /**

@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Interfaces\MigrationInterface;
 use Metricool\Interfaces\ControllerInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;

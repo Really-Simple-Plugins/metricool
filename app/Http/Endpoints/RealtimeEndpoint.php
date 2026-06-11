@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Traits\HasRestAccess;
-use Metricool\Services\RealtimeService;
-use Metricool\Traits\HasAllowlistControl;
+use Exception;
+use Metricool\Http\Endpoints\Responses\RealtimeResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Http\Endpoints\Responses\RealtimeResponse;
+use Metricool\Services\RealtimeService;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
 class RealtimeEndpoint implements SingleEndpointInterface
 {
@@ -28,15 +29,6 @@ class RealtimeEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token, - ID and blog ID.
-     */
-    public function enabled(): bool
-    {
-        return $this->adminAccessAllowed() && $this->metricoolApi->hasAuthentication();
-    }
-
-    /**
      * @inheritDoc
      */
     public function registerRoute(): string
@@ -47,11 +39,20 @@ class RealtimeEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
+    public function enabled(): bool
+    {
+        return $this->adminAccessAllowed();
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function registerArguments(): array
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
+            'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
 
@@ -63,8 +64,8 @@ class RealtimeEndpoint implements SingleEndpointInterface
     {
         try {
             $response = $this->buildResponse($request);
-        } catch (\Exception $e) {
-            return $this->sendHttpErrorResponse(__('Failed to load Realtime data', 'metricool'), $e->getMessage());
+        } catch (Exception $e) {
+            return $this->sendHttpErrorResponse(__('Failed to load Realtime data', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
         return $this->sendHttpResponse($response);
@@ -74,7 +75,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
      * Build the specific Analytics response for the endpoint. This is mainly
      * used in the plugin Dashboard to reflect non-realtime statistics.
      * Building it server side prevents client-side complexity.
-     * @throws \Exception
+     * @throws Exception
      */
     private function buildResponse(\WP_REST_Request $request): array
     {
@@ -83,12 +84,12 @@ class RealtimeEndpoint implements SingleEndpointInterface
         // Get our data
         $sessions = $realtimeModule->sessions()->get();
         if (!isset($sessions['timeline'])) {
-            throw new \Exception('Session data is missing');
+            throw new Exception('Session data is missing');
         }
 
         $values = $realtimeModule->current()->get();
         if (!isset($values['activeVisits'])) {
-            throw new \Exception('Visitors data is missing');
+            throw new Exception('Visitors data is missing');
         }
 
         // Add the pageViews to the timeline and totals

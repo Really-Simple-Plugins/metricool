@@ -1,7 +1,7 @@
 {
     "name": "really-simple-plugins/metricool",
     "version": "2.0.0",
-    "description": "Allows you to track your users and readers using metricool.com",
+    "description": "Site metrics and social media analytics for Instagram, Facebook, YouTube, LinkedIn, X Twitter. The single best tool for Social Media Managers!",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
     "homepage": "https://metricool.com/",
@@ -18,7 +18,8 @@
         "adbario/php-dot-notation": "*",
         "automattic/jetpack-autoloader": "^5",
         "guzzlehttp/guzzle": "^7.9",
-        "nesbot/carbon": "*"
+        "nesbot/carbon": "*",
+        "ext-zlib": "*"
     },
     "require-dev": {
         "phpcompatibility/php-compatibility": "^9.3",

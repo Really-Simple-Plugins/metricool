@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Features\UserSettings;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Features\UserSettings\Exceptions\StorageSubmitException;
 use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
 use Metricool\Traits\HasAllowlistControl;

@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
-use Metricool\Services\CapabilityService;
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Interfaces\ControllerInterface;
+use Metricool\Services\CapabilityService;
 
 class CapabilityController implements ControllerInterface
 {

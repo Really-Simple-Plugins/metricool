@@ -1,6 +1,3 @@
 [submodule "scripts"]
 	path = scripts
 	url = git@gitlab.group.team.blue:really-simple-plugins/metricool/tools-metricool-scripts.git
-[submodule "components"]
-	path = react/src/components
-	url = git@gitlab.group.team.blue:really-simple-plugins/general/tools-really-simple-components.git

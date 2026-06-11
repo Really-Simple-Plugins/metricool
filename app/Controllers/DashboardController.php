@@ -4,10 +4,17 @@ declare(strict_types=1);
 
 namespace Metricool\Controllers;
 
+if (!defined('ABSPATH')) {
+    exit;
+}
+
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasUserAccess;
+use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\ControllerInterface;
+use Metricool\Services\MetricoolAccountService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class DashboardController implements ControllerInterface
@@ -17,17 +24,23 @@ class DashboardController implements ControllerInterface
     use HasAllowlistControl;
 
     private EnvironmentConfig $env;
+    private MetricoolApi $metricool;
+    private DashboardService $service;
+    private MetricoolAccountService $account;
 
-    public function __construct(EnvironmentConfig $env)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $service, MetricoolAccountService $account)
     {
         $this->env = $env;
+        $this->metricool = $metricool;
+        $this->service = $service;
+        $this->account = $account;
     }
 
     public function register(): void
     {
-        if ($this->userCanManage() === false) {
-            return;
-        }
+        // Show forced login screen when coming from legacy
+        add_action('metricool_plugin_legacy_upgrade', [$this->service, 'enableForcedLogin']);
+        add_action('metricool_onboarding_completed', [$this->service, 'disableForcedLogin']);
 
         // Redirect on the activation hook, but do it after anything else.
         add_action('metricool_activation', [$this, 'maybeRedirectToDashboard'], 9999);
@@ -79,7 +92,6 @@ class DashboardController implements ControllerInterface
             $menuPosition,
         );
 
-//        add_action("admin_print_styles-$pageHookSuffix", [$this, 'enqueueDashboardStyles']);
         add_action("admin_print_scripts-$pageHookSuffix", [$this, 'enqueueReactScripts']);
     }
 
@@ -137,7 +149,7 @@ class DashboardController implements ControllerInterface
             $manifest_contents = file_get_contents($manifest);
             $decoded_manifest = json_decode($manifest_contents, true);
             foreach ($decoded_manifest as $key => $value) {
-                if (substr($value['file'], - 3) === '.js') {
+                if (substr($value['file'], -3) === '.js') {
                     wp_register_script(
                         $key,
                         $this->env->getUrl('plugin.react_url') . '/build/' . $value['file'],
@@ -205,9 +217,9 @@ class DashboardController implements ControllerInterface
         // filter the filenames to get the JavaScript and asset filenames
         foreach ($filenames as $filename) {
             if (strpos($filename, 'index.') === 0) {
-                if (substr($filename, - 3) === '.js') {
+                if (substr($filename, -3) === '.js') {
                     $jsFileName = $filename;
-                } elseif (substr($filename, - 10) === '.asset.php') {
+                } elseif (substr($filename, -10) === '.asset.php') {
                     $assetFilename = $filename;
                 }
             }
@@ -253,33 +265,47 @@ class DashboardController implements ControllerInterface
      */
     private function localizedReactSettings(array $chunkTranslation): array
     {
-        return apply_filters(
-            'metricool_localize_dashboard_script',
-            [
-                'nonce' => wp_create_nonce('metricool_nonce'),
-                'x_wp_nonce' => wp_create_nonce('wp_rest'),
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'rest_url' => get_rest_url(),
-                'rest_namespace' => $this->env->getString('http.namespace'),
-                'rest_version' => $this->env->getString('http.version'),
-                'site_url' => site_url(),
-                'assets_url' => $this->env->getUrl('plugin.assets_url'),
-                'json_translations' => ($chunkTranslation['json_translations'] ?? []),
-                'trusted_urls' => $this->env->get('frontend.trusted_urls'),
-                'is_onboarding_completed' => $this->isOnboardingCompleted(),
-                'support' => $this->env->get('metricool.support'),
-                'metricool_base_url' => $this->env->get('metricool.base_url'),
-                'metricool_help_url' => $this->env->get('metricool.help_url'),
-                'locale' => str_replace("_", "-", get_user_locale()),
-                'blogId' => (defined('METRICOOL_BLOG_ID') && !empty(METRICOOL_BLOG_ID) ? METRICOOL_BLOG_ID : ""),
-                'userId' => (defined('METRICOOL_USER_ID') && !empty(METRICOOL_USER_ID) ? METRICOOL_USER_ID : ""),
-            ]
-        );
+        $settings = [
+            'nonce' => wp_create_nonce('metricool_nonce'),
+            'x_wp_nonce' => wp_create_nonce('wp_rest'),
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'rest_url' => get_rest_url(),
+            'rest_namespace' => $this->env->getString('http.namespace'),
+            'rest_version' => $this->env->getString('http.version'),
+            'api_url' => trailingslashit(
+                get_rest_url(null, $this->env->getString('http.namespace') . '/' . $this->env->getString('http.version'))
+            ),
+            'dashboard_url' => $this->env->getString('plugin.dashboard_url'),
+            'site_url' => site_url(),
+            'assets_url' => $this->env->getUrl('plugin.assets_url'),
+            'json_translations' => ($chunkTranslation['json_translations'] ?? []),
+            'trusted_urls' => $this->env->get('frontend.trusted_urls'),
+            'onboarding' => [
+                'state' => $this->service->state(),
+                'mode' => $this->service->mode(),
+            ],
+            'support' => $this->env->getUrl('metricool.support'),
+            'metricool_base_url' => $this->env->getUrl('metricool.base_url'),
+            'metricool_help_url' => $this->env->getUrl('metricool.help_url'),
+            'locale' => str_replace("_", "-", get_user_locale()),
+            'supported_languages' => $this->metricool->supportedLanguages(),
+            'google_recaptcha_url' => $this->getGoogleRecaptchaUrl(),
+            'google_recaptcha_key' => $this->env->getString('metricool.google_recaptcha_key'),
+        ];
+
+        if ($this->metricool->hasAuthentication()) {
+            $settings['account'] = $this->account->fetch();
+        }
+
+        return apply_filters('metricool_localize_dashboard_script', $settings);
     }
 
-    private function isOnboardingCompleted(): bool
+    /**
+     * Get the Google reCAPTCHA URL with the key from the environment config.
+     */
+    private function getGoogleRecaptchaUrl(): string
     {
-        return (bool) get_option('metricool_onboarding_completed', false);
+        return 'https://www.google.com/recaptcha/enterprise.js?render=' . $this->env->getString('metricool.google_recaptcha_key');
     }
 
     public function loadMainScriptsAsModule(string $tag, string $handle): string
