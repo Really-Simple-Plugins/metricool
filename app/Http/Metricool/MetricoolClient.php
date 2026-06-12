@@ -13,6 +13,7 @@ use InvalidArgumentException;
 use Metricool\Services\OptionsService;
 use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 class MetricoolClient
@@ -359,7 +360,7 @@ class MetricoolClient
 
     /**
      * Send a GET request.
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function get(string $endpoint): ?array
     {
@@ -368,7 +369,7 @@ class MetricoolClient
 
     /**
      * Send a POST request.
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function post(string $endpoint, array $body): ?array
     {
@@ -377,7 +378,7 @@ class MetricoolClient
 
     /**
      * Send a PUT request.
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function put(string $endpoint, array $body): ?array
     {
@@ -386,7 +387,7 @@ class MetricoolClient
 
     /**
      * Send a PATCH request.
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function patch(string $endpoint, array $body): ?array
     {
@@ -395,7 +396,7 @@ class MetricoolClient
 
     /**
      * Send a DELETE request.
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function delete(string $endpoint): ?array
     {
@@ -406,7 +407,7 @@ class MetricoolClient
      * Send an authenticated request to the Metricool API.
      *
      * @param mixed|null $body
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function request(string $method, string $endpoint, $body = null): ?array
     {
@@ -427,7 +428,11 @@ class MetricoolClient
                 $this->logout();
             }
 
-            throw $e;
+            throw new ApiException(
+                $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
         }
 
         return $this->parseResponse($response);
@@ -555,9 +560,11 @@ class MetricoolClient
     }
 
     /**
-     * Perform the actual token refresh request against the Metricool OAuth endpoint.
+     * Perform the actual token refresh request against the
+     * Metricool OAuth endpoint.
      *
-     * @throws RuntimeException when the refresh request fails or the response is invalid.
+     * @throws ApiException when the refresh request fails.
+     * @throws RuntimeException when the response is invalid.
      */
     private function performTokenRefresh(): void
     {
@@ -581,8 +588,12 @@ class MetricoolClient
             );
         } catch (GuzzleException $e) {
             $this->logout();
-            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- $e is a Throwable passed as $previous, not output.
-            throw new RuntimeException('Failed to refresh authentication token. Please log in again.', 401, $e);
+
+            throw new ApiException(
+                'Failed to refresh authentication token. Please log in again.',
+                $e->getCode(),
+                $e
+            );
         }
 
         $data = $this->parseResponse($response);
