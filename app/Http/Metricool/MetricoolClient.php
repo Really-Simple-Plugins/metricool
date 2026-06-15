@@ -617,11 +617,18 @@ class MetricoolClient
 
     /**
      * Decode a JSON response body into an array.
+     * @throws ApiException when the response doesn't contain valid JSON.
      */
-    private function parseResponse(ResponseInterface $response): ?array
+    private function parseResponse(ResponseInterface $response): array
     {
         $response->getBody()->rewind();
-        return json_decode($response->getBody()->getContents(), true);
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        if ($data === null) {
+            throw new ApiException('Invalid JSON response from API.');
+        }
+
+        return $data;
     }
 
     /**
