@@ -10,7 +10,6 @@ if (!defined('ABSPATH')) {
 
 use Metricool\Traits\HasRestAccess;
 use Metricool\Services\DashboardService;
-use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\MetricoolAccountService;
 use Metricool\Features\Onboarding\Services\OAuthService;
@@ -18,6 +17,7 @@ use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Features\Onboarding\Services\CreateAccountService;
 use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
+use Throwable;
 
 class OnboardingController implements FeatureInterface
 {
@@ -127,13 +127,13 @@ class OnboardingController implements FeatureInterface
             $this->onboarding->finalizeOnboarding($blogId);
         } catch (BrandAccessDeniedException $e) {
             return $this->sendHttpErrorResponse(__('Could not retrieve brand. Pick another brand, try again or contact support.', 'metricool'), [], 403);
-        } catch (GuzzleException $e) {
+        } catch (Throwable $e) {
             return $this->sendHttpErrorResponse(wp_kses_post(sprintf(
                 /* translators: %1$s is opening link and %2$s is closing link */
                 __('Something went wrong. Please try again or %1$sleave a support message%2$s.', 'metricool'),
                 '<a href="' . $this->env->get('frontend.trusted_urls.new_support_ticket') . '" target="_blank">',
                 '</a>',
-            )));
+            )), ['data' => $e->getMessage()], $e->getCode() ?: 500);
         }
 
         return $this->onboardedResponse();
@@ -165,7 +165,7 @@ class OnboardingController implements FeatureInterface
 
         try {
             $this->oauth->authenticateWithCode($code, $state);
-        } catch (\Exception $e) {
+        } catch (Throwable $e) {
             wp_safe_redirect(add_query_arg('oauth_error', $e->getMessage(), $this->env->getString('plugin.dashboard_url')));
             exit;
         }
@@ -173,7 +173,7 @@ class OnboardingController implements FeatureInterface
         // Attempt to automatically set the blog information, completes the onboarding process on success
         try {
             $this->onboarding->finalizeOnboarding();
-        } catch (BrandAccessDeniedException | GuzzleException $e) {
+        } catch (Throwable $e) {
             wp_safe_redirect(add_query_arg('oauth_error', 'onboarding_failed', $this->env->getString('plugin.dashboard_url')));
             exit;
         }

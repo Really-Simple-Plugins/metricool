@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
+use Throwable;
 
 class CredentialsEndpoint implements SingleEndpointInterface
 {
@@ -73,7 +73,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
         try {
             $this->metricoolApi->userCredentials()
                 ->updatePassword($password, $newPassword);
-        } catch (GuzzleException $e) {
+        } catch (Throwable $e) {
             return $this->sendHttpErrorResponse(__('Something went wrong.', 'metricool'), $e->getMessage(), $e->getCode());
         }
 
