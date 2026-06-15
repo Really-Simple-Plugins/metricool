@@ -15,6 +15,7 @@ use Psr\Http\Message\ResponseInterface;
 use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Throwable;
 
 class MetricoolClient
 {
@@ -423,8 +424,8 @@ class MetricoolClient
                     'Authorization' => 'Bearer ' . $this->userToken
                 ], json_encode($body))
             );
-        } catch (GuzzleException $e) {
-            if ($e->getCode() === 401) {
+        } catch (Throwable $e) {
+            if ($e instanceof GuzzleException && $e->getCode() === 401) {
                 $this->logout();
             }
 
@@ -440,7 +441,7 @@ class MetricoolClient
 
     /**
      * Exchange an OAuth authorization code for an access token.
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function exchangeOAuthCode(string $code, string $redirectUri): array
     {
@@ -459,10 +460,18 @@ class MetricoolClient
             ],
         ];
 
-        $response = $this->client->send(
-            new Request('POST', $this->env->getString('metricool.oauth_token_url'), $headers),
-            $options
-        );
+        try {
+            $response = $this->client->send(
+                new Request('POST', $this->env->getString('metricool.oauth_token_url'), $headers),
+                $options
+            );
+        } catch (Throwable $e) {
+            throw new ApiException(
+                $e->getMessage(),
+                $e->getCode(),
+                $e
+            );
+        }
 
         return $this->parseResponse($response);
     }
@@ -591,7 +600,7 @@ class MetricoolClient
                 new Request('POST', $this->env->getString('metricool.oauth_token_url'), $headers),
                 $options
             );
-        } catch (GuzzleException $e) {
+        } catch (Throwable $e) {
             $this->logout();
 
             throw new ApiException(
@@ -632,7 +641,7 @@ class MetricoolClient
         $decoded = json_decode($response->getBody()->getContents(), true);
 
         if (!is_array($decoded)) {
-            throw new ApiException('Invalid or empty JSON response from the API.');
+            throw new ApiException('Invalid JSON response from the API.');
         }
 
         return $decoded;

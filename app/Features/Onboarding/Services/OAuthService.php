@@ -2,9 +2,10 @@
 
 namespace Metricool\Features\Onboarding\Services;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use RuntimeException;
+use Throwable;
 
 class OAuthService
 {
@@ -51,25 +52,25 @@ class OAuthService
         $validated = $this->validateState($state);
 
         if ($validated === false) {
-            throw new \RuntimeException('invalid_state');
+            throw new RuntimeException('invalid_state');
         }
 
         try {
             // Exchange the code for auth tokens
             $tokenData = $this->api->exchangeOAuthCode($code, $this->getRedirectUrl());
-        } catch (GuzzleException $e) {
-            throw new \RuntimeException('token_exchange_failed');
+        } catch (Throwable $e) {
+            throw new RuntimeException('token_exchange_failed');
         }
 
         if (empty($tokenData['access_token']) || empty($tokenData['refresh_token']) || empty($tokenData['expires_in'])) {
-            throw new \RuntimeException('missing_token_data');
+            throw new RuntimeException('missing_token_data');
         }
 
         // Retrieve the user ID from the access token
         $userId = $this->parseUserIdFromAccessToken($tokenData['access_token']);
 
         if (empty($userId)) {
-            throw new \RuntimeException('token_parse_failed');
+            throw new RuntimeException('token_parse_failed');
         }
 
         // Authenticate the Metricool API Client

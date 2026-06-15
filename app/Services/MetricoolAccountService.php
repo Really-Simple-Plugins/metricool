@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Metricool\Services;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Support\Helpers\Event;
+use Throwable;
 
 /**
  * Service that is responsible for getting the account information
@@ -35,7 +35,7 @@ class MetricoolAccountService
     {
         try {
             $user = $this->metricool->user()->get();
-        } catch (GuzzleException $e) {
+        } catch (Throwable $e) {
             return $this->accountData();
         }
 

@@ -106,6 +106,9 @@ You can skip the onboarding and login with your existing login credentials.
 
 == Changelog ==
 
+= 2.0.1 - 2026-06-15 =
+* Fixed: Improved error handling to prevent unexpected plugin failures.
+
 = 2.0.0 - 2026-06-09 =
 * Major refactor of the plugin by Really Simple Plugins.
 * Added: wimbraam, rvvelthuijsen, kelvink as contributors
