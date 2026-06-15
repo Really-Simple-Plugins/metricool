@@ -470,11 +470,13 @@ class MetricoolClient
     /**
      * Refresh the authentication token using the refresh token.
      *
-     * Uses a MySQL lock to prevent concurrent processes from both attempting
-     * a refresh. The process that cannot acquire the lock waits in a loop
-     * until the token is refreshed by the lock holder.
+     * Uses a MySQL lock to prevent concurrent processes from both
+     * attempting a refresh. The process that cannot acquire the lock
+     * waits in a loop until the token is refreshed by the lock holder.
      *
-     * @throws RuntimeException the user will be unauthenticated if the refresh token request fails.
+     * @throws ApiException when the refresh request fails or the
+     *                       response is invalid.
+     * @throws RuntimeException when polling times out.
      */
     public function refreshAuthToken(): void
     {
@@ -484,8 +486,11 @@ class MetricoolClient
             return;
         }
 
-        $this->performTokenRefresh();
-        $this->releaseRefreshLock();
+        try {
+            $this->performTokenRefresh();
+        } finally {
+            $this->releaseRefreshLock();
+        }
     }
 
     /**
@@ -563,8 +568,8 @@ class MetricoolClient
      * Perform the actual token refresh request against the
      * Metricool OAuth endpoint.
      *
-     * @throws ApiException when the refresh request fails.
-     * @throws RuntimeException when the response is invalid.
+     * @throws ApiException when the refresh request fails or the
+     *                       response is invalid.
      */
     private function performTokenRefresh(): void
     {
@@ -599,7 +604,7 @@ class MetricoolClient
         $data = $this->parseResponse($response);
 
         if (!isset($data['access_token'], $data['refresh_token'], $data['expires_in'])) {
-            throw new RuntimeException('refresh_token response invalid.');
+            throw new ApiException('refresh_token response invalid.');
         }
 
         $this->storeUserToken($data['access_token']);
@@ -617,18 +622,20 @@ class MetricoolClient
 
     /**
      * Decode a JSON response body into an array.
-     * @throws ApiException when the response doesn't contain valid JSON.
+     *
+     * @throws ApiException when the response body is empty or
+     *                      not valid JSON.
      */
     private function parseResponse(ResponseInterface $response): array
     {
         $response->getBody()->rewind();
-        $data = json_decode($response->getBody()->getContents(), true);
+        $decoded = json_decode($response->getBody()->getContents(), true);
 
-        if ($data === null) {
-            throw new ApiException('Invalid JSON response from API.');
+        if (!is_array($decoded)) {
+            throw new ApiException('Invalid or empty JSON response from the API.');
         }
 
-        return $data;
+        return $decoded;
     }
 
     /**
