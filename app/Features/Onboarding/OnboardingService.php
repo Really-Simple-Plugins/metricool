@@ -2,8 +2,7 @@
 
 namespace Metricool\Features\Onboarding;
 
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
+use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
@@ -30,7 +29,7 @@ class OnboardingService
      * set the onboarding as completed.
      *
      * @throws BrandAccessDeniedException
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function finalizeOnboarding(?string $blogId = null): bool
     {
@@ -53,14 +52,16 @@ class OnboardingService
 
     /**
      * A brand is connected when it's retrieved from the API and the tracking hash is activated. The blogId is stored for future API calls.
-     * @throws GuzzleException
+     *
+     * @throws BrandAccessDeniedException
+     * @throws ApiException
      */
     private function connectBrand(string $blogId): void
     {
         try {
             $brand = $this->api->brands()->get($blogId);
-        } catch (RequestException $e) {
-            if ($e->getResponse()->getStatusCode() === 403) {
+        } catch (ApiException $e) {
+            if ($e->getCode() === 403) {
                 throw new BrandAccessDeniedException();
             }
             throw $e;

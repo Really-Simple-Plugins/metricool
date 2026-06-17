@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool\Entities;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Http\Metricool\MetricoolClient;
 
 class UserSettings
@@ -19,7 +19,7 @@ class UserSettings
     }
 
     /**
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function get(): array
     {
@@ -28,7 +28,7 @@ class UserSettings
     }
 
     /**
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function patch(array $data): array
     {
