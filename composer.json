@@ -1,6 +1,6 @@
 {
     "name": "really-simple-plugins/metricool",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "Site metrics and social media analytics for Instagram, Facebook, YouTube, LinkedIn, X Twitter. The single best tool for Social Media Managers!",
     "type": "wordpress-plugin",
     "license": "GPL-2.0-or-later",
