@@ -58,8 +58,6 @@ class OnboardingService
      */
     private function connectBrand(string $blogId): void
     {
-        $this->api->setBlogId($blogId);
-
         try {
             $brand = $this->api->brands()->get($blogId);
         } catch (ApiException $e) {
