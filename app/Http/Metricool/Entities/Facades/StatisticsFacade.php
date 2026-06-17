@@ -24,18 +24,9 @@ class StatisticsFacade
      * Returns per-country website visits distribution during the period. Use
      * the {@see filter()} method to filter the results by date range.
      */
-    public function countries(bool $useCache = true): DistributionStatistics
+    public function countries(): DistributionStatistics
     {
-        $cacheName = 'metricool_entities_cache_statistics_facade_countries';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new DistributionStatistics($this->client, 'country');
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new DistributionStatistics($this->client, 'country');
     }
 
     /**
@@ -45,18 +36,9 @@ class StatisticsFacade
      * @internal 'referers' results in a list of website uri's with the amount
      * of visits from each referer during the period.
      */
-    public function referers(bool $useCache = true): DistributionStatistics
+    public function referers(): DistributionStatistics
     {
-        $cacheName = 'metricool_entities_cache_statistics_facade_referers';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new DistributionStatistics($this->client, 'referers');
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new DistributionStatistics($this->client, 'referers');
     }
 
     /**
@@ -66,107 +48,53 @@ class StatisticsFacade
      * @internal 'sources' results in a list of source-types from which the
      * visits originated, such as 'direct', 'google.com', 'youtube.com', etc.
      */
-    public function sources(bool $useCache = true): DistributionStatistics
+    public function sources(): DistributionStatistics
     {
-        $cacheName = 'metricool_entities_cache_statistics_facade_sources';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new DistributionStatistics($this->client, 'sources');
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new DistributionStatistics($this->client, 'sources');
     }
 
     /**
      * Returns the page view statistics for the website during the period for
      * timeline charts usage.
      */
-    public function pageViews(bool $useCache = true): TimelineStatistics
+    public function pageViews(): TimelineStatistics
     {
-        $cacheName = 'metricool_entities_cache_statistics_facade_page_views';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new TimelineStatistics($this->client, 'PageViews');
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new TimelineStatistics($this->client, 'PageViews');
     }
 
     /**
      * Returns the session counts for the website during the period for
      * timeline charts usage
      */
-    public function visits(bool $useCache = true): TimelineStatistics
+    public function visits(): TimelineStatistics
     {
-        $cacheName = 'metricool_entities_cache_statistics_facade_visits';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new TimelineStatistics($this->client, 'SessionsCount');
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new TimelineStatistics($this->client, 'SessionsCount');
     }
 
     /**
      * Returns the visitor statistics for the website during the period for
      * timeline charts usage.
      */
-    public function visitors(bool $useCache = true): TimelineStatistics
+    public function visitors(): TimelineStatistics
     {
-        $cacheName = 'metricool_entities_cache_statistics_facade_visitors';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new TimelineStatistics($this->client, 'Visitors');
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new TimelineStatistics($this->client, 'Visitors');
     }
 
     /**
      * Returns the amount of posts made on the blog during the period for
      * timeline charts usage.
      */
-    public function posts(bool $useCache = true): TimelineStatistics
+    public function posts(): TimelineStatistics
     {
-        $cacheName = 'metricool_entities_cache_statistics_facade_posts';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new TimelineStatistics($this->client, 'DailyPosts');
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new TimelineStatistics($this->client, 'DailyPosts');
     }
 
     /**
      * Returns the amount of comments made on the blog during the period for
      * timeline charts usage.
      */
-    public function comments(bool $useCache = true): TimelineStatistics
+    public function comments(): TimelineStatistics
     {
-        $cacheName = 'metricool_entities_cache_statistics_facade_comments';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new TimelineStatistics($this->client, 'DailyComments');
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new TimelineStatistics($this->client, 'DailyComments');
     }
 }

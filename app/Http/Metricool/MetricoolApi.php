@@ -22,52 +22,25 @@ class MetricoolApi
     /**
      * Easy access to the ConnectedBrands entity.
      */
-    public function connectedBrands(bool $useCache = true): Entities\ConnectedBrands
+    public function connectedBrands(): Entities\ConnectedBrands
     {
-        $cacheName = 'metricool_entities_cache_connected_brands';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new Entities\ConnectedBrands($this->client);
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new Entities\ConnectedBrands($this->client);
     }
 
     /**
      * Easy access to the statistic entities via the StatisticsFacade.
      */
-    public function statistics(bool $useCache = true): Entities\Facades\StatisticsFacade
+    public function statistics(): Entities\Facades\StatisticsFacade
     {
-        $cacheName = 'metricool_entities_cache_statistics_facade';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new Entities\Facades\StatisticsFacade($this->client);
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new Entities\Facades\StatisticsFacade($this->client);
     }
 
     /**
      * Easy access to the real time entities via the RealtimeFacade.
      */
-    public function realtime(bool $useCache = true): Entities\Facades\RealtimeFacade
+    public function realtime(): Entities\Facades\RealtimeFacade
     {
-        $cacheName = 'metricool_entities_cache_realtime_facade';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new Entities\Facades\RealtimeFacade($this->client);
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new Entities\Facades\RealtimeFacade($this->client);
     }
 
     /**
@@ -97,18 +70,9 @@ class MetricoolApi
     /**
      * Easy access to the ConnectedBrands entity.
      */
-    public function brands(bool $useCache = true): Entities\Brands
+    public function brands(): Entities\Brands
     {
-        $cacheName = 'metricool_entities_cache_user_brands';
-        $cache = wp_cache_get($cacheName, 'metricool');
-        if ($useCache && !empty($cache)) {
-            return $cache;
-        }
-
-        $entity = new Entities\Brands($this->client);
-        wp_cache_set($cacheName, $entity, 'metricool', MINUTE_IN_SECONDS);
-
-        return $entity;
+        return new Entities\Brands($this->client);
     }
 
     /**
