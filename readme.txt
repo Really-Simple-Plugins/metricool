@@ -108,6 +108,7 @@ You can skip the onboarding and login with your existing login credentials.
 
 = 2.0.2 - 2026-06-17 =
 * Fixed: An issue when trying to connect to a brand
+* Fixed: An issue when using Redis Object Cache
 * Improved: Error handling for better user experience
 
 = 2.0.1 - 2026-06-15 =
