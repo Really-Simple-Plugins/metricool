@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Http\Metricool\Entities;
 
 use Carbon\Carbon;
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Collection;
 use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Http\Metricool\MetricoolClient;
@@ -110,7 +110,7 @@ class TimelineStatistics
     /**
      * Fetch and return the timeline statistics data plainly from the API.
      * @return Collection|TimelineDTO[]
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function get(): Collection
     {

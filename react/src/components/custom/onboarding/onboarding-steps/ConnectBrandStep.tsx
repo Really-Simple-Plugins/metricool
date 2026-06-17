@@ -119,7 +119,15 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
                     />
                 </Alert>
             </FlexContainer>
-            {submitError && (<Alert variant={"error"}>{submitError.message}</Alert>)}
+            {submitError && (
+                <Alert variant={"error"}>
+                    <div
+                        dangerouslySetInnerHTML={{
+                            __html: DOMPurify.sanitize(submitError.message, { ADD_ATTR: ["target"] })
+                        }}
+                    />
+                </Alert>
+            )}
             <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
                 {!connectedBrands ? (
                     <LoadingAndErrorState
