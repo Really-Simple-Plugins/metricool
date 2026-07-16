@@ -44,6 +44,30 @@ abstract class AbstractAdminNotice
     }
 
     /**
+     * Notice-specific display conditions, use this to check for things like
+     * required capabilities, specific admin pages, etc.
+     */
+    abstract protected function canDisplay(): bool;
+
+    /**
+     * Returns the view path for the inner content of the notice
+     */
+    abstract protected function getContentView(): string;
+
+    /**
+     * Returns the variables passed to the content view
+     */
+    abstract protected function getContentVariables(): array;
+
+    /**
+     * Returns whether the notice should be displayed
+     */
+    final public function shouldDisplay(): bool
+    {
+        return $this->canDisplay() && !$this->isDismissed() && !$this->isSnoozed();
+    }
+
+    /**
      * Get the unique identifier
      */
     public function getId(): string
@@ -164,28 +188,4 @@ abstract class AbstractAdminNotice
             'content' => $this->view($this->getContentView(), $this->getContentVariables()),
         ];
     }
-
-    /**
-     * Returns whether the notice should be displayed
-     */
-    final public function shouldDisplay(): bool
-    {
-        return $this->canDisplay() && !$this->isDismissed() && !$this->isSnoozed();
-    }
-
-    /**
-     * Notice-specific display conditions, use this to check for things like
-     * required capabilities, specific admin pages, etc.
-     */
-    abstract protected function canDisplay(): bool;
-
-    /**
-     * Returns the view path for the inner content of the notice
-     */
-    abstract protected function getContentView(): string;
-
-    /**
-     * Returns the variables passed to the content view
-     */
-    abstract protected function getContentVariables(): array;
 }
