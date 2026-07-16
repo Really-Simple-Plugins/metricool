@@ -25,7 +25,7 @@ class OnboardingLoader extends AbstractLoader
      */
     public function isEnabled(): bool
     {
-        return $this->dashboard->isOnboardingCompleted() === false && current_user_can('metricool_manage');
+        return $this->dashboard->isOnboardingCompleted() === false;
     }
 
     /**
@@ -33,6 +33,6 @@ class OnboardingLoader extends AbstractLoader
      */
     public function inScope(): bool
     {
-        return true;
+        return current_user_can('metricool_manage');
     }
 }
