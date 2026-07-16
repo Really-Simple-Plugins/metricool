@@ -5,7 +5,7 @@ Tags: instagram, facebook, analytics, meta, social
 Requires at least: 6.6
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.0.1
+Stable tag: 2.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,11 @@ You can skip the onboarding and login with your existing login credentials.
 
 
 == Changelog ==
+
+= 2.0.2 - 2026-06-17 =
+* Fixed: An issue when trying to connect to a brand
+* Fixed: An issue when using Redis Object Cache
+* Improved: Error handling for better user experience
 
 = 2.0.1 - 2026-06-15 =
 * Fixed: Improved error handling to prevent unexpected plugin failures.

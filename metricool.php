@@ -10,7 +10,7 @@
  * Plugin Name: Metricool - Social media and site statistics
  * Plugin URI: https://metricool.com/
  * Description: Site metrics and social media analytics for Instagram, Facebook, YouTube, LinkedIn, X Twitter. The single best tool for Social Media Managers!
- * Version: 2.0.1
+ * Version: 2.0.2
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author: Really Simple Plugins

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool\Entities;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Http\Metricool\MetricoolClient;
 
 class UserCredentials
@@ -21,7 +21,7 @@ class UserCredentials
     /**
      * Update the user password
      *
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function updatePassword(string $oldPassword, string $newPassword): array
     {

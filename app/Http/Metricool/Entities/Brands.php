@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool\Entities;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Http\Metricool\MetricoolClient;
 
 class Brands
@@ -19,7 +19,7 @@ class Brands
 
     /**
      * Stub method to get all connected brands
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function all(): array
     {
@@ -34,11 +34,13 @@ class Brands
 
     /**
      * Stub method to get brand by id
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function get(string $id): array
     {
-        $result = $this->client->get($this->endpoint . $id);
+        // append the blogId parameter to the endpoint, to prevent 403 response
+        $url = add_query_arg('blogId', $id, $this->endpoint . $id);
+        $result = $this->client->get($url);
 
         if (!isset($result['data'])) {
             return [];

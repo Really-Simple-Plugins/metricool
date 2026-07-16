@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool\Entities;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Http\Metricool\MetricoolClient;
 
 class User
@@ -21,7 +21,7 @@ class User
     /**
      * Get the user information
      *
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function get(): array
     {

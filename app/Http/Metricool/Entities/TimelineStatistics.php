@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Http\Metricool\Entities;
 
 use Carbon\Carbon;
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Collection;
 use Metricool\Http\Metricool\DTOs\TimelineDTO;
 use Metricool\Http\Metricool\MetricoolClient;
@@ -110,17 +110,12 @@ class TimelineStatistics
     /**
      * Fetch and return the timeline statistics data plainly from the API.
      * @return Collection|TimelineDTO[]
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function get(): Collection
     {
         if ($this->requiresFilter && $this->filtered === false) {
             $this->filter($this->filters);
-        }
-
-        $cacheName = 'timeline_statistics_' . $this->endpoint;
-        if ($cache = wp_cache_get($cacheName, 'metricool')) {
-            return $cache;
         }
 
         $results = $this->client->get($this->endpoint);
@@ -130,8 +125,6 @@ class TimelineStatistics
         }
 
         $results = $this->hydrateResults($results);
-
-        wp_cache_set($cacheName, $results, 'metricool', MINUTE_IN_SECONDS);
 
         return $results;
     }

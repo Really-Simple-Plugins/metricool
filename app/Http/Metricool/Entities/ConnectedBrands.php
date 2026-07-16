@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool\Entities;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Support\Helpers\Event;
 
@@ -21,7 +21,7 @@ class ConnectedBrands
 
     /**
      * Stub method to get all connected brands via {@see all()}.
-     * @throws GuzzleException
+     * @throws ApiException
      */
     public function get(): array
     {
