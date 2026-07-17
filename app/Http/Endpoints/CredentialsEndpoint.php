@@ -64,12 +64,10 @@ class CredentialsEndpoint implements SingleEndpointInterface
         $password = (string) $request->get_param('password');
         $newPassword = (string) $request->get_param('newPassword');
 
-        // Validation
         if (empty($password) || empty($newPassword)) {
             return $this->sendHttpErrorResponse(__('Validation failed', 'metricool'));
         }
-
-        // Update the user password
+        
         try {
             $this->metricoolApi->userCredentials()
                 ->updatePassword($password, $newPassword);
