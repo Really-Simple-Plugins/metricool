@@ -9,6 +9,8 @@ use Throwable;
 
 class OAuthService
 {
+    const OPTION_OAUTH_STATE = 'metricool_oauth_state';
+
     private EnvironmentConfig $env;
     private MetricoolApi $api;
 
@@ -113,7 +115,7 @@ class OAuthService
      */
     private function getStoredState(): string
     {
-        return (string) get_option('metricool_oauth_state');
+        return (string) get_option(self::OPTION_OAUTH_STATE);
     }
 
     /**
@@ -121,7 +123,7 @@ class OAuthService
      */
     private function storeState(string $state): void
     {
-        update_option('metricool_oauth_state', $state, false);
+        update_option(self::OPTION_OAUTH_STATE, $state, false);
     }
 
     /**
@@ -129,7 +131,7 @@ class OAuthService
      */
     private function deleteStoredState(): void
     {
-        delete_option('metricool_oauth_state');
+        delete_option(self::OPTION_OAUTH_STATE);
     }
 
     /**
