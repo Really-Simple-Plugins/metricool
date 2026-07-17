@@ -68,7 +68,7 @@ class OnboardingController implements FeatureInterface
 
         $routes['onboarding/oauth_redirect'] = [
             'methods' => 'GET',
-            'callback' => [$this, 'oauthRedirect'],
+            'callback' => [$this, 'getOauthRedirectUrl'],
         ];
 
         $routes['onboarding/oauth_callback'] = [
@@ -142,9 +142,8 @@ class OnboardingController implements FeatureInterface
     /**
      * Build and return the Metricool OAuth authorize URL.
      */
-    public function oauthRedirect(\WP_REST_Request $request): \WP_REST_Response
+    public function getOauthRedirectUrl(\WP_REST_Request $request): \WP_REST_Response
     {
-        // Check if authorizationUrl is a secure URL, otherwise redirect to the dashboard
         if (is_ssl() === false) {
             return $this->sendHttpErrorResponse(__('HTTPS is required to be able to authorize this website.', 'metricool'), [], 400);
         }
