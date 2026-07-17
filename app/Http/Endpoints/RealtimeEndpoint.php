@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Metricool\Http\Endpoints;
 
 use Exception;
-use Metricool\Features\Onboarding\OnboardingService;
 use Metricool\Http\Endpoints\Responses\RealtimeResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
