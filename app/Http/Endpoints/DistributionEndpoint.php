@@ -10,6 +10,7 @@ use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
 use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Collection;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
@@ -27,10 +28,12 @@ class DistributionEndpoint implements SingleEndpointInterface
     ];
 
     public MetricoolApi $metricoolApi;
+    public DashboardService $dashboard;
 
-    public function __construct(MetricoolApi $metricoolApi)
+    public function __construct(MetricoolApi $metricoolApi, DashboardService $dashboard)
     {
         $this->metricoolApi = $metricoolApi;
+        $this->dashboard = $dashboard;
     }
 
     /**
@@ -42,11 +45,11 @@ class DistributionEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Only enable this endpoint when onboarding is completed
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return $this->dashboard->isOnboardingCompleted();
     }
 
     /**

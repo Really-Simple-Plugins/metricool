@@ -39,7 +39,7 @@ class LogoutEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return current_user_can('metricool_manage');
     }
 
     /**

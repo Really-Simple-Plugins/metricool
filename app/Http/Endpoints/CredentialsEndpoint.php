@@ -33,12 +33,11 @@ class CredentialsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token.
+     * @inheritDoc
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return current_user_can('metricool_manage');
     }
 
     /**
@@ -67,7 +66,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
         if (empty($password) || empty($newPassword)) {
             return $this->sendHttpErrorResponse(__('Validation failed', 'metricool'));
         }
-        
+
         try {
             $this->metricoolApi->userCredentials()
                 ->updatePassword($password, $newPassword);

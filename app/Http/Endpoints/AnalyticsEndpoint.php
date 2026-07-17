@@ -8,6 +8,7 @@ use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Services\AnalyticsService;
+use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -20,11 +21,13 @@ class AnalyticsEndpoint implements SingleEndpointInterface
 
     public AnalyticsService $service;
     public MetricoolApi $metricoolApi;
+    public DashboardService $dashboard;
 
-    public function __construct(AnalyticsService $service, MetricoolApi $metricoolApi)
+    public function __construct(AnalyticsService $service, MetricoolApi $metricoolApi, DashboardService $dashboard)
     {
         $this->service = $service;
         $this->metricoolApi = $metricoolApi;
+        $this->dashboard = $dashboard;
     }
 
     /**
@@ -36,11 +39,11 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Only enable this endpoint when onboarding is completed
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return $this->dashboard->isOnboardingCompleted();
     }
 
     /**

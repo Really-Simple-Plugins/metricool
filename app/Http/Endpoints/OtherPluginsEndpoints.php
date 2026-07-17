@@ -43,11 +43,11 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area
+     * @inheritDoc
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return current_user_can('metricool_manage');
     }
 
     /**
@@ -59,17 +59,6 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
         return $this->sendHttpResponse([
             'plugins' => $plugins
         ]);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function registerArguments(): array
-    {
-        return [
-            'methods' => \WP_REST_Server::EDITABLE,
-            'callback' => [$this, 'callback'],
-        ];
     }
 
     /**

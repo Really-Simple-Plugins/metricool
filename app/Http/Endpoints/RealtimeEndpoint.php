@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Metricool\Http\Endpoints;
 
 use Exception;
+use Metricool\Features\Onboarding\OnboardingService;
 use Metricool\Http\Endpoints\Responses\RealtimeResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\DashboardService;
 use Metricool\Services\RealtimeService;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
@@ -21,11 +23,13 @@ class RealtimeEndpoint implements SingleEndpointInterface
 
     public RealtimeService $service;
     public MetricoolApi $metricoolApi;
+    public DashboardService $dashboard;
 
-    public function __construct(RealtimeService $service, MetricoolApi $metricoolApi)
+    public function __construct(RealtimeService $service, MetricoolApi $metricoolApi, DashboardService $dashboard)
     {
         $this->service = $service;
         $this->metricoolApi = $metricoolApi;
+        $this->dashboard = $dashboard;
     }
 
     /**
@@ -37,11 +41,11 @@ class RealtimeEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Only enable this endpoint when onboarding is completed
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return $this->dashboard->isOnboardingCompleted();
     }
 
     /**

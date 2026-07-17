@@ -25,7 +25,7 @@ class UserSettingsLoader extends AbstractLoader
      */
     public function isEnabled(): bool
     {
-        return $this->dashboard->isOnboardingCompleted();
+        return true;
     }
 
     /**

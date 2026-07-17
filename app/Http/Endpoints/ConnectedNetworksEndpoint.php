@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -19,10 +20,12 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     public const ROUTE = 'connected_networks';
 
     public MetricoolApi $metricoolApi;
+    public DashboardService $dashboard;
 
-    public function __construct(MetricoolApi $metricoolApi)
+    public function __construct(MetricoolApi $metricoolApi, DashboardService $dashboard)
     {
         $this->metricoolApi = $metricoolApi;
+        $this->dashboard = $dashboard;
     }
 
     /**
@@ -34,11 +37,11 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Only enable this endpoint when onboarding is completed
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return $this->dashboard->isOnboardingCompleted();
     }
 
     /**
