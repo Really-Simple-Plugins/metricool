@@ -60,7 +60,7 @@ class MetricoolAccountService
     public function storeUser(array $user): void
     {
         $this->user = $user;
-        update_option(self::METRICOOL_USER_OPTION, $user);
+        update_option(self::METRICOOL_USER_OPTION, $user, false);
     }
 
     /**

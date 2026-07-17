@@ -49,7 +49,7 @@ class OptionsStorage extends AbstractStorage
      */
     public function store(string $key, $value): void
     {
-        update_option($this->prefix . $this->convertCase($key), $value);
+        update_option($this->prefix . $this->convertCase($key), $value, false);
     }
 
     /**

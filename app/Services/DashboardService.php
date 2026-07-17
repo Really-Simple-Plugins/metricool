@@ -90,7 +90,7 @@ class DashboardService
      */
     public function setForcedLogin(bool $forcedLogin): bool
     {
-        return update_option(self::FORCED_LOGIN_OPTION, $forcedLogin);
+        return update_option(self::FORCED_LOGIN_OPTION, $forcedLogin, false);
     }
 
     /**
@@ -125,7 +125,7 @@ class DashboardService
 
         do_action('metricool_onboarding_completed', $timestamp);
 
-        return update_option(self::ONBOARDING_COMPLETED_OPTION, $timestamp);
+        return update_option(self::ONBOARDING_COMPLETED_OPTION, $timestamp, false);
     }
 
     /**
@@ -152,6 +152,6 @@ class DashboardService
      */
     public function setShowWelcomeScreen(): void
     {
-        update_option('metricool_show_welcome_screen', true);
+        update_option('metricool_show_welcome_screen', true, false);
     }
 }

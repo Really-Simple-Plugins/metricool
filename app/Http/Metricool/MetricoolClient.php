@@ -81,7 +81,7 @@ class MetricoolClient
      */
     public function storeUserId(string $userId): void
     {
-        update_option(self::OPTION_USER_ID, $userId);
+        update_option(self::OPTION_USER_ID, $userId, false);
 
         $this->setUserId($userId);
     }
@@ -117,7 +117,7 @@ class MetricoolClient
      */
     public function storeBlogId(string $blogId): void
     {
-        update_option(self::OPTION_BLOG_ID, $blogId);
+        update_option(self::OPTION_BLOG_ID, $blogId, false);
 
         $this->setBlogId($blogId);
     }
@@ -169,7 +169,7 @@ class MetricoolClient
      */
     public function storeUserToken(string $token): void
     {
-        update_option(self::OPTION_AUTH_TOKEN, $token);
+        update_option(self::OPTION_AUTH_TOKEN, $token, false);
 
         $this->setUserToken($token);
     }
@@ -197,7 +197,7 @@ class MetricoolClient
      */
     public function storeRefreshToken(string $refreshToken): void
     {
-        update_option(self::OPTION_REFRESH_TOKEN, $refreshToken);
+        update_option(self::OPTION_REFRESH_TOKEN, $refreshToken, false);
     }
 
     /**
@@ -251,7 +251,7 @@ class MetricoolClient
     {
         $expiresIn = Carbon::now()->addSeconds($expiresIn)->timestamp;
 
-        update_option(self::OPTION_AUTH_TOKEN_EXPIRES, $expiresIn);
+        update_option(self::OPTION_AUTH_TOKEN_EXPIRES, $expiresIn, false);
     }
 
     /**
