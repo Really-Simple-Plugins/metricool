@@ -17,11 +17,6 @@ class VerifyNonce implements MiddlewareInterface
     use HasRestAccess;
     use HasNonces;
 
-    /**
-     * @param callable(\WP_REST_Request): mixed $next
-     * @return mixed
-     * @throws Exception when not called with a capability
-     */
     public function handle(\WP_REST_Request $request, callable $next)
     {
         $method = $request->get_method();
@@ -31,7 +26,7 @@ class VerifyNonce implements MiddlewareInterface
         $methodsRequiringNonce = ['POST', 'PUT', 'PATCH', 'DELETE'];
         if (in_array($method, $methodsRequiringNonce) && ($this->verifyNonce($nonce) === false)) {
             return $this->sendHttpErrorResponse(
-                __('Forbidden', 'metricool'),
+                'Forbidden',
                 null,
                 403
             );

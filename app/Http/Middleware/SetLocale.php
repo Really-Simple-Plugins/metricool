@@ -12,10 +12,6 @@ use Metricool\Interfaces\MiddlewareInterface;
  */
 class SetLocale implements MiddlewareInterface
 {
-    /**
-     * @param callable(\WP_REST_Request): mixed $next
-     * @return mixed
-     */
     public function handle(\WP_REST_Request $request, callable $next)
     {
         $locale = get_user_locale() ?: get_locale();

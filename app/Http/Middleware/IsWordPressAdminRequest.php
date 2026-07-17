@@ -14,10 +14,6 @@ class IsWordPressAdminRequest implements MiddlewareInterface
 {
     use HasRestAccess;
 
-    /**
-     * @param callable(\WP_REST_Request): mixed $next
-     * @return mixed
-     */
     public function handle(\WP_REST_Request $request, callable $next)
     {
         if (!is_admin()) {

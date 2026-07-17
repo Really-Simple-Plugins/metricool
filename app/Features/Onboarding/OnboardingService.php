@@ -35,7 +35,7 @@ class OnboardingService
     {
         // When a blogId is provided, try to connect to the brand
         if ($blogId !== null) {
-            $this->connectBrand($blogId);
+            $this->connectBlog($blogId);
         }
 
         // If the blogId is not set, the onboarding is not completed
@@ -56,7 +56,7 @@ class OnboardingService
      * @throws BrandAccessDeniedException
      * @throws ApiException
      */
-    private function connectBrand(string $blogId): void
+    private function connectBlog(string $blogId): void
     {
         try {
             $brand = $this->api->brands()->get($blogId);
@@ -67,8 +67,8 @@ class OnboardingService
             throw $e;
         }
 
-        $this->activateTrackingHash($brand);
         $this->api->storeBlogId($blogId);
+        $this->activateTrackingHash($brand);
     }
 
     /**
