@@ -68,7 +68,8 @@ class DistributionEndpoint implements SingleEndpointInterface
      * Method will dynamically request the requested statistic. If the metric
      * is filterable and filters are provided, it will apply them before
      * retrieving the data.
-     * @example /wp-json/metricool/v1/statistics/countries?filters[start]=20250618&filters[end]=20250718&filters[country]=nl
+     *
+     *     GET /wp-json/metricool/v1/distribution/countries?filters[start]=20250618&filters[end]=20250718&filters[country]=nl
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {

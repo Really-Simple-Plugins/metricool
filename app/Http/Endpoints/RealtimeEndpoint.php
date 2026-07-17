@@ -63,6 +63,8 @@ class RealtimeEndpoint implements SingleEndpointInterface
     /**
      * Build the specific Realtime response for the endpoint. This is mainly
      * used in the plugin Dashboard. Building it server side prevents client-side complexity.
+     *
+     *     GET /wp-json/metricool/v1/realtime
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {

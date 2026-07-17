@@ -52,6 +52,8 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
 
     /**
      * Get plugin data for other plugin section
+     *
+     *     GET /wp-json/metricool/v1/other_plugins_data
      */
     public function getOtherPluginsData(\WP_REST_Request $request): \WP_REST_Response
     {
@@ -63,6 +65,12 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
 
     /**
      * Perform an action on a plugin
+     *
+     *     POST /wp-json/metricool/v1/do_plugin_action
+     *     {
+     *         "slug": "really-simple-ssl",
+     *         "action": "download"
+     *     }
      */
     public function doOtherPluginAction(\WP_REST_Request $request): \WP_REST_Response
     {

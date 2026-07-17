@@ -53,10 +53,13 @@ class CredentialsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Method will dynamically request the requested statistic. If the metric
-     * is filterable and filters are provided, it will apply them before
-     * retrieving the data.
-     * @example /wp-json/metricool/v1/analytics
+     * Update the password
+     *
+     *     POST /wp-json/metricool/v1/credentials
+     *     {
+     *       "password": "current-password",
+     *       "newPassword": "new-password"
+     *     }
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {

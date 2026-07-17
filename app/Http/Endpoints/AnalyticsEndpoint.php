@@ -62,7 +62,8 @@ class AnalyticsEndpoint implements SingleEndpointInterface
      * Method will dynamically request the requested statistic. If the metric
      * is filterable and filters are provided, it will apply them before
      * retrieving the data.
-     * @example /wp-json/metricool/v1/analytics
+     *
+     *     GET /wp-json/metricool/v1/analytics?filters[start]=20250618&filters[end]=20250718&metrics[]=pageViews&metrics[]=visits
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
