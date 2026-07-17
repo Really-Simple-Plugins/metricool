@@ -20,10 +20,10 @@ class AdminNoticesLoader extends AbstractLoader
     }
 
     /**
-     * Feature enabled for every logged-in user
+     * Feature enabled for every logged-in user with the Metricool capability
      */
     public function inScope(): bool
     {
-        return is_user_logged_in();
+        return current_user_can('metricool_manage');
     }
 }
