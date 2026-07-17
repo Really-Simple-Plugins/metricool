@@ -60,22 +60,6 @@ abstract class AbstractAdminNotice
     abstract protected function getContentVariables(): array;
 
     /**
-     * Returns whether the notice should be displayed
-     */
-    final public function shouldDisplay(): bool
-    {
-        return $this->canDisplay() && !$this->isDismissed() && !$this->isSnoozed();
-    }
-
-    /**
-     * Get the unique identifier
-     */
-    public function getId(): string
-    {
-        return static::IDENTIFIER;
-    }
-
-    /**
      * Returns whether the notice can be permanently dismissed
      */
     public function isDismissable(): bool
@@ -100,11 +84,43 @@ abstract class AbstractAdminNotice
     }
 
     /**
-     * Permanently dismiss the notice
+     * Returns the URL for the call-to-action button, or empty string if none
      */
-    final public function dismiss(): void
+    public function getCtaUrl(): string
     {
-        update_option('metricool_notice_' . $this->getId() . '_dismissed', true, false);
+        return '';
+    }
+
+    /**
+     * Returns the label for the call-to-action button, or empty string if none
+     */
+    public function getCtaLabel(): string
+    {
+        return '';
+    }
+
+    /**
+     * Render the notice
+     */
+    public function render(): void
+    {
+        $this->traitRender('admin/notices/layout', $this->viewData());
+    }
+
+    /**
+     * Get the unique identifier
+     */
+    final public function getId(): string
+    {
+        return static::IDENTIFIER;
+    }
+
+    /**
+     * Returns whether the notice should be displayed
+     */
+    final public function shouldDisplay(): bool
+    {
+        return $this->canDisplay() && !$this->isDismissed() && !$this->isSnoozed();
     }
 
     /**
@@ -139,27 +155,11 @@ abstract class AbstractAdminNotice
     }
 
     /**
-     * Returns the URL for the call-to-action button, or empty string if none
+     * Permanently dismiss the notice
      */
-    public function getCtaUrl(): string
+    final public function dismiss(): void
     {
-        return '';
-    }
-
-    /**
-     * Returns the label for the call-to-action button, or empty string if none
-     */
-    public function getCtaLabel(): string
-    {
-        return '';
-    }
-
-    /**
-     * Render the notice
-     */
-    public function render(): void
-    {
-        $this->traitRender('admin/notices/layout', $this->viewData());
+        update_option('metricool_notice_' . $this->getId() . '_dismissed', true, false);
     }
 
     /**
