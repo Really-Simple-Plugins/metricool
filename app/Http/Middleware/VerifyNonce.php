@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Middleware;
 
+use Exception;
 use Metricool\Interfaces\MiddlewareInterface;
 use Metricool\Traits\HasNonces;
 use Metricool\Traits\HasRestAccess;
@@ -17,9 +18,11 @@ class VerifyNonce implements MiddlewareInterface
     use HasNonces;
 
     /**
-     * @throws \Exception when not called with a capability
+     * @param callable(\WP_REST_Request): mixed $next
+     * @return mixed
+     * @throws Exception when not called with a capability
      */
-    public function handle(\WP_REST_Request $request): ?\WP_REST_Response
+    public function handle(\WP_REST_Request $request, callable $next)
     {
         $method = $request->get_method();
         $nonce = $request->get_param('nonce');
@@ -34,6 +37,6 @@ class VerifyNonce implements MiddlewareInterface
             );
         }
 
-        return null;
+        return $next($request);
     }
 }

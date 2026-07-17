@@ -14,7 +14,11 @@ class HasAdministratorRole implements MiddlewareInterface
 {
     use HasRestAccess;
 
-    public function handle(\WP_REST_Request $request): ?\WP_REST_Response
+    /**
+     * @param callable(\WP_REST_Request): mixed $next
+     * @return mixed
+     */
+    public function handle(\WP_REST_Request $request, callable $next)
     {
         if (!current_user_can('manage_options')) {
             return $this->sendHttpErrorResponse(
@@ -24,6 +28,6 @@ class HasAdministratorRole implements MiddlewareInterface
             );
         }
 
-        return null;
+        return $next($request);
     }
 }

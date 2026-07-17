@@ -189,19 +189,24 @@ final class EndpointManager extends AbstractManager
     {
         $middlewareInstances = $this->resolveMiddleware($middlewares);
 
-        return static function (\WP_REST_Request $request) use ($callback, $middlewareInstances) {
+        $pipeline = array_reduce(
+            array_reverse($middlewareInstances),
+            static function (callable $next, MiddlewareInterface $middleware): callable {
+                return static function (\WP_REST_Request $request) use ($middleware, $next) {
+                    return $middleware->handle($request, $next);
+                };
+            },
+            static function (\WP_REST_Request $request) use ($callback) {
+                return $callback($request);
+            }
+        );
+
+        return static function (\WP_REST_Request $request) use ($pipeline) {
             try {
-                foreach ($middlewareInstances as $middleware) {
-                    $response = $middleware->handle($request);
-                    if ($response instanceof \WP_REST_Response) {
-                        return $response;
-                    }
-                }
+                return $pipeline($request);
             } catch (\Exception $e) {
                 return new \WP_REST_Response(['message' => $e->getMessage()], 500);
             }
-
-            return $callback($request);
         };
     }
 

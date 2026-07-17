@@ -12,13 +12,17 @@ use Metricool\Interfaces\MiddlewareInterface;
  */
 class SetLocale implements MiddlewareInterface
 {
-    public function handle(\WP_REST_Request $request): ?\WP_REST_Response
+    /**
+     * @param callable(\WP_REST_Request): mixed $next
+     * @return mixed
+     */
+    public function handle(\WP_REST_Request $request, callable $next)
     {
         $locale = get_user_locale() ?: get_locale();
         switch_to_locale($locale);
 
         Carbon::setLocale($locale);
 
-        return null;
+        return $next($request);
     }
 }

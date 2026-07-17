@@ -22,7 +22,11 @@ class HasMetricoolBlogId implements MiddlewareInterface
         $this->metricool = $metricool;
     }
 
-    public function handle(\WP_REST_Request $request): ?\WP_REST_Response
+    /**
+     * @param callable(\WP_REST_Request): mixed $next
+     * @return mixed
+     */
+    public function handle(\WP_REST_Request $request, callable $next)
     {
         if (!$this->metricool->hasBlogId()) {
             return $this->sendHttpErrorResponse(
@@ -32,6 +36,6 @@ class HasMetricoolBlogId implements MiddlewareInterface
             );
         }
 
-        return null;
+        return $next($request);
     }
 }
