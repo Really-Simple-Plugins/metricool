@@ -9,7 +9,7 @@ use Throwable;
 
 class OAuthService
 {
-    const OPTION_OAUTH_STATE = 'metricool_oauth_state';
+    public const OPTION_OAUTH_STATE = 'metricool_oauth_state';
 
     private EnvironmentConfig $env;
     private MetricoolApi $api;
