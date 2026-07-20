@@ -50,7 +50,7 @@ class OAuthService
      */
     public function authenticateWithCode(string $code, string $state): bool
     {
-        if ($this->isValidateState($state) === false) {
+        if ($this->isValidatState($state) === false) {
             throw new RuntimeException('invalid_state');
         }
 
@@ -86,7 +86,7 @@ class OAuthService
     /**
      * Validates the state parameter from the OAuth flow.
      */
-    public function isValidateState(string $state): bool
+    public function isValidatState(string $state): bool
     {
         $storedState = $this->getStoredState();
         $this->deleteStoredState();
