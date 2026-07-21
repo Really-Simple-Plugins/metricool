@@ -4,6 +4,8 @@ namespace Metricool\Http\RSPAL;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
+use Metricool\Exceptions\RestDataException;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
@@ -52,31 +54,49 @@ class RspalApiClient
     /**
      * Sign Up Endpoint
      *
-     * @throws GuzzleException
+     * @throws RestDataException
      */
     public function signUp(array $data, array $headers = []): RspalApiResponse
     {
-        return $this->request('v2/integrations/wp-plugin/users/sign-ups', [
+        $response =  $this->request('v2/integrations/wp-plugin/users/sign-ups', [
             'json' => $data,
             'headers' => $this->headers($headers)
         ], 'post');
+
+        if ($response->getStatusCode() == 400) {
+            throw new RestDataException('Email or password error', 422);
+        }
+
+        // Check if the response contains the required fields
+        if (empty($response->data->accessToken) || empty($response->data->refreshToken)) {
+            throw new RestDataException('Signup response is missing required fields', 500);
+        }
+
+        return $response;
+
     }
 
     /**
      * Make a request to the RSPAL API.
      *
-     * @throws GuzzleException
+     * @throws RestDataException
      */
     private function request(string $path, array $params = [], string $method = 'get'): RspalApiResponse
     {
-        // Request and store installationId if needed before any request
-        if (!$this->hasInstallationId()) {
-            $installation = $this->requestInstallation();
+        try {
+            // Request and store installationId if needed before any request
+            if (!$this->hasInstallationId()) {
+                $installation = $this->requestInstallation();
+                $this->setInstallationId($installation->data->uuid);
+            }
 
-            $this->setInstallationId($installation->data->uuid);
+            $response = $this->client->request(strtoupper($method), $this->uri($path), $params);
+        } catch (RequestException $e) {
+            throw (new RestDataException($e->getMessage()))
+                ->setResponseCode($e->getResponse()->getStatusCode());
+        } catch (GuzzleException $e) {
+            throw new RestDataException($e->getMessage());
         }
-
-        $response = $this->client->request(strtoupper($method), $this->uri($path), $params);
 
         return RspalApiResponse::fromResponse($response);
     }
@@ -85,6 +105,7 @@ class RspalApiClient
      * Request a new InstallationID from the RSPAL API.
      *
      * @throws GuzzleException
+     * @throws RestDataException
      */
     private function requestInstallation(): RspalApiResponse
     {

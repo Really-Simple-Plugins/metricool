@@ -473,7 +473,13 @@ class MetricoolClient
             );
         }
 
-        return $this->parseResponse($response);
+        $tokenData = $this->parseResponse($response);
+
+        if (empty($tokenData['access_token']) || empty($tokenData['refresh_token']) || empty($tokenData['expires_in'])) {
+            throw new ApiException('missing_token_data');
+        }
+
+        return $tokenData;
     }
 
     /**

@@ -50,7 +50,7 @@ class OAuthService
      */
     public function authenticateWithCode(string $code, string $state): bool
     {
-        if ($this->isValidatState($state) === false) {
+        if ($this->isValidState($state) === false) {
             throw new RuntimeException('invalid_state');
         }
 
@@ -59,10 +59,6 @@ class OAuthService
             $tokenData = $this->api->exchangeOAuthCode($code, $this->getRedirectUrl());
         } catch (Throwable $e) {
             throw new RuntimeException('token_exchange_failed');
-        }
-
-        if (empty($tokenData['access_token']) || empty($tokenData['refresh_token']) || empty($tokenData['expires_in'])) {
-            throw new RuntimeException('missing_token_data');
         }
 
         // Retrieve the user ID from the access token
@@ -86,7 +82,7 @@ class OAuthService
     /**
      * Validates the state parameter from the OAuth flow.
      */
-    public function isValidatState(string $state): bool
+    public function isValidState(string $state): bool
     {
         $storedState = $this->getStoredState();
         $this->deleteStoredState();
