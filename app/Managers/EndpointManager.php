@@ -144,7 +144,7 @@ final class EndpointManager extends AbstractManager
 
             $arguments = [
                 'methods' => $this->normalizeMethods($methods),
-                'callback' => $this->callbackMiddleware($callback, $middleware),
+                'callback' => $this->applyMiddleware($callback, $middleware),
                 'permission_callback' => $permissionCallback,
             ];
 
@@ -192,16 +192,36 @@ final class EndpointManager extends AbstractManager
     }
 
     /**
-     * Wrap the endpoint callback with the default middleware and any named middleware from the pipeline.
-     * Each entry can be either a registered alias (e.g. 'auth:metricool') or a fully qualified class name (e.g. MetricoolAuthenticated::class).
+     * Wrap the endpoint callback with middleware. Provided middleware can either be an alias ```auth:metricool``` or
+     * a FQCN```MetricoolAuthenticated::class```
+     *
+     * @param callable $callback The endpoint's callback
+     * @param array $middlewares The middleware to apply
+     * @return callable The wrapped callback
+     *
      * @throws \ReflectionException
      */
-    public function callbackMiddleware(callable $callback, array $middlewares = []): callable
+    public function applyMiddleware(callable $callback, array $middlewares = []): callable
     {
-        $middlewareInstances = $this->resolveMiddleware($middlewares);
+        $instances = $this->resolveMiddleware($middlewares);
+        $pipeline = $this->buildPipeline($callback, $instances);
 
-        $pipeline = array_reduce(
-            array_reverse($middlewareInstances),
+        return static function (\WP_REST_Request $request) use ($pipeline) {
+            try {
+                return $pipeline($request);
+            } catch (\Exception $e) {
+                return new \WP_REST_Response(['message' => $e->getMessage()], 500);
+            }
+        };
+    }
+
+    /**
+     * Return a pipeline of middleware into a single callback.
+     */
+    private function buildPipeline(callable $callback, array $middleware): callable
+    {
+        return array_reduce(
+            array_reverse($middleware),
             static function (callable $next, MiddlewareInterface $middleware): callable {
                 return static function (\WP_REST_Request $request) use ($middleware, $next) {
                     return $middleware->handle($request, $next);
@@ -211,14 +231,6 @@ final class EndpointManager extends AbstractManager
                 return $callback($request);
             }
         );
-
-        return static function (\WP_REST_Request $request) use ($pipeline) {
-            try {
-                return $pipeline($request);
-            } catch (\Exception $e) {
-                return new \WP_REST_Response(['message' => $e->getMessage()], 500);
-            }
-        };
     }
 
     /**
