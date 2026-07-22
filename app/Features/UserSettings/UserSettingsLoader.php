@@ -10,11 +10,6 @@ use Metricool\Support\Helpers\Storages\RequestStorage;
 
 class UserSettingsLoader extends AbstractLoader
 {
-    public function __construct(EnvironmentConfig $env, RequestStorage $request)
-    {
-        parent::__construct($env, $request);
-    }
-
     /**
      * @inheritDoc
      */
