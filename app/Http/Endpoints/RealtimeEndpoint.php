@@ -44,7 +44,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->dashboard->isOnboardingCompleted();
+        return current_user_can('metricool_manage') && $this->dashboard->isOnboardingCompleted();
     }
 
     /**
