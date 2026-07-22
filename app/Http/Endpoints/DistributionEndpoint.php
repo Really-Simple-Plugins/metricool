@@ -49,7 +49,7 @@ class DistributionEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return current_user_can('metricool_manage') && $this->dashboard->isOnboardingCompleted();
+        return $this->dashboard->isOnboardingCompleted();
     }
 
     /**

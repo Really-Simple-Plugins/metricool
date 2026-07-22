@@ -37,7 +37,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return current_user_can('metricool_manage');
+        return true;
     }
 
     /**

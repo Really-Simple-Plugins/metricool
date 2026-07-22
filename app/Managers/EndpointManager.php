@@ -104,9 +104,9 @@ final class EndpointManager extends AbstractManager
      *          return [
      *              'methods' => \WP_REST_Server::READABLE,
      *              'callback' => [$this, 'callback'],
-     *              'permission_callback' => [$this, 'permissionCallback'],
+     *              'permission_callback' => [], // optional, defaults to metricool_manage capability check
      *              'middleware' => [
-     *                  'user_can:administrator', // alias in config/middleware.php
+     *                  'metricool:auth', // alias in config/middleware.php
      *                  ExampleMiddleware::class, // MiddlewareInterface class
      *              ],
      *              'apply_default_middleware' => true, // optional, default is true
@@ -126,7 +126,7 @@ final class EndpointManager extends AbstractManager
         foreach ($routes as $route => $data) {
             $methods = ($data['methods'] ?? 'GET');
             $callback = ($data['callback'] ?? null);
-            $permissionCallback = ($data['permission_callback'] ?? '__return_true');
+            $permissionCallback = ($data['permission_callback'] ?? $this->defaultPermissionCallback());
             $middleware = ($data['middleware'] ?? []);
             $applyDefaultMiddleware = ($data['apply_default_middleware'] ?? true);
             $version = ($data['version'] ?? $this->env->getString('http.version'));
@@ -154,6 +154,17 @@ final class EndpointManager extends AbstractManager
 
             register_rest_route($this->env->getString('http.namespace') . '/' . $version, $route, $arguments);
         }
+    }
+
+    /**
+     * The default permission callback applied to routes that do not define
+     * their own. Default is ```metricool_manage``` capability check.
+     */
+    private function defaultPermissionCallback(): callable
+    {
+        return static function (): bool {
+            return current_user_can('metricool_manage');
+        };
     }
 
     /**
