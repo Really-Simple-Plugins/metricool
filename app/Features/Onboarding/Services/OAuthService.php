@@ -108,7 +108,7 @@ class OAuthService
      */
     private function getStoredState(): string
     {
-        return (string) get_option(self::OPTION_OAUTH_STATE);
+        return (string) get_option(self::OPTION_OAUTH_STATE, '');
     }
 
     /**
