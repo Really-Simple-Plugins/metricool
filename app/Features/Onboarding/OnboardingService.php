@@ -33,7 +33,7 @@ class OnboardingService
      */
     public function finalizeOnboarding(?string $blogId = null): bool
     {
-        // When a blogId is provided, try to connect to the brand
+        // When a blogId is provided, try to connect to the blog
         if ($blogId !== null) {
             $this->connectBlog($blogId);
         }
