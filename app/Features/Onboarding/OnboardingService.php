@@ -51,7 +51,7 @@ class OnboardingService
     }
 
     /**
-     * A brand is connected when it's retrieved from the API and the tracking hash is activated. The blogId is stored for future API calls.
+     * A blog is connected when it's retrieved from the API and the tracking hash is activated. The blogId is stored for future API calls.
      *
      * @throws BrandAccessDeniedException
      * @throws ApiException
