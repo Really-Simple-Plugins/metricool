@@ -24,6 +24,6 @@ class AdminNoticesLoader extends AbstractLoader
      */
     public function inScope(): bool
     {
-        return current_user_can('metricool_manage');
+        return $this->userCanManage();
     }
 }

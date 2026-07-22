@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Metricool\Features\UserSettings;
 
 use Metricool\Features\AbstractLoader;
-use Metricool\Support\Helpers\Storages\EnvironmentConfig;
-use Metricool\Support\Helpers\Storages\RequestStorage;
+use Metricool\Traits\HasAllowlistControl;
 
 class UserSettingsLoader extends AbstractLoader
 {
+    use HasAllowlistControl;
+
     /**
      * @inheritDoc
      */
@@ -23,6 +24,6 @@ class UserSettingsLoader extends AbstractLoader
      */
     public function inScope(): bool
     {
-        return current_user_can('metricool_manage');
+        return $this->userCanManage();
     }
 }

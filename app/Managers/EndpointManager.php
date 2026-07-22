@@ -162,8 +162,8 @@ final class EndpointManager extends AbstractManager
      */
     private function defaultPermissionCallback(): callable
     {
-        return static function (): bool {
-            return current_user_can('metricool_manage');
+        return function (): bool {
+            return $this->userCanManage();
         };
     }
 

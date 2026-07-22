@@ -73,7 +73,6 @@ class RspalApiClient
         }
 
         return $response;
-
     }
 
     /**

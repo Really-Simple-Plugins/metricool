@@ -2,7 +2,6 @@
 
 namespace Metricool\Features\Onboarding\Services;
 
-use GuzzleHttp\Exception\GuzzleException;
 use Metricool\Exceptions\RestDataException;
 use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
 use Metricool\Features\Onboarding\OnboardingService;

@@ -8,9 +8,12 @@ use Metricool\Features\AbstractLoader;
 use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Support\Helpers\Storages\RequestStorage;
+use Metricool\Traits\HasAllowlistControl;
 
 class OnboardingLoader extends AbstractLoader
 {
+    use HasAllowlistControl;
+
     private DashboardService $dashboard;
 
     public function __construct(EnvironmentConfig $env, RequestStorage $request, DashboardService $dashboard)
@@ -33,6 +36,6 @@ class OnboardingLoader extends AbstractLoader
      */
     public function inScope(): bool
     {
-        return current_user_can('metricool_manage');
+        return $this->userCanManage();
     }
 }
