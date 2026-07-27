@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Services\DashboardService;
 use Metricool\Interfaces\FeatureInterface;
@@ -29,6 +30,7 @@ class OnboardingController implements FeatureInterface
     private OAuthService $oauth;
     private DashboardService $dashboard;
     private MetricoolAccountService $account;
+    private RequestStorage $request;
 
     public function __construct(
         OnboardingService $onboarding,
@@ -36,7 +38,8 @@ class OnboardingController implements FeatureInterface
         EnvironmentConfig $env,
         OAuthService $oauth,
         DashboardService $dashboard,
-        MetricoolAccountService $account
+        MetricoolAccountService $account,
+        RequestStorage $request
     ) {
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
@@ -44,11 +47,15 @@ class OnboardingController implements FeatureInterface
         $this->oauth = $oauth;
         $this->dashboard = $dashboard;
         $this->account = $account;
+        $this->request = $request;
     }
 
     public function register(): void
     {
         add_filter('metricool_rest_routes', [$this, 'addRoutes']);
+
+        // Intercept OAuth callback on the dashboard page
+        add_action('load-toplevel_page_metricool', [$this, 'oauthCallback']);
     }
 
     /**
@@ -69,11 +76,6 @@ class OnboardingController implements FeatureInterface
         $routes['onboarding/oauth_redirect'] = [
             'methods' => 'GET',
             'callback' => [$this, 'getOauthRedirectUrl'],
-        ];
-
-        $routes['onboarding/oauth_callback'] = [
-            'methods' => 'GET',
-            'callback' => [$this, 'oauthCallback'],
         ];
 
         return $routes;
@@ -157,10 +159,16 @@ class OnboardingController implements FeatureInterface
      * Handle the OAuth callback from Metricool. Exchanges the authorization
      * code for tokens, authenticates the user, and redirects to the dashboard.
      */
-    public function oauthCallback(\WP_REST_Request $request): \WP_REST_Response
+    public function oauthCallback(): void
     {
-        $code = (string) $request->get_param('code');
-        $state = (string) $request->get_param('state');
+        $action = $this->request->getString('global.metricool_action');
+
+        if ($action !== OAuthService::REDIRECT_ACTION) {
+            return;
+        }
+
+        $code = $_GET['code'] ?? null;
+        $state = $_GET['state'] ?? null;
 
         try {
             $this->oauth->authenticateWithCode($code, $state);

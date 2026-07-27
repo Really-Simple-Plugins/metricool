@@ -10,6 +10,7 @@ use Throwable;
 class OAuthService
 {
     public const OPTION_OAUTH_STATE = 'metricool_oauth_state';
+    public const REDIRECT_ACTION = 'oauth_callback';
 
     private EnvironmentConfig $env;
     private MetricoolApi $api;
@@ -25,7 +26,7 @@ class OAuthService
      */
     public function getRedirectUrl(): string
     {
-        return rest_url($this->env->getString('http.namespace') . '/' . $this->env->getString('http.version') . '/onboarding/oauth_callback');
+        return $this->env->getString('plugin.dashboard_url') . '&metricool_action=' . self::REDIRECT_ACTION;
     }
 
     /**
@@ -40,7 +41,7 @@ class OAuthService
             'client_id' => $this->env->getString('metricool.oauth_client_id'),
             'state' => $state,
             'response_type' => 'code',
-            'redirect_uri' => $redirectUri,
+            'redirect_uri' => urlencode($redirectUri),
             'code_challenge' => 'login',
         ], $this->env->getString('metricool.oauth_authorize_url'));
     }
