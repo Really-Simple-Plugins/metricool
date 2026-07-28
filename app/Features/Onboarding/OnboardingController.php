@@ -167,8 +167,8 @@ class OnboardingController implements FeatureInterface
             return;
         }
 
-        $code = $_GET['code'] ?? null;
-        $state = $_GET['state'] ?? null;
+        $code = $this->request->getString('global.code');
+        $state = $this->request->getString('global.state');
 
         try {
             $this->oauth->authenticateWithCode($code, $state);
