@@ -18,7 +18,7 @@ class TrackingScriptService
 
     public function activateTrackingWidget(): self
     {
-        update_option('metricool_tracking_script_active', true);
+        update_option('metricool_tracking_script_active', true, true);
 
         return $this;
     }
