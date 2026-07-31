@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool;
 
+use InvalidArgumentException;
 use Metricool\Vendor\Carbon\Carbon;
-use RuntimeException;
 use Metricool\Vendor\GuzzleHttp\Client;
 use Metricool\Vendor\GuzzleHttp\HandlerStack;
 use Metricool\Vendor\GuzzleHttp\Psr7\Request;
-use InvalidArgumentException;
 use Metricool\Services\OptionsService;
+use Metricool\Services\TrackingScriptService;
 use Metricool\Vendor\Psr\Http\Message\ResponseInterface;
 use Metricool\Vendor\GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use RuntimeException;
 use Throwable;
 
 class MetricoolClient
@@ -263,7 +264,19 @@ class MetricoolClient
     }
 
     /**
-     * Check if the client has all the necessary authentication tokens to show the dashboard
+     * Clear the authentication tokens and userId, but keep the tracking
+     * widget active so the website does not lose data.
+     */
+    public function logoutPreservingTracking(): void
+    {
+        $this->options->wipe(false, [
+            TrackingScriptService::OPTION_TRACKING_HASH,
+            TrackingScriptService::OPTION_TRACKING_ACTIVE,
+        ]);
+    }
+
+    /**
+     * Check if the client has all the necessary authentication tokens to show the dashboard.
      */
     public function hasAuthentication(): bool
     {
@@ -384,7 +397,8 @@ class MetricoolClient
             );
         } catch (Throwable $e) {
             if ($e instanceof GuzzleException && $e->getCode() === 401) {
-                $this->logout();
+                // In case of a 401 response, Metricool API revokes the token so we should log the user out
+                $this->logoutPreservingTracking();
             }
 
             throw new ApiException(
@@ -550,7 +564,7 @@ class MetricoolClient
                 $options
             );
         } catch (Throwable $e) {
-            $this->logout();
+            $this->logoutPreservingTracking();
 
             throw new ApiException(
                 'Failed to refresh authentication token. Please log in again.',
