@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Services\Analytics;
 
-use Carbon\Carbon;
+use Metricool\Vendor\Carbon\Carbon;
 use Metricool\Support\Helpers\Collection;
 use Metricool\Http\Metricool\Entities\TimelineStatistics;
 

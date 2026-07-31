@@ -1,12 +1,14 @@
 parameters:
     phpVersion:
         min: 70400
-        max: 80400
+        max: 80500
     level: 6
     paths:
         - metricool.php
         - app
         - bootstrap
+    bootstrapFiles:
+        - vendor/_scoped/scoper-autoload.php
     dynamicConstantNames:
         EXTENDIFY_PARTNER_ID: string|null
     reportUnmatchedIgnoredErrors: false

@@ -14,21 +14,17 @@
         }
     ],
     "require": {
-        "php": ">=7.4, <=8.3",
-        "adbario/php-dot-notation": "*",
-        "automattic/jetpack-autoloader": "^5",
-        "guzzlehttp/guzzle": "^7.9",
-        "nesbot/carbon": "*",
-        "ext-zlib": "*"
+        "php": ">=7.4"
     },
     "require-dev": {
-        "phpcompatibility/php-compatibility": "^9.3",
+        "php-stubs/wordpress-stubs": "6.8.2",
+        "phpcompatibility/phpcompatibility-wp": "^3.0@alpha",
         "phpstan/extension-installer": "^1.4",
         "phpstan/phpstan": "^2.1",
         "slevomat/coding-standard": "^8.14",
         "squizlabs/php_codesniffer": "^3.9",
         "szepeviktor/phpstan-wordpress": "^2.0",
-        "php-stubs/wordpress-stubs": "6.8.2"
+        "wpify/scoper": "^3.2"
     },
     "autoload": {
         "psr-4": {
@@ -40,12 +36,26 @@
         "optimize-autoloader": true,
         "sort-packages": true,
         "platform": {
-            "php": "7.4"
+            "php": "8.2"
         },
         "allow-plugins": {
-            "automattic/jetpack-autoloader": true,
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "wpify/scoper": true
+        }
+    },
+    "extra": {
+        "wpify-scoper": {
+            "prefix": "Metricool\\Vendor",
+            "folder": "vendor/_scoped",
+            "globals": [
+                "wp-cli",
+                "wordpress",
+                "woocommerce"
+            ],
+            "composerjson": "composer-scoped.json",
+            "composerlock": "composer-scoped.lock",
+            "autorun": true
         }
     },
     "scripts": {
@@ -56,5 +66,7 @@
         "quality": "vendor/bin/phpstan analyse --memory-limit=2048M",
         "quality:report": "vendor/bin/phpstan analyse --memory-limit=2048M > phpstan-report.txt",
         "quality:diagnose": "vendor/bin/phpstan diagnose --memory-limit=2048M"
-    }
+    },
+    "minimum-stability": "alpha",
+    "prefer-stable": true
 }

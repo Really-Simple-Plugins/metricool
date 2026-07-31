@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool\Entities;
 
-use Carbon\Carbon;
+use Metricool\Vendor\Carbon\Carbon;
 use Metricool\Support\Helpers\Collection;
 use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Metricool\MetricoolClient;

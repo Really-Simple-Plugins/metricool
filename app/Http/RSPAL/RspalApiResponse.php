@@ -2,8 +2,8 @@
 
 namespace Metricool\Http\RSPAL;
 
+use Metricool\Vendor\Psr\Http\Message\ResponseInterface;
 use Metricool\Exceptions\RestDataException;
-use Psr\Http\Message\ResponseInterface;
 
 class RspalApiResponse
 {

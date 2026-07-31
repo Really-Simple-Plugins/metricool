@@ -25,10 +25,16 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Load the Jetpack packages autoloader.
- * @see https://packagist.org/packages/automattic/jetpack-autoloader
+ * Load the Composer autoloader for the plugin's own classes.
  */
-require_once __DIR__ . '/vendor/autoload_packages.php';
+require_once __DIR__ . '/vendor/autoload.php';
+
+/**
+ * Load the scoped (prefixed) dependencies to prevent conflicts
+ * with other plugins bundling the same packages.
+ * @see https://packagist.org/packages/wpify/scoper
+ */
+require_once __DIR__ . '/vendor/_scoped/scoper-autoload.php';
 
 // Boot the plugin.
 $plugin = new Metricool\Bootstrap\Plugin();

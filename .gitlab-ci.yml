@@ -4,7 +4,7 @@ stages:
 
 # Setup PHP + Composer template
 .setup_php:
-  image: php:7.4-cli
+  image: php:8.2-cli
   before_script:
     # OS deps for Composer (needed for dist/source installs)
     - apt-get update -qq
@@ -25,6 +25,44 @@ stages:
     key: "$CI_COMMIT_REF_SLUG-composer"
     paths:
       - vendor/
+
+composer:scope:
+  stage: lint
+  image: php:8.2-cli
+  before_script:
+    - apt-get update -qq && apt-get install -yqq --no-install-recommends curl > /dev/null
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - when: never
+  script:
+    - |
+      # Flag remote packages (contain "/") in `require`; 
+      # platform reqs (php, ext-*, lib-*, composer-*) pass through.
+      # $allowlist is for rare exceptions, example: ['some-vendor/some-plugin'].
+      OFFENDERS=$(php -r '
+        $allowlist = [];
+        $require = json_decode(file_get_contents("composer.json"), true)["require"] ?? [];
+        echo implode(", ", array_filter(array_keys($require), fn($key) => strpos($key, "/") !== false && !in_array($key, $allowlist, true)));
+      ')
+
+      if [ -z "$OFFENDERS" ]; then
+        echo "Composer scope guard: clean."
+        exit 0
+      fi
+
+      echo "Composer scope guard: found runtime deps in composer.json: $OFFENDERS"
+
+      NOTE="**Composer scope guard**: runtime dependencies detected in \`composer.json\`: \`${OFFENDERS}\`. Please move them to \`composer-scoped.json\` so \`wpify/scoper\` prefixes them into \`vendor/_scoped/\`, then run \`composer update\` and commit the updated lock files. Unscoped runtime dependencies ship to end users and collide with other plugins."
+      JSON=$(php -r 'echo json_encode(["body" => $argv[1]]);' "$NOTE")
+
+      curl -sS --request POST \
+        --header "PRIVATE-TOKEN: $MR_REVIEW_GITLAB_API_TOKEN" \
+        --header "Content-Type: application/json" \
+        --data "$JSON" \
+        "$CI_SERVER_URL/api/v4/projects/$CI_PROJECT_ID/merge_requests/$CI_MERGE_REQUEST_IID/discussions" \
+        > /dev/null || true
+
+      exit 1
 
 phpcs:reviewdog:
   stage: lint

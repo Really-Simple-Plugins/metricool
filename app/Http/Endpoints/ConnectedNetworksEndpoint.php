@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Vendor\GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;

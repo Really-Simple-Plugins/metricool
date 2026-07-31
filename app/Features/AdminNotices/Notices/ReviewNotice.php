@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Features\AdminNotices\Notices;
 
-use Carbon\Carbon;
+use Metricool\Vendor\Carbon\Carbon;
 use Metricool\Features\AdminNotices\AbstractAdminNotice;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\DashboardService;
