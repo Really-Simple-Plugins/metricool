@@ -33,9 +33,9 @@ class OnboardingService
      */
     public function finalizeOnboarding(?string $blogId = null): bool
     {
+        // When a blogId is provided, try to connect to the blog
         if ($blogId !== null) {
-            // When a blogId is provided, try to connect to the brand
-            $this->connectBrand($blogId);
+            $this->connectBlog($blogId);
         }
 
         // If the blogId is not set, the onboarding is not completed
@@ -51,12 +51,12 @@ class OnboardingService
     }
 
     /**
-     * A brand is connected when it's retrieved from the API and the tracking hash is activated. The blogId is stored for future API calls.
+     * A blog is connected when it's retrieved from the API and the tracking hash is activated. The blogId is stored for future API calls.
      *
      * @throws BrandAccessDeniedException
      * @throws ApiException
      */
-    private function connectBrand(string $blogId): void
+    private function connectBlog(string $blogId): void
     {
         try {
             $brand = $this->api->brands()->get($blogId);
@@ -67,8 +67,8 @@ class OnboardingService
             throw $e;
         }
 
-        $this->activateTrackingHash($brand);
         $this->api->storeBlogId($blogId);
+        $this->activateTrackingHash($brand);
     }
 
     /**

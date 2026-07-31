@@ -22,16 +22,16 @@ class HasMetricoolBlogId implements MiddlewareInterface
         $this->metricool = $metricool;
     }
 
-    public function handle(\WP_REST_Request $request): ?\WP_REST_Response
+    public function handle(\WP_REST_Request $request, callable $next)
     {
         if (!$this->metricool->hasBlogId()) {
             return $this->sendHttpErrorResponse(
-                'Brand / blog id missing',
+                'Blog id missing',
                 null,
                 403
             );
         }
 
-        return null;
+        return $next($request);
     }
 }

@@ -2,9 +2,10 @@
 
 namespace Metricool\Features\Onboarding\Services;
 
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Exceptions\RestDataException;
 use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
 use Metricool\Features\Onboarding\OnboardingService;
+use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Http\RSPAL\RspalApiClient;
 use Metricool\Services\DashboardService;
@@ -62,18 +63,8 @@ class CreateAccountService
             ], [
                 'RSPAL-RecaptchaV3Token' => $captcha
             ]);
-        } catch (Throwable $e) {
-            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
-        }
-
-        // A 400 response means e-mail exists
-        if ($signupResponse->getStatusCode() == 400) {
-            throw new CreateAccountException(wp_kses_post($globalError), 'Email or password error', 422);
-        }
-
-        // Check if the response contains the required fields
-        if (empty($signupResponse->data->accessToken) || empty($signupResponse->data->refreshToken)) {
-            throw new CreateAccountException(wp_kses_post($globalError), 'Signup response is missing required fields', 500);
+        } catch (RestDataException $e) {
+            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), $e->getResponseCode());
         }
 
         // Parse the user ID from the access token
@@ -94,7 +85,7 @@ class CreateAccountService
         try {
             $this->api->userCredentials()
                 ->updatePassword('', $password);
-        } catch (Throwable $e) {
+        } catch (ApiException $e) {
             $this->api->logout();
 
             throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
@@ -104,7 +95,7 @@ class CreateAccountService
         try {
             $this->onboarding->finalizeOnboarding($this->findConnectedBrandId());
         } catch (Throwable $e) {
-            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
+            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), $e->getCode());
         }
 
         $this->dashboard->setShowWelcomeScreen();
@@ -115,7 +106,7 @@ class CreateAccountService
 
     /**
      * Get the blogId from the API. This is needed to connect the brand and complete the onboarding process.
-     * @throws GuzzleException
+     * @throws ApiException
      */
     private function findConnectedBrandId(): ?string
     {

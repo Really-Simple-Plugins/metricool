@@ -33,12 +33,11 @@ class CredentialsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Only enable this endpoint if the user has access to the admin area and
-     * the user has saved a user token.
+     * @inheritDoc
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return true;
     }
 
     /**
@@ -54,22 +53,23 @@ class CredentialsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * Method will dynamically request the requested statistic. If the metric
-     * is filterable and filters are provided, it will apply them before
-     * retrieving the data.
-     * @example /wp-json/metricool/v1/analytics
+     * Update the password
+     *
+     *     POST /wp-json/metricool/v1/credentials
+     *     {
+     *       "password": "current-password",
+     *       "newPassword": "new-password"
+     *     }
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
         $password = (string) $request->get_param('password');
         $newPassword = (string) $request->get_param('newPassword');
 
-        // Validation
         if (empty($password) || empty($newPassword)) {
             return $this->sendHttpErrorResponse(__('Validation failed', 'metricool'));
         }
 
-        // Update the user password
         try {
             $this->metricoolApi->userCredentials()
                 ->updatePassword($password, $newPassword);

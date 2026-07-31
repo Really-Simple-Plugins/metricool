@@ -9,6 +9,9 @@ use Throwable;
 
 class OAuthService
 {
+    public const OPTION_OAUTH_STATE = 'metricool_oauth_state';
+    public const REDIRECT_ACTION = 'oauth_callback';
+
     private EnvironmentConfig $env;
     private MetricoolApi $api;
 
@@ -23,7 +26,7 @@ class OAuthService
      */
     public function getRedirectUrl(): string
     {
-        return rest_url($this->env->getString('http.namespace') . '/' . $this->env->getString('http.version') . '/onboarding/oauth_callback');
+        return $this->env->getString('plugin.dashboard_url') . '&metricool_action=' . self::REDIRECT_ACTION;
     }
 
     /**
@@ -38,7 +41,7 @@ class OAuthService
             'client_id' => $this->env->getString('metricool.oauth_client_id'),
             'state' => $state,
             'response_type' => 'code',
-            'redirect_uri' => $redirectUri,
+            'redirect_uri' => urlencode($redirectUri),
             'code_challenge' => 'login',
         ], $this->env->getString('metricool.oauth_authorize_url'));
     }
@@ -48,10 +51,7 @@ class OAuthService
      */
     public function authenticateWithCode(string $code, string $state): bool
     {
-        // Verify state to prevent CSRF
-        $validated = $this->validateState($state);
-
-        if ($validated === false) {
+        if ($this->isValidState($state) === false) {
             throw new RuntimeException('invalid_state');
         }
 
@@ -60,10 +60,6 @@ class OAuthService
             $tokenData = $this->api->exchangeOAuthCode($code, $this->getRedirectUrl());
         } catch (Throwable $e) {
             throw new RuntimeException('token_exchange_failed');
-        }
-
-        if (empty($tokenData['access_token']) || empty($tokenData['refresh_token']) || empty($tokenData['expires_in'])) {
-            throw new RuntimeException('missing_token_data');
         }
 
         // Retrieve the user ID from the access token
@@ -87,7 +83,7 @@ class OAuthService
     /**
      * Validates the state parameter from the OAuth flow.
      */
-    public function validateState(string $state): bool
+    public function isValidState(string $state): bool
     {
         $storedState = $this->getStoredState();
         $this->deleteStoredState();
@@ -113,7 +109,7 @@ class OAuthService
      */
     private function getStoredState(): string
     {
-        return (string) get_option('metricool_oauth_state');
+        return (string) get_option(self::OPTION_OAUTH_STATE, '');
     }
 
     /**
@@ -121,7 +117,7 @@ class OAuthService
      */
     private function storeState(string $state): void
     {
-        update_option('metricool_oauth_state', $state, false);
+        update_option(self::OPTION_OAUTH_STATE, $state, false);
     }
 
     /**
@@ -129,7 +125,7 @@ class OAuthService
      */
     private function deleteStoredState(): void
     {
-        delete_option('metricool_oauth_state');
+        delete_option(self::OPTION_OAUTH_STATE);
     }
 
     /**

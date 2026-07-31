@@ -44,12 +44,20 @@ abstract class AbstractAdminNotice
     }
 
     /**
-     * Get the unique identifier
+     * Notice-specific display conditions, use this to check for things like
+     * required capabilities, specific admin pages, etc.
      */
-    public function getId(): string
-    {
-        return static::IDENTIFIER;
-    }
+    abstract protected function canDisplay(): bool;
+
+    /**
+     * Returns the view path for the inner content of the notice
+     */
+    abstract protected function getContentView(): string;
+
+    /**
+     * Returns the variables passed to the content view
+     */
+    abstract protected function getContentVariables(): array;
 
     /**
      * Returns whether the notice can be permanently dismissed
@@ -76,11 +84,43 @@ abstract class AbstractAdminNotice
     }
 
     /**
-     * Permanently dismiss the notice
+     * Returns the URL for the call-to-action button, or empty string if none
      */
-    final public function dismiss(): void
+    public function getCtaUrl(): string
     {
-        update_option('metricool_notice_' . $this->getId() . '_dismissed', true, false);
+        return '';
+    }
+
+    /**
+     * Returns the label for the call-to-action button, or empty string if none
+     */
+    public function getCtaLabel(): string
+    {
+        return '';
+    }
+
+    /**
+     * Render the notice
+     */
+    public function render(): void
+    {
+        $this->traitRender('admin/notices/layout', $this->viewData());
+    }
+
+    /**
+     * Get the unique identifier
+     */
+    final public function getId(): string
+    {
+        return static::IDENTIFIER;
+    }
+
+    /**
+     * Returns whether the notice should be displayed
+     */
+    final public function shouldDisplay(): bool
+    {
+        return $this->canDisplay() && !$this->isDismissed() && !$this->isSnoozed();
     }
 
     /**
@@ -115,27 +155,11 @@ abstract class AbstractAdminNotice
     }
 
     /**
-     * Returns the URL for the call-to-action button, or empty string if none
+     * Permanently dismiss the notice
      */
-    public function getCtaUrl(): string
+    final public function dismiss(): void
     {
-        return '';
-    }
-
-    /**
-     * Returns the label for the call-to-action button, or empty string if none
-     */
-    public function getCtaLabel(): string
-    {
-        return '';
-    }
-
-    /**
-     * Render the notice
-     */
-    public function render(): void
-    {
-        $this->traitRender('admin/notices/layout', $this->viewData());
+        update_option('metricool_notice_' . $this->getId() . '_dismissed', true, false);
     }
 
     /**
@@ -164,28 +188,4 @@ abstract class AbstractAdminNotice
             'content' => $this->view($this->getContentView(), $this->getContentVariables()),
         ];
     }
-
-    /**
-     * Returns whether the notice should be displayed
-     */
-    final public function shouldDisplay(): bool
-    {
-        return $this->canDisplay() && !$this->isDismissed() && !$this->isSnoozed();
-    }
-
-    /**
-     * Notice-specific display conditions, use this to check for things like
-     * required capabilities, specific admin pages, etc.
-     */
-    abstract protected function canDisplay(): bool;
-
-    /**
-     * Returns the view path for the inner content of the notice
-     */
-    abstract protected function getContentView(): string;
-
-    /**
-     * Returns the variables passed to the content view
-     */
-    abstract protected function getContentVariables(): array;
 }

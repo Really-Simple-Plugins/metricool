@@ -11,14 +11,14 @@ class TrackingScriptService
      */
     public function storeTrackingHash(string $hash): self
     {
-        update_option('metricool_tracking_script_hash', $hash);
+        update_option('metricool_tracking_script_hash', $hash, true);
 
         return $this;
     }
 
     public function activateTrackingWidget(): self
     {
-        update_option('metricool_tracking_script_active', true);
+        update_option('metricool_tracking_script_active', true, true);
 
         return $this;
     }
@@ -28,7 +28,7 @@ class TrackingScriptService
      */
     public function isTrackingWidgetActive(): bool
     {
-        return (bool) get_option('metricool_tracking_script_active', false);
+        return (bool) get_option('metricool_tracking_script_active');
     }
 
     /**

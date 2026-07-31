@@ -55,7 +55,7 @@ class MetricoolClient
      */
     public function setUserId(string $userId): void
     {
-        update_option(self::OPTION_USER_ID, $userId);
+        update_option(self::OPTION_USER_ID, $userId, false);
     }
 
     /**
@@ -79,7 +79,7 @@ class MetricoolClient
      */
     public function storeUserId(string $userId): void
     {
-        update_option(self::OPTION_USER_ID, $userId);
+        update_option(self::OPTION_USER_ID, $userId, false);
     }
 
     /**
@@ -103,7 +103,7 @@ class MetricoolClient
      */
     public function storeBlogId(string $blogId): void
     {
-        update_option(self::OPTION_BLOG_ID, $blogId);
+        update_option(self::OPTION_BLOG_ID, $blogId, false);
     }
 
     /**
@@ -135,7 +135,7 @@ class MetricoolClient
      */
     public function setUserToken(string $userToken): void
     {
-        update_option(self::OPTION_AUTH_TOKEN, $userToken);
+        update_option(self::OPTION_AUTH_TOKEN, $userToken, false);
     }
 
     /**
@@ -151,7 +151,7 @@ class MetricoolClient
      */
     public function storeUserToken(string $token): void
     {
-        update_option(self::OPTION_AUTH_TOKEN, $token);
+        update_option(self::OPTION_AUTH_TOKEN, $token, false);
     }
 
     /**
@@ -175,7 +175,7 @@ class MetricoolClient
      */
     public function storeRefreshToken(string $refreshToken): void
     {
-        update_option(self::OPTION_REFRESH_TOKEN, $refreshToken);
+        update_option(self::OPTION_REFRESH_TOKEN, $refreshToken, false);
     }
 
     /**
@@ -229,7 +229,7 @@ class MetricoolClient
     {
         $expiresIn = Carbon::now()->addSeconds($expiresIn)->timestamp;
 
-        update_option(self::OPTION_AUTH_TOKEN_EXPIRES, $expiresIn);
+        update_option(self::OPTION_AUTH_TOKEN_EXPIRES, $expiresIn, false);
     }
 
     /**
@@ -431,7 +431,13 @@ class MetricoolClient
             );
         }
 
-        return $this->parseResponse($response);
+        $tokenData = $this->parseResponse($response);
+
+        if (empty($tokenData['access_token']) || empty($tokenData['refresh_token']) || empty($tokenData['expires_in'])) {
+            throw new ApiException('missing_token_data');
+        }
+
+        return $tokenData;
     }
 
     /**

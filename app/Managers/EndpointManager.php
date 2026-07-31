@@ -104,9 +104,9 @@ final class EndpointManager extends AbstractManager
      *          return [
      *              'methods' => \WP_REST_Server::READABLE,
      *              'callback' => [$this, 'callback'],
-     *              'permission_callback' => [$this, 'permissionCallback'],
+     *              'permission_callback' => [], // optional, defaults to metricool_manage capability check
      *              'middleware' => [
-     *                  'user_can:administrator', // alias in config/middleware.php
+     *                  'metricool:auth', // alias in config/middleware.php
      *                  ExampleMiddleware::class, // MiddlewareInterface class
      *              ],
      *              'apply_default_middleware' => true, // optional, default is true
@@ -126,7 +126,7 @@ final class EndpointManager extends AbstractManager
         foreach ($routes as $route => $data) {
             $methods = ($data['methods'] ?? 'GET');
             $callback = ($data['callback'] ?? null);
-            $permissionCallback = ($data['permission_callback'] ?? '__return_true');
+            $permissionCallback = ($data['permission_callback'] ?? $this->defaultPermissionCallback());
             $middleware = ($data['middleware'] ?? []);
             $applyDefaultMiddleware = ($data['apply_default_middleware'] ?? true);
             $version = ($data['version'] ?? $this->env->getString('http.version'));
@@ -144,7 +144,7 @@ final class EndpointManager extends AbstractManager
 
             $arguments = [
                 'methods' => $this->normalizeMethods($methods),
-                'callback' => $this->callbackMiddleware($callback, $middleware),
+                'callback' => $this->applyMiddleware($callback, $middleware),
                 'permission_callback' => $permissionCallback,
             ];
 
@@ -154,6 +154,17 @@ final class EndpointManager extends AbstractManager
 
             register_rest_route($this->env->getString('http.namespace') . '/' . $version, $route, $arguments);
         }
+    }
+
+    /**
+     * The default permission callback applied to routes that do not define
+     * their own. Default is ```metricool_manage``` capability check.
+     */
+    private function defaultPermissionCallback(): callable
+    {
+        return function (): bool {
+            return $this->userCanManage();
+        };
     }
 
     /**
@@ -181,28 +192,45 @@ final class EndpointManager extends AbstractManager
     }
 
     /**
-     * Wrap the endpoint callback with the default middleware and any named middleware from the pipeline.
-     * Each entry can be either a registered alias (e.g. 'auth:metricool') or a fully qualified class name (e.g. MetricoolAuthenticated::class).
+     * Wrap the endpoint callback with middleware. Provided middleware can either be an alias ```auth:metricool``` or
+     * a FQCN```MetricoolAuthenticated::class```
+     *
+     * @param callable $callback The endpoint's callback
+     * @param array $middlewares The middleware to apply
+     * @return callable The wrapped callback
+     *
      * @throws \ReflectionException
      */
-    public function callbackMiddleware(callable $callback, array $middlewares = []): callable
+    public function applyMiddleware(callable $callback, array $middlewares = []): callable
     {
-        $middlewareInstances = $this->resolveMiddleware($middlewares);
+        $instances = $this->resolveMiddleware($middlewares);
+        $pipeline = $this->buildPipeline($callback, $instances);
 
-        return static function (\WP_REST_Request $request) use ($callback, $middlewareInstances) {
+        return static function (\WP_REST_Request $request) use ($pipeline) {
             try {
-                foreach ($middlewareInstances as $middleware) {
-                    $response = $middleware->handle($request);
-                    if ($response instanceof \WP_REST_Response) {
-                        return $response;
-                    }
-                }
+                return $pipeline($request);
             } catch (\Exception $e) {
                 return new \WP_REST_Response(['message' => $e->getMessage()], 500);
             }
-
-            return $callback($request);
         };
+    }
+
+    /**
+     * Return a pipeline of middleware into a single callback.
+     */
+    private function buildPipeline(callable $callback, array $middleware): callable
+    {
+        return array_reduce(
+            array_reverse($middleware),
+            static function (callable $next, MiddlewareInterface $middleware): callable {
+                return static function (\WP_REST_Request $request) use ($middleware, $next) {
+                    return $middleware->handle($request, $next);
+                };
+            },
+            static function (\WP_REST_Request $request) use ($callback) {
+                return $callback($request);
+            }
+        );
     }
 
     /**

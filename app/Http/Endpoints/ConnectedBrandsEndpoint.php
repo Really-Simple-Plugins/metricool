@@ -28,7 +28,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return true;
     }
 
     /**
@@ -53,6 +53,8 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
 
     /**
      * Return the brands related to the user
+     *
+     *     GET /wp-json/metricool/v1/connected_brands
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {

@@ -2,6 +2,7 @@
 
 namespace Metricool\Http\RSPAL;
 
+use Metricool\Exceptions\RestDataException;
 use Psr\Http\Message\ResponseInterface;
 
 class RspalApiResponse
@@ -22,11 +23,11 @@ class RspalApiResponse
         $data = json_decode($body, false);
 
         if (!is_object($data)) {
-            throw new \RuntimeException('Invalid or empty response from the API');
+            throw new RestDataException('Invalid or empty response from the API');
         }
 
         if ($data->status && $data->status == 'OK') {
-            throw new \RuntimeException('Al Error Occurred');
+            throw new RestDataException('An error occurred');
         }
 
         return new self(

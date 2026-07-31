@@ -5,27 +5,18 @@ declare(strict_types=1);
 namespace Metricool\Features\UserSettings;
 
 use Metricool\Features\AbstractLoader;
-use Metricool\Services\DashboardService;
-use Metricool\Support\Helpers\Storages\EnvironmentConfig;
-use Metricool\Support\Helpers\Storages\RequestStorage;
+use Metricool\Traits\HasAllowlistControl;
 
 class UserSettingsLoader extends AbstractLoader
 {
-    private DashboardService $dashboard;
-
-    public function __construct(EnvironmentConfig $env, RequestStorage $request, DashboardService $dashboard)
-    {
-        parent::__construct($env, $request);
-
-        $this->dashboard = $dashboard;
-    }
+    use HasAllowlistControl;
 
     /**
      * @inheritDoc
      */
     public function isEnabled(): bool
     {
-        return $this->dashboard->isOnboardingCompleted() && current_user_can('metricool_manage');
+        return true;
     }
 
     /**
@@ -33,6 +24,6 @@ class UserSettingsLoader extends AbstractLoader
      */
     public function inScope(): bool
     {
-        return true;
+        return $this->userCanManage();
     }
 }
