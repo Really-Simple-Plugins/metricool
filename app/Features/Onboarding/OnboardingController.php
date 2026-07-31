@@ -128,7 +128,11 @@ class OnboardingController implements FeatureInterface
         try {
             $this->onboarding->finalizeOnboarding($blogId);
         } catch (BrandAccessDeniedException $e) {
-            return $this->sendHttpErrorResponse(__('Could not retrieve brand. Pick another brand, try again or contact support.', 'metricool'), [], 403);
+            return $this->sendHttpErrorResponse(
+                __('You don’t have sufficient permissions to connect this brand. Please pick another brand or sign in with a different account.', 'metricool'),
+                [],
+                403
+            );
         } catch (Throwable $e) {
             return $this->sendHttpErrorResponse(wp_kses_post(sprintf(
                 /* translators: %1$s is opening link and %2$s is closing link */
