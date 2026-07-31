@@ -12,7 +12,7 @@ namespace Metricool\Http\Metricool;
  */
 class MetricoolApi
 {
-    protected ?MetricoolClient $client = null;
+    protected MetricoolClient $client;
 
     public function __construct(MetricoolClient $client)
     {
