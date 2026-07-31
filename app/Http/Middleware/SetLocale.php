@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Middleware;
 
-use Carbon\Carbon;
+use Metricool\Vendor\Carbon\Carbon;
 use Metricool\Interfaces\MiddlewareInterface;
 
 /**

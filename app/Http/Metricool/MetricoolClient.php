@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool;
 
-use Carbon\Carbon;
+use Metricool\Vendor\Carbon\Carbon;
 use RuntimeException;
-use GuzzleHttp\Client;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Request;
+use Metricool\Vendor\GuzzleHttp\Client;
+use Metricool\Vendor\GuzzleHttp\HandlerStack;
+use Metricool\Vendor\GuzzleHttp\Psr7\Request;
 use InvalidArgumentException;
 use Metricool\Services\OptionsService;
-use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Vendor\Psr\Http\Message\ResponseInterface;
+use Metricool\Vendor\GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Throwable;

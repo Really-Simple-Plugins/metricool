@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool\Entities;
 
-use Carbon\Carbon;
+use Metricool\Vendor\Carbon\Carbon;
 use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Collection;
 use Metricool\Http\Metricool\DTOs\TimelineDTO;

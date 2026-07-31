@@ -2,9 +2,9 @@
 
 namespace Metricool\Http\RSPAL;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
+use Metricool\Vendor\GuzzleHttp\Client;
+use Metricool\Vendor\GuzzleHttp\Exception\GuzzleException;
+use Metricool\Vendor\GuzzleHttp\Exception\RequestException;
 use Metricool\Exceptions\RestDataException;
 use Metricool\Http\Metricool\MetricoolClient;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
