@@ -9,7 +9,6 @@ if (!defined('ABSPATH')) {
 }
 
 use Metricool\Http;
-use Metricool\Providers;
 use Metricool\Controllers;
 use Metricool\Managers\FeatureManager;
 use Metricool\Managers\ProviderManager;
@@ -129,9 +128,7 @@ class Plugin
      */
     public function registerProviders(): void
     {
-        $this->providerManager->register([
-            Providers\MetricoolApiProvider::class,
-        ]);
+        $this->providerManager->register([]);
     }
 
     /**
