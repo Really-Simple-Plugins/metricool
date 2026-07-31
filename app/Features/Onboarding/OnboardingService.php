@@ -33,9 +33,9 @@ class OnboardingService
      */
     public function finalizeOnboarding(?string $blogId = null): bool
     {
-        // When a blogId is provided, try to connect to the blog
         if ($blogId !== null) {
-            $this->connectBlog($blogId);
+            // When a blogId is provided, try to connect to the brand
+            $this->connectBrand($blogId);
         }
 
         // If the blogId is not set, the onboarding is not completed
@@ -51,12 +51,12 @@ class OnboardingService
     }
 
     /**
-     * A blog is connected when it's retrieved from the API and the tracking hash is activated. The blogId is stored for future API calls.
+     * A brand is connected when it's retrieved from the API and the tracking hash is activated. The blogId is stored for future API calls.
      *
      * @throws BrandAccessDeniedException
      * @throws ApiException
      */
-    private function connectBlog(string $blogId): void
+    private function connectBrand(string $blogId): void
     {
         try {
             $brand = $this->api->brands()->get($blogId);
@@ -67,8 +67,26 @@ class OnboardingService
             throw $e;
         }
 
-        $this->api->storeBlogId($blogId);
+        if (!$this->brandCanBeConnected($brand)) {
+            throw new BrandAccessDeniedException();
+        }
+
         $this->activateTrackingHash($brand);
+        $this->api->storeBlogId($blogId);
+    }
+
+    /**
+     * A brand can only be connected by its owner or by a user whose brand
+     * role includes the editBrand permission. This is the same capability
+     * the Metricool API validates when linking a site to a brand.
+     */
+    private function brandCanBeConnected(array $brand): bool
+    {
+        if (isset($brand['ownerUserId']) && (string) $brand['ownerUserId'] === $this->api->getUserId()) {
+            return true;
+        }
+
+        return isset($brand['brandRole']['actions']['editBrand']) && $brand['brandRole']['actions']['editBrand'] === true;
     }
 
     /**
