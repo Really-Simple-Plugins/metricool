@@ -1,37 +1,43 @@
 <?php
 
+use Metricool\Features\UserSettings\Rules\FirstDayOfWeekRule;
+use Metricool\Features\UserSettings\Rules\SupportedLanguageRule;
+use Metricool\Features\UserSettings\Rules\TimezoneRule;
+
 return [
     'fields' => [
         'blogId' => [
             'storage' => 'default',
+            'validators' => ['string'],
         ],
         'name' => [
             'section' => 'personal',
             'storage' => 'metricool',
-            'validators' => ['required'],
+            'validators' => ['required', 'string'],
         ],
         'lastName' => [
             'section' => 'personal',
             'storage' => 'metricool',
+            'validators' => ['string'],
         ],
         'language' => [
             'section' => 'preferences',
             'storage' => 'metricool',
-            'validators' => ['supportedLanguage'],
+            'validators' => [SupportedLanguageRule::class],
         ],
         'timezone' => [
             'section' => 'preferences',
             'storage' => 'metricool',
-            'validators' => ['timezone'],
+            'validators' => [TimezoneRule::class],
         ],
         'firstDayOfTheWeek' => [
             'section' => 'preferences',
             'storage' => 'metricool',
-            'validators' => ['firstDayOfWeek'],
+            'validators' => [FirstDayOfWeekRule::class],
         ],
         'sendToAlternativeEmail' => [
             'section' => 'account',
-            'validators' => ['required'],
+            'validators' => ['required', 'boolean'],
             'type' => 'boolean',
             'storage' => 'metricool',
         ],
@@ -44,9 +50,11 @@ return [
             'section' => 'tracking',
             'type' => 'boolean',
             'defaultValue' => false,
+            'validators' => ['boolean'],
         ],
         'trackingScriptHash' => [
             'section' => 'tracking',
+            'validators' => ['string'],
         ]
     ],
     'storages' => [

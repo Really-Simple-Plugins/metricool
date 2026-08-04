@@ -19,6 +19,7 @@ final class GeneralConfig extends DeferredObject
         'env', // EnvironmentConfig
         'middleware', // MiddlewareConfig
         'user_settings', // UserSettingsConfig
+        'languages', // LanguagesConfig
     ];
 
     /**

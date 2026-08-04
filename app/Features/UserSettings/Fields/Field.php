@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Metricool\Features\UserSettings\Fields;
 
 use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
-use Metricool\Features\UserSettings\Factories\ValidatorFactory;
 use Metricool\Features\UserSettings\Storage\AbstractStorage;
-use Metricool\Features\UserSettings\Validators\AbstractValidator;
-use Metricool\Features\UserSettings\Validators\FieldTypeValidator;
+use Metricool\Support\Validation\Rules\AbstractRule;
+use Metricool\Support\Validation\Validator;
 
 class Field
 {
@@ -55,7 +54,10 @@ class Field
     public AbstractStorage $storage;
 
     /**
-     * @var AbstractValidator[] Validators applied to this field during validate().
+     * Validation rules applied to this field during validate(). Configured
+     * with the 'validators' key in config/user_settings.php, either as rule
+     * strings like 'required' or as {@see AbstractRule} instances.
+     * @var array<string|AbstractRule>
      */
     protected array $validators = [];
 
@@ -130,12 +132,12 @@ class Field
     /**
      * Sets the value of the field after validating it
      * @param mixed $value
-     * @param \WP_REST_Request|null $request Pass the request object for
+     * @param \WP_REST_Request $request Pass the request object for
      * context-aware validation
      * @throws \LogicException when storage is not set by developer
      * @throws ValidatorFailedException when validation fails
      */
-    public function setValue($value, ?\WP_REST_Request $request = null): void
+    public function setValue($value, \WP_REST_Request $request): void
     {
         if (empty($this->storage)) {
             throw new \LogicException('Storage not set for field: ' . esc_html($this->name) . '. First call setStorage() before setValue().');
@@ -203,23 +205,23 @@ class Field
     }
 
     /**
-     * Adds a validator of type {@see AbstractValidator} to the field. Each
-     * validator will be used to validate a given value for the field.
-     */
-    public function addValidator(AbstractValidator $validator): void
-    {
-        $this->validators[] = $validator;
-    }
-
-    /**
-     * Validates the value of the field against this field's validators
+     * Validates the value of the field against this field's validators using
+     * the {@see Validator}. The request params are passed along as validation
+     * data for context-aware rules like requiredIf.
      * @param mixed $value
      * @throws ValidatorFailedException
      */
-    public function validate($value, ?\WP_REST_Request $request = null): void
+    public function validate($value, \WP_REST_Request $request): void
     {
-        foreach ($this->validators as $validator) {
-            $validator->validate($value, $request);
+        $data = $request->get_params();
+        $data[$this->getName()] = $value;
+
+        $validator = Validator::make($data, [$this->getName() => $this->validators]);
+
+        if ($validator->fails()) {
+            $messages = $validator->errors()[$this->getName()] ?? [];
+            // phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- Messages are returned as JSON
+            throw new ValidatorFailedException(implode(' ', $messages));
         }
     }
 
@@ -233,21 +235,7 @@ class Field
         $this->storageName = $config['storage'] ?? 'default';
         $this->settingName = $config['settingName'] ?? null;
         $this->defaultValue = $config['defaultValue'] ?? null;
-
-        // Check if we should add the type validator, default is true
-        // Override by setting 'validateType' to false in config
-        $validateType = $config['validateType'] ?? true;
-        if ($validateType) {
-            $this->addValidator(new FieldTypeValidator($this));
-        }
-
-        // Add configured validators
-        if (isset($config['validators'])) {
-            foreach ($config['validators'] as $validatorConfig) {
-                $validator = ValidatorFactory::createFromConfig($validatorConfig, $this);
-                $this->addValidator($validator);
-            }
-        }
+        $this->validators = $config['validators'] ?? [];
 
         return $this;
     }
