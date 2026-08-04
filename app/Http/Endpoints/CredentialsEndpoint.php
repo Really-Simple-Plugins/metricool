@@ -6,6 +6,7 @@ namespace Metricool\Http\Endpoints;
 
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Support\Validation\Validator;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 use Throwable;
@@ -63,16 +64,15 @@ class CredentialsEndpoint implements SingleEndpointInterface
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
-        $password = (string) $request->get_param('password');
-        $newPassword = (string) $request->get_param('newPassword');
+        $validated = Validator::validate($request->get_params(), [
+            'password' => 'required|string',
+            'newPassword' => 'required|string|confirm:password',
+        ]);
 
-        if (empty($password) || empty($newPassword)) {
-            return $this->sendHttpErrorResponse(__('Validation failed', 'metricool'));
-        }
-
+        // Update the user password
         try {
             $this->metricoolApi->userCredentials()
-                ->updatePassword($password, $newPassword);
+                ->updatePassword($validated['password'], $validated['newPassword']);
         } catch (Throwable $e) {
             return $this->sendHttpErrorResponse(__('Something went wrong.', 'metricool'), $e->getMessage(), $e->getCode());
         }

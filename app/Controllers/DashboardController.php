@@ -8,6 +8,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use Metricool\Support\Helpers\Storages\LanguagesConfig;
 use Metricool\Traits\HasViews;
 use Metricool\Traits\HasUserAccess;
 use Metricool\Services\DashboardService;
@@ -27,13 +28,15 @@ class DashboardController implements ControllerInterface
     private MetricoolApi $metricool;
     private DashboardService $service;
     private MetricoolAccountService $account;
+    private LanguagesConfig $languages;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $service, MetricoolAccountService $account)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $metricool, DashboardService $service, MetricoolAccountService $account, LanguagesConfig $languages)
     {
         $this->env = $env;
         $this->metricool = $metricool;
         $this->service = $service;
         $this->account = $account;
+        $this->languages = $languages;
     }
 
     public function register(): void
@@ -288,7 +291,7 @@ class DashboardController implements ControllerInterface
             'metricool_base_url' => $this->env->getUrl('metricool.base_url'),
             'metricool_help_url' => $this->env->getUrl('metricool.help_url'),
             'locale' => str_replace("_", "-", get_user_locale()),
-            'supported_languages' => $this->metricool->supportedLanguages(),
+            'supported_languages' => $this->languages->all(),
             'google_recaptcha_url' => $this->getGoogleRecaptchaUrl(),
             'google_recaptcha_key' => $this->env->getString('metricool.google_recaptcha_key'),
         ];

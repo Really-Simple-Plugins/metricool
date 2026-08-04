@@ -12,6 +12,7 @@ use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Collection;
+use Metricool\Support\Validation\Validator;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -73,8 +74,13 @@ class DistributionEndpoint implements SingleEndpointInterface
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
+        $validated = Validator::validate($request->get_params(), [
+            'metric' => 'required|string|in:countries,referers',
+            'filters' => 'array',
+        ]);
+
         try {
-            $response = $this->buildResponse($request);
+            $response = $this->buildResponse($validated);
         } catch (\Exception $e) {
             return $this->sendHttpErrorResponse(__('Failed to load Analytics data', 'metricool'), $e->getMessage(), $e->getCode());
         }
@@ -89,10 +95,10 @@ class DistributionEndpoint implements SingleEndpointInterface
      *
      * @throws \Exception
      */
-    private function buildResponse(\WP_REST_Request $request): array
+    private function buildResponse(array $validated): array
     {
-        $metric = ($request->get_param('metric') ?: '');
-        $requestFilters = ($request->get_param('filters') ?: []);
+        $metric = $validated['metric'];
+        $requestFilters = $validated['filters'] ?? [];
 
         // Load the statistics
         $statistics = $this->getStatisticsForMetric($metric, $requestFilters);

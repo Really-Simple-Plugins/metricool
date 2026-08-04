@@ -76,51 +76,6 @@ class MetricoolApi
     }
 
     /**
-     * List of languages that Metricool supports
-     */
-    public static function supportedLanguages(): array
-    {
-        return [
-            [
-                'label' => __('English', 'metricool'),
-                'value' => 'en',
-            ],
-            [
-                'label' => __('Spanish', 'metricool'),
-                'value' => 'es',
-            ],
-            [
-                'label' => __('French', 'metricool'),
-                'value' => 'fr',
-            ],
-            [
-                'label' => __('Portuguese (Portugal)', 'metricool'),
-                'value' => 'pt',
-            ],
-            [
-                'label' => __('Portuguese (Brazil)', 'metricool'),
-                'value' => 'br',
-            ],
-            [
-                'label' => __('Deutsch', 'metricool'),
-                'value' => 'de',
-            ],
-            [
-                'label' => __('Italian', 'metricool'),
-                'value' => 'it',
-            ],
-            [
-                'label' => __('Danish', 'metricool'),
-                'value' => 'da',
-            ],
-            [
-                'label' => __('Dutch', 'metricool'),
-                'value' => 'nl',
-            ],
-        ];
-    }
-
-    /**
      * This magic method is called when a method is requested that does not
      * exist on this class. It will try to call the method on the
      * MetricoolClient instance, if not found, it will throw an exception.

@@ -11,6 +11,7 @@ if (!defined('ABSPATH')) {
 use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Services\DashboardService;
+use Metricool\Support\Validation\Validator;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\MetricoolAccountService;
 use Metricool\Features\Onboarding\Services\OAuthService;
@@ -87,24 +88,22 @@ class OnboardingController implements FeatureInterface
      */
     public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
-        $email = (string) $request->get_param('email');
-        $password = (string) $request->get_param('password');
-        $marketing = (bool) $request->get_param('marketing');
-        $terms = (bool) $request->get_param('terms');
-        $captcha = (string) $request->get_param('captcha');
-
-        // Validate fields
-        if (!is_email($email) || empty($password) || empty($captcha) || !$terms) {
-            return $this->sendHttpErrorResponse(
-                __('Validation failed.', 'metricool'),
-                [],
-                422
-            );
-        }
+        $validated = Validator::validate($request->get_params(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+            'captcha' => 'required|string',
+            'terms' => 'accepted',
+            'marketing' => 'boolean',
+        ]);
 
         // Attempt to create the account
         try {
-            $this->accounts->createAccount($captcha, $email, $password, $marketing);
+            $this->accounts->createAccount(
+                $validated['captcha'],
+                $validated['email'],
+                $validated['password'],
+                rest_sanitize_boolean($validated['marketing'] ?? false)
+            );
         } catch (CreateAccountException $e) {
             return $this->sendHttpErrorResponse($e->getMessage(), ['reason' => $e->getReason()], $e->getCode());
         }

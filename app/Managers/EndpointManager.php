@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Managers;
 
 use Metricool\Bootstrap\App;
+use Metricool\Exceptions\RestDataException;
 use Metricool\Interfaces\MiddlewareInterface;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
@@ -12,11 +13,14 @@ use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Support\Helpers\Storages\MiddlewareConfig;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasNonces;
+use Metricool\Traits\HasRestAccess;
+use Throwable;
 
 final class EndpointManager extends AbstractManager
 {
     use HasNonces;
     use HasAllowlistControl;
+    use HasRestAccess;
 
     private EnvironmentConfig $env;
 
@@ -104,7 +108,7 @@ final class EndpointManager extends AbstractManager
      *          return [
      *              'methods' => \WP_REST_Server::READABLE,
      *              'callback' => [$this, 'callback'],
-     *              'permission_callback' => [], // optional, defaults to metricool_manage capability check
+     *              'permission_callback' => [$this, 'permissionCallback'],
      *              'middleware' => [
      *                  'metricool:auth', // alias in config/middleware.php
      *                  ExampleMiddleware::class, // MiddlewareInterface class
@@ -206,11 +210,13 @@ final class EndpointManager extends AbstractManager
         $instances = $this->resolveMiddleware($middlewares);
         $pipeline = $this->buildPipeline($callback, $instances);
 
-        return static function (\WP_REST_Request $request) use ($pipeline) {
+        return function (\WP_REST_Request $request) use ($pipeline) {
             try {
                 return $pipeline($request);
-            } catch (\Exception $e) {
-                return new \WP_REST_Response(['message' => $e->getMessage()], 500);
+            } catch (RestDataException $e) {
+                return $this->sendHttpErrorResponse($e->getMessage(), $e->getData(), $e->getResponseCode());
+            } catch (Throwable $e) {
+                return $this->sendHttpErrorResponse($e->getMessage(), null, $e->getCode() ?: 500);
             }
         };
     }
