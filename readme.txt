@@ -3,7 +3,7 @@ Contributors: reallysimpleplugins, wimbraam, rvvelthuijsen, kelvink, juan.pablo.
 Donate link: https://metricool.com
 Tags: instagram, facebook, analytics, meta, social
 Requires at least: 6.6
-Tested up to: 7.0
+Tested up to: 7.0.2
 Requires PHP: 7.4
 Stable tag: 2.0.2
 License: GPLv2 or later
@@ -105,6 +105,15 @@ You can skip the onboarding and login with your existing login credentials.
 
 
 == Changelog ==
+
+= 2.1.0 - 2026-08-06 =
+* Fixed: Website tracking is no longer removed when the connection with Metricool cannot be renewed.
+* Fixed: Notices in the WordPress admin can now be dismissed reliably.
+* Fixed: Texts in the plugin are shown in your own language again.
+* Added: A permission check when connecting a brand, so only brands you may manage are connected.
+* Changed: Settings and other submitted data are now validated more strictly, with clearer error messages.
+* Changed: The connection with Metricool is renewed more reliably.
+* Changed: Dependencies are now scoped, preventing conflicts with other plugins that ship the same libraries.
 
 = 2.0.2 - 2026-06-17 =
 * Fixed: An issue when trying to connect to a brand
