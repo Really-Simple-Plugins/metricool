@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 return [
     'plugin' => [
         'name' => 'Metricool',
-        'version' => '2.0.2',
+        'version' => '2.1.0-rc1',
         'pro' => true,
         'path' => dirname(__DIR__),
         'base_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . plugin_basename(dirname(__DIR__)) . '.php',
