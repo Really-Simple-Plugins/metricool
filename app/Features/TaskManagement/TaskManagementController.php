@@ -22,12 +22,12 @@ class TaskManagementController implements FeatureInterface
     private TaskManagementListener $listener;
     private DashboardService $dashboard;
 
-    public function __construct(TaskManagementService $service, TaskManagementEndpoints $endpoints, TaskManagementListener $listener, DashboardService $dasboard)
+    public function __construct(TaskManagementService $service, TaskManagementEndpoints $endpoints, TaskManagementListener $listener, DashboardService $dashboard)
     {
         $this->service = $service;
         $this->endpoints = $endpoints;
         $this->listener = $listener;
-        $this->dashboard = $dasboard;
+        $this->dashboard = $dashboard;
     }
 
     public function register(): void
