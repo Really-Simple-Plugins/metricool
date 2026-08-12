@@ -10,26 +10,35 @@ if (!defined('ABSPATH')) {
 
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Interfaces\NoticeInterface;
+use Metricool\Services\DashboardService;
+use Metricool\Traits\HasAllowlistControl;
 
 class NotificationsController implements FeatureInterface
 {
+    use HasAllowlistControl;
+
     private NotificationsEndpoints $endpoints;
     private NotificationsService $service;
     private NotificationListener $listener;
+    private DashboardService $dashboard;
 
-    public function __construct(NotificationsEndpoints $endpoints, NotificationsService $service, NotificationListener $listener)
+    public function __construct(NotificationsEndpoints $endpoints, NotificationsService $service, NotificationListener $listener, DashboardService $dashboard)
     {
         $this->service = $service;
         $this->endpoints = $endpoints;
         $this->listener = $listener;
+        $this->dashboard = $dashboard;
     }
 
     public function register(): void
     {
         $this->endpoints->register();
-        $this->listener->listen();
 
-        $this->initiateNotices();
+        if ($this->userCanManage() && $this->dashboard->isOnboardingCompleted()) {
+            $this->listener->listen();
+            $this->initiateNotices();
+        }
+
         add_action('metricool_plugin_version_upgrade', [$this, 'upgradeNotices']);
     }
 
