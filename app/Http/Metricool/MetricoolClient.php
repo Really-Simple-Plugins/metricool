@@ -513,6 +513,7 @@ class MetricoolClient
 
         while ($waitedMs < $maxWaitMs) {
             if ($this->isTokenExpired() === false) {
+                $this->clearTokenOptionCache();
                 return;
             }
 
@@ -521,6 +522,17 @@ class MetricoolClient
         }
 
         throw new RuntimeException('Timed out waiting for token refresh. Please try again.');
+    }
+
+    /**
+     * Remove the token options from the WordPress object cache so the
+     * next read fetches the freshly refreshed values from the database.
+     */
+    private function clearTokenOptionCache(): void
+    {
+        wp_cache_delete(self::OPTION_AUTH_TOKEN, 'options');
+        wp_cache_delete(self::OPTION_REFRESH_TOKEN, 'options');
+        wp_cache_delete('alloptions', 'options');
     }
 
 
