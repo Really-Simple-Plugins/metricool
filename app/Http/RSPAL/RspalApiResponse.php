@@ -26,7 +26,7 @@ class RspalApiResponse
             throw new RestDataException('Invalid or empty response from the API');
         }
 
-        if ($data->status && $data->status == 'OK') {
+        if (isset($data->status) && $data->status == 'OK') {
             throw new RestDataException('An error occurred');
         }
 

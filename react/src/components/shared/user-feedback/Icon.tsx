@@ -24,6 +24,7 @@ import {
     faArrowTrendUp,
     faEye,
     faSignOut,
+    faInbox,
 } from "@fortawesome/pro-solid-svg-icons";
 import {
     faChevronDown,
@@ -39,8 +40,12 @@ import {
     faOctagonExclamation,
     faPenToSquare,
     faSort,
+    faSortAsc,
+    faSortDesc,
     faSpinnerThird,
     faTriangleExclamation,
+    faCalendar,
+    faFilter,
 } from "@fortawesome/pro-regular-svg-icons";
 import {
     faBluesky,
@@ -95,6 +100,8 @@ const iconMap = {
     "ring": faCircle,
     "circle": faSolidCircle,
     "sort": faSort,
+    "sort-asc": faSortAsc,
+    "sort-desc": faSortDesc,
     "success": faCircleCheck,
     "info": faCircleInfo,
     "warning": faTriangleExclamation,
@@ -108,6 +115,9 @@ const iconMap = {
     "trend-up": faArrowTrendUp,
     "preview": faEye,
     "sign-out": faSignOut,
+    "calendar": faCalendar,
+    "filter": faFilter,
+    "inbox": faInbox,
 };
 
 const Gbp = ({ className, ...props }: React.ComponentProps<"svg">) => (
@@ -175,7 +185,17 @@ const Icon = ({ icon, className, inverse, ...props }: IconProps) => {
                 {/*@ts-expect-error type mismatch - FontAwesome icon props aren't allowed on an svg - will be solved with FA kit*/}
                 <GoogleAds className={className} {...props}/>
             </>) : (
-                <FontAwesomeIcon {...(inverse && { inverse: true })} icon={iconMap[icon]} className={cn(icon === "loading" && "animate-spin", className)} {...props} />
+                <FontAwesomeIcon
+                    inverse={inverse}
+                    icon={iconMap[icon]}
+                    className={cn(
+                        {
+                            "animate-spin": (icon === "loading")
+                        },
+                        className
+                    )}
+                    {...props}
+                />
             )
         )}
     </>);
