@@ -1,11 +1,11 @@
-import { Icon } from "@/components/shared/user-feedback/Icon.tsx";
+import { Icon } from "@/components/shared/user-feedback/Icon";
 import {
     Alert as PrimitiveAlert,
     AlertDescription as PrimitiveAlertDescription,
     alertVariants as PrimitiveAlertVariants
-} from "@/components/shared/primitives/alert.tsx";
+} from "@/components/shared/primitives/alert";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/support/functions/utils.ts";
+import { cn } from "@/support/functions/utils";
 
 const AlertVariantStyling = {
     success: "bg-rsp-success-light text-rsp-success-dark *:data-[slot=alert-description]:text-rsp-success-dark",
@@ -15,7 +15,7 @@ const AlertVariantStyling = {
 };
 
 const AlertVariants = cva(
-    "!gap-2 justify-between w-full rounded-md px-3 py-2 text-md text-center font-semibold leading-4",
+    "gap-2! justify-between w-full rounded-md p-3 text-md text-center font-semibold leading-4",
     {
         variants: {
             variant: AlertVariantStyling,
@@ -47,27 +47,24 @@ const Alert = ({
 }: React.ComponentProps<"div"> & AlertProps & AlertVariantsProps) => {
     return (
         <PrimitiveAlert
-            // @ts-expect-error tsc can't verify type narrowing on variant
-            className={cn(variant ? variant in AlertVariantStyling ? AlertVariants({ variant }) : PrimitiveAlertVariants({ variant }) : "",
-                action && "!grid-cols-[calc(var(--spacing)*4)_1fr_calc(var(--spacing)*25)]",
-                className,
+            className={cn(
+                // @ts-expect-error tsc can't verify type narrowing on variant
+                variant ? variant in AlertVariantStyling ? AlertVariants({ variant }) : PrimitiveAlertVariants({ variant }) : "",
+                className
             )}
             {...props}
         >
             <div data-slot={"alert-icon"}>
                 <Icon icon={"info"}/>
             </div>
-            <PrimitiveAlertDescription className={"text-md font-semibold leading-4"}>
+            <PrimitiveAlertDescription className={"text-md font-semibold leading-4 text-left"}>
                 {children}
+                {action && (
+                    <div>
+                        {action}
+                    </div>
+                )}
             </PrimitiveAlertDescription>
-            {action && (
-                <div
-                    data-slot={"alert-action"}
-                    className={"leading-4 text-right"}
-                >
-                    {action}
-                </div>
-            )}
         </PrimitiveAlert>
     );
 };
