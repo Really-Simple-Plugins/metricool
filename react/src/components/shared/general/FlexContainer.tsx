@@ -15,10 +15,12 @@ const FlexContainer = ({
             className={cn(
                 "flex gap-4",
                 className,
-                direction === "row" && "flex-row",
-                direction === "column" && "flex-col",
-                direction === "row-reverse" && "flex-row-reverse",
-                direction === "column-reverse" && "flex-col-reverse",
+                {
+                    "flex-row": (direction === "row"),
+                    "flex-col": (direction === "column"),
+                    "flex-row-reverse": (direction === "row-reverse"),
+                    "flex-col-reverse": (direction === "column-reverse"),
+                }
             )}
             {...props}
         >

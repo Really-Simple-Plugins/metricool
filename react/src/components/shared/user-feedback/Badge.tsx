@@ -1,32 +1,29 @@
-import { Badge as PrimitiveBadge, badgeVariants as PrimitiveBadgeVariants } from "@/components/shared/primitives/badge.tsx";
+import { Badge as PrimitiveBadge } from "@/components/shared/primitives/badge";
+import { cn } from "@/support/functions/utils";
 import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/support/functions/utils.ts";
 
 const BadgeVariantStyling = {
-    "open": "bg-rsp-task-open text-black",
-    "special-feature": "bg-rsp-task-special-feature text-white",
-    "premium": "bg-rsp-task-premium text-white",
-    "warning": "bg-rsp-task-warning text-white",
-    "urgent": "bg-rsp-task-urgent text-white",
-    "completed": "bg-rsp-task-completed text-white",
-    "dismissed": "bg-rsp-task-dismissed text-gray-800",
+    basis: "rounded-full text-[9px] font-semibold",
+    variant: {
+        primary: "bg-primary-light text-primary",
+        gradient: "bg-(image:--gradient-brand) border-transparent bg-origin-border text-white",
+    },
+    size: {
+        default: "h-5 px-2 py-1",
+    },
 };
 
 const BadgeVariants = cva(
-    "rounded-full p-2 xl:min-w-27 xl:rounded-md xl:justify-center xl:max-h-[28px]",
-    {
-        variants: {
-            variant: BadgeVariantStyling
-        },
-        defaultVariants: {
-            variant: "open",
-        },
+    BadgeVariantStyling.basis, {
+    variants: {
+        variant: BadgeVariantStyling.variant,
+        size: BadgeVariantStyling.size,
+    },
+    defaultVariants: {
+        variant: "primary",
+        size: "default",
     }
-);
-
-export type BadgeVariantsProps =
-    | VariantProps<typeof PrimitiveBadgeVariants>
-    | VariantProps<typeof BadgeVariants>;
+});
 
 /**
  * Custom extension of shadcn's {@link PrimitiveBadge} component.
@@ -36,6 +33,9 @@ export type BadgeVariantsProps =
  * for a `span` element, passed to Badge through a `...props` rest object
  * @uses {@link PrimitiveBadge} from primitives
  *
+ * Note: original variants from shadcn's {@link PrimitiveBadge} can no longer be
+ * passed to this component.
+ *
  * @version 1.0.0
  */
 const Badge = ({
@@ -43,18 +43,18 @@ const Badge = ({
     children,
     variant,
     ...props
-}: React.ComponentProps<"span"> & BadgeVariantsProps) => {
+}: Omit<React.ComponentProps<typeof PrimitiveBadge>, "variant"> & VariantProps<typeof BadgeVariants>) => {
     return (
         <PrimitiveBadge
-            // @ts-expect-error tsc can't verify type narrowing on variant
-            className={cn(variant ? variant in BadgeVariantStyling ? BadgeVariants({ variant }) : PrimitiveBadgeVariants({ variant }) : "",
-                className,
+            className={cn(
+                BadgeVariants({ variant }),
+                className
             )}
             {...props}
         >
-            <span className={"hidden xl:block text-sm font-semibold leading-3"}>{children}</span>
+            {children}
         </PrimitiveBadge>
     );
 };
 
-export { Badge };
+export { Badge, BadgeVariantStyling };

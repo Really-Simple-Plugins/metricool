@@ -4,19 +4,19 @@ import {
 } from "@/components/shared/primitives/toggle";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/support/functions/utils";
+import { BadgeVariantStyling } from "@/components/shared/user-feedback/Badge";
 
 const ToggleVariantStyling = {
     variant: {
-        primary: "bg-primary-light text-primary rounded-full text-sm font-semibold hover:bg-primary hover:text-primary-light data-[state=on]:bg-primary-dark data-[state=on]:text-primary-light",
+        primary: cn(BadgeVariantStyling.basis, BadgeVariantStyling.variant.primary, "text-sm hover:bg-primary hover:text-primary-light data-[state=on]:bg-primary-dark data-[state=on]:text-primary-light"),
     },
     size: {
-        default: "h-6 px-2 py-1",
+        default: cn(BadgeVariantStyling.size.default, "h-6"),
     }
-
 };
 
 const ToggleVariants = cva(
-    "max-w-[fit-content]",
+    "max-w-fit cursor-pointer",
     {
         variants: {
             variant: ToggleVariantStyling.variant,
@@ -39,7 +39,7 @@ const Toggle = ({
     onPressedChange,
     children,
     className,
-    variant,
+    variant = "primary",
 }: ToggleVariantsProps & Omit<React.ComponentProps<typeof PrimitiveToggle>, "variant">) => {
     return (
         <PrimitiveToggle

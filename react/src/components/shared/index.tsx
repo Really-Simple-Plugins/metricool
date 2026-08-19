@@ -1,7 +1,7 @@
 export { Button } from "@/components/shared/forms/Button.tsx";
 export { Block, BlockHeader } from "@/components/shared/general/Block.tsx";
 export { Notification } from "@/components/shared/user-feedback/Notification.tsx";
-export { Badge, type BadgeVariantsProps } from "@/components/shared/user-feedback/Badge.tsx";
+export { Badge } from "@/components/shared/user-feedback/Badge.tsx";
 export { Input } from "@/components/shared/forms/Input.tsx";
 export { Dialog, DialogTitle, DialogHeader } from "@/components/shared/user-feedback/Dialog.tsx";
 export { ToastContainer, showToast } from "@/components/shared/user-feedback/Toast.tsx";

@@ -5,38 +5,42 @@ import {
 import { ToggleVariantStyling } from "@/components/shared/forms/Toggle";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/support/functions/utils";
+import { BadgeVariantStyling } from "@/components/shared/user-feedback/Badge";
 
 const ButtonVariantStyling = {
     "primary": "bg-primary border-primary hover:bg-primary-light hover:text-primary hover:border-primary-light",
-    "primary-ghost": "bg-transparent text-primary border-solid border-primary hover:bg-primary-light hover:border-primary-light hover:text-primary-dark",
-    "primary-gradient": "bg-[image:var(--gradient-brand)] border-transparent [background-origin:border-box] hover:brightness-115",
+    "primary-ghost": "bg-transparent text-primary border-solid border-primary hover:bg-primary hover:border-primary hover:text-white",
+    "primary-gradient": "bg-(image:--gradient-brand) border-transparent bg-origin-border hover:brightness-115",
     "primary-gradient-ghost": "gradient-button-ghost hover:brightness-115 leading-loose",
     "secondary": "bg-secondary-dark border-secondary-dark hover:bg-secondary-light hover:text-secondary hover:border-secondary-light",
-    "secondary-ghost": "bg-transparent text-secondary border-solid border-secondary hover:text-accent-foreground hover:bg-secondary-light hover:border-secondary-light hover:text-secondary-dark",
+    "secondary-ghost": "bg-transparent text-secondary border-solid border-secondary hover:bg-secondary hover:border-secondary hover:text-white",
     "tertiary": "bg-tertiary border-tertiary hover:bg-tertiary-light hover:text-tertiary hover:border-tertiary-light",
-    "tertiary-ghost": "bg-transparent text-tertiary border-solid border-tertiary hover:text-accent-foreground hover:bg-tertiary-light hover:border-tertiary-light hover:text-tertiary-dark",
-    "icon": "rounded-full border-none p-0 has-[>svg]:p-0 m-0 bg-transparent hover:bg-transparent text-gray-600",
+    "tertiary-ghost": "bg-transparent text-tertiary border-solid border-tertiary hover:bg-tertiary-light hover:border-tertiary-light hover:text-tertiary-dark",
+    "icon": "border-none p-0 has-[>svg]:p-0 m-0 bg-transparent hover:bg-transparent text-gray-600",
     "upsell": "bg-upsell border-upsell text-black hover:bg-upsell hover:text-black",
     "upsell-ghost": "bg-white border-neutral-200 text-black hover:bg-white hover:text-black",
     "black": "bg-black border-black text-white hover:bg-black hover:text-white hover:invert",
-    "black-ghost": "bg-transparent text-black border-black border-1 hover:bg-black hover:text-white",
-    "link": "p-0 border-none text-black hover:text-wordpress-link-hover bg-transparent hover:bg-transparent font-normal underline !h-[fit-content]",
-    "unstyled": "p-0 border-none rounded-none font-normal font-base min-h-[fit-content] min-w-[fit-content]",
-    "toggle": cn(ToggleVariantStyling.variant.primary, "max-w-[fit-content] border-none"),
+    "black-ghost": "bg-transparent text-black border-black border hover:bg-black hover:text-white",
+    "link": "p-0 border-none text-black hover:text-wordpress-link-hover bg-transparent hover:bg-transparent font-normal leading-4 underline h-fit!",
+    "unstyled": "p-0 border-none rounded-none font-normal font-base min-h-fit min-w-fit",
+    "toggle": cn(ToggleVariantStyling.variant.primary, "max-w-fit border-none"),
+    "badge": cn(BadgeVariantStyling.basis, BadgeVariantStyling.variant.primary, "text-sm hover:bg-primary hover:text-primary-light max-w-fit border-none active:bg-primary-dark active:text-primary-light"),
 };
 
 const ButtonVariants = cva(
-    "rounded-xs px-3 py-0 border-2 font-semibold text-md cursor-pointer size-fit leading-(--text-md)",
+    "px-3 py-0 border-2 font-semibold text-md cursor-pointer size-fit leading-(--text-md)",
     {
         variants: {
             variant: ButtonVariantStyling,
             size: {
-                default: "h-7.5",
-                xs: "text-xs h-5 px-2 py-1 has-[>svg]:px-2",
-                sm: "text-sm h-6",
-                lg: "text-md h-10",
-                icon: "h-[fit-content] w-[fit-content]",
-                toggle: ToggleVariantStyling.size.default
+                default: "h-7.5 rounded-base!",
+                xs: "text-xs h-5 px-2 py-1 has-[>svg]:px-2 rounded-base!",
+                sm: "text-sm h-6 rounded-base!",
+                lg: "text-md h-10 rounded-base!",
+                icon: "h-fit w-fit rounded-full",
+                toggle: ToggleVariantStyling.size.default,
+                badge: cn(BadgeVariantStyling.size.default, "h-6"),
+                link: "h-7.5 rounded-none",
             }
         },
         defaultVariants: {
@@ -52,7 +56,7 @@ type ButtonVariantsProps =
 
 /**
  * A 'discriminating union type' which ensures that if the type is "button" (default)
- * a Button component can only have either a link or an onClick prop, not both,
+ * a Button component can have a link, an onClick prop, or both,
  * and with type "submit" or "trigger" it can have neither.
  *
  * Type "trigger" was added as several shadcn components use buttons as triggers
@@ -75,9 +79,14 @@ type ActionProps = ({
     type?: "button",
     link: string,
     target?: React.ComponentProps<"a">["target"],
-    onClick?: never,
+    onClick?: React.MouseEventHandler<HTMLElement>,
 });
 
+type ButtonProps =
+    Omit<React.ComponentProps<"button">, "type"> &
+    Required<Pick<ButtonVariantsProps, "variant">> &
+    ButtonVariantsProps &
+    ActionProps;
 
 /**
  * Custom extension of shadcn's {@link PrimitiveButton} component.
@@ -99,9 +108,19 @@ const Button = ({
     target = "_blank",
     type = "button",
     ...props
-}: Omit<React.ComponentProps<"button">, "type"> & Required<Pick<ButtonVariantsProps, "variant">> & ButtonVariantsProps & ActionProps) => {
-    //@ts-expect-error tsc can't verify type narrowing on variant
-    const classes = cn(variant in ButtonVariantStyling ? ButtonVariants({ variant, size }) : PrimitiveButtonVariants({ variant, size }), className);
+}: ButtonProps) => {
+    const isCustomVariant = variant != null && variant in ButtonVariantStyling;
+
+    const variantClasses = isCustomVariant
+        //@ts-expect-error tsc can't verify type narrowing on variant
+        ? ButtonVariants({ variant, size })
+        //@ts-expect-error tsc can't verify type narrowing on variant
+        : PrimitiveButtonVariants({ variant, size });
+
+    const classes = cn(
+        variantClasses,
+        className
+    );
 
     const StyledButton = () => (
         <PrimitiveButton
@@ -113,7 +132,9 @@ const Button = ({
         >
             {/*span required for gradient text color to work*/}
             {variant === "primary-gradient-ghost" ?
-                <span className={"inline-flex items-center justify-center gap-2 whitespace-nowrap"}>{children}</span>
+                <span className={"inline-flex items-center justify-center gap-2"}>
+                    {children}
+                </span>
                 :
                 children
             }
@@ -127,6 +148,7 @@ const Button = ({
                 target={target}
                 className={classes}
                 rel={"noopener noreferrer"}
+                onClick={onClick}
             >
                 {children}
             </a>
@@ -138,7 +160,7 @@ const Button = ({
             <a
                 href={link}
                 target={target}
-                className={"flex max-w-[fit-content]"}
+                className={"flex max-w-fit"}
                 rel={"noopener noreferrer"}
             >
                 <StyledButton/>
