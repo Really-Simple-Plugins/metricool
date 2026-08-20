@@ -46,7 +46,7 @@ const useOtherPluginsData = () => {
 
     const otherPluginsDataQuery = useQuery({
         queryKey: ["other_plugins_data"],
-        queryFn: () => httpClient.setRoute("other_plugins_data").get(),
+        queryFn: () => httpClient.get("other_plugins_data"),
         staleTime: Infinity, // never stale unless manually invalidated
         gcTime: Infinity, // data is never garbage collected
         select: (response): Record<string, OtherPlugin> => {
@@ -94,10 +94,10 @@ const useOtherPluginsData = () => {
             }
         },
         mutationFn: async ({ slug, action }: PluginActionArguments) => {
-            return httpClient.setRoute("do_plugin_action").setPayload({
+            return httpClient.post("do_plugin_action", {
                 "slug": slug,
                 "action": action,
-            }).post();
+            });
         },
         onSuccess: (response, variables) => {
             const currentOtherPluginsData: {

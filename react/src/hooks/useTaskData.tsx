@@ -24,7 +24,7 @@ const useTaskData = ({hasConnectedAccountsDataLoaded}: UseTaskDataProps) => {
     const taskDataQuery = useQuery({
         enabled: hasConnectedAccountsDataLoaded,
         queryKey: ["tasks"],
-        queryFn: () => httpClient.setRoute("get_tasks").get(),
+        queryFn: () => httpClient.get("get_tasks"),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (response): {
             tasks: TaskProps[],
@@ -51,9 +51,9 @@ const useTaskData = ({hasConnectedAccountsDataLoaded}: UseTaskDataProps) => {
         mutationFn: async ({ taskId }: {
             taskId: string,
         }) => {
-            return httpClient.setRoute("dismiss_task").setPayload({
+            return httpClient.post("dismiss_task", {
                 "taskId": taskId,
-            }).post();
+            });
         },
         onSuccess: async () => {
             await taskDataQuery.refetch();

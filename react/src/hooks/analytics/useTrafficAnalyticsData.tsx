@@ -11,7 +11,7 @@ const useTrafficAnalyticsData = () => {
 
     const trafficDataQuery = useQuery({
         queryKey: ["analytics", "traffic"],
-        queryFn: () => httpClient.setRoute("distribution/referers").get(),
+        queryFn: () => httpClient.get("distribution/referers"),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (response): { tableData: TrafficDataTableColumns[] } => response.data,
     });

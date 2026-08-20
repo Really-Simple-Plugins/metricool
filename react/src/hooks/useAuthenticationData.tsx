@@ -30,13 +30,13 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
         mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
             const token = await generateRecaptchaToken(metricool.google_recaptcha_key, "signup");
 
-            return await httpClient.setRoute("onboarding/create_account").setPayload({
+            return await httpClient.post("onboarding/create_account", {
                 email: formValues.credentials.email,
                 password: formValues.credentials.password,
                 marketing: formValues.marketing,
                 captcha: token,
                 terms: formValues.terms,
-            }).post();
+            });
         },
         onSuccess: async (response) => {
             signUpCallbacks?.onSignUpSuccessCallback(response.data.onboarding, response.data.account);
@@ -49,9 +49,9 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
 
     const finishOnboardingMutation = useMutation({
         mutationFn: async (formValues: z.infer<typeof OnboardingSchema.shape.brand>) => {
-            return httpClient.setRoute("onboarding/finish_onboarding").setPayload({
+            return httpClient.post("onboarding/finish_onboarding", {
                 blogId: formValues.id,
-            }).post();
+            });
         },
         onSuccess: (response) => {
             dispatch({
@@ -66,7 +66,7 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
 
     const signInRedirectUrlMutation = useMutation({
         mutationFn: async () => {
-            return httpClient.setRoute("onboarding/oauth_redirect").get();
+            return httpClient.get("onboarding/oauth_redirect");
         },
         onSuccess: (response) => {
             window.location = response.data.redirect_url;
@@ -78,7 +78,7 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
 
     const logoutMutation = useMutation({
         mutationFn: async () => {
-            return httpClient.setRoute("logout").post();
+            return httpClient.post("logout");
         },
         onSuccess: (response) => {
             if (logoutCallback) {
