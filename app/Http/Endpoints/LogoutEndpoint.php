@@ -39,7 +39,7 @@ class LogoutEndpoint implements SingleEndpointInterface
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return true;
     }
 
     /**
@@ -56,6 +56,8 @@ class LogoutEndpoint implements SingleEndpointInterface
 
     /**
      * Log the user out and redirect to the dashboard
+     *
+     *     POST /wp-json/metricool/v1/logout
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {

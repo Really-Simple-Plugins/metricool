@@ -4,17 +4,16 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Metricool;
 
-use Carbon\Carbon;
-use RuntimeException;
-use GuzzleHttp\Client;
-use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Request;
 use InvalidArgumentException;
+use Metricool\Vendor\Carbon\Carbon;
+use Metricool\Vendor\GuzzleHttp\Client;
+use Metricool\Vendor\GuzzleHttp\Psr7\Request;
 use Metricool\Services\OptionsService;
-use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\Exception\GuzzleException;
+use Metricool\Services\TrackingScriptService;
+use Metricool\Vendor\Psr\Http\Message\ResponseInterface;
 use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use RuntimeException;
 use Throwable;
 
 class MetricoolClient
@@ -26,19 +25,21 @@ class MetricoolClient
     private const OPTION_AUTH_TOKEN_EXPIRES = 'metricool_auth_token_expires';
     private const OPTION_REFRESH_LOCK = 'metricool_refresh_lock';
 
-    private const LOCK_STALE_MS = 15000;
-    private const LOCK_WAIT_SLEEP_MS = 100;
-    private const LOCK_WAIT_MAX_MS = 5000;
+    /**
+     * The amount of milliseconds to wait before polling for a new token
+     */
+    private const REFRESH_LOCK_WAIT_MS = 100;
+    /**
+     * The timeout for the token refresh request
+     */
+    public const REFRESH_TIMEOUT_SECONDS = 10;
 
-    private ?Client $client = null;
+    private Client $client;
 
     private EnvironmentConfig $env;
     private OptionsService $options;
 
     private string $apiUrl;
-    private string $userToken = '';
-    private string $blogId = '';
-    private string $userId = '';
     protected array $middleWares = [];
 
 
@@ -50,6 +51,7 @@ class MetricoolClient
         $this->env = $env;
         $this->options = $options;
         $this->apiUrl = $env->get('metricool.base_api_domain');
+        $this->client = $this->client();
     }
 
     /**
@@ -57,15 +59,15 @@ class MetricoolClient
      */
     public function setUserId(string $userId): void
     {
-        $this->userId = $userId;
+        update_option(self::OPTION_USER_ID, $userId, false);
     }
 
     /**
      * Get the authenticated Metricool user ID.
      */
-    public function getUserId(): string
+    public function getUserId(): ?string
     {
-        return $this->userId;
+        return get_option(self::OPTION_USER_ID, null);
     }
 
     /**
@@ -73,7 +75,7 @@ class MetricoolClient
      */
     public function hasUserId(): bool
     {
-        return !empty($this->userId);
+        return !empty($this->getUserId());
     }
 
     /**
@@ -81,9 +83,7 @@ class MetricoolClient
      */
     public function storeUserId(string $userId): void
     {
-        update_option(self::OPTION_USER_ID, $userId);
-
-        $this->setUserId($userId);
+        update_option(self::OPTION_USER_ID, $userId, false);
     }
 
     /**
@@ -92,24 +92,14 @@ class MetricoolClient
     public function clearUserId(): void
     {
         delete_option(self::OPTION_USER_ID);
-
-        $this->setUserId('');
     }
 
     /**
      * Get the selected Metricool blog ID.
      */
-    public function getBlogId(): string
+    public function getBlogId(): ?string
     {
-        return $this->blogId;
-    }
-
-    /**
-     * Set the selected Metricool blog ID.
-     */
-    public function setBlogId(string $blogId): void
-    {
-        $this->blogId = $blogId;
+        return get_option(self::OPTION_BLOG_ID, null);
     }
 
     /**
@@ -117,9 +107,7 @@ class MetricoolClient
      */
     public function storeBlogId(string $blogId): void
     {
-        update_option(self::OPTION_BLOG_ID, $blogId);
-
-        $this->setBlogId($blogId);
+        update_option(self::OPTION_BLOG_ID, $blogId, false);
     }
 
     /**
@@ -128,8 +116,6 @@ class MetricoolClient
     public function clearBlogId(): void
     {
         delete_option(self::OPTION_BLOG_ID);
-
-        $this->setBlogId('');
     }
 
     /**
@@ -137,23 +123,15 @@ class MetricoolClient
      */
     public function hasBlogId(): bool
     {
-        return !empty($this->blogId);
+        return !empty($this->getBlogId());
     }
 
     /**
      * Get the current access token.
      */
-    public function getUserToken(): string
+    public function getUserToken(): ?string
     {
-        return $this->userToken;
-    }
-
-    /**
-     * Set the current access token.
-     */
-    public function setUserToken(string $userToken): void
-    {
-        $this->userToken = $userToken;
+        return get_option(self::OPTION_AUTH_TOKEN, null);
     }
 
     /**
@@ -161,7 +139,7 @@ class MetricoolClient
      */
     public function hasUserToken(): bool
     {
-        return !empty($this->userToken);
+        return !empty($this->getUserToken());
     }
 
     /**
@@ -169,9 +147,7 @@ class MetricoolClient
      */
     public function storeUserToken(string $token): void
     {
-        update_option(self::OPTION_AUTH_TOKEN, $token);
-
-        $this->setUserToken($token);
+        update_option(self::OPTION_AUTH_TOKEN, $token, false);
     }
 
     /**
@@ -180,16 +156,22 @@ class MetricoolClient
     public function clearUserToken(): void
     {
         delete_option(self::OPTION_AUTH_TOKEN);
-
-        $this->setUserToken('');
     }
 
     /**
      * Get the persisted refresh token.
      */
-    public function getRefreshToken(): string
+    public function getRefreshToken(): ?string
     {
-        return get_option(self::OPTION_REFRESH_TOKEN);
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching - Refresh token is not cached
+        return $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
+                self::OPTION_REFRESH_TOKEN
+            )
+        );
     }
 
     /**
@@ -197,7 +179,7 @@ class MetricoolClient
      */
     public function storeRefreshToken(string $refreshToken): void
     {
-        update_option(self::OPTION_REFRESH_TOKEN, $refreshToken);
+        update_option(self::OPTION_REFRESH_TOKEN, $refreshToken, false);
     }
 
     /**
@@ -221,7 +203,7 @@ class MetricoolClient
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         return (int) $wpdb->get_var(
             $wpdb->prepare(
-                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
+                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s LIMIT 1",
                 self::OPTION_AUTH_TOKEN_EXPIRES
             )
         );
@@ -251,31 +233,7 @@ class MetricoolClient
     {
         $expiresIn = Carbon::now()->addSeconds($expiresIn)->timestamp;
 
-        update_option(self::OPTION_AUTH_TOKEN_EXPIRES, $expiresIn);
-    }
-
-    /**
-     * Register a middleware for outgoing requests.
-     */
-    public function insertMiddleWare(callable $middleWare): void
-    {
-        $this->middleWares[] = $middleWare;
-    }
-
-    /**
-     * Connect and return the configured HTTP client.
-     */
-    public function connect(): Client
-    {
-        return $this->client();
-    }
-
-    /**
-     * Check whether the HTTP client has been initialized.
-     */
-    public function isConnected(): bool
-    {
-        return ($this->client instanceof Client);
+        update_option(self::OPTION_AUTH_TOKEN_EXPIRES, $expiresIn, false);
     }
 
     /**
@@ -300,7 +258,19 @@ class MetricoolClient
     }
 
     /**
-     * Check if the client has all the necessary authentication tokens to show the dashboard
+     * Clear the authentication tokens and userId, but keep the tracking
+     * widget active so the website does not lose data.
+     */
+    public function logoutPreservingTracking(): void
+    {
+        $this->options->wipe(false, [
+            TrackingScriptService::OPTION_TRACKING_HASH,
+            TrackingScriptService::OPTION_TRACKING_ACTIVE,
+        ]);
+    }
+
+    /**
+     * Check if the client has all the necessary authentication tokens to show the dashboard.
      */
     public function hasAuthentication(): bool
     {
@@ -308,29 +278,12 @@ class MetricoolClient
     }
 
     /**
-     * Build the middleware stack for the HTTP client.
-     */
-    protected function middleware(): HandlerStack
-    {
-        $handlerStack = HandlerStack::create();
-        foreach ($this->middleWares as $middleWare) {
-            $handlerStack->push($middleWare);
-        }
-        return $handlerStack;
-    }
-
-    /**
      * Build or return the configured HTTP client instance.
      */
     private function client(): Client
     {
-        if ($this->client) {
-            return $this->client;
-        }
-
-        $this->client = new Client([
+        return new Client([
             'http_errors' => true,
-            'handler' => $this->middleware(),
             'expect' => false,
             'headers' => [
                 'Accept' => 'application/json',
@@ -338,8 +291,6 @@ class MetricoolClient
                 'User-Agent' => $this->getRequestUserAgent(),
             ]
         ]);
-
-        return $this->client;
     }
 
     /**
@@ -421,14 +372,10 @@ class MetricoolClient
         try {
             $response = $this->client->send(
                 new Request($method, $this->formatUrl($endpoint), [
-                    'Authorization' => 'Bearer ' . $this->userToken
+                    'Authorization' => 'Bearer ' . $this->getUserToken()
                 ], json_encode($body))
             );
         } catch (Throwable $e) {
-            if ($e instanceof GuzzleException && $e->getCode() === 401) {
-                $this->logout();
-            }
-
             throw new ApiException(
                 $e->getMessage(),
                 $e->getCode(),
@@ -473,7 +420,13 @@ class MetricoolClient
             );
         }
 
-        return $this->parseResponse($response);
+        $tokenData = $this->parseResponse($response);
+
+        if (empty($tokenData['access_token']) || empty($tokenData['refresh_token']) || empty($tokenData['expires_in'])) {
+            throw new ApiException('missing_token_data');
+        }
+
+        return $tokenData;
     }
 
     /**
@@ -490,6 +443,7 @@ class MetricoolClient
     public function refreshAuthToken(): void
     {
         $lockAcquired = $this->lockTokenRefresh();
+
         if ($lockAcquired === false) {
             $this->pollForNewUserToken();
             return;
@@ -516,7 +470,7 @@ class MetricoolClient
             $wpdb->prepare(
                 "DELETE FROM {$wpdb->options} WHERE option_name = %s AND option_value < %d",
                 self::OPTION_REFRESH_LOCK,
-                time() - (int) (self::LOCK_STALE_MS / 1000)
+                time() - $this->getRefreshLockTimeoutSeconds()
             )
         );
 
@@ -534,44 +488,47 @@ class MetricoolClient
     }
 
     /**
+     * Get the timeout duration of the token refresh request
+     */
+    private function getRefreshLockTimeoutSeconds(): int
+    {
+        return self::REFRESH_TIMEOUT_SECONDS + 1; // add 1 second buffer to account for request duration
+    }
+
+    /**
      * Wait for another process to refresh the token by polling if the token is expired
      * @throws RuntimeException if the token is still expired after waiting for the maximum time.
      */
     private function pollForNewUserToken(): void
     {
-        $maxWait = self::LOCK_WAIT_MAX_MS;
-        $sleepDuration = self::LOCK_WAIT_SLEEP_MS;
-        $waited = 0;
+        $maxWaitMs = self::REFRESH_TIMEOUT_SECONDS * 1000;
+        $sleepDurationMs = self::REFRESH_LOCK_WAIT_MS;
+        $waitedMs = 0;
 
-        while ($waited < $maxWait) {
+        while ($waitedMs < $maxWaitMs) {
             if ($this->isTokenExpired() === false) {
-                $this->setUserToken($this->fetchUserToken());
+                $this->clearTokenOptionCache();
                 return;
             }
 
-            usleep($sleepDuration * 1000);
-            $waited += $sleepDuration;
+            usleep($sleepDurationMs * 1000);
+            $waitedMs += $sleepDurationMs;
         }
 
-        throw new \RuntimeException('Timed out waiting for token refresh. Please try again.');
+        throw new RuntimeException('Timed out waiting for token refresh. Please try again.');
     }
 
     /**
-     * Read the access token directly from the database, bypassing the
-     * WordPress object cache.
+     * Remove the token options from the WordPress object cache so the
+     * next read fetches the freshly refreshed values from the database.
      */
-    private function fetchUserToken(): string
+    private function clearTokenOptionCache(): void
     {
-        global $wpdb;
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        return (string) $wpdb->get_var(
-            $wpdb->prepare(
-                "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s",
-                self::OPTION_AUTH_TOKEN
-            )
-        );
+        wp_cache_delete(self::OPTION_AUTH_TOKEN, 'options');
+        wp_cache_delete(self::OPTION_REFRESH_TOKEN, 'options');
+        wp_cache_delete('alloptions', 'options');
     }
+
 
     /**
      * Perform the actual token refresh request against the
@@ -582,26 +539,32 @@ class MetricoolClient
      */
     private function performTokenRefresh(): void
     {
-        $headers = [
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/x-www-form-urlencoded',
-        ];
+        $refreshToken = $this->getRefreshToken();
 
-        $options = [
-            'form_params' => [
-                'client_id' => $this->env->getString('metricool.oauth_client_id'),
-                'grant_type' => 'refresh_token',
-                'refresh_token' => $this->getRefreshToken(),
-            ]
-        ];
+        if (empty($refreshToken)) {
+            $this->logoutPreservingTracking();
+            throw new RuntimeException('No refresh token available, the user has been logged out.');
+        }
 
         try {
+            $options = [
+                'form_params' => [
+                    'client_id' => $this->env->getString('metricool.oauth_client_id'),
+                    'grant_type' => 'refresh_token',
+                    'refresh_token' => $this->getRefreshToken(),
+                ],
+                'timeout' => self::REFRESH_TIMEOUT_SECONDS,
+            ];
+
             $response = $this->client->send(
-                new Request('POST', $this->env->getString('metricool.oauth_token_url'), $headers),
+                new Request('POST', $this->env->getString('metricool.oauth_token_url'), [
+                    'Accept' => 'application/json',
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                ]),
                 $options
             );
         } catch (Throwable $e) {
-            $this->logout();
+            $this->logoutPreservingTracking();
 
             throw new ApiException(
                 'Failed to refresh authentication token. Please log in again.',
@@ -656,8 +619,8 @@ class MetricoolClient
     private function formatUrl(string $url): string
     {
         $query = http_build_query(array_filter([
-            'userId' => $this->userId,
-            'blogId' => $this->blogId,
+            'userId' => $this->getUserId(),
+            'blogId' => $this->getBlogId(),
         ]));
 
         // Dirty hack to allow for non-standard query params
@@ -673,7 +636,7 @@ class MetricoolClient
     /**
      * Validate if all prerequisites are met to use the client. We need at least
      * the user token to be set before we can make any requests.
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function validate(): void
     {
@@ -681,10 +644,6 @@ class MetricoolClient
 
         if ($this->hasAuthentication() === false) {
             $validationErrors[] = 'Authentication is required for Metricool API.';
-        }
-
-        if ($this->isConnected() === false) {
-            $validationErrors[] = 'Client is not connected to Metricool API.';
         }
 
         if (!empty($validationErrors)) {

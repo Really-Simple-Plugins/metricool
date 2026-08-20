@@ -67,8 +67,26 @@ class OnboardingService
             throw $e;
         }
 
+        if (!$this->brandCanBeConnected($brand)) {
+            throw new BrandAccessDeniedException();
+        }
+
         $this->activateTrackingHash($brand);
         $this->api->storeBlogId($blogId);
+    }
+
+    /**
+     * A brand can only be connected by its owner or by a user whose brand
+     * role includes the editBrand permission. This is the same capability
+     * the Metricool API validates when linking a site to a brand.
+     */
+    private function brandCanBeConnected(array $brand): bool
+    {
+        if (isset($brand['ownerUserId']) && (string) $brand['ownerUserId'] === $this->api->getUserId()) {
+            return true;
+        }
+
+        return isset($brand['brandRole']['actions']['editBrand']) && $brand['brandRole']['actions']['editBrand'] === true;
     }
 
     /**

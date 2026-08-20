@@ -1,16 +1,16 @@
 (function () {
     const notices = document.querySelectorAll('.rsp-metricool-admin-notice');
 
-    notices.forEach(function (noticeEl) {
-        const restUrl = noticeEl.getAttribute('data-rest-url');
-        const nonce = noticeEl.getAttribute('data-nonce');
-        const wpNonce = noticeEl.getAttribute('data-wp-nonce');
+    notices.forEach(function (notice) {
+        const restUrl = notice.getAttribute('data-rest-url');
+        const nonce = notice.getAttribute('data-nonce');
+        const wpNonce = notice.getAttribute('data-wp-nonce');
 
         if (!restUrl || !nonce || !wpNonce) {
             return;
         }
 
-        const buttons = noticeEl.querySelectorAll('[data-notice-action]');
+        const buttons = notice.querySelectorAll('[data-notice-action]');
 
         buttons.forEach(function (button) {
             button.addEventListener('click', function () {
@@ -32,7 +32,7 @@
                     }),
                 }).then(function (response) {
                     if (response.ok) {
-                        noticeEl.style.display = 'none';
+                        notice.style.display = 'none';
                     }
                 });
             });

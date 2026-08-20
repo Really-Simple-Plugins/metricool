@@ -14,7 +14,7 @@ class IsWordPressAdminRequest implements MiddlewareInterface
 {
     use HasRestAccess;
 
-    public function handle(\WP_REST_Request $request): ?\WP_REST_Response
+    public function handle(\WP_REST_Request $request, callable $next)
     {
         if (!is_admin()) {
             return $this->sendHttpErrorResponse(
@@ -24,6 +24,6 @@ class IsWordPressAdminRequest implements MiddlewareInterface
             );
         }
 
-        return null;
+        return $next($request);
     }
 }

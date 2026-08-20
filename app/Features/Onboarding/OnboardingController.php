@@ -8,8 +8,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+use Metricool\Support\Helpers\Storages\RequestStorage;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Services\DashboardService;
+use Metricool\Support\Validation\Validator;
 use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\MetricoolAccountService;
 use Metricool\Features\Onboarding\Services\OAuthService;
@@ -29,6 +31,7 @@ class OnboardingController implements FeatureInterface
     private OAuthService $oauth;
     private DashboardService $dashboard;
     private MetricoolAccountService $account;
+    private RequestStorage $request;
 
     public function __construct(
         OnboardingService $onboarding,
@@ -36,7 +39,8 @@ class OnboardingController implements FeatureInterface
         EnvironmentConfig $env,
         OAuthService $oauth,
         DashboardService $dashboard,
-        MetricoolAccountService $account
+        MetricoolAccountService $account,
+        RequestStorage $request
     ) {
         $this->onboarding = $onboarding;
         $this->accounts = $accounts;
@@ -44,11 +48,15 @@ class OnboardingController implements FeatureInterface
         $this->oauth = $oauth;
         $this->dashboard = $dashboard;
         $this->account = $account;
+        $this->request = $request;
     }
 
     public function register(): void
     {
         add_filter('metricool_rest_routes', [$this, 'addRoutes']);
+
+        // Intercept OAuth callback on the dashboard page
+        add_action('load-toplevel_page_metricool', [$this, 'oauthCallback']);
     }
 
     /**
@@ -68,12 +76,7 @@ class OnboardingController implements FeatureInterface
 
         $routes['onboarding/oauth_redirect'] = [
             'methods' => 'GET',
-            'callback' => [$this, 'oauthRedirect'],
-        ];
-
-        $routes['onboarding/oauth_callback'] = [
-            'methods' => 'GET',
-            'callback' => [$this, 'oauthCallback'],
+            'callback' => [$this, 'getOauthRedirectUrl'],
         ];
 
         return $routes;
@@ -85,24 +88,22 @@ class OnboardingController implements FeatureInterface
      */
     public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
-        $email = (string) $request->get_param('email');
-        $password = (string) $request->get_param('password');
-        $marketing = (bool) $request->get_param('marketing');
-        $terms = (bool) $request->get_param('terms');
-        $captcha = (string) $request->get_param('captcha');
-
-        // Validate fields
-        if (!is_email($email) || empty($password) || empty($captcha) || !$terms) {
-            return $this->sendHttpErrorResponse(
-                __('Validation failed.', 'metricool'),
-                [],
-                422
-            );
-        }
+        $validated = Validator::validate($request->get_params(), [
+            'email' => 'required|email',
+            'password' => 'required|string',
+            'captcha' => 'required|string',
+            'terms' => 'accepted',
+            'marketing' => 'boolean',
+        ]);
 
         // Attempt to create the account
         try {
-            $this->accounts->createAccount($captcha, $email, $password, $marketing);
+            $this->accounts->createAccount(
+                $validated['captcha'],
+                $validated['email'],
+                $validated['password'],
+                rest_sanitize_boolean($validated['marketing'] ?? false)
+            );
         } catch (CreateAccountException $e) {
             return $this->sendHttpErrorResponse($e->getMessage(), ['reason' => $e->getReason()], $e->getCode());
         }
@@ -126,7 +127,11 @@ class OnboardingController implements FeatureInterface
         try {
             $this->onboarding->finalizeOnboarding($blogId);
         } catch (BrandAccessDeniedException $e) {
-            return $this->sendHttpErrorResponse(__('Could not retrieve brand. Pick another brand, try again or contact support.', 'metricool'), [], 403);
+            return $this->sendHttpErrorResponse(
+                __('You don’t have sufficient permissions to connect this brand. Please pick another brand or sign in with a different account.', 'metricool'),
+                [],
+                403
+            );
         } catch (Throwable $e) {
             return $this->sendHttpErrorResponse(wp_kses_post(sprintf(
                 /* translators: %1$s is opening link and %2$s is closing link */
@@ -142,9 +147,8 @@ class OnboardingController implements FeatureInterface
     /**
      * Build and return the Metricool OAuth authorize URL.
      */
-    public function oauthRedirect(\WP_REST_Request $request): \WP_REST_Response
+    public function getOauthRedirectUrl(\WP_REST_Request $request): \WP_REST_Response
     {
-        // Check if authorizationUrl is a secure URL, otherwise redirect to the dashboard
         if (is_ssl() === false) {
             return $this->sendHttpErrorResponse(__('HTTPS is required to be able to authorize this website.', 'metricool'), [], 400);
         }
@@ -158,10 +162,16 @@ class OnboardingController implements FeatureInterface
      * Handle the OAuth callback from Metricool. Exchanges the authorization
      * code for tokens, authenticates the user, and redirects to the dashboard.
      */
-    public function oauthCallback(\WP_REST_Request $request): \WP_REST_Response
+    public function oauthCallback(): void
     {
-        $code = (string) $request->get_param('code');
-        $state = (string) $request->get_param('state');
+        $action = $this->request->getString('global.metricool_action');
+
+        if ($action !== OAuthService::REDIRECT_ACTION) {
+            return;
+        }
+
+        $code = $this->request->getString('global.code');
+        $state = $this->request->getString('global.state');
 
         try {
             $this->oauth->authenticateWithCode($code, $state);

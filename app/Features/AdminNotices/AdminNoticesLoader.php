@@ -12,19 +12,18 @@ class AdminNoticesLoader extends AbstractLoader
     use HasAllowlistControl;
 
     /**
-     * Feature enabled for every logged-in user
+     * @inheritDoc
      */
     public function isEnabled(): bool
     {
-        return is_user_logged_in();
+        return true;
     }
 
-
     /**
-     * @inheritDoc
+     * Feature enabled for every logged-in user with the Metricool capability
      */
     public function inScope(): bool
     {
-        return true;
+        return $this->userCanManage();
     }
 }

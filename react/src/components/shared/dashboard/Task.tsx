@@ -1,8 +1,9 @@
-import { Badge, type BadgeVariantsProps } from "@/components/shared/user-feedback/Badge.tsx";
-import { Button } from "@/components/shared/forms/Button.tsx";
-import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
-import { Icon } from "@/components/shared/user-feedback/Icon.tsx";
-import { cn } from "@/support/functions/utils.ts";
+import { Link } from "@tanstack/react-router";
+import { TaskStatusBadge } from "@/components/shared/dashboard/TaskStatusBadge";
+import { Button } from "@/components/shared/forms/Button";
+import { FlexContainer } from "@/components/shared/general/FlexContainer";
+import { Icon } from "@/components/shared/user-feedback/Icon";
+import { cn } from "@/support/functions/utils";
 
 export type TaskProps = {
     id: string,
@@ -15,8 +16,8 @@ export type TaskProps = {
     priority: number,
     action?: {
         text: string,
+        route?: string,
         link?: string,
-        login_link?: string,
         target?: string,
         modal?: {
             id: string,
@@ -41,49 +42,53 @@ const Task = ({
     badgeClass?: string,
     onDismiss?: () => void
 }) => {
-    const taskIsDismissable = type === "optional" && ["open", "urgent", "premium"].includes(status);
-    const getBadgeVariant = (): BadgeVariantsProps["variant"] => {
-        if (status === "completed") {
-            return "completed";
-        }
-        if (status === "dismissed") {
-            return "dismissed";
-        }
-        if (premium) {
-            return "premium";
-        }
-        if (special_feature) {
-            return "special-feature";
-        }
-        if (status === "hidden") {
-            return "default";
-        }
-        return status;
-    };
+    const taskIsDismissable = type === "optional" && ["open", "urgent"].includes(status);
 
     return (
         <FlexContainer direction={"row"} className={"justify-between"}>
             <FlexContainer direction={"row"} className={"items-center"}>
-                <Badge
-                    variant={getBadgeVariant()}
+                <TaskStatusBadge
+                    status={status}
+                    isPremium={premium}
+                    isSpecialFeature={special_feature}
                     className={badgeClass}
                 >
                     {label}
-                </Badge>
-                <div className={cn(
-                    "font-semibold",
-                    status === "dismissed" && "text-gray-400 line-through",
-                )}>
+                </TaskStatusBadge>
+                <div
+                    className={cn(
+                        "font-semibold",
+                        {
+                            "text-gray-400 line-through": (status === "dismissed"),
+                        }
+                    )}
+                >
                     {text}
                 </div>
             </FlexContainer>
             <FlexContainer direction={"row"} className={"items-center"}>
                 {action && (
-                    <Button variant={"link"} link={action.link ? action.link : ""}>
-                        <span className={"text-nowrap"}>
-                            {action.text}
-                        </span>
-                    </Button>
+                    action.link ? (
+                        <Button
+                            variant={"link"}
+                            size={"link"}
+                            link={action.link}
+                            target={action.target ?? "_self"}
+                        >
+                            <span className={"text-nowrap"}>
+                                {action.text}
+                            </span>
+                        </Button>
+                    ) : (
+                        <Link
+                            to={action.route}
+                            className={"text-black hover:text-wordpress-link-hover font-normal underline leading-(--text-md)"}
+                        >
+                            <span className={"text-nowrap"}>
+                                {action.text}
+                            </span>
+                        </Link>
+                    )
                 )}
                 <div className={"w-4 h-4"}>
                     {taskIsDismissable && (

@@ -33,10 +33,6 @@ class NotificationsEndpoints
      */
     public function addNotificationRoutes(array $routes): array
     {
-        if ($this->adminAccessAllowed() === false) {
-            return $routes;
-        }
-
         $routes['get_notices'] = [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'getNoticesCallback'],

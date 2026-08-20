@@ -35,10 +35,6 @@ class UserSettingsEndpoint
      */
     public function addRoutes(array $routes): array
     {
-        if ($this->adminAccessAllowed() === false) {
-            return $routes;
-        }
-
         $routeParameters = [
             'methods' => \WP_REST_Server::READABLE . ', ' . \WP_REST_Server::EDITABLE,
             'callback' => [$this, 'callback'],

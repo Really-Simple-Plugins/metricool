@@ -34,10 +34,6 @@ class TaskManagementEndpoints
      */
     public function addTaskRoutes(array $routes): array
     {
-        if ($this->adminAccessAllowed() === false) {
-            return $routes;
-        }
-
         $routes['get_tasks'] = [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'getTasksCallback'],

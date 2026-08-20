@@ -6,19 +6,22 @@ namespace Metricool\Services;
 
 class TrackingScriptService
 {
+    public const OPTION_TRACKING_HASH = 'metricool_tracking_script_hash';
+    public const OPTION_TRACKING_ACTIVE = 'metricool_tracking_script_active';
+
     /**
      * Stores the tracking hash in the database
      */
     public function storeTrackingHash(string $hash): self
     {
-        update_option('metricool_tracking_script_hash', $hash);
+        update_option(self::OPTION_TRACKING_HASH, $hash, true);
 
         return $this;
     }
 
     public function activateTrackingWidget(): self
     {
-        update_option('metricool_tracking_script_active', true);
+        update_option(self::OPTION_TRACKING_ACTIVE, true, true);
 
         return $this;
     }
@@ -28,7 +31,7 @@ class TrackingScriptService
      */
     public function isTrackingWidgetActive(): bool
     {
-        return (bool) get_option('metricool_tracking_script_active', false);
+        return (bool) get_option(self::OPTION_TRACKING_ACTIVE, false);
     }
 
     /**
@@ -36,6 +39,6 @@ class TrackingScriptService
      */
     public function getTrackingHash(): string
     {
-        return (string) get_option('metricool_tracking_script_hash', '');
+        return (string) get_option(self::OPTION_TRACKING_HASH, '');
     }
 }

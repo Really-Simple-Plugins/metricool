@@ -1,8 +1,8 @@
-import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
-import { Alert } from "@/components/shared/user-feedback/Alert.tsx";
+import { FlexContainer } from "@/components/shared/general/FlexContainer";
+import { Alert } from "@/components/shared/user-feedback/Alert";
 import { __, sprintf } from "@wordpress/i18n";
 import DOMPurify from "dompurify";
-import { Button } from "@/components/shared/forms/Button.tsx";
+import { Button } from "@/components/shared/forms/Button";
 
 type FetchingErrorFeedbackNoticeProps = {
     errorUpdateCount: number,
@@ -24,7 +24,7 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                         {errorUpdateCount <= 1 ? (
                             <Button
                                 variant={"link"}
-                                className={"text-rss-blue font-semibold"}
+                                className={"text-rss-blue font-semibold whitespace-nowrap"}
                                 onClick={() => refetch()}
                             >
                                 {__("Try again", "metricool")}
@@ -32,7 +32,7 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                         ) : (
                             <Button
                                 variant={"link"}
-                                className={"text-rss-blue font-semibold"}
+                                className="text-rss-blue font-semibold whitespace-nowrap"
                                 onClick={() => window.location.reload()}
                             >
                                 {__("Refresh page", "metricool")}
@@ -42,13 +42,11 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                 )}
             >
                 <div>
-                    {__("There was an error fetching this data.", "metricool")}
+                    {__("There was an error fetching this data.", "metricool")} 
                 </div>
                 {errorUpdateCount > 1 && (
                     <>
-                        <div>
-                            {__("Please try refreshing the page.", "metricool")}
-                        </div>
+                        {__("Please try refreshing the page.", "metricool")}
                         <div
                             dangerouslySetInnerHTML={{
                                 __html:

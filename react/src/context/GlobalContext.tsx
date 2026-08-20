@@ -118,7 +118,7 @@ const setTranslations = () => {
     METRICOOL_DATA.json_translations.forEach((translationString: string) => {
         try {
             const translations = JSON.parse(translationString);
-            const localeData = translations.locale_data?.metricool;
+            const localeData = translations.locale_data?.metricool ?? translations.locale_data?.messages;
             if (!localeData) {
                 return;
             }
@@ -129,6 +129,10 @@ const setTranslations = () => {
         }
     });
 };
+
+// Register translations at module load, before any component renders,
+// so __() calls during the initial render are already translated
+setTranslations();
 
 /**
  * The main Global Context Component
@@ -142,8 +146,6 @@ export const GlobalContextProvider = ({ children }: { children: React.ReactNode 
     );
 
     useEffect(() => {
-        setTranslations();
-
         const metricoolScriptElement = document.querySelector("script[id='metricool-main-script-js-extra']");
         if (metricoolScriptElement) {
             metricoolScriptElement.remove();

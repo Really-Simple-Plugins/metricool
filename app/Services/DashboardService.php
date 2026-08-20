@@ -24,11 +24,15 @@ class DashboardService
 
     /**
      * Returns the current state of the onboarding process
-     * [
-     *  'completed' => When the onboarding is completed, the user can start using the plugin
-     *  'authenticated' => The plugin is authenticated with the Metricool API
-     *  'blog_id_selected' => The plugin has stored the blog id and can retrieve the necessary information from the Metricool API
-     * ]
+     *
+     *     [
+     *         // the onboarding is completed, the user can start using the plugin
+     *         'completed' => true,
+     *         // the plugin is authenticated with the Metricool API
+     *         'authenticated' => true,
+     *         // submit a blog_id when false
+     *         'blog_id_selected' => true
+     *     ]
      */
     public function state(): array
     {
@@ -41,10 +45,13 @@ class DashboardService
 
     /**
      * Returns the current mode of the onboarding process
-     * [
-     *   'show_welcome_screen' => The welcome screen should be shown
-     *   'forced_login' => Force the user to log in
-     *  ]
+     *
+     *     [
+     *         // the welcome screen should be shown
+     *         'show_welcome_screen' => true,
+     *         // force the user to log in with a forced login screen
+     *         'forced_login' => true
+     *     ]
      */
     public function mode(): array
     {
@@ -83,7 +90,7 @@ class DashboardService
      */
     public function setForcedLogin(bool $forcedLogin): bool
     {
-        return update_option(self::FORCED_LOGIN_OPTION, $forcedLogin);
+        return update_option(self::FORCED_LOGIN_OPTION, $forcedLogin, false);
     }
 
     /**
@@ -118,7 +125,7 @@ class DashboardService
 
         do_action('metricool_onboarding_completed', $timestamp);
 
-        return update_option(self::ONBOARDING_COMPLETED_OPTION, $timestamp);
+        return update_option(self::ONBOARDING_COMPLETED_OPTION, $timestamp, false);
     }
 
     /**
@@ -145,6 +152,6 @@ class DashboardService
      */
     public function setShowWelcomeScreen(): void
     {
-        update_option('metricool_show_welcome_screen', true);
+        update_option('metricool_show_welcome_screen', true, false);
     }
 }

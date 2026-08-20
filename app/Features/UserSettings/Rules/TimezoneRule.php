@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Features\UserSettings\Validators;
+namespace Metricool\Features\UserSettings\Rules;
 
-use WP_REST_Request;
-use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
+use Metricool\Support\Validation\Rules\AbstractRule;
 
-class TimezoneValidator extends AbstractValidator
+class TimezoneRule extends AbstractRule
 {
     /**
-     * This validator checks if the value is 1
+     * Checks if the value is a valid timezone identifier
+     * @inheritDoc
      */
-    public function validate($value, ?WP_REST_Request $request = null): void
+    public function validate(string $field, $value, array $data): void
     {
         $validTimezones = timezone_identifiers_list();
 
         if (!in_array($value, $validTimezones)) {
-            throw new ValidatorFailedException(esc_html(
+            $this->fail(esc_html(
                 sprintf(
                     // translators: %s is the invalid timezone submitted by the user.
                     __('%s is not a valid timezone', 'metricool'),

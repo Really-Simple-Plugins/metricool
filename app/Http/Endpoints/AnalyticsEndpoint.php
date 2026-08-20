@@ -8,6 +8,7 @@ use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Services\AnalyticsService;
+use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -20,11 +21,13 @@ class AnalyticsEndpoint implements SingleEndpointInterface
 
     public AnalyticsService $service;
     public MetricoolApi $metricoolApi;
+    public DashboardService $dashboard;
 
-    public function __construct(AnalyticsService $service, MetricoolApi $metricoolApi)
+    public function __construct(AnalyticsService $service, MetricoolApi $metricoolApi, DashboardService $dashboard)
     {
         $this->service = $service;
         $this->metricoolApi = $metricoolApi;
+        $this->dashboard = $dashboard;
     }
 
     /**
@@ -36,11 +39,11 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Only enable this endpoint when onboarding is completed
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return $this->dashboard->isOnboardingCompleted();
     }
 
     /**
@@ -59,7 +62,8 @@ class AnalyticsEndpoint implements SingleEndpointInterface
      * Method will dynamically request the requested statistic. If the metric
      * is filterable and filters are provided, it will apply them before
      * retrieving the data.
-     * @example /wp-json/metricool/v1/analytics
+     *
+     *     GET /wp-json/metricool/v1/analytics?filters[start]=20250618&filters[end]=20250718&metrics[]=pageViews&metrics[]=visits
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {

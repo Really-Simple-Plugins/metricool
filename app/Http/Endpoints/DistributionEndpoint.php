@@ -10,7 +10,9 @@ use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
 use Metricool\Http\Metricool\DTOs\DistributionDTO;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Collection;
+use Metricool\Support\Validation\Validator;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
@@ -27,10 +29,12 @@ class DistributionEndpoint implements SingleEndpointInterface
     ];
 
     public MetricoolApi $metricoolApi;
+    public DashboardService $dashboard;
 
-    public function __construct(MetricoolApi $metricoolApi)
+    public function __construct(MetricoolApi $metricoolApi, DashboardService $dashboard)
     {
         $this->metricoolApi = $metricoolApi;
+        $this->dashboard = $dashboard;
     }
 
     /**
@@ -42,11 +46,11 @@ class DistributionEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Only enable this endpoint when onboarding is completed
      */
     public function enabled(): bool
     {
-        return $this->adminAccessAllowed();
+        return $this->dashboard->isOnboardingCompleted();
     }
 
     /**
@@ -65,12 +69,18 @@ class DistributionEndpoint implements SingleEndpointInterface
      * Method will dynamically request the requested statistic. If the metric
      * is filterable and filters are provided, it will apply them before
      * retrieving the data.
-     * @example /wp-json/metricool/v1/statistics/countries?filters[start]=20250618&filters[end]=20250718&filters[country]=nl
+     *
+     *     GET /wp-json/metricool/v1/distribution/countries?filters[start]=20250618&filters[end]=20250718&filters[country]=nl
      */
     public function callback(\WP_REST_Request $request): \WP_REST_Response
     {
+        $validated = Validator::validate($request->get_params(), [
+            'metric' => 'required|string|in:countries,referers',
+            'filters' => 'array',
+        ]);
+
         try {
-            $response = $this->buildResponse($request);
+            $response = $this->buildResponse($validated);
         } catch (\Exception $e) {
             return $this->sendHttpErrorResponse(__('Failed to load Analytics data', 'metricool'), $e->getMessage(), $e->getCode());
         }
@@ -85,10 +95,10 @@ class DistributionEndpoint implements SingleEndpointInterface
      *
      * @throws \Exception
      */
-    private function buildResponse(\WP_REST_Request $request): array
+    private function buildResponse(array $validated): array
     {
-        $metric = ($request->get_param('metric') ?: '');
-        $requestFilters = ($request->get_param('filters') ?: []);
+        $metric = $validated['metric'];
+        $requestFilters = $validated['filters'] ?? [];
 
         // Load the statistics
         $statistics = $this->getStatisticsForMetric($metric, $requestFilters);

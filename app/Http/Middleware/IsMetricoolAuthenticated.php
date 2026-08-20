@@ -22,7 +22,7 @@ class IsMetricoolAuthenticated implements MiddlewareInterface
         $this->client = $client;
     }
 
-    public function handle(\WP_REST_Request $request): ?\WP_REST_Response
+    public function handle(\WP_REST_Request $request, callable $next)
     {
         if (!$this->client->hasAuthentication()) {
             return $this->sendHttpErrorResponse(
@@ -32,6 +32,6 @@ class IsMetricoolAuthenticated implements MiddlewareInterface
             );
         }
 
-        return null;
+        return $next($request);
     }
 }

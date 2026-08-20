@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Support\Helpers;
 
-use Adbar\Dot;
+use Metricool\Vendor\Adbar\Dot;
 
 /**
  * Wrapper for easy access to storage data. Create a new instance with an array

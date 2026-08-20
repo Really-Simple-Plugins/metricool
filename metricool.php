@@ -10,7 +10,7 @@
  * Plugin Name: Metricool - Social media and site statistics
  * Plugin URI: https://metricool.com/
  * Description: Site metrics and social media analytics for Instagram, Facebook, YouTube, LinkedIn, X Twitter. The single best tool for Social Media Managers!
- * Version: 2.0.2
+ * Version: 2.1.0
  * Requires at least: 6.6
  * Requires PHP: 7.4
  * Author: Really Simple Plugins
@@ -25,10 +25,16 @@ if (!defined('ABSPATH')) {
 }
 
 /**
- * Load the Jetpack packages autoloader.
- * @see https://packagist.org/packages/automattic/jetpack-autoloader
+ * Load the Composer autoloader for the plugin's own classes.
  */
-require_once __DIR__ . '/vendor/autoload_packages.php';
+require_once __DIR__ . '/vendor/autoload.php';
+
+/**
+ * Load the scoped (prefixed) dependencies to prevent conflicts
+ * with other plugins bundling the same packages.
+ * @see https://packagist.org/packages/wpify/scoper
+ */
+require_once __DIR__ . '/vendor/_scoped/scoper-autoload.php';
 
 // Boot the plugin.
 $plugin = new Metricool\Bootstrap\Plugin();

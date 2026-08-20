@@ -16,7 +16,6 @@ class MetricoolUrl
      */
     public static function adminUrl(string $url): string
     {
-        // todo - fetch from settings
         $queryArgs = array_filter([
             'blogId' => get_option('metricool_blog_id', ''),
             'userId' => get_option('metricool_user_id', ''),
@@ -34,7 +33,6 @@ class MetricoolUrl
      */
     public static function createPostUrl(string $content, $mediaUrl = null): string
     {
-        // todo - fetch from settings
         $queryArgs = [
             'blogId' => get_option('metricool_blog_id', ''),
             'userId' => get_option('metricool_user_id', ''),

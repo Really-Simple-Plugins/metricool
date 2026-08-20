@@ -29,8 +29,8 @@ return new class () implements MigrationInterface
         $profileId = trim(get_option('metricool_profile_id', ''));
 
         if (!empty($profileId)) {
-            add_option('metricool_tracking_script_hash', $profileId, '', false);
-            add_option('metricool_tracking_script_active', true, '', false);
+            add_option('metricool_tracking_script_hash', $profileId, '', true);
+            add_option('metricool_tracking_script_active', true, '', true);
         }
 
         delete_option('metricool_profile_id');

@@ -1,5 +1,6 @@
 composer.phar
 /vendor/
+/tmp-*/
 logs
 *.log
 npm-debug.log*
