@@ -11,7 +11,6 @@ use Metricool\Vendor\GuzzleHttp\Psr7\Request;
 use Metricool\Services\OptionsService;
 use Metricool\Services\TrackingScriptService;
 use Metricool\Vendor\Psr\Http\Message\ResponseInterface;
-use Metricool\Vendor\GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use RuntimeException;
