@@ -15,6 +15,7 @@ import { useState } from "react";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 import { cn } from "@/support/functions/utils";
 import { useWebAnalyticsData } from "@/hooks/analytics/useWebAnalyticsData.tsx";
+import { MetricTileContainer } from "@/components/custom/dashboard/analytics/MetricTileContainer.tsx";
 
 export type PeriodFilterOption = {
     label: string,
@@ -80,12 +81,6 @@ const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activeP
 
 const AnalyticsTab = () => {
     const { metricool, dispatch, dashboardSettings, metricoolDynamicUrl } = useGlobalContext();
-
-    const numberFormatter = Intl.NumberFormat(metricool.locale, {
-        notation: "compact",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    });
 
     const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.activePeriodFilter));
     const [chartConfig, setChartConfig] = useState<ChartConfig>({
@@ -156,21 +151,25 @@ const AnalyticsTab = () => {
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
             <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
-                <FlexContainer direction={"row"} className={"w-full min-h-12.5 justify-end !gap-2"}>
-                    {analyticsData && Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
-                        <MetricTile
-                            onClick={() => toggleMetric(metricKey)}
-                            metric={numberFormatter.format(metricData.totalAmount)}
-                            trend={metricData.trend}
-                            // @ts-expect-error tsc can't verify color is a valid variant
-                            variant={chartConfig[metricKey].color}
-                            inactive={chartConfig[metricKey].hidden}
-                            disabled={metricData.totalAmount === 0}
-                        >
-                            {chartConfig[metricKey].label}
-                        </MetricTile>
-                    ))}
-                </FlexContainer>
+                {/*<FlexContainer direction={"row"} className={"w-full min-h-12.5 justify-end !gap-2"}>*/}
+                {/*    {analyticsData && Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (*/}
+                {/*        <MetricTile*/}
+                {/*            onClick={() => toggleMetric(metricKey)}*/}
+                {/*            metric={numberFormatter.format(metricData.totalAmount)}*/}
+                {/*            trend={metricData.trend}*/}
+                {/*            // @ts-expect-error tsc can't verify color is a valid variant*/}
+                {/*            variant={chartConfig[metricKey].color}*/}
+                {/*            inactive={chartConfig[metricKey].hidden}*/}
+                {/*            disabled={metricData.totalAmount === 0}*/}
+                {/*        >*/}
+                {/*            {chartConfig[metricKey].label}*/}
+                {/*        </MetricTile>*/}
+                {/*    ))}*/}
+                {/*</FlexContainer>*/}
+                {analyticsData && (<MetricTileContainer
+                    showFullAnalytics={true}
+                    metrics={analyticsData.totals}
+                />)}
                 <hr className={"-mx-2"}/>
                 <FlexContainer direction={"column"} className={"min-h-72.5 max-h-72.5"}>
                     {(isFetching || error) && (

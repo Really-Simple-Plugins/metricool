@@ -22,12 +22,15 @@ const MetricTileVariants = cva(
     }
 );
 
-type MetricTileProps = {
-    trend?: "up" | "down" | "stable",
-    metric: string | number,
-    inactive?: boolean,
-    disabled?: boolean,
-}
+export type MetricTileProps =
+    React.ComponentProps<"button"> &
+    VariantProps<typeof MetricTileVariants> &
+    {
+        trend?: "up" | "down" | "stable",
+        metric: string | number,
+        inactive?: boolean,
+        disabled?: boolean,
+    };
 
 const MetricTile = ({
     variant,
@@ -38,7 +41,7 @@ const MetricTile = ({
     inactive,
     disabled,
     onClick,
-}: React.ComponentProps<"button"> & MetricTileProps & VariantProps<typeof MetricTileVariants>) => {
+}: MetricTileProps) => {
     return (
         <Button
              className={clsx(
