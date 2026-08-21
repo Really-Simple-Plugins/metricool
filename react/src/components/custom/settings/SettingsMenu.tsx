@@ -8,9 +8,9 @@ const SettingsMenu = () => {
     const { metricoolDynamicUrl, metricool } = useGlobalContext();
 
     return (
-        <Block className={"md:sticky md:top-[3rem]"}>
+        <Block className={"md:sticky md:top-12"}>
             <BlockHeader title={__("Settings", "metricool")}/>
-            <FlexContainer direction={"column"} className={"!gap-3"}>
+            <FlexContainer direction={"column"} className={"gap-3!"}>
                 <Link to={"/settings/account"} className={"text-md text-black hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none"}>
                     {__("Account Settings", "metricool")}
                 </Link>

@@ -26,7 +26,7 @@ const AccountTile = ({
             href={link}
             target={"_blank"}
         >
-            <FlexContainer direction={"row"} className={"min-w-[25px] items-center justify-center"}>
+            <FlexContainer direction={"row"} className={"min-w-6.25 items-center justify-center"}>
                 <Icon
                     data-content
                     icon={icon}
@@ -37,7 +37,7 @@ const AccountTile = ({
                 />
             </FlexContainer>
             <FlexContainer direction={"row"} className={"justify-between items-center grow"}>
-                <FlexContainer direction={"column"} className={cn("text-sm justify-center !gap-0")}>
+                <FlexContainer direction={"column"} className={cn("text-sm justify-center gap-0!")}>
                     {isConnected ? (
                         <>
                             <span className={"text-gray-500"}>{label}</span>

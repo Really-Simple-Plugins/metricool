@@ -155,8 +155,8 @@ const AnalyticsTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 !gap-2 p-2"}>
-                <FlexContainer direction={"row"} className={"w-full min-h-12.5 justify-end !gap-2"}>
+            <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 gap-2! p-2"}>
+                <FlexContainer direction={"row"} className={"w-full min-h-12.5 justify-end gap-2!"}>
                     {analyticsData && Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
                         <MetricTile
                             onClick={() => toggleMetric(metricKey)}
@@ -201,7 +201,7 @@ const AnalyticsTab = () => {
                 </FlexContainer>
             </FlexContainer>
             <FlexContainer direction={"row"} className={"justify-between items-center"}>
-                <FlexContainer direction={"row"} className={"flex-wrap !gap-2"}>
+                <FlexContainer direction={"row"} className={"flex-wrap gap-2!"}>
                     <Select
                         disabled={isFetching}
                         defaultValue={periodFilter.option}
@@ -210,7 +210,7 @@ const AnalyticsTab = () => {
                             className: "bg-upsell size-2.5 p-0.5 text-black rounded-full"
                         } : undefined}
                         inputSize={"sm"}
-                        className={"border-neutral-200 font-semibold !text-black min-w-36 max-w-36 flex-row-reverse "}
+                        className={"border-neutral-200 font-semibold text-black! min-w-36 max-w-36 flex-row-reverse "}
                         onValueChange={(value) => {
                             const selectedPeriodFilter = Object.values(periodFilterOptions).find((option) => option.option === value);
                             setPeriodFilter((prevState) => selectedPeriodFilter ?? prevState);
@@ -232,9 +232,9 @@ const AnalyticsTab = () => {
                                     <Button
                                         variant={"link"}
                                         link={metricoolDynamicUrl.withPath("user-settings/plan")}
-                                        className={"!no-underline font-semibold hover:text-black"}
+                                        className={"no-underline! font-semibold hover:text-black"}
                                     >
-                                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                                        <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                                                     <span className={"flex size-3.5 items-center justify-center"}>
                                                         <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
                                                     </span>
@@ -258,7 +258,7 @@ const AnalyticsTab = () => {
                         size={"sm"}
                         link={metricoolDynamicUrl.withPath("evolution/reports")}
                     >
-                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                        <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                             <Icon icon={"file"}/>
                             {__("Report", "metricool")}
                         </FlexContainer>
@@ -268,7 +268,7 @@ const AnalyticsTab = () => {
                     variant={"primary-gradient-ghost"}
                     link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
-                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                         {__("View Analytics", "metricool")}
                         <Icon icon={"external-link"} className={"svg-gradient"}/>
                     </FlexContainer>

@@ -24,7 +24,7 @@ const AuthorizedLayout = ({ children }: React.ComponentProps<"div">) => {
                         variant={"black"}
                         link={metricool.metricool_help_url}
                     >
-                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                        <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                             <Icon icon={"faq"} className={"text-white"}/>
                             {__("Help Center", "metricool")}
                         </FlexContainer>
@@ -34,7 +34,7 @@ const AuthorizedLayout = ({ children }: React.ComponentProps<"div">) => {
                             variant={"primary-gradient"}
                             link={metricoolDynamicUrl.withPath("user-settings/plan")}
                         >
-                            <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                            <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                                 <Icon icon={"sparkle"} className={"text-secondary"}/>
                                 {__("Upgrade", "metricool")}
                             </FlexContainer>
@@ -43,7 +43,7 @@ const AuthorizedLayout = ({ children }: React.ComponentProps<"div">) => {
                     )
                 ]}
                 logo={(
-                    <div className={"flex min-w-[4.375rem] min-h-[4.375rem] items-center justify-center"}>
+                    <div className={"flex min-w-17.5 min-h-17.5 items-center justify-center"}>
                         <img
                             src={`${metricool.assets_url}img/mc-logo.svg`}
                             alt={__("Metricool logo", "metricool")}
