@@ -76,7 +76,10 @@ const CountriesTab = () => {
                     <DataTable
                         columns={columns}
                         data={countryData.tableData}
-                        tableSettings={{ pageSize: 3 }}
+                        tableSettings={{
+                            pageSize: 3,
+                            roundedTopCornersTableHeader: true,
+                        }}
                     />
                 </FlexContainer>
             )}

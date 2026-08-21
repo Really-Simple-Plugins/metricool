@@ -59,7 +59,10 @@ const TrafficTab = () => {
                     <DataTable
                         data={trafficData.tableData}
                         columns={columns}
-                        tableSettings={{ pageSize: 8 }}
+                        tableSettings={{
+                            pageSize: 8,
+                            roundedTopCornersTableHeader: true
+                        }}
                     />
                 </FlexContainer>
             )}
