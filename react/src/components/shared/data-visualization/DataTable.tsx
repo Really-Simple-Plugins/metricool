@@ -146,8 +146,8 @@ const DataTable = <TData, >({ data, columns, isLoading, hideNoResultsRowIfDataEm
     const columnWidth = (size?: number) => size ? `${size}px` : "auto";
 
     return (
-        <div className={cn(
-            "flex flex-col gap-2",
+        <FlexContainer direction={"column"} className={cn(
+            "gap-2! grow justify-between",
             {
                 "opacity-45": isLoading,
             }
@@ -246,7 +246,7 @@ const DataTable = <TData, >({ data, columns, isLoading, hideNoResultsRowIfDataEm
                     isPreviousDisabled={!table.getCanPreviousPage()}
                 />
             )}
-        </div>
+        </FlexContainer>
     );
 };
 

@@ -55,7 +55,7 @@ const TrafficTab = () => {
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
                 />
             ) : (
-                <FlexContainer direction={"column"}>
+                <FlexContainer direction={"column"} className={"grow"}>
                     <DataTable
                         data={trafficData.tableData}
                         columns={columns}
