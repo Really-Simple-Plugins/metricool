@@ -12,7 +12,7 @@ const SignInStep = () => {
 
     return (
         <FlexContainer direction={"column"} className={"md:mx-8 mt-8 w-full"}>
-            <DialogHeader className={"!gap-8 justify-center items-center"}>
+            <DialogHeader className={"gap-8! justify-center items-center"}>
                 <img src={`${metricool.assets_url}img/logo.svg`} className={"h-11 w-auto"} alt={__("Metricool logo", "metricool")}/>
                 <FlexContainer direction={"column"} className={"justify-center items-center"}>
                     <DialogTitle className={"font-nunito font-bold m-0 text-2xl leading-6"}>
@@ -31,7 +31,7 @@ const SignInStep = () => {
                     onClick={() => getRedirectUrl()}
                     disabled={isPending}
                 >
-                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                         {__("Sign in on Metricool", "metricool")}
                         <Icon icon={isPending ? "loading" : "external-link"}/>
                     </FlexContainer>

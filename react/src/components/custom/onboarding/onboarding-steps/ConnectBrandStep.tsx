@@ -86,8 +86,8 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
     };
 
     return (
-        <FlexContainer direction={"column"} className={"justify-center !gap-6 items-center"}>
-            <FlexContainer direction={"column"} className={"w-full !gap-2"}>
+        <FlexContainer direction={"column"} className={"justify-center gap-6! items-center"}>
+            <FlexContainer direction={"column"} className={"w-full gap-2!"}>
                 <DialogHeader className={"justify-center items-center"}>
                     <img src={`${metricool.assets_url}img/onboarding-connect-brand.svg`} alt={__("Link icon", "metricool")}/>
                     <DialogTitle className={"font-bold font-nunito m-0 text-2xl"}>
@@ -147,7 +147,7 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
                             <Select
                                 {...props}
                                 onValueChange={props.onChange}
-                                className={"border-neutral-200 font-semibold !text-black"}
+                                className={"border-neutral-200 font-semibold text-black!"}
                                 placeholder={__("Select a brand", "metricool")}
                             >
                                 {connectedBrands.map((brand) => (
@@ -175,7 +175,7 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
                         type={"submit"}
                         disabled={!dirtyFields.id}
                     >
-                        <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                        <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                             {__("Finish", "metricool")}
                             <Icon icon={"arrow-right"}/>
                         </FlexContainer>

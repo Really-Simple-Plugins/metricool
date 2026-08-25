@@ -30,7 +30,7 @@ const NotificationsSidebar = () => {
             ) : noticeData.visibleNotifications && noticeData.visibleNotifications?.length > 0 && (
                 noticeData.visibleNotifications.map((notice) => (
                     <Notification key={notice.id} title={notice.title} variant={notice.type}>
-                        <FlexContainer direction={"column"} className={"!gap-2"}>
+                        <FlexContainer direction={"column"} className={"gap-2!"}>
                             <div>{notice.text}</div>
                             {notice.action && (
                                 <div className={"p-0.5"}>

@@ -46,7 +46,7 @@ const OtherPlugins = () => {
                         supportTicketLink={metricool.trusted_urls.new_support_ticket}
                     />
                 ) : (
-                    <FlexContainer direction={"column"} className={"!gap-2"}>
+                    <FlexContainer direction={"column"} className={"gap-2!"}>
                         {Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (
                             <ListItem
                                 iconProps={{

@@ -36,10 +36,10 @@ const RealtimeTab = () => {
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
                 />
             ) : (
-                <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 !gap-2 p-2"}>
+                <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 gap-2! p-2"}>
                     <FlexContainer direction={"row"} className={"justify-between"}>
                         <div className={"text-md font-semibold"}>{__("Last 30 Minutes", "metricool")}</div>
-                        <FlexContainer direction={"row"} className={"!gap-2"}>
+                        <FlexContainer direction={"row"} className={"gap-2!"}>
                             <MetricTile metric={realTimeData.totals.pageViews.totalAmount} variant={"tertiary"}>
                                 {__("Page Views", "metricool")}
                             </MetricTile>
@@ -65,7 +65,7 @@ const RealtimeTab = () => {
                     variant={"primary-gradient-ghost"}
                     link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
-                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                         {__("View Analytics", "metricool")}
                         <Icon icon={"external-link"} className={"svg-gradient"}/>
                     </FlexContainer>

@@ -51,11 +51,11 @@ const MetricTile = ({
              size={"icon"}
              onClick={onClick}
         >
-            <FlexContainer direction={"row"} className={clsx("text-white text-[16px] items-center !gap-1.5 justify-center")}>
+            <FlexContainer direction={"row"} className={clsx("text-white text-[16px] items-center gap-1.5! justify-center")}>
                 {metric}
                 {trend && <Icon icon={trend} className={"text-white size-3"}/>}
             </FlexContainer>
-            <FlexContainer direction={"row"} className={"w-full !gap-0 items-center justify-center text-white text-xs"}>
+            <FlexContainer direction={"row"} className={"w-full gap-0! items-center justify-center text-white text-xs"}>
                 {children}
             </FlexContainer>
         </Button>
