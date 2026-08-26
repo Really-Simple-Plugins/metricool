@@ -1,5 +1,4 @@
-import { FlexContainer } from "@/components/shared";
-import { MetricTile, type MetricTileProps } from "@/components/custom/dashboard/analytics/MetricTile";
+import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import type { MetricData } from "@/hooks/analytics/useWebAnalyticsData.tsx";
 import type { AnalyticsChartConfig } from "@/components/custom/dashboard/analytics/tabs/AnalyticsTab.tsx";
