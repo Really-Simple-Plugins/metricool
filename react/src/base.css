@@ -254,6 +254,7 @@ Base Style Guide
     --color-tiktok: #010101;
     --color-youtube: #f03;
     --color-x: #0f141a;
+    --color-whatsapp: #52BE60;
 
     /**
     ======================================
@@ -277,11 +278,25 @@ Base Style Guide
 
     /**
     ======================================
+    Shadcn Overwrites
+    ======================================
+    **/
+    --color-accent: var(--color-primary-light);
+
+    /**
+    ======================================
     Additional Breakpoints
     ======================================
     **/
     --breakpoint-2xl: clamp(300px, 100% - 20px * 2, 1600px);
     --container-8xl: 125rem;
+
+    /**
+    ======================================
+    Additional Custom Vars
+    ======================================
+    **/
+    --radius-base: 4px;
 }
 
 /**
@@ -291,7 +306,7 @@ App Root global overwrites
 **/
 
 /* Applies a WP style focus to everything within our root */
-#rsp-app-root *:focus-visible[aria-invalid="false"] {
+#rsp-app-root *:focus-visible[aria-invalid="false"][data-slot="input"] {
     box-shadow: 0 0 0 2px var(--color-wordpress-blue) !important;
     outline: 2px solid transparent !important;
 }
@@ -344,7 +359,7 @@ Special Utility Classes
         @apply w-full h-full;
         @apply absolute;
         @apply bg-transparent! text-transparent;
-        @apply rounded-xs content-['']!;
+        @apply rounded-base content-['']!;
         @apply border-2;
         background: var(--gradient-brand);
         box-sizing: content-box;
@@ -406,4 +421,15 @@ that use flexbox and would misplace a full element due to gaps etc*/
         color: red;
         font-weight: bold;
     }
+}
+
+/* Needed to render the fullscreen dialog properly no matter the browser's scroll bar.
+`--removed-body-scroll-bar-size` is set and maintained by the RemoveScroll package*/
+#rsp-app-root {
+    width: calc(100% + var(--removed-body-scroll-bar-size));
+}
+
+/* Same as above, needed for the fullscreen dialog */
+body[data-scroll-locked] {
+    margin-right: 0 !important;
 }

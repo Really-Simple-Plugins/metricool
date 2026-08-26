@@ -68,7 +68,7 @@ const TrafficTab = () => {
                     variant={"primary-gradient-ghost"}
                     link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
-                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                         {__("View Analytics", "metricool")}
                         <Icon icon={"external-link"} className={"svg-gradient"}/>
                     </FlexContainer>

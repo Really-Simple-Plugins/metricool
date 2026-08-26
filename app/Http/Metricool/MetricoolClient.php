@@ -11,7 +11,6 @@ use Metricool\Vendor\GuzzleHttp\Psr7\Request;
 use Metricool\Services\OptionsService;
 use Metricool\Services\TrackingScriptService;
 use Metricool\Vendor\Psr\Http\Message\ResponseInterface;
-use Metricool\Vendor\GuzzleHttp\Exception\GuzzleException;
 use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use RuntimeException;
@@ -377,11 +376,6 @@ class MetricoolClient
                 ], json_encode($body))
             );
         } catch (Throwable $e) {
-            if ($e instanceof GuzzleException && $e->getCode() === 401) {
-                // In case of a 401 response, Metricool API revokes the token so we should log the user out
-                $this->logoutPreservingTracking();
-            }
-
             throw new ApiException(
                 $e->getMessage(),
                 $e->getCode(),

@@ -16,7 +16,7 @@ export const DashboardLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
     return (
         <>
-            <FlexContainer direction={"column"} className={"px-4 w-full max-w-[125rem]"}>
+            <FlexContainer direction={"column"} className={"px-4 w-full max-w-8xl"}>
                 <FlexContainer direction={"column"} className={"w-full h-full justify-around xl:flex-row"}>
                     <Progress/>
                     <WebsiteAnalytics/>

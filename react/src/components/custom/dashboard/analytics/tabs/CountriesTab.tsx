@@ -54,7 +54,7 @@ const CountriesTab = () => {
     };
 
     return (
-        <FlexContainer direction={"column"} className={"justify-between grow !gap-2"}>
+        <FlexContainer direction={"column"} className={"justify-between grow gap-2!"}>
             {!countryData ? (
                 <LoadingAndErrorState
                     error={error}
@@ -64,9 +64,9 @@ const CountriesTab = () => {
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
                 />
             ) : (
-                <FlexContainer direction={"column"} className={"!gap-2"}>
+                <FlexContainer direction={"column"} className={"gap-2!"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>
-                        <div className={"min-h-[185px]"}>
+                        <div className={"min-h-46.25"}>
                             <GeoChart
                                 chartData={countryData.chartData}
                                 chartOptions={geochartOptions}
@@ -85,7 +85,7 @@ const CountriesTab = () => {
                     variant={"primary-gradient-ghost"}
                     link={metricoolDynamicUrl.withPath("evolution/web")}
                 >
-                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                         {__("View Analytics", "metricool")}
                         <Icon icon={"external-link"} className={"svg-gradient"}/>
                     </FlexContainer>
