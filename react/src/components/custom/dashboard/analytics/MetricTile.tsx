@@ -53,6 +53,7 @@ const MetricTile = ({
              variant={"unstyled"}
              size={"icon"}
              onClick={onClick}
+             disabled={disabled}
         >
             <FlexContainer direction={"row"} className={clsx("text-white text-[16px] items-center !gap-1.5 justify-center")}>
                 {metric}
