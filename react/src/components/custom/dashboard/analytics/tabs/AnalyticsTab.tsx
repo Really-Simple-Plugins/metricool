@@ -24,6 +24,12 @@ export type PeriodFilterOption = {
     xAxisInterval: number,
 }
 
+export type AnalyticsChartConfig = Omit<ChartConfig, "color"> & {
+    [x: string]: {
+        color?: "primary" | "secondary" | "tertiary" | "light-green" | "primary-dark"
+    }
+}
+
 export const periodFilterOptions: Record<string, PeriodFilterOption> = {
     lastWeek: {
         label: __("Last week", "metricool"),
@@ -83,7 +89,7 @@ const AnalyticsTab = () => {
     const { metricool, dispatch, dashboardSettings, metricoolDynamicUrl } = useGlobalContext();
 
     const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.activePeriodFilter));
-    const [chartConfig, setChartConfig] = useState<ChartConfig>({
+    const [chartConfig, setChartConfig] = useState<AnalyticsChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
             color: "tertiary",
