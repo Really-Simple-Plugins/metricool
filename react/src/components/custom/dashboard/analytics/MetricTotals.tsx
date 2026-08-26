@@ -5,7 +5,7 @@ import type { AnalyticsChartConfig } from "@/components/custom/dashboard/analyti
 
 type MetricTileContainerProps = {
     toggleMetric: (metricKey: string) => void,
-    metrics: Record<"pageViews" | "comments" | "posts" | "visits" | "visitors", MetricData & Pick<MetricTileProps, "onClick" | "hidden">>,
+    metrics: Record<"pageViews" | "comments" | "posts" | "visits" | "visitors", MetricData>,
     chartConfig: AnalyticsChartConfig,
 };
 
