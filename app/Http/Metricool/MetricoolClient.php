@@ -261,12 +261,14 @@ class MetricoolClient
      * Clear the authentication tokens and userId, but keep the tracking
      * widget active so the website does not lose data.
      */
-    public function logoutPreservingTracking(): void
+    public function logoutAfterLosingConnection(): void
     {
         $this->options->wipe(false, [
             TrackingScriptService::OPTION_TRACKING_HASH,
             TrackingScriptService::OPTION_TRACKING_ACTIVE,
         ]);
+
+        do_action('metricool_connection_lost');
     }
 
     /**
@@ -542,7 +544,7 @@ class MetricoolClient
         $refreshToken = $this->getRefreshToken();
 
         if (empty($refreshToken)) {
-            $this->logoutPreservingTracking();
+            $this->logoutAfterLosingConnection();
             throw new RuntimeException('No refresh token available, the user has been logged out.');
         }
 
@@ -564,7 +566,7 @@ class MetricoolClient
                 $options
             );
         } catch (Throwable $e) {
-            $this->logoutPreservingTracking();
+            $this->logoutAfterLosingConnection();
 
             throw new ApiException(
                 'Failed to refresh authentication token. Please log in again.',

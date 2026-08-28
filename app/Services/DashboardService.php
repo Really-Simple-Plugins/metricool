@@ -10,6 +10,7 @@ class DashboardService
 {
     public const ONBOARDING_COMPLETED_OPTION = 'metricool_onboarding_completed_at';
     public const FORCED_LOGIN_OPTION = 'metricool_force_login';
+    public const LOST_CONNECTION_OPTION = 'metricool_lost_connection';
 
     private EnvironmentConfig $env;
     private MetricoolApi $api;
@@ -51,6 +52,8 @@ class DashboardService
      *         'show_welcome_screen' => true,
      *         // force the user to log in with a forced login screen
      *         'forced_login' => true
+     *         // the lost connection modal should be shown
+     *         'lost_connection' => true
      *     ]
      */
     public function mode(): array
@@ -58,6 +61,7 @@ class DashboardService
         return [
             'show_welcome_screen' => $this->shouldShowWelcomeScreen(),
             'forced_login' => $this->isForcedLogin(),
+            'lost_connection' => $this->isLostConnection(),
         ];
     }
 
@@ -153,5 +157,30 @@ class DashboardService
     public function setShowWelcomeScreen(): void
     {
         update_option('metricool_show_welcome_screen', true, false);
+    }
+
+    /**
+     * Enable the lost connection state
+     */
+    public function enableLostConnection(): bool
+    {
+        return update_option(self::LOST_CONNECTION_OPTION, true, false);
+    }
+
+    /**
+     * Disable the lost connection state
+     */
+    public function disableLostConnection(): bool
+    {
+        return delete_option(self::LOST_CONNECTION_OPTION);
+    }
+
+    /**
+     * Check if sign in modal should be shown after the connection to
+     * Metricool was lost
+     */
+    public function isLostConnection(): bool
+    {
+        return (bool) get_option(self::LOST_CONNECTION_OPTION, false);
     }
 }
