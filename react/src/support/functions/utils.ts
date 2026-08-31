@@ -1,5 +1,6 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { setLocaleData } from "@wordpress/i18n";
 
 /**
  * Function defined by shadcn, should not be renamed.
@@ -14,7 +15,7 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Function to get the rounded ScrollProgressPercent as an integer.
- * Used in the {@link FormFooter} to set the width of the progress bar.
+ * Used in the {@link SettingsFooter} to set the width of the progress bar.
  */
 export const getScrollProgressPercent = () => {
     const totalScrollableHeightInPixels =
@@ -86,3 +87,34 @@ export const generateRecaptchaToken = async (key: string, action: string): Promi
         );
     })
 );
+
+/**
+ * Splits a comma-separated string of tags dropping any empty values.
+ * Used to render each tag as a separate badge
+ *
+ * @param tags
+ * @returns string[]
+ */
+export const parseTags = (tags?: string | null): string[] => {
+    return tags?.split(",").filter(Boolean) ?? [];
+};
+
+/**
+ * Sets the translations for the given text domain.
+ * @param jsonTranslations - the WordPress translation strings in JSON format
+ * @param textDomain - the text domain for which the translations should be set
+ */
+export const setTranslations = (jsonTranslations: string[], textDomain: string) => {
+    jsonTranslations.forEach((translationString: string) => {
+        try {
+            const localeData = JSON.parse(translationString).locale_data?.messages ?? null;
+            if (!localeData) {
+                return;
+            }
+            setLocaleData(localeData, textDomain);
+        } catch (error) {
+            console.log("Error while loading translations");
+            console.error(error);
+        }
+    });
+};

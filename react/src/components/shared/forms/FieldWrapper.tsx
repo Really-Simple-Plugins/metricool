@@ -2,17 +2,11 @@ import {
     Field as PrimitiveField,
     FieldError as PrimitiveFieldError,
     FieldLabel as PrimitiveFieldLabel,
-} from "@/components/shared/primitives/field.tsx";
+} from "@/components/shared/primitives/field";
 import { type ComponentProps, type ReactNode, useState } from "react";
-import { camelCaseToHyphenated, cn } from "@/support/functions/utils.ts";
-import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
-import {
-    type Control,
-    Controller,
-    type ControllerRenderProps,
-    type FieldValues,
-    type Path
-} from "react-hook-form";
+import { camelCaseToHyphenated, cn } from "@/support/functions/utils";
+import { FlexContainer } from "@/components/shared/general/FlexContainer";
+import { type Control, Controller, type ControllerRenderProps, type FieldValues, type Path } from "react-hook-form";
 
 type FieldErrorProps = {
     fieldState: {
@@ -34,8 +28,11 @@ const FieldError = ({ fieldState }: FieldErrorProps) => {
 
     return (
         <PrimitiveFieldError
-            className={cn("text-rsp-error-dark text-sm h-0 opacity-0 transition-all ease-in-out duration-300",
-                fieldState.invalid && "h-3 opacity-100"
+            className={cn(
+                "text-rsp-error-dark text-sm h-0 opacity-0 transition-all ease-in-out duration-300",
+                {
+                    "h-3 opacity-100": fieldState.invalid,
+                }
             )}
             errors={[errorMessage]}
         />
@@ -45,11 +42,13 @@ const FieldError = ({ fieldState }: FieldErrorProps) => {
 type FieldComponentProps = {
     "aria-invalid": boolean,
     id: string,
+    disabled?: boolean,
 } & Pick<ControllerRenderProps, "onChange" | "onBlur" | "value">;
 
 
 type FieldWrapperProps<T extends FieldValues> = {
     label: string | ReactNode,
+    hideLabel?: boolean,
     flexDirection?: "row" | "column" | "row-reverse" | "column-reverse",
     control: Control<T>,
     name: Path<T>,
@@ -67,8 +66,10 @@ const FieldWrapper = <T extends FieldValues>({
     name,
     className,
     label,
+    hideLabel,
     control,
     uniqueIdSuffix = "",
+    disabled,
     render,
 }: ComponentProps<"input"> & ComponentProps<"label"> & FieldWrapperProps<T>) => {
     const fieldId = camelCaseToHyphenated(name + uniqueIdSuffix);
@@ -79,16 +80,40 @@ const FieldWrapper = <T extends FieldValues>({
             control={control}
             render={({ field, fieldState }) => {
                 return (
-                    <PrimitiveField data-invalid={fieldState.invalid} className={cn("gap-0 transition-all ease-in-out duration-300", fieldState.invalid && "gap-2")}>
-                        <FlexContainer direction={flexDirection ?? "column"} className={cn("!gap-2", className)}>
-                            <PrimitiveFieldLabel htmlFor={fieldId} className={cn("!gap-1 font-semibold text-md text-black", required && "required-asterisk")}>
+                    <PrimitiveField
+                        data-invalid={fieldState.invalid}
+                        className={cn(
+                            "gap-0 transition-all ease-in-out duration-300 justify-center",
+                            {
+                                "gap-2": fieldState.invalid
+                            }
+                        )}
+                    >
+                        <FlexContainer
+                            direction={flexDirection ?? "column"}
+                            className={cn(
+                                "gap-2!",
+                                className
+                            )}
+                        >
+                            <PrimitiveFieldLabel
+                                htmlFor={fieldId}
+                                className={cn(
+                                    "gap-1! font-semibold text-md text-black",
+                                    {
+                                        "required-asterisk": required,
+                                        "hidden": hideLabel
+                                    }
+                                )}
+                            >
                                 {label}
                             </PrimitiveFieldLabel>
                             {render({
-                                'aria-invalid': fieldState.invalid,
-                                id:fieldId,
+                                "aria-invalid": fieldState.invalid,
+                                id: fieldId,
+                                disabled: disabled,
                                 onChange: field.onChange,
-                                onBlur:field.onBlur,
+                                onBlur: field.onBlur,
                                 value: field.value
                             })}
                         </FlexContainer>

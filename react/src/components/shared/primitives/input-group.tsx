@@ -132,15 +132,16 @@ function InputGroupText({ className, ...props }: React.ComponentProps<"span">) {
  * which doesn't support refs as props because of React v18.3.
  * ref has an underscore prefix to denote to TS that it is meant to be unused.
  */
-const InputGroupInput = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(({
+const InputGroupInput = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(function InputGroupInput({
   className,
   ...props
-}, _ref) => {
+}, _ref) {
   return (
     <Input
       data-slot="input-group-control"
+      data-read-only={props.readOnly}
       className={cn(
-        "flex-1 rounded-none !border-0 !bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent",
+        "flex-1 rounded-none border-0! bg-transparent! shadow-none focus-visible:ring-0 dark:bg-transparent",
         className
       )}
       {...props}

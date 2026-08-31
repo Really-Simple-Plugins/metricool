@@ -18,12 +18,17 @@ import {
 } from "@/components/shared/primitives/table";
 import { Icon } from "@/components/shared/user-feedback/Icon";
 import { Button } from "@/components/shared/forms/Button";
-import { useState } from "react";
-import { __, sprintf } from "@wordpress/i18n";
+import { type MouseEvent, useState } from "react";
+import { cn } from "@/support/functions/utils";
+import { Pagination } from "@/components/shared/data-visualization/Pagination";
+import { __ } from "@wordpress/i18n";
+import { FlexContainer } from "@/components/shared/general/FlexContainer";
 
 interface DataTableColumnHeaderProps<TData, TValue> {
     column: Column<TData, TValue>,
     title: string,
+    iconClasses?: string,
+    onSort?: (values: Record<string, string | number | boolean>) => void
 }
 
 /**
@@ -34,41 +39,88 @@ const DataTableColumnHeader = <TData, TValue>({
     column,
     title,
     className,
+    iconClasses,
+    onSort,
 }: DataTableColumnHeaderProps<TData, TValue> & React.ComponentProps<"div">) => {
-    if (!column.getCanSort()) {
-        return (<div className={className}>{title}</div>);
-    }
+    const isColumnSortable = column.getCanSort();
+    const columnSortDirection = column.getIsSorted();
+
+    const handleSort = (event: MouseEvent<HTMLDivElement | HTMLButtonElement>) => {
+        event.stopPropagation();
+
+        const nextOrder = column.getNextSortingOrder();
+
+        if (onSort) {
+            onSort({
+                columnName: column.id,
+                columnSort: nextOrder,
+            });
+        } else {
+            column.toggleSorting();
+        }
+    };
 
     return (
-        <div
-            className={"flex items-center justify-between font-bold h-9 "}
-            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        <FlexContainer
+            direction={"row"}
+            className={cn(
+                "items-center justify-between font-bold h-9 px-2",
+                className,
+                {
+                    "cursor-pointer": isColumnSortable
+                }
+            )}
+            {...(isColumnSortable && {
+                onClick: handleSort
+            })}
         >
             {title}
-            <Button
-                variant={"icon"}
-                size={"icon"}
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-            >
-                <Icon icon={"sort"}/>
-            </Button>
-        </div>
+            {column.getCanSort() && (
+                <Button
+                    variant={"icon"}
+                    size={"icon"}
+                    onClick={handleSort}
+                >
+                    <Icon
+                        icon={
+                            columnSortDirection === false ?
+                                "sort" :
+                                `sort-${columnSortDirection}`
+                        }
+                        className={iconClasses}
+                    />
+                </Button>
+            )}
+        </FlexContainer>
     );
 };
 
 
-interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[],
+interface DataTableProps<TData> {
+    columns: ColumnDef<TData, TData[keyof TData]>[],
     data: TData[],
-    tableSettings?: Record<string, string | number>,
+    isLoading?: boolean,
+    hideNoResultsRowIfDataEmpty?: boolean,
+    initialSorting?: SortingState,
+    tableSettings?: {
+        disableSorting?: boolean,
+        manualSorting?: boolean,
+        pageSize?: number,
+        showBorder?: boolean,
+        tableHeaderClasses?: string,
+        tableRowClasses?: string,
+        hidePagination?: boolean,
+        roundedTopCornersTableHeader?: boolean,
+        tableLayoutFixed?: boolean,
+    },
 }
 
 /**
  *
  * @version 1.0.0
  */
-const DataTable = <TData, TValue>({ data, columns, tableSettings }: DataTableProps<TData, TValue>) => {
-    const [sorting, setSorting] = useState<SortingState>([]);
+const DataTable = <TData, >({ data, columns, isLoading, hideNoResultsRowIfDataEmpty, initialSorting, tableSettings }: DataTableProps<TData>) => {
+    const [sorting, setSorting] = useState<SortingState>(initialSorting ?? []);
     const table = useReactTable({
         data,
         columns,
@@ -76,30 +128,67 @@ const DataTable = <TData, TValue>({ data, columns, tableSettings }: DataTablePro
         getPaginationRowModel: getPaginationRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
+        manualSorting: tableSettings?.manualSorting,
+        enableSorting: !tableSettings?.disableSorting,
+        defaultColumn: {
+            size: 0,
+        },
         state: {
             sorting,
         },
         initialState: {
             pagination: {
-                pageSize: tableSettings && tableSettings.pageSize ? Number(tableSettings.pageSize) : 10,
+                pageSize: tableSettings?.pageSize ?? 10,
             },
         },
     });
 
+    const columnWidth = (size?: number) => size ? `${size}px` : "auto";
+
     return (
-        <div className={"flex flex-col gap-2"}>
-            <div className={"overflow-hidden rounded-sm border border-neutral-100"}>
-                <PrimitiveTable>
-                    <PrimitiveTableHeader className={"bg-neutral-200"}>
+        <FlexContainer direction={"column"} className={cn(
+            "gap-2! grow justify-between",
+            {
+                "opacity-45": isLoading,
+            }
+        )}>
+            <div
+                className={cn(
+                    "overflow-hidden",
+                    {
+                        "rounded-sm border border-neutral-100": tableSettings?.showBorder,
+                    }
+                )}
+            >
+                <PrimitiveTable
+                    roundedTopCornersTableHeader={tableSettings?.roundedTopCornersTableHeader}
+                    className={cn(
+                        {
+                            "md:table-fixed md:w-full": tableSettings?.tableLayoutFixed
+                        }
+                    )}
+                >
+                    <PrimitiveTableHeader
+                        className={cn(
+                            "bg-neutral-200",
+                            tableSettings?.tableHeaderClasses
+                        )}
+                    >
                         {table.getHeaderGroups().map((headerGroup) => (
-                            <PrimitiveTableRow key={headerGroup.id}>
-                                {headerGroup.headers.map((header, index) => {
+                            <PrimitiveTableRow
+                                key={headerGroup.id}
+                                className={cn(
+                                    {
+                                        "pointer-events-none": tableSettings?.disableSorting || isLoading
+                                    }
+                                )}
+                            >
+                                {headerGroup.headers.map((header) => {
                                     return (
                                         <PrimitiveTableHead
                                             key={header.id}
                                             style={{
-                                                minWidth: index === 0 ? "60%" : "20%",
-                                                maxWidth: index === 0 ? "60%" : "20%",
+                                                width: columnWidth(header.column.columnDef.size)
                                             }}
                                         >
                                             {header.isPlaceholder
@@ -107,7 +196,8 @@ const DataTable = <TData, TValue>({ data, columns, tableSettings }: DataTablePro
                                                 : flexRender(
                                                     header.column.columnDef.header,
                                                     header.getContext()
-                                                )}
+                                                )
+                                            }
                                         </PrimitiveTableHead>
                                     );
                                 })}
@@ -118,24 +208,25 @@ const DataTable = <TData, TValue>({ data, columns, tableSettings }: DataTablePro
                         {table.getRowModel().rows?.length ? (
                             table.getRowModel().rows.map((row) => (
                                 <PrimitiveTableRow
-                                    className={"border-neutral-100"}
+                                    className={cn("border-neutral-100", tableSettings?.tableRowClasses)}
                                     key={row.id}
                                     data-state={row.getIsSelected() && "selected"}
                                 >
-                                    {row.getVisibleCells().map((cell, index) => (
-                                        <PrimitiveTableCell
-                                            key={cell.id}
-                                            style={{
-                                                minWidth: index === 0 ? "60%" : "20%",
-                                                maxWidth: index === 0 ? "60%" : "20%",
-                                            }}
-                                        >
-                                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                        </PrimitiveTableCell>
-                                    ))}
+                                    {row.getVisibleCells().map((cell) => (
+                                            <PrimitiveTableCell
+                                                key={cell.id}
+                                                className={"text-ellipsis overflow-hidden"}
+                                                style={{
+                                                    width: columnWidth(cell.column.columnDef.size),
+                                                }}
+                                            >
+                                                {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                            </PrimitiveTableCell>
+                                        )
+                                    )}
                                 </PrimitiveTableRow>
                             ))
-                        ) : (
+                        ) : !hideNoResultsRowIfDataEmpty && (
                             <PrimitiveTableRow>
                                 <PrimitiveTableCell colSpan={columns.length} className={"h-24 text-center"}>
                                     {__("No results.", "metricool")}
@@ -145,35 +236,17 @@ const DataTable = <TData, TValue>({ data, columns, tableSettings }: DataTablePro
                     </PrimitiveTableBody>
                 </PrimitiveTable>
             </div>
-            <div className={"flex items-center justify-end gap-2"}>
-                <div className={"flex items-center justify-center text-sm font-semibold"}>
-                    {sprintf(
-                        /*translators: variables are page numbers*/
-                        __("Page %1$s of %2$s", "metricool"), [String(table.getPageCount() === 0 ? 0 : table.getState().pagination.pageIndex + 1), String(table.getPageCount())]
-                    )}
-                </div>
-                <div className={"flex gap-1"}>
-                    <Button
-                        variant={"icon"}
-                        size={"icon"}
-                        className={"bg-primary-light text-primary !p-1.5"}
-                        onClick={() => table.previousPage()}
-                        disabled={!table.getCanPreviousPage()}
-                    >
-                        <Icon icon={"left"} className={"size-3"}/>
-                    </Button>
-                    <Button
-                        variant={"icon"}
-                        size={"icon"}
-                        className={"bg-primary-light text-primary !p-1.5"}
-                        onClick={() => table.nextPage()}
-                        disabled={!table.getCanNextPage()}
-                    >
-                        <Icon icon={"right"} className={"size-3"}/>
-                    </Button>
-                </div>
-            </div>
-        </div>
+            {!tableSettings?.hidePagination && (
+                <Pagination
+                    currentPage={table.getPageCount() === 0 ? 0 : table.getState().pagination.pageIndex + 1}
+                    totalPages={table.getPageCount()}
+                    onNext={() => table.nextPage()}
+                    onPrevious={() => table.previousPage()}
+                    isNextDisabled={!table.getCanNextPage()}
+                    isPreviousDisabled={!table.getCanPreviousPage()}
+                />
+            )}
+        </FlexContainer>
     );
 };
 

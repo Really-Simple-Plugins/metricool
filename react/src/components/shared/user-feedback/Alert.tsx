@@ -2,39 +2,22 @@ import { Icon } from "@/components/shared/user-feedback/Icon";
 import {
     Alert as PrimitiveAlert,
     AlertDescription as PrimitiveAlertDescription,
-    alertVariants as PrimitiveAlertVariants
 } from "@/components/shared/primitives/alert";
-import { cva, type VariantProps } from "class-variance-authority";
+import { type VariantProps } from "class-variance-authority";
 import { cn } from "@/support/functions/utils";
+import { alertVariants } from "@/support/helpers/Variants";
 
-const AlertVariantStyling = {
-    success: "bg-rsp-success-light text-rsp-success-dark *:data-[slot=alert-description]:text-rsp-success-dark",
-    warning: "bg-rsp-warning-light text-rsp-warning-dark *:data-[slot=alert-description]:text-rsp-warning-dark",
-    error: "bg-rsp-error-light text-rsp-error-dark *:data-[slot=alert-description]:text-rsp-error-dark",
-    info: "bg-rsp-info-light text-rsp-info-dark *:data-[slot=alert-description]:text-rsp-info-dark",
-};
-
-const AlertVariants = cva(
-    "gap-2! justify-between w-full rounded-md p-3 text-md text-center font-semibold leading-4",
-    {
-        variants: {
-            variant: AlertVariantStyling,
-        },
-        defaultVariants: {
-            variant: "info",
-        },
-    }
-);
-
-type AlertVariantsProps =
-    | VariantProps<typeof PrimitiveAlertVariants>
-    | VariantProps<typeof AlertVariants>;
+type AlertVariantsProps = VariantProps<typeof alertVariants>;
 
 type AlertProps = {
     action?: React.ReactNode,
 };
 
 /**
+ *
+ *
+ * Note: original variants from shadcn's {@link PrimitiveAlert} can no longer be
+ * passed to this component.
  *
  * @version 1.0.0
  */
@@ -45,13 +28,10 @@ const Alert = ({
     className,
     ...props
 }: React.ComponentProps<"div"> & AlertProps & AlertVariantsProps) => {
+
     return (
         <PrimitiveAlert
-            className={cn(
-                // @ts-expect-error tsc can't verify type narrowing on variant
-                variant ? variant in AlertVariantStyling ? AlertVariants({ variant }) : PrimitiveAlertVariants({ variant }) : "",
-                className
-            )}
+            className={cn(alertVariants({ variant, className }))}
             {...props}
         >
             <div data-slot={"alert-icon"}>

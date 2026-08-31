@@ -1,6 +1,6 @@
-import { FetchingErrorAlert } from "@/components/shared/user-feedback/FetchingErrorAlert.tsx";
-import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
-import { Icon } from "@/components/shared/user-feedback/Icon.tsx";
+import { FetchingErrorAlert } from "@/components/shared/user-feedback/FetchingErrorAlert";
+import { FlexContainer } from "@/components/shared/general/FlexContainer";
+import { Icon } from "@/components/shared/user-feedback/Icon";
 import type { UseQueryResult } from "@tanstack/react-query";
 
 type LoadingAndErrorState = Pick<UseQueryResult, "isLoading" | "error" | "errorUpdateCount" | "refetch"> & {

@@ -8,11 +8,13 @@ import { __ } from "@wordpress/i18n";
 type SignOutProps = {
     onSignOut: () => void,
     currentUserEmail: string,
+    isPending?: boolean,
 };
 
 const SignOut = ({
     onSignOut,
     currentUserEmail,
+    isPending = false,
 }: SignOutProps) => {
     return (
         <>
@@ -25,9 +27,10 @@ const SignOut = ({
                     variant={"primary"}
                     onClick={onSignOut}
                     size={"lg"}
+                    disabled={isPending}
                 >
                     {__("Log Out", "metricool")}
-                    <Icon icon={"sign-out"}/>
+                    <Icon icon={isPending ? "loading" : "sign-out"}/>
                 </Button>
             </PrimitiveButtonGroup>
         </>

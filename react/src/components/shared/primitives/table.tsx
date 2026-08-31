@@ -2,11 +2,11 @@ import * as React from "react"
 
 import { cn } from "@/support/functions/utils"
 
-function Table({ className, ...props }: React.ComponentProps<"table">) {
+function Table({ className, roundedTopCornersTableHeader, ...props }: React.ComponentProps<"table"> & { roundedTopCornersTableHeader?: boolean }) {
   return (
     <div
       data-slot="table-container"
-      className="relative w-full overflow-x-auto"
+      className={cn("relative w-full overflow-x-auto", roundedTopCornersTableHeader && "rounded-t-base")}
     >
       <table
         data-slot="table"
@@ -21,7 +21,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
       data-slot="table-header"
-      className={cn("[&_tr]:border-b", className)}
+      className={cn("group [&_tr]:border-b", className)}
       {...props}
     />
   )
@@ -55,7 +55,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
+          "not-group-data-[slot=table-header]:hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
         className
       )}
       {...props}

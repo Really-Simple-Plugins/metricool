@@ -1,8 +1,8 @@
 import * as React from "react"
 import * as AccordionPrimitive from "@radix-ui/react-accordion"
-import { Icon } from "@/components/shared/user-feedback/Icon.tsx"
+import { Icon } from "@/components/shared/user-feedback/Icon"
 
-import { cn } from "@/support/functions/utils.ts"
+import { cn } from "@/support/functions/utils"
 
 function Accordion({
   ...props
