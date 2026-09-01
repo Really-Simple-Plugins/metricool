@@ -128,7 +128,6 @@ class Plugin
      * plugin. Is hooked into plugins_loaded to make sure we only boot the
      * plugin after all other plugins are loaded. This plugin depends on the
      * providerManager to fire the metricool_plugin_providers_loaded action.
-     * @uses do_action metricool_plugin_providers_loaded
      */
     public function registerProviders(): void
     {
@@ -138,7 +137,6 @@ class Plugin
     /**
      * Register plugin features after providers are loaded. Features boot
      * their own controllers, listeners and endpoints.
-     * @uses do_action metricool_plugin_features_loaded
      */
     public function registerFeatures(): void
     {
@@ -154,7 +152,6 @@ class Plugin
     /**
      * Register Controllers. Hooked into metricool_plugin_features_loaded to
      * make sure features are available to the Controllers.
-     * @uses do_action metricool_plugin_controllers_loaded
      */
     public function registerControllers(): void
     {
@@ -171,7 +168,6 @@ class Plugin
 
     /**
      * Register plugin listeners after controllers are loaded.
-     * @uses do_action metricool_plugin_listeners_loaded
      */
     public function registerListeners(): void
     {
@@ -181,7 +177,6 @@ class Plugin
     /**
      * Register the plugins REST API endpoint instances. Hooked into
      * rest_api_init to make sure the REST API is available.
-     * @uses do_action metricool_plugin_endpoints_loaded
      */
     public function registerEndpoints(): void
     {
