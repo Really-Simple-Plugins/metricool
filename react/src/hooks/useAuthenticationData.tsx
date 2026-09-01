@@ -4,13 +4,14 @@ import { showToast } from "@/components/shared";
 import { z } from "zod";
 import { generateRecaptchaToken } from "@/support/functions/utils.ts";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
+import { __, sprintf } from "@wordpress/i18n";
 
 type AuthenticationDataProps = {
     reloadOnLogout?: boolean,
     logoutCallback?: () => void,
     signUpCallbacks?: {
         beforeSignUpCallback: () => void,
-        onSignUpSuccessCallback: (onboarding: MetricoolData["onboarding"], account: Pick<Required<MetricoolData>, "account">["account"] ) => void,
+        onSignUpSuccessCallback: (onboarding: MetricoolData["onboarding"], account: Pick<Required<MetricoolData>, "account">["account"]) => void,
         onSignUpErrorCallback: () => void,
     }
 }
@@ -28,7 +29,18 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
             signUpCallbacks?.beforeSignUpCallback();
         },
         mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
-            const token = await generateRecaptchaToken(metricool.google_recaptcha_key, "signup");
+            let token;
+            try {
+                token = await generateRecaptchaToken(metricool.google_recaptcha_key, "signup");
+            } catch (error) {
+                console.error(error);
+                throw new Error(sprintf(
+                    /* translators: %1$s is opening link and %2$s is closing link */
+                    __("Something went wrong. Please try again or %1$sleave a support message%2$s.", "metricool"),
+                    `<a href="${metricool.trusted_urls.new_support_ticket}" target="_blank">`,
+                    "</a>",
+                ));
+            }
 
             return await httpClient.setRoute("onboarding/create_account").setPayload({
                 email: formValues.credentials.email,
