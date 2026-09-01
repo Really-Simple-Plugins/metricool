@@ -13,8 +13,8 @@ interface SingleEndpointInterface
     public function registerRoute(): string;
 
     /**
-     * Arguments you can use are documented wih filter: metricool_rest_routes
-     * in method: {@see EndpointManager::getPluginRoutes}
+     * Arguments you can use are documented in:
+     * {@see \Metricool\Managers\EndpointManager::registerWordPressRestRoutes()}
      */
     public function registerArguments(): array;
 
