@@ -69,7 +69,8 @@ final class TaskManagementFeature implements FeatureInterface
     }
 
     /**
-     * @inheritDoc
+     * Currently the only actions the {@see TaskManagementListener} has to
+     * listen to are all triggered by admins. So this guard is broad enough.
      */
     public function inScope(): bool
     {
