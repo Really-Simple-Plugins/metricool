@@ -164,6 +164,13 @@ class Plugin
             Http\Endpoints\RealtimeEndpoint::class,
             Http\Endpoints\OtherPluginsEndpoints::class,
             Http\Endpoints\LogoutEndpoint::class,
+            \Metricool\Features\Onboarding\Endpoints\CreateAccountEndpoint::class,
+            \Metricool\Features\Onboarding\Endpoints\FinishOnboardingEndpoint::class,
+            \Metricool\Features\Onboarding\Endpoints\OAuthRedirectEndpoint::class,
+            \Metricool\Features\AdminNotices\Endpoints\AdminNoticesEndpoint::class,
+            \Metricool\Features\Notifications\Endpoints\NotificationsEndpoint::class,
+            \Metricool\Features\TaskManagement\Endpoints\TaskManagementEndpoints::class,
+            \Metricool\Features\UserSettings\Endpoints\UserSettingsEndpoints::class,
         ]);
     }
 }

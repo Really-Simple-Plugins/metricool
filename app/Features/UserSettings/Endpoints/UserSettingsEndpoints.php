@@ -2,18 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Features\UserSettings;
-
-if (!defined('ABSPATH')) {
-    exit;
-}
+namespace Metricool\Features\UserSettings\Endpoints;
 
 use Metricool\Features\UserSettings\Exceptions\StorageSubmitException;
 use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
+use Metricool\Features\UserSettings\UserSettingsResponse;
+use Metricool\Features\UserSettings\UserSettingsService;
+use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
-class UserSettingsEndpoint
+final class UserSettingsEndpoints implements MultiEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
@@ -25,25 +24,28 @@ class UserSettingsEndpoint
         $this->service = $service;
     }
 
-    public function register(): void
+    /**
+     * @inheritDoc
+     */
+    public function enabled(): bool
     {
-        add_filter('metricool_rest_routes', [$this, 'addRoutes']);
+        return $this->userCanManage();
     }
 
     /**
-     * Add the task routes to the REST API.
+     * @inheritDoc
      */
-    public function addRoutes(array $routes): array
+    public function registerRoutes(): array
     {
         $routeParameters = [
             'methods' => \WP_REST_Server::READABLE . ', ' . \WP_REST_Server::EDITABLE,
             'callback' => [$this, 'callback'],
         ];
 
-        $routes['user_settings'] = $routeParameters;
-        $routes['user_settings/(?P<section>[^/]+)'] = $routeParameters;
-
-        return $routes;
+        return [
+            'user_settings' => $routeParameters,
+            'user_settings/(?P<section>[^/]+)' => $routeParameters,
+        ];
     }
 
     /**

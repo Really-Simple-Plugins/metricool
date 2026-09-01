@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Features\Notifications;
+namespace Metricool\Features\Notifications\Endpoints;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
-
-use Metricool\Traits\HasRestAccess;
+use Metricool\Features\Notifications\NotificationsService;
+use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
-class NotificationsEndpoints
+final class NotificationsEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
+
+    public const ROUTE = 'get_notices';
 
     private NotificationsService $service;
 
@@ -23,26 +23,37 @@ class NotificationsEndpoints
         $this->service = $service;
     }
 
-    public function register(): void
+    /**
+     * @inheritDoc
+     */
+    public function enabled(): bool
     {
-        add_filter('metricool_rest_routes', [$this, 'addNotificationRoutes']);
+        return $this->userCanManage();
     }
 
     /**
-     * Add the Notification routes to the REST API.
+     * @inheritDoc
      */
-    public function addNotificationRoutes(array $routes): array
+    public function registerRoute(): string
     {
-        $routes['get_notices'] = [
+        return self::ROUTE;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerArguments(): array
+    {
+        return [
             'methods' => \WP_REST_Server::READABLE,
             'callback' => [$this, 'getNoticesCallback'],
         ];
-
-        return $routes;
     }
 
     /**
-     * Return current Notices as a WP_REST_Response.
+     * Return current notices as a WP_REST_Response.
+     *
+     *     GET /wp-json/metricool/v1/get_notices
      */
     public function getNoticesCallback(\WP_REST_Request $request): \WP_REST_Response
     {

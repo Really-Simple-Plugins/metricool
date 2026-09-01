@@ -25,6 +25,20 @@ class OnboardingService
     }
 
     /**
+     * Return the payload after attempting to complete onboarding.
+     */
+    public function onboardedState(): array
+    {
+        return [
+            'onboarding' => [
+                'state' => $this->dashboard->state(),
+                'mode' => $this->dashboard->mode(),
+            ],
+            'account' => $this->account->accountData(),
+        ];
+    }
+
+    /**
      * Attempt to finish the onboarding process. When the necessary information is provided or retrieved,
      * set the onboarding as completed.
      *

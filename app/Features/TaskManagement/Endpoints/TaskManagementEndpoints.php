@@ -2,17 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Features\TaskManagement;
+namespace Metricool\Features\TaskManagement\Endpoints;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
-
-use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Features\TaskManagement\Exceptions\DismissRequiredTaskException;
+use Metricool\Features\TaskManagement\TaskManagementService;
+use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Support\Validation\Validator;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
-class TaskManagementEndpoints
+final class TaskManagementEndpoints implements MultiEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
@@ -24,31 +23,35 @@ class TaskManagementEndpoints
         $this->service = $service;
     }
 
-    public function register(): void
+    /**
+     * @inheritDoc
+     */
+    public function enabled(): bool
     {
-        add_filter('metricool_rest_routes', [$this, 'addTaskRoutes']);
+        return $this->userCanManage();
     }
 
     /**
-     * Add the task routes to the REST API.
+     * @inheritDoc
      */
-    public function addTaskRoutes(array $routes): array
+    public function registerRoutes(): array
     {
-        $routes['get_tasks'] = [
-            'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'getTasksCallback'],
+        return [
+            'get_tasks' => [
+                'methods' => \WP_REST_Server::READABLE,
+                'callback' => [$this, 'getTasksCallback'],
+            ],
+            'dismiss_task' => [
+                'methods' => \WP_REST_Server::CREATABLE,
+                'callback' => [$this, 'dismissTaskCallback'],
+            ],
         ];
-
-        $routes['dismiss_task'] = [
-            'methods' => \WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'dismissTaskCallback'],
-        ];
-
-        return $routes;
     }
 
     /**
      * Return current tasks as a WP_REST_Response.
+     *
+     *     GET /wp-json/metricool/v1/get_tasks
      */
     public function getTasksCallback(\WP_REST_Request $request): \WP_REST_Response
     {
@@ -63,6 +66,8 @@ class TaskManagementEndpoints
 
     /**
      * Dismiss a task by taskId.
+     *
+     *     POST /wp-json/metricool/v1/dismiss_task
      */
     public function dismissTaskCallback(\WP_REST_Request $request): \WP_REST_Response
     {

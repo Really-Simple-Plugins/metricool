@@ -2,20 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Features\AdminNotices;
+namespace Metricool\Features\AdminNotices\Endpoints;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
-
+use Metricool\Features\AdminNotices\AbstractAdminNotice;
+use Metricool\Features\AdminNotices\AdminNoticesRepository;
+use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Support\Helpers\Storage;
-use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Traits\HasRestAccess;
 
-class AdminNoticesEndpoints
+final class AdminNoticesEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
     use HasAllowlistControl;
+
+    public const ROUTE = '/admin-notices/(?P<notice_id>[\w-]+)';
 
     private AdminNoticesRepository $repository;
 
@@ -24,14 +25,28 @@ class AdminNoticesEndpoints
         $this->repository = $repository;
     }
 
-    public function register(): void
+    /**
+     * @inheritDoc
+     */
+    public function enabled(): bool
     {
-        add_filter('metricool_rest_routes', [$this, 'addRestRoutes']);
+        return $this->userCanManage();
     }
 
-    public function addRestRoutes(array $routes): array
+    /**
+     * @inheritDoc
+     */
+    public function registerRoute(): string
     {
-        $routes['/admin-notices/(?P<notice_id>[\w-]+)'] = [
+        return self::ROUTE;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerArguments(): array
+    {
+        return [
             'methods' => 'POST',
             'callback' => [$this, 'handleNoticeAction'],
             'args' => [
@@ -47,10 +62,13 @@ class AdminNoticesEndpoints
                 ],
             ],
         ];
-
-        return $routes;
     }
 
+    /**
+     * Handle an action for an admin notice.
+     *
+     *     POST /wp-json/metricool/v1/admin-notices/{notice_id}
+     */
     public function handleNoticeAction(\WP_REST_Request $wpRestRequest): \WP_REST_Response
     {
         $request = new Storage(
