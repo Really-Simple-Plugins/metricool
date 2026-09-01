@@ -1,10 +1,10 @@
 import {
-    Button,
     type ChartConfig,
     DisabledSelectOption,
     FlexContainer,
     Icon,
     LineChart,
+    Link,
     LoadingAndErrorState,
     Select,
     SelectOption,
@@ -229,9 +229,8 @@ const AnalyticsTab = () => {
                                 <DisabledSelectOption
                                     className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
                                 >
-                                    <Button
-                                        variant={"link"}
-                                        link={metricoolDynamicUrl.withPath("user-settings/plan")}
+                                    <Link
+                                        href={metricoolDynamicUrl.withPath("user-settings/plan")}
                                         className={"no-underline! font-semibold hover:text-black"}
                                     >
                                         <FlexContainer direction={"row"} className={"gap-2! items-center"}>
@@ -240,7 +239,7 @@ const AnalyticsTab = () => {
                                                     </span>
                                             {filterOption.label}
                                         </FlexContainer>
-                                    </Button>
+                                    </Link>
                                 </DisabledSelectOption>
                             ) : (
                                 <SelectOption
@@ -252,27 +251,27 @@ const AnalyticsTab = () => {
                             )
                         )}
                     </Select>
-                    <Button
+                    <Link
                         variant={metricool.account?.is_premium ? "black-ghost" : "upsell"}
                         className={cn(metricool.account?.is_premium && "border-neutral-200")}
                         size={"sm"}
-                        link={metricoolDynamicUrl.withPath("evolution/reports")}
+                        href={metricoolDynamicUrl.withPath("evolution/reports")}
                     >
                         <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                             <Icon icon={"file"}/>
                             {__("Report", "metricool")}
                         </FlexContainer>
-                    </Button>
+                    </Link>
                 </FlexContainer>
-                <Button
+                <Link
                     variant={"primary-gradient-ghost"}
-                    link={metricoolDynamicUrl.withPath("evolution/web")}
+                    href={metricoolDynamicUrl.withPath("evolution/web")}
                 >
                     <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                         {__("View Analytics", "metricool")}
                         <Icon icon={"external-link"} className={"svg-gradient"}/>
                     </FlexContainer>
-                </Button>
+                </Link>
             </FlexContainer>
         </FlexContainer>
     );

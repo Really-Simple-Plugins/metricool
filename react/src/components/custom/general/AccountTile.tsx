@@ -1,4 +1,4 @@
-import { Button, FlexContainer, Icon } from "@/components/shared";
+import { FlexContainer, Icon, Link } from "@/components/shared";
 import { cn } from "@/support/functions/utils.ts";
 import { type ConnectedAccount } from "@/hooks/useConnectedAccountsData.tsx";
 
@@ -51,13 +51,13 @@ const AccountTile = ({
                 </FlexContainer>
                 <FlexContainer direction={"row"}>
                     {isConnected && (
-                        <Button
+                        <Link
                             size={"icon"}
                             variant={"icon"}
-                            link={link}
+                            href={link}
                         >
                             <Icon icon={"settings"}/>
-                        </Button>
+                        </Link>
                     )}
                     {upsell && (
                         <Icon icon={"upsell"} className={"size-2.5 p-0.5 bg-upsell rounded-full text-black"}/>

@@ -1,4 +1,4 @@
-import { Block, BlockHeader, Button, FlexContainer, Icon, LoadingAndErrorState, } from "@/components/shared";
+import { Block, BlockHeader, FlexContainer, Icon, Link, LoadingAndErrorState, } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -43,16 +43,16 @@ const ConnectionsSettings = () => {
                         )}
                     </FlexContainer>
                     <FlexContainer direction={"row"} className={"justify-end"}>
-                        <Button
+                        <Link
                             variant={"primary-gradient-ghost"}
-                            link={metricoolDynamicUrl.withPath("evolution/settings/connections")}
+                            href={metricoolDynamicUrl.withPath("evolution/settings/connections")}
                         >
                             <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                                 {__("Connected Accounts", "metricool")}
                                 <Icon icon={"external-link"} className={"svg-gradient"}/>
                             </FlexContainer>
 
-                        </Button>
+                        </Link>
                     </FlexContainer>
                 </Block>
             </FlexContainer>

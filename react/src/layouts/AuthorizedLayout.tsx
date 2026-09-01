@@ -1,4 +1,4 @@
-import { Button, FlexContainer, Header, HeaderTab, Icon } from "@/components/shared";
+import { Link, FlexContainer, Header, HeaderTab, Icon } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 
@@ -9,36 +9,36 @@ const AuthorizedLayout = ({ children }: React.ComponentProps<"div">) => {
             <Header
                 className={"px-4"}
                 tabs={[
-                    (<HeaderTab link={"/"}>
+                    (<HeaderTab route={"/"}>
                         {__("Dashboard", "metricool")}
                     </HeaderTab>),
-                    (<HeaderTab link={"/settings"}>
+                    (<HeaderTab route={"/settings"}>
                         {__("Settings", "metricool")}
                     </HeaderTab>),
-                    <HeaderTab link={metricoolDynamicUrl.withPath("planner/calendar")} external={true}>
+                    <HeaderTab href={metricoolDynamicUrl.withPath("planner/calendar")}>
                         {__("Planner", "metricool")}
-                    </HeaderTab>
+                    </HeaderTab>,
                 ]}
                 actions={[
-                    (<Button
+                    (<Link
                         variant={"black"}
-                        link={metricool.metricool_help_url}
+                        href={metricool.metricool_help_url}
                     >
                         <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                             <Icon icon={"faq"} className={"text-white"}/>
                             {__("Help Center", "metricool")}
                         </FlexContainer>
-                    </Button>),
+                    </Link>),
                     (!metricool.account?.is_premium && (
-                        <Button
+                        <Link
                             variant={"primary-gradient"}
-                            link={metricoolDynamicUrl.withPath("user-settings/plan")}
+                            href={metricoolDynamicUrl.withPath("user-settings/plan")}
                         >
                             <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                                 <Icon icon={"sparkle"} className={"text-secondary"}/>
                                 {__("Upgrade", "metricool")}
                             </FlexContainer>
-                        </Button>
+                        </Link>
                         )
                     )
                 ]}

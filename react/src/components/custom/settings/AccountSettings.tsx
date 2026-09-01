@@ -1,12 +1,12 @@
 import {
     Block,
     BlockHeader,
-    Button,
     FieldWrapper,
     FlexContainer,
     FormFooter,
     Icon,
     Input,
+    Link,
     LoadingAndErrorState,
     SignOut,
     Switch
@@ -72,10 +72,13 @@ const AccountSettings = () => {
                 <Block className={"rounded-md"}>
                     <BlockHeader title={__("Account settings", "metricool")}/>
                     <SignOut onSignOut={() => logoutUser()} currentUserEmail={metricool.account?.user.mail ?? ""}/>
-                    <Button variant={"primary-ghost"} className={"font-bold"} link={metricoolDynamicUrl.withPath("user-settings/access")}>
+                    <Link
+                        variant={"primary-ghost"}
+                        href={metricoolDynamicUrl.withPath("user-settings/access")}
+                    >
                         {__("Change Password", "metricool")}
                         <Icon icon={"external-link"}/>
-                    </Button>
+                    </Link>
                 </Block>
                 <Block className={"rounded-t-md rounded-b-none"}>
                     <BlockHeader title={__("Monthly summary", "metricool")}/>

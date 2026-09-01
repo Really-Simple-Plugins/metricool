@@ -1,5 +1,4 @@
-import { Link } from "@tanstack/react-router";
-import { Block, BlockHeader, FlexContainer, ListItem } from "@/components/shared";
+import { Block, BlockHeader, FlexContainer, ListItem, Link } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { cn } from "@/support/functions/utils.ts";
@@ -11,14 +10,14 @@ const SettingsMenu = () => {
         <Block className={"md:sticky md:top-12"}>
             <BlockHeader title={__("Settings", "metricool")}/>
             <FlexContainer direction={"column"} className={"gap-3!"}>
-                <Link to={"/settings/account"} className={"text-md text-black hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none"}>
+                <Link route={"/settings/account"} className={"text-md text-black no-underline hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none max-w-fit"}>
                     {__("Account Settings", "metricool")}
                 </Link>
-                <Link to={"/settings/connections"} className={"text-md text-black hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none"}>
+                <Link route={"/settings/connections"} className={"text-md text-black no-underline hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none max-w-fit"}>
                     {__("Connections", "metricool")}
                 </Link>
                 <ListItem
-                    className={"text-md text-black cursor-pointer hover:underline"}
+                    className={"text-md text-black cursor-pointer hover:underline max-w-fit"}
                     link={metricoolDynamicUrl.withPath("affiliation/general")}
                     iconProps={{
                         icon: "inline-external-link",
@@ -28,7 +27,7 @@ const SettingsMenu = () => {
                     {__("Affiliation Program", "metricool")}
                 </ListItem>
                 <ListItem
-                    className={cn("text-md cursor-pointer hover:underline", !metricool.account?.is_premium ? "text-upsell font-semibold" : "text-black")}
+                    className={cn("text-md cursor-pointer hover:underline max-w-fit", !metricool.account?.is_premium ? "text-upsell font-semibold" : "text-black")}
                     link={metricoolDynamicUrl.withPath("user-management/users")}
                     {...(!metricool.account?.is_premium ? {
                         iconProps: {
@@ -46,7 +45,7 @@ const SettingsMenu = () => {
                     {__("User Management", "metricool")}
                 </ListItem>
                 <ListItem
-                    className={cn("text-md cursor-pointer hover:underline", !metricool.account?.is_premium ? "text-upsell font-semibold" : "text-black")}
+                    className={cn("text-md cursor-pointer hover:underline max-w-fit", !metricool.account?.is_premium ? "text-upsell font-semibold" : "text-black")}
                     link={metricoolDynamicUrl.withPath("my-tasks/open")}
                     {...(!metricool.account?.is_premium ? {
                         iconProps: {

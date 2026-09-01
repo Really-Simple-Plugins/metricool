@@ -1,6 +1,6 @@
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { Button, FlexContainer, Icon, LineChart, LoadingAndErrorState } from "@/components/shared";
+import { FlexContainer, Icon, LineChart, Link, LoadingAndErrorState } from "@/components/shared";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 import { useRealtimeAnalyticsData } from "@/hooks/analytics/useRealtimeAnalyticsData.tsx";
 
@@ -61,15 +61,15 @@ const RealtimeTab = () => {
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>
-                <Button
+                <Link
                     variant={"primary-gradient-ghost"}
-                    link={metricoolDynamicUrl.withPath("evolution/web")}
+                    href={metricoolDynamicUrl.withPath("evolution/web")}
                 >
                     <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                         {__("View Analytics", "metricool")}
                         <Icon icon={"external-link"} className={"svg-gradient"}/>
                     </FlexContainer>
-                </Button>
+                </Link>
             </FlexContainer>
         </FlexContainer>
     );
