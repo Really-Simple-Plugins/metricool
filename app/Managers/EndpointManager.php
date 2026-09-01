@@ -28,19 +28,19 @@ final class EndpointManager extends AbstractManager
     private array $defaultMiddleware;
     private array $aliases;
 
+    public function __construct(MiddlewareConfig $middleware, EnvironmentConfig $env)
+    {
+        $this->env = $env;
+        $this->aliases = $middleware->get('aliases', []);
+        $this->defaultMiddleware = $middleware->get('default_middleware', []);
+    }
+
     /**
      * @inheritDoc
      */
     protected function type(): string
     {
         return 'endpoints';
-    }
-
-    public function __construct(MiddlewareConfig $middleware, EnvironmentConfig $env)
-    {
-        $this->env = $env;
-        $this->aliases = $middleware->get('aliases', []);
-        $this->defaultMiddleware = $middleware->get('default_middleware', []);
     }
 
     /**

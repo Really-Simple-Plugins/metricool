@@ -136,8 +136,8 @@ class Plugin
     }
 
     /**
-     * Register plugin features after providers are loaded.
-     *
+     * Register plugin features after providers are loaded. Features boot
+     * their own controllers, listeners and endpoints.
      * @uses do_action metricool_plugin_features_loaded
      */
     public function registerFeatures(): void
@@ -152,8 +152,8 @@ class Plugin
     }
 
     /**
-     * Register Controllers. Hooked into metricool_plugin_features_loaded to make sure
-     * features are available to the Controllers.
+     * Register Controllers. Hooked into metricool_plugin_features_loaded to
+     * make sure features are available to the Controllers.
      * @uses do_action metricool_plugin_controllers_loaded
      */
     public function registerControllers(): void
@@ -171,7 +171,6 @@ class Plugin
 
     /**
      * Register plugin listeners after controllers are loaded.
-     *
      * @uses do_action metricool_plugin_listeners_loaded
      */
     public function registerListeners(): void

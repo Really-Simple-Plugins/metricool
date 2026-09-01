@@ -32,7 +32,8 @@ class UserSettingsService
     private array $uniqueFieldStorages = [];
 
     /**
-     * @throws \Exception
+     * @throws StorageNotFoundException When the config file is not correctly
+     * set up.
      */
     public function __construct(UserSettingsConfig $config)
     {
@@ -139,8 +140,8 @@ class UserSettingsService
      *
      * @throws StorageSubmitException when any storage submission fails - is
      * caught in {@see \Metricool\Features\UserSettings\Endpoints\UserSettingsEndpoints}
-     * and the message we return here is
-     * only shown to the user has WP_DEBUG set to true.
+     * and the message we return here is only shown to the user has WP_DEBUG set
+     * to true.
      */
     private function saveValidatedSettings(): void
     {
