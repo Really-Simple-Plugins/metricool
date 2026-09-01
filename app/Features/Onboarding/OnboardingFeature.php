@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding;
 
-use Metricool\Features\Onboarding\Endpoints\CreateAccountEndpoint;
-use Metricool\Features\Onboarding\Endpoints\FinishOnboardingEndpoint;
-use Metricool\Features\Onboarding\Endpoints\OAuthRedirectEndpoint;
-use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\FeatureInterface;
+use Metricool\Features\Onboarding\Endpoints\OAuthRedirectEndpoint;
+use Metricool\Features\Onboarding\Endpoints\CreateAccountEndpoint;
+use Metricool\Features\Onboarding\Endpoints\FinishOnboardingEndpoint;
 
 final class OnboardingFeature implements FeatureInterface
 {
@@ -36,7 +36,9 @@ final class OnboardingFeature implements FeatureInterface
      */
     public function registerControllers(array $existingControllers): array
     {
-        return array_merge($existingControllers, [OnboardingController::class]);
+        return array_merge($existingControllers, [
+            OnboardingController::class,
+        ]);
     }
 
     /**

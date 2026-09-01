@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Metricool\Features\UserSettings;
 
-use Metricool\Features\UserSettings\Endpoints\UserSettingsEndpoints;
-use Metricool\Interfaces\FeatureInterface;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\FeatureInterface;
+use Metricool\Features\UserSettings\Endpoints\UserSettingsEndpoints;
 
 final class UserSettingsFeature implements FeatureInterface
 {
@@ -25,7 +25,9 @@ final class UserSettingsFeature implements FeatureInterface
      */
     public function registerEndpoints(array $existingEndpoints): array
     {
-        return array_merge($existingEndpoints, [UserSettingsEndpoints::class]);
+        return array_merge($existingEndpoints, [
+            UserSettingsEndpoints::class,
+        ]);
     }
 
     /**

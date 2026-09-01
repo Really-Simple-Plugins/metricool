@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Metricool\Features\AdminNotices;
 
-use Metricool\Features\AdminNotices\Endpoints\AdminNoticesEndpoint;
-use Metricool\Interfaces\FeatureInterface;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\FeatureInterface;
+use Metricool\Features\AdminNotices\Endpoints\AdminNoticesEndpoint;
 
 final class AdminNoticesFeature implements FeatureInterface
 {
@@ -26,7 +26,9 @@ final class AdminNoticesFeature implements FeatureInterface
      */
     public function registerControllers(array $existingControllers): array
     {
-        return array_merge($existingControllers, [AdminNoticesController::class]);
+        return array_merge($existingControllers, [
+            AdminNoticesController::class,
+        ]);
     }
 
     /**
@@ -34,7 +36,9 @@ final class AdminNoticesFeature implements FeatureInterface
      */
     public function registerEndpoints(array $existingEndpoints): array
     {
-        return array_merge($existingEndpoints, [AdminNoticesEndpoint::class]);
+        return array_merge($existingEndpoints, [
+            AdminNoticesEndpoint::class,
+        ]);
     }
 
     /**

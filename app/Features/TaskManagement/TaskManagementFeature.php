@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Features\TaskManagement;
 
-use Metricool\Features\TaskManagement\Endpoints\TaskManagementEndpoints;
-use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\FeatureInterface;
+use Metricool\Features\TaskManagement\Endpoints\TaskManagementEndpoints;
 
 final class TaskManagementFeature implements FeatureInterface
 {
@@ -35,7 +35,9 @@ final class TaskManagementFeature implements FeatureInterface
      */
     public function registerControllers(array $existingControllers): array
     {
-        return array_merge($existingControllers, [TaskManagementController::class]);
+        return array_merge($existingControllers, [
+            TaskManagementController::class,
+        ]);
     }
 
     /**
@@ -43,7 +45,9 @@ final class TaskManagementFeature implements FeatureInterface
      */
     public function registerEndpoints(array $existingEndpoints): array
     {
-        return array_merge($existingEndpoints, [TaskManagementEndpoints::class]);
+        return array_merge($existingEndpoints, [
+            TaskManagementEndpoints::class,
+        ]);
     }
 
     /**
@@ -51,7 +55,9 @@ final class TaskManagementFeature implements FeatureInterface
      */
     public function registerListeners(array $existingListeners): array
     {
-        return array_merge($existingListeners, [TaskManagementListener::class]);
+        return array_merge($existingListeners, [
+            TaskManagementListener::class,
+        ]);
     }
 
     /**

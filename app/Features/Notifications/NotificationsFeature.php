@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Notifications;
 
-use Metricool\Features\Notifications\Endpoints\NotificationsEndpoint;
-use Metricool\Interfaces\FeatureInterface;
 use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\FeatureInterface;
+use Metricool\Features\Notifications\Endpoints\NotificationsEndpoint;
 
 final class NotificationsFeature implements FeatureInterface
 {
@@ -35,7 +35,9 @@ final class NotificationsFeature implements FeatureInterface
      */
     public function registerControllers(array $existingControllers): array
     {
-        return array_merge($existingControllers, [NotificationsController::class]);
+        return array_merge($existingControllers, [
+            NotificationsController::class,
+        ]);
     }
 
     /**
@@ -43,7 +45,9 @@ final class NotificationsFeature implements FeatureInterface
      */
     public function registerEndpoints(array $existingEndpoints): array
     {
-        return array_merge($existingEndpoints, [NotificationsEndpoint::class]);
+        return array_merge($existingEndpoints, [
+            NotificationsEndpoint::class,
+        ]);
     }
 
     /**
@@ -51,7 +55,9 @@ final class NotificationsFeature implements FeatureInterface
      */
     public function registerListeners(array $existingListeners): array
     {
-        return array_merge($existingListeners, [NotificationListener::class]);
+        return array_merge($existingListeners, [
+            NotificationListener::class,
+        ]);
     }
 
     /**
