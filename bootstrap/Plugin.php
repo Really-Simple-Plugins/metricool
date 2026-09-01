@@ -14,6 +14,7 @@ use Metricool\Managers\FeatureManager;
 use Metricool\Managers\ProviderManager;
 use Metricool\Managers\EndpointManager;
 use Metricool\Managers\ControllerManager;
+use Metricool\Managers\ListenerManager;
 
 class Plugin
 {
@@ -21,6 +22,7 @@ class Plugin
     private ProviderManager $providerManager;
     private EndpointManager $endpointManager;
     private ControllerManager $controllerManager;
+    private ListenerManager $listenerManager;
 
     /**
      * Plugin constructor
@@ -33,6 +35,7 @@ class Plugin
         $this->providerManager = $app->make(ProviderManager::class);
         $this->endpointManager = $app->make(EndpointManager::class);
         $this->controllerManager = $app->make(ControllerManager::class);
+        $this->listenerManager = $app->make(ListenerManager::class);
     }
 
     /**
@@ -47,8 +50,9 @@ class Plugin
 
         add_action('plugins_loaded', [$this, 'loadPluginTextDomain']);
         add_action('plugins_loaded', [$this, 'registerProviders']); // Provide functionality to the plugin
-        add_action('metricool_plugin_providers_loaded', [$this->featureManager, 'registerFeatures']); // Makes sure features exist when Controllers need them
-        add_action('metricool_plugin_features_loaded', [$this, 'registerControllers']); // Control the functionality of the plugin
+        add_action('metricool_plugin_providers_loaded', [$this, 'registerFeatures']);
+        add_action('metricool_plugin_features_loaded', [$this, 'registerControllers']);
+        add_action('metricool_plugin_controllers_loaded', [$this, 'registerListeners']);
         add_action('rest_api_init', [$this, 'registerEndpoints']);
         add_action('admin_init', [$this, 'fireActivationHook']);
     }
@@ -132,6 +136,22 @@ class Plugin
     }
 
     /**
+     * Register plugin features after providers are loaded.
+     *
+     * @uses do_action metricool_plugin_features_loaded
+     */
+    public function registerFeatures(): void
+    {
+        $this->featureManager->register([
+            \Metricool\Features\Onboarding\OnboardingFeature::class,
+            \Metricool\Features\TaskManagement\TaskManagementFeature::class,
+            \Metricool\Features\Notifications\NotificationsFeature::class,
+            \Metricool\Features\AdminNotices\AdminNoticesFeature::class,
+            \Metricool\Features\UserSettings\UserSettingsFeature::class,
+        ]);
+    }
+
+    /**
      * Register Controllers. Hooked into metricool_plugin_features_loaded to make sure
      * features are available to the Controllers.
      * @uses do_action metricool_plugin_controllers_loaded
@@ -150,6 +170,16 @@ class Plugin
     }
 
     /**
+     * Register plugin listeners after controllers are loaded.
+     *
+     * @uses do_action metricool_plugin_listeners_loaded
+     */
+    public function registerListeners(): void
+    {
+        $this->listenerManager->register([]);
+    }
+
+    /**
      * Register the plugins REST API endpoint instances. Hooked into
      * rest_api_init to make sure the REST API is available.
      * @uses do_action metricool_plugin_endpoints_loaded
@@ -164,13 +194,6 @@ class Plugin
             Http\Endpoints\RealtimeEndpoint::class,
             Http\Endpoints\OtherPluginsEndpoints::class,
             Http\Endpoints\LogoutEndpoint::class,
-            \Metricool\Features\Onboarding\Endpoints\CreateAccountEndpoint::class,
-            \Metricool\Features\Onboarding\Endpoints\FinishOnboardingEndpoint::class,
-            \Metricool\Features\Onboarding\Endpoints\OAuthRedirectEndpoint::class,
-            \Metricool\Features\AdminNotices\Endpoints\AdminNoticesEndpoint::class,
-            \Metricool\Features\Notifications\Endpoints\NotificationsEndpoint::class,
-            \Metricool\Features\TaskManagement\Endpoints\TaskManagementEndpoints::class,
-            \Metricool\Features\UserSettings\Endpoints\UserSettingsEndpoints::class,
         ]);
     }
 }

@@ -9,12 +9,12 @@ if (!defined('ABSPATH')) {
 }
 
 use Metricool\Support\Helpers\Storages\RequestStorage;
-use Metricool\Interfaces\FeatureInterface;
+use Metricool\Interfaces\ControllerInterface;
 use Metricool\Features\Onboarding\Services\OAuthService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Throwable;
 
-class OnboardingController implements FeatureInterface
+class OnboardingController implements ControllerInterface
 {
     private OnboardingService $onboarding;
     private EnvironmentConfig $env;

@@ -31,5 +31,4 @@ final class ProviderManager extends AbstractManager
     {
         $class->provide();
     }
-
 }

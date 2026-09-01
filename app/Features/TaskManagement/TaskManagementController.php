@@ -8,10 +8,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use Metricool\Interfaces\FeatureInterface;
+use Metricool\Interfaces\ControllerInterface;
 use Metricool\Interfaces\TaskInterface;
 
-class TaskManagementController implements FeatureInterface
+class TaskManagementController implements ControllerInterface
 {
     private TaskManagementService $service;
 

@@ -31,5 +31,4 @@ final class ControllerManager extends AbstractManager
     {
         $class->register();
     }
-
 }

@@ -8,10 +8,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use Metricool\Interfaces\FeatureInterface;
+use Metricool\Interfaces\ControllerInterface;
 use Metricool\Interfaces\NoticeInterface;
 
-class NotificationsController implements FeatureInterface
+class NotificationsController implements ControllerInterface
 {
     private NotificationsService $service;
 

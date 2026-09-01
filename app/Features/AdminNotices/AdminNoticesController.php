@@ -8,10 +8,10 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use Metricool\Interfaces\FeatureInterface;
+use Metricool\Interfaces\ControllerInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
-class AdminNoticesController implements FeatureInterface
+class AdminNoticesController implements ControllerInterface
 {
     private EnvironmentConfig $env;
     private AdminNoticesRepository $repository;

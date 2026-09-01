@@ -7,7 +7,6 @@ namespace Metricool\Features\TaskManagement\Endpoints;
 use Metricool\Features\TaskManagement\Exceptions\DismissRequiredTaskException;
 use Metricool\Features\TaskManagement\TaskManagementService;
 use Metricool\Interfaces\MultiEndpointInterface;
-use Metricool\Support\Validation\Validator;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
 
