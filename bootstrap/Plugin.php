@@ -13,8 +13,8 @@ use Metricool\Controllers;
 use Metricool\Managers\FeatureManager;
 use Metricool\Managers\ProviderManager;
 use Metricool\Managers\EndpointManager;
-use Metricool\Managers\ControllerManager;
 use Metricool\Managers\ListenerManager;
+use Metricool\Managers\ControllerManager;
 
 class Plugin
 {
@@ -49,7 +49,7 @@ class Plugin
         register_uninstall_hook($pluginBaseFile, 'Metricool\Bootstrap\Plugin::uninstall');
 
         add_action('plugins_loaded', [$this, 'loadPluginTextDomain']);
-        add_action('plugins_loaded', [$this, 'registerProviders']); // Provide functionality to the plugin
+        add_action('plugins_loaded', [$this, 'registerProviders']);
         add_action('metricool_plugin_providers_loaded', [$this, 'registerFeatures']);
         add_action('metricool_plugin_features_loaded', [$this, 'registerControllers']);
         add_action('metricool_plugin_controllers_loaded', [$this, 'registerListeners']);
