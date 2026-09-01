@@ -2,12 +2,12 @@
 
 namespace Metricool\Features\Onboarding;
 
+use Metricool\Services\DashboardService;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Services\TrackingScriptService;
+use Metricool\Services\MetricoolAccountService;
 use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
-use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Services\DashboardService;
-use Metricool\Services\MetricoolAccountService;
-use Metricool\Services\TrackingScriptService;
 
 class OnboardingService
 {
@@ -25,7 +25,7 @@ class OnboardingService
     }
 
     /**
-     * Return the payload after attempting to complete onboarding.
+     * Returns the current state of the onboarding
      */
     public function onboardedState(): array
     {
