@@ -1,26 +1,42 @@
-import { Link as RouterLink} from "@tanstack/react-router";
+import { Link, type LinkProps } from "@/components/shared/general/Link";
 import { Icon } from "@/components/shared/user-feedback/Icon";
 import { FlexContainer } from "@/components/shared/general/FlexContainer";
 import { cn } from "@/support/functions/utils";
 import { type VariantProps } from "class-variance-authority";
 import { headerVariants } from "@/support/helpers/Variants";
 
-const HeaderTab = ({ link, children, className, external = false, badge }: React.ComponentProps<"div"> & {
-    link: string,
-    external?: boolean,
+type HeaderTabProps =
+    React.ComponentProps<"div">
+    & RouteOrHref
+    & {
     badge?: {
         label: string | number,
         classes?: string,
     }
-}) => {
+};
+
+type RouteOrHref = ({
+    route: LinkProps["route"],
+    href?: never
+} | {
+    href: string,
+    route?: never
+})
+
+const HeaderTab = ({ route, href, children, className, badge }: HeaderTabProps) => {
     return (
-        <RouterLink
-            to={link}
+        <Link
+            {...(route ? {
+                route: route
+            } : {
+                href: href,
+                target: "_blank"
+            })}
+            variant={"unstyled"}
             className={cn(
                 "text-md text-black items-center flex gap-1 max-[700px]:py-5.75 focus:outline-hidden relative ease-in-out duration-200 border-b-3 border-b-transparent [&.active]:border-b-primary hover:border-b-3 hover:border-b-primary-light hover:text-black",
                 className
             )}
-            {...(external && { target: "_blank" })}
         >
             {children}
             {badge && (
@@ -28,8 +44,8 @@ const HeaderTab = ({ link, children, className, external = false, badge }: React
                     {badge.label}
                 </div>
             )}
-            {external && (<Icon icon={"inline-external-link"}/>)}
-        </RouterLink>
+            {href && (<Icon icon={"inline-external-link"}/>)}
+        </Link>
     );
 };
 

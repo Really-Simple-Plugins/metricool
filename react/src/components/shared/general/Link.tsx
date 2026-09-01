@@ -1,12 +1,28 @@
+import { Link as RouterLink, type LinkProps as TanstackRouterLinkProps } from "@tanstack/react-router";
 import type { VariantProps } from "class-variance-authority";
 import { buttonVariants, PrimaryGradientGhostVariantWrapper } from "@/support/helpers/Variants";
 import { cn } from "@/support/functions/utils";
 
-type LinkProps = Pick<React.ComponentProps<"a">, "href" | "target" | "onClick" | "className" | "children">;
+type BaseLinkProps =
+    Pick<React.ComponentProps<"a">, "href" | "target" | "onClick" | "className">
+    & {
+    route?: never,
+}
+
+type RouterLinkProps =
+    Omit<React.ComponentProps<typeof RouterLink>, "to" | "children">
+    & {
+    href?: never,
+    route: TanstackRouterLinkProps["to"],
+}
+
+export type LinkProps =
+    Pick<React.ComponentProps<"a">, "children">
+    & (BaseLinkProps | RouterLinkProps);
 
 /**
  *
- * v1.0.0
+ * @version 1.0.0
  */
 const Link = ({
     href,
@@ -15,24 +31,54 @@ const Link = ({
     className,
     children,
     variant,
-    size
+    size,
+    route,
+    ...props
 }: LinkProps & VariantProps<typeof buttonVariants>) => {
+    let classes = cn("cursor-pointer", className);
 
-    const classes = cn(
-        "h-7.5 rounded-none text-md cursor-pointer",
-        variant
-            ? cn(buttonVariants({ variant, size }))
-            : "p-0 border-none text-black hover:text-wordpress-link-hover bg-transparent hover:bg-transparent font-normal leading-4 underline h-fit!",
-        className,
-    );
+    /**
+     * This makes it impossible to specifically style a Link as the "unstyled" Button variant
+     */
+    if (!(variant === "unstyled")) {
+        classes = cn(
+            "h-7.5 rounded-none text-md cursor-pointer",
+            variant
+                ? cn(buttonVariants({ variant, size }))
+                : "p-0 border-none text-black hover:text-wordpress-link-hover bg-transparent hover:bg-transparent font-normal leading-4 underline h-fit!",
+            className,
+        );
+    }
 
+    if (!route) {
+        return (
+            <a
+                href={href}
+                target={target ?? "_blank"}
+                className={classes}
+                rel={"noopener noreferrer"}
+                onClick={onClick}
+            >
+                {variant === "primary-gradient-ghost" ?
+                    <PrimaryGradientGhostVariantWrapper>
+                        {children}
+                    </PrimaryGradientGhostVariantWrapper>
+                    : children
+                }
+            </a>
+        )
+    }
+
+    /**
+     * Tanstack Link's `href` is currently broken, using `to` instead.
+     * @see {@link https://github.com/TanStack/router/issues/4901#issuecomment-4976734641|GitHubIssue}
+     */
     return (
-        <a
-            href={href}
-            target={target}
+        <RouterLink
+            to={route ?? href}
             className={classes}
-            rel={"noopener noreferrer"}
-            onClick={onClick}
+            target={target}
+            {...props}
         >
             {variant === "primary-gradient-ghost" ?
                 <PrimaryGradientGhostVariantWrapper>
@@ -40,7 +86,7 @@ const Link = ({
                 </PrimaryGradientGhostVariantWrapper>
                 : children
             }
-        </a>
+        </RouterLink>
     );
 };
 
