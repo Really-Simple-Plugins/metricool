@@ -11,6 +11,14 @@ final class ProviderManager extends AbstractManager
     /**
      * @inheritDoc
      */
+    protected function type(): string
+    {
+        return 'providers';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function isRegistrable(object $class): bool
     {
         return $class instanceof ProviderInterface;
@@ -24,11 +32,4 @@ final class ProviderManager extends AbstractManager
         $class->provide();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function afterRegister(): void
-    {
-        do_action('metricool_providers_loaded');
-    }
 }

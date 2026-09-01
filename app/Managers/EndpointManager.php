@@ -28,6 +28,14 @@ final class EndpointManager extends AbstractManager
     private array $defaultMiddleware;
     private array $aliases;
 
+    /**
+     * @inheritDoc
+     */
+    protected function type(): string
+    {
+        return 'endpoints';
+    }
+
     public function __construct(MiddlewareConfig $middleware, EnvironmentConfig $env)
     {
         $this->env = $env;
@@ -62,10 +70,9 @@ final class EndpointManager extends AbstractManager
     /**
      * @inheritDoc
      */
-    public function afterRegister(): void
+    protected function afterRegister(): void
     {
         $this->registerWordPressRestRoutes();
-        do_action('metricool_endpoints_loaded');
     }
 
     /**

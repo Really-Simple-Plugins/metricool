@@ -47,8 +47,8 @@ class Plugin
 
         add_action('plugins_loaded', [$this, 'loadPluginTextDomain']);
         add_action('plugins_loaded', [$this, 'registerProviders']); // Provide functionality to the plugin
-        add_action('metricool_providers_loaded', [$this->featureManager, 'registerFeatures']); // Makes sure features exist when Controllers need them
-        add_action('metricool_features_loaded', [$this, 'registerControllers']); // Control the functionality of the plugin
+        add_action('metricool_plugin_providers_loaded', [$this->featureManager, 'registerFeatures']); // Makes sure features exist when Controllers need them
+        add_action('metricool_plugin_features_loaded', [$this, 'registerControllers']); // Control the functionality of the plugin
         add_action('rest_api_init', [$this, 'registerEndpoints']);
         add_action('admin_init', [$this, 'fireActivationHook']);
     }
@@ -123,8 +123,8 @@ class Plugin
      * Register Plugin providers. First step in the booting process of the
      * plugin. Is hooked into plugins_loaded to make sure we only boot the
      * plugin after all other plugins are loaded. This plugin depends on the
-     * providerManager to fire the metricool_providers_loaded action.
-     * @uses do_action metricool_providers_loaded
+     * providerManager to fire the metricool_plugin_providers_loaded action.
+     * @uses do_action metricool_plugin_providers_loaded
      */
     public function registerProviders(): void
     {
@@ -132,9 +132,9 @@ class Plugin
     }
 
     /**
-     * Register Controllers. Hooked into metricool_features_loaded to make sure
+     * Register Controllers. Hooked into metricool_plugin_features_loaded to make sure
      * features are available to the Controllers.
-     * @uses do_action metricool_controllers_loaded
+     * @uses do_action metricool_plugin_controllers_loaded
      */
     public function registerControllers(): void
     {
@@ -152,7 +152,7 @@ class Plugin
     /**
      * Register the plugins REST API endpoint instances. Hooked into
      * rest_api_init to make sure the REST API is available.
-     * @uses do_action metricool_endpoints_loaded
+     * @uses do_action metricool_plugin_endpoints_loaded
      */
     public function registerEndpoints(): void
     {

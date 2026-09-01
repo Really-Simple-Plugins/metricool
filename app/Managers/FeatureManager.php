@@ -30,6 +30,14 @@ final class FeatureManager extends AbstractManager
     /**
      * @inheritDoc
      */
+    protected function type(): string
+    {
+        return 'features';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function isRegistrable(object $class): bool
     {
         return $class instanceof FeatureInterface;
@@ -41,14 +49,6 @@ final class FeatureManager extends AbstractManager
     public function registerClass(object $class): void
     {
         $class->register();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function afterRegister(): void
-    {
-        do_action('metricool_features_loaded');
     }
 
     /**

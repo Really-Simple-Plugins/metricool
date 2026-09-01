@@ -11,6 +11,14 @@ final class ControllerManager extends AbstractManager
     /**
      * @inheritDoc
      */
+    protected function type(): string
+    {
+        return 'controllers';
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function isRegistrable(object $class): bool
     {
         return $class instanceof ControllerInterface;
@@ -24,11 +32,4 @@ final class ControllerManager extends AbstractManager
         $class->register();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function afterRegister(): void
-    {
-        do_action('metricool_controllers_loaded');
-    }
 }
