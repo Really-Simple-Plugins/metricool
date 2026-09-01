@@ -74,7 +74,11 @@ export const camelCaseToHyphenated = (string: string) => {
  * @param action
  */
 export const generateRecaptchaToken = async (key: string, action: string): Promise<string> => (
-    new Promise((resolve) => {
+    new Promise((resolve, reject) => {
+        // @ts-expect-error grecaptcha globally defined through script
+        if (typeof grecaptcha === "undefined") {
+            return reject("'grecaptcha' is not defined");
+        }
         // @ts-expect-error grecaptcha globally defined through script
         grecaptcha.enterprise.ready(
             () =>
