@@ -25,7 +25,7 @@ import { cn } from "@/support/functions/utils";
  */
 function OpacityFadeShape(props: LineDrawShapeProps) {
     const { animationElapsedTime = 1, isEntrance = false } = props;
-    const opacity = isEntrance && animationElapsedTime < 0.2 ? animationElapsedTime : 1;
+    const opacity = isEntrance ? Math.min(animationElapsedTime / 0.2, 1) : 1;
     return <LineDrawShape {...props} strokeOpacity={opacity} />;
 }
 
