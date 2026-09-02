@@ -19,7 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import DOMPurify from "dompurify";
 import { useAuthenticationData } from "@/hooks/useAuthenticationData";
-import { type Dispatch, type SetStateAction } from "react";
+import { type Dispatch, type SetStateAction, useCallback, useEffect } from "react";
 import { queryClient } from "@/main.tsx";
 import { useConnectedBrandsData } from "@/hooks/useConnectedBrandsData.tsx";
 
@@ -60,7 +60,7 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
         ...(!resetSignInSteps && { reloadOnLogout: true })
     });
 
-    const onCancel = () => {
+    const onCancel = useCallback(() => {
         logoutUser();
         // For some reason adding clear() to the onSuccess for the logout mutation
         // reloads the page, so adding it here.
@@ -68,22 +68,18 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
         if (resetSignInSteps) {
             resetSignInSteps();
         }
-    };
+    }, [logoutUser, resetSignInSteps]);
 
-    /**
-     * Because we use `dangerouslySetInnerHTML` for the `Alert` content, we
-     * cannot directly pass an `onclick` to the `<a>` tag defined in the `sprintf`.
-     * It simply has no reference to any functions defined in React code.
-     * Therefor we set an onClick on its `<div>` parent, which only calls the
-     * `logoutUser` function if the click happened while the mouse was over the
-     * `<a>` tag.
-     */
-    const logoutUserWrapper = (event: React.MouseEvent<HTMLDivElement>) => {
-        //casting to HTMLElement to keep TS happy
-        if ((event.target as HTMLElement).tagName === "A") {
-            onCancel();
+    const linkId = "metricool-link";
+
+    useEffect(() => {
+        const link = document.getElementById(linkId);
+        if (link) {
+            link.addEventListener("click", () => {
+                onCancel();
+            })
         }
-    };
+    }, [onCancel]);
 
     return (
         <FlexContainer direction={"column"} className={"justify-center gap-6! items-center"}>
@@ -102,7 +98,6 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
                     className={"text-left"}
                 >
                     <div
-                        onClick={logoutUserWrapper}
                         dangerouslySetInnerHTML={{
                             __html: DOMPurify.sanitize(
                                 sprintf(
@@ -111,7 +106,7 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
                                         "Don’t see the brand you’re looking for? %1$sGo to Metricool.com%2$s and make sure you’re logged into the correct account.",
                                         "metricool",
                                     ),
-                                    `<a class="underline" href=${metricool.trusted_urls.base_url} target="_blank" rel="noopener noreferrer">`,
+                                    `<a id="${linkId}" class="underline" href=${metricool.trusted_urls.base_url} target="_blank" rel="noopener noreferrer">`,
                                     `</a>`
                                 ), { ADD_ATTR: ["target"] }
                             )
