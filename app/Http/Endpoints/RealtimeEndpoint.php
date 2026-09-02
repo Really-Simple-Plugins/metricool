@@ -54,7 +54,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getRealtimeData'],
             'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
@@ -65,7 +65,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/realtime
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getRealtimeData(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
             $response = $this->buildResponse($request);

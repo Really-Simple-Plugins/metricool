@@ -51,7 +51,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getConnectedNetworks'],
             'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
@@ -61,7 +61,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/connected_networks
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getConnectedNetworks(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
             $response = $this->buildResponse($request);

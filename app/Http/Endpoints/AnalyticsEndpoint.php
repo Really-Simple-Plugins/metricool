@@ -53,7 +53,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getAnalytics'],
             'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
@@ -65,7 +65,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/analytics?filters[start]=20250618&filters[end]=20250718&metrics[]=pageViews&metrics[]=visits
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getAnalytics(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
             $response = $this->buildResponse($request);

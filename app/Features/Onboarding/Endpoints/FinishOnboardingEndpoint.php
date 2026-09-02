@@ -52,7 +52,7 @@ final class FinishOnboardingEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'finishOnboarding'],
         ];
     }
 
@@ -61,7 +61,7 @@ final class FinishOnboardingEndpoint implements SingleEndpointInterface
      *
      *     POST /wp-json/metricool/v1/onboarding/finish_onboarding
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function finishOnboarding(\WP_REST_Request $request): \WP_REST_Response
     {
         $blogId = (string) $request->get_param('blogId');
 

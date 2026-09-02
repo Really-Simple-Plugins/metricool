@@ -48,7 +48,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::EDITABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'updateCredentials'],
             'middleware' => ['metricool:auth'],
         ];
     }
@@ -62,7 +62,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
      *       "newPassword": "new-password"
      *     }
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function updateCredentials(\WP_REST_Request $request): \WP_REST_Response
     {
         $validated = Validator::validate($request->get_params(), [
             'password' => 'required|string',

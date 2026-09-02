@@ -39,7 +39,7 @@ final class UserSettingsEndpoints implements MultiEndpointInterface
     {
         $routeParameters = [
             'methods' => \WP_REST_Server::READABLE . ', ' . \WP_REST_Server::EDITABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'handleUserSettings'],
         ];
 
         return [
@@ -52,7 +52,7 @@ final class UserSettingsEndpoints implements MultiEndpointInterface
      * Handle the REST API request, routing to the appropriate method to the
      * correct method. Only allows GET, POST, PUT, and PATCH.
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function handleUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {
         switch ($request->get_method()) {
             case \WP_REST_Server::READABLE:

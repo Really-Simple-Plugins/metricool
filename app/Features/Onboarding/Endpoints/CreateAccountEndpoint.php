@@ -52,7 +52,7 @@ final class CreateAccountEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'createAccount'],
         ];
     }
 
@@ -61,7 +61,7 @@ final class CreateAccountEndpoint implements SingleEndpointInterface
      *
      *     POST /wp-json/metricool/v1/onboarding/create_account
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function createAccount(\WP_REST_Request $request): \WP_REST_Response
     {
         $validated = Validator::validate($request->get_params(), [
             'email' => 'required|email',

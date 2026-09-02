@@ -60,7 +60,7 @@ class DistributionEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getDistribution'],
             'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
@@ -72,7 +72,7 @@ class DistributionEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/distribution/countries?filters[start]=20250618&filters[end]=20250718&filters[country]=nl
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getDistribution(\WP_REST_Request $request): \WP_REST_Response
     {
         $validated = Validator::validate($request->get_params(), [
             'metric' => 'required|string|in:countries,referers',

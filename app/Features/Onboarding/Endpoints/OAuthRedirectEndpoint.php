@@ -47,7 +47,7 @@ final class OAuthRedirectEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getOAuthRedirectUrl'],
         ];
     }
 
@@ -56,7 +56,7 @@ final class OAuthRedirectEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/onboarding/oauth_redirect
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getOAuthRedirectUrl(\WP_REST_Request $request): \WP_REST_Response
     {
         if (is_ssl() === false) {
             return $this->sendHttpErrorResponse(__('HTTPS is required to be able to authorize this website.', 'metricool'), [], 400);

@@ -49,7 +49,7 @@ class LogoutEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::EDITABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'logout'],
             'middleware' => ['metricool:auth'],
         ];
     }
@@ -59,7 +59,7 @@ class LogoutEndpoint implements SingleEndpointInterface
      *
      *     POST /wp-json/metricool/v1/logout
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function logout(\WP_REST_Request $request): \WP_REST_Response
     {
         $this->metricoolApi->logout();
 

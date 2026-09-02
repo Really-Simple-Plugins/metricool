@@ -46,7 +46,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getConnectedBrands'],
             'middleware' => ['metricool:auth'],
         ];
     }
@@ -56,7 +56,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/connected_brands
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getConnectedBrands(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
             $response = $this->metricoolApi->brands()->all();
