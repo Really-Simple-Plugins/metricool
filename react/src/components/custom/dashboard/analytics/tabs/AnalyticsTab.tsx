@@ -190,7 +190,6 @@ const AnalyticsTab = () => {
                             chartConfig={chartConfig}
                             chartSettings={{
                                 xAxisKey: lineChartXAxisDataKey,
-                                general: { height: 290 },
                                 xAxis: { interval: xAxisInterval },
                             }}
                             maxHeightClass={"max-h-72.5"}
