@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding\Endpoints;
 
-use Metricool\Features\Onboarding\Services\OAuthService;
-use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Features\Onboarding\Services\OAuthService;
 
 final class OAuthRedirectEndpoint implements SingleEndpointInterface
 {
@@ -26,7 +26,7 @@ final class OAuthRedirectEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->userCanManage();
     }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Metricool\Features\TaskManagement\Endpoints;
 
-use Metricool\Features\TaskManagement\Exceptions\DismissRequiredTaskException;
-use Metricool\Features\TaskManagement\TaskManagementService;
-use Metricool\Interfaces\MultiEndpointInterface;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Features\TaskManagement\TaskManagementService;
+use Metricool\Features\TaskManagement\Exceptions\DismissRequiredTaskException;
 
 final class TaskManagementEndpoints implements MultiEndpointInterface
 {
@@ -25,7 +25,7 @@ final class TaskManagementEndpoints implements MultiEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->userCanManage();
     }

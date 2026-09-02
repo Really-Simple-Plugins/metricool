@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Metricool\Managers;
 
+use Throwable;
 use Metricool\Bootstrap\App;
+use Metricool\Traits\HasNonces;
+use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
 use Metricool\Exceptions\RestDataException;
 use Metricool\Interfaces\MiddlewareInterface;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Support\Helpers\Storages\MiddlewareConfig;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasNonces;
-use Metricool\Traits\HasRestAccess;
-use Throwable;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 final class EndpointManager extends AbstractManager
 {
@@ -81,7 +81,7 @@ final class EndpointManager extends AbstractManager
      */
     private function registerSingleEndpointRoute(SingleEndpointInterface $endpoint): void
     {
-        if ($endpoint->enabled() === false) {
+        if ($endpoint->isEnabled() === false) {
             return;
         }
 
@@ -94,7 +94,7 @@ final class EndpointManager extends AbstractManager
      */
     private function registerMultiEndpointRoute(MultiEndpointInterface $endpoint): void
     {
-        if ($endpoint->enabled() === false) {
+        if ($endpoint->isEnabled() === false) {
             return;
         }
 

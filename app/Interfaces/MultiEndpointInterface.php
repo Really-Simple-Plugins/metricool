@@ -25,5 +25,5 @@ interface MultiEndpointInterface
      * otherwise. Endpoint will not be registered if this method returns false:
      * {@see EndpointManager::registerEndpoints}
      */
-    public function enabled(): bool;
+    public function isEnabled(): bool;
 }

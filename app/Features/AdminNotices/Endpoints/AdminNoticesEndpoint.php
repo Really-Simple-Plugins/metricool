@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Features\AdminNotices\Endpoints;
 
-use Metricool\Features\AdminNotices\AbstractAdminNotice;
-use Metricool\Features\AdminNotices\AdminNoticesRepository;
-use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasRestAccess;
 use Metricool\Support\Helpers\Storage;
 use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Features\AdminNotices\AbstractAdminNotice;
+use Metricool\Features\AdminNotices\AdminNoticesRepository;
 
 final class AdminNoticesEndpoint implements SingleEndpointInterface
 {
@@ -28,7 +28,7 @@ final class AdminNoticesEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->userCanManage();
     }

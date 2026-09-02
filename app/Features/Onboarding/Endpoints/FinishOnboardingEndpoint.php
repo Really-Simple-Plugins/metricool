@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding\Endpoints;
 
-use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
-use Metricool\Features\Onboarding\OnboardingService;
-use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Support\Helpers\Storages\EnvironmentConfig;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
 use Throwable;
+use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Features\Onboarding\OnboardingService;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
+use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 
 final class FinishOnboardingEndpoint implements SingleEndpointInterface
 {
@@ -31,7 +31,7 @@ final class FinishOnboardingEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->userCanManage();
     }

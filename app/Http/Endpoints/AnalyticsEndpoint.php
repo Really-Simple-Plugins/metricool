@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
+use Metricool\Traits\HasRestAccess;
+use Metricool\Services\DashboardService;
+use Metricool\Services\AnalyticsService;
+use Metricool\Traits\HasAllowlistControl;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Services\AnalyticsService;
-use Metricool\Services\DashboardService;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
 
 class AnalyticsEndpoint implements SingleEndpointInterface
 {
@@ -41,7 +41,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     /**
      * Only enable this endpoint when onboarding is completed
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->dashboard->isOnboardingCompleted();
     }

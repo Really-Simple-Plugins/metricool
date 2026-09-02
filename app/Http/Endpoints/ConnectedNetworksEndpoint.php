@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Vendor\GuzzleHttp\Exception\GuzzleException;
-use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
-use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasRestAccess;
 use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Vendor\GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
 
 class ConnectedNetworksEndpoint implements SingleEndpointInterface
 {
@@ -39,7 +39,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     /**
      * Only enable this endpoint when onboarding is completed
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->dashboard->isOnboardingCompleted();
     }

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Support\Validation\Validator;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
 use Throwable;
+use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Support\Validation\Validator;
+use Metricool\Interfaces\SingleEndpointInterface;
 
 class CredentialsEndpoint implements SingleEndpointInterface
 {
@@ -36,7 +36,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return true;
     }

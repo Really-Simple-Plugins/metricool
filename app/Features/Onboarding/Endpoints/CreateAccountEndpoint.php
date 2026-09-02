@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding\Endpoints;
 
-use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
+use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Support\Validation\Validator;
+use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Features\Onboarding\OnboardingService;
 use Metricool\Features\Onboarding\Services\CreateAccountService;
-use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Support\Validation\Validator;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
 
 final class CreateAccountEndpoint implements SingleEndpointInterface
 {
@@ -31,7 +31,7 @@ final class CreateAccountEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->userCanManage();
     }

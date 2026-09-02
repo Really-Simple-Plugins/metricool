@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Metricool\Features\UserSettings\Endpoints;
 
+use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Features\UserSettings\UserSettingsService;
+use Metricool\Features\UserSettings\UserSettingsResponse;
 use Metricool\Features\UserSettings\Exceptions\StorageSubmitException;
 use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
-use Metricool\Features\UserSettings\UserSettingsResponse;
-use Metricool\Features\UserSettings\UserSettingsService;
-use Metricool\Interfaces\MultiEndpointInterface;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
 
 final class UserSettingsEndpoints implements MultiEndpointInterface
 {
@@ -27,7 +27,7 @@ final class UserSettingsEndpoints implements MultiEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->userCanManage();
     }

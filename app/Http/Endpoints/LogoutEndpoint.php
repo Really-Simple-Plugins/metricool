@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasRestAccess;
 use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Interfaces\SingleEndpointInterface;
 
 class LogoutEndpoint implements SingleEndpointInterface
 {
@@ -37,7 +37,7 @@ class LogoutEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return true;
     }

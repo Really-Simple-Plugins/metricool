@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Notifications\Endpoints;
 
-use Metricool\Features\Notifications\NotificationsService;
-use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Features\Notifications\NotificationsService;
 
 final class NotificationsEndpoint implements SingleEndpointInterface
 {
@@ -26,7 +26,7 @@ final class NotificationsEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->userCanManage();
     }
