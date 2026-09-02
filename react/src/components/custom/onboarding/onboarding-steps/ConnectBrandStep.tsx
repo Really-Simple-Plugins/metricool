@@ -75,9 +75,13 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
     useEffect(() => {
         const link = document.getElementById(linkId);
         if (link) {
-            link.addEventListener("click", () => {
+            const handleClick = () => {
                 onCancel();
-            })
+            };
+            link.addEventListener("click", handleClick);
+            return () => {
+                link.removeEventListener("click", handleClick);
+            };
         }
     }, [onCancel]);
 
