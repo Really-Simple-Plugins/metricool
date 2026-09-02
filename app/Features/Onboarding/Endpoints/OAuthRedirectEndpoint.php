@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding\Endpoints;
 
+use WP_REST_Server;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\SingleEndpointInterface;
@@ -45,7 +46,7 @@ final class OAuthRedirectEndpoint implements SingleEndpointInterface
     public function registerArguments(): array
     {
         return [
-            'methods' => 'GET',
+            'methods' => WP_REST_Server::READABLE,
             'callback' => [$this, 'callback'],
         ];
     }

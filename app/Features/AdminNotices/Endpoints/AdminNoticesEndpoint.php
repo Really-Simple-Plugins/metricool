@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Features\AdminNotices\Endpoints;
 
+use WP_REST_Server;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Support\Helpers\Storage;
 use Metricool\Traits\HasAllowlistControl;
@@ -47,7 +48,7 @@ final class AdminNoticesEndpoint implements SingleEndpointInterface
     public function registerArguments(): array
     {
         return [
-            'methods' => 'POST',
+            'methods' => WP_REST_Server::CREATABLE,
             'callback' => [$this, 'handleNoticeAction'],
             'args' => [
                 'notice_id' => [

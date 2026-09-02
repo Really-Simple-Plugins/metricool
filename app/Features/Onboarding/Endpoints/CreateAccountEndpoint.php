@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Features\Onboarding\Endpoints;
 
+use WP_REST_Server;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Support\Validation\Validator;
@@ -50,7 +51,7 @@ final class CreateAccountEndpoint implements SingleEndpointInterface
     public function registerArguments(): array
     {
         return [
-            'methods' => 'POST',
+            'methods' => WP_REST_Server::CREATABLE,
             'callback' => [$this, 'callback'],
         ];
     }

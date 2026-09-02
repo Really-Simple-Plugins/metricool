@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Metricool\Features\Onboarding\Endpoints;
 
 use Throwable;
+use WP_REST_Server;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\SingleEndpointInterface;
@@ -50,7 +51,7 @@ final class FinishOnboardingEndpoint implements SingleEndpointInterface
     public function registerArguments(): array
     {
         return [
-            'methods' => 'POST',
+            'methods' => WP_REST_Server::CREATABLE,
             'callback' => [$this, 'callback'],
         ];
     }
