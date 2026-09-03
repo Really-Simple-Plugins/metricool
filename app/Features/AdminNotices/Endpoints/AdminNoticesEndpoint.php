@@ -7,7 +7,6 @@ namespace Metricool\Features\AdminNotices\Endpoints;
 use WP_REST_Server;
 use Metricool\Traits\HasRestAccess;
 use Metricool\Support\Helpers\Storage;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Features\AdminNotices\AbstractAdminNotice;
 use Metricool\Features\AdminNotices\AdminNoticesRepository;
@@ -15,7 +14,6 @@ use Metricool\Features\AdminNotices\AdminNoticesRepository;
 final class AdminNoticesEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
-    use HasAllowlistControl;
 
     public const ROUTE = '/admin-notices/(?P<notice_id>[\w-]+)';
 
@@ -27,11 +25,13 @@ final class AdminNoticesEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Endpoint is guarded by the {@see AdminNoticesFeature}, which only
+     * registers this endpoint when the current user can manage the plugin.
+     * So this class does not need its own capability check.
      */
     public function isEnabled(): bool
     {
-        return $this->userCanManage();
+        return true;
     }
 
     /**

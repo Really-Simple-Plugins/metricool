@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Metricool\Features\UserSettings\Endpoints;
 
 use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Features\UserSettings\UserSettingsService;
 use Metricool\Features\UserSettings\UserSettingsResponse;
@@ -15,7 +14,6 @@ use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
 final class UserSettingsEndpoints implements MultiEndpointInterface
 {
     use HasRestAccess;
-    use HasAllowlistControl;
 
     private UserSettingsService $service;
 
@@ -25,11 +23,13 @@ final class UserSettingsEndpoints implements MultiEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Endpoints are guarded by the {@see UserSettingsFeature}, which only
+     * registers these endpoints when the current user can manage the plugin.
+     * So this class does not need its own capability check.
      */
     public function isEnabled(): bool
     {
-        return $this->userCanManage();
+        return true;
     }
 
     /**

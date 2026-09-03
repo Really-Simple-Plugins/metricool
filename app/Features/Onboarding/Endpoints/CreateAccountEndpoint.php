@@ -6,7 +6,6 @@ namespace Metricool\Features\Onboarding\Endpoints;
 
 use WP_REST_Server;
 use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Support\Validation\Validator;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Features\Onboarding\OnboardingService;
@@ -16,7 +15,6 @@ use Metricool\Features\Onboarding\Exceptions\CreateAccountException;
 final class CreateAccountEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
-    use HasAllowlistControl;
 
     public const ROUTE = 'onboarding/create_account';
 
@@ -30,11 +28,13 @@ final class CreateAccountEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Endpoint is guarded by the {@see OnboardingFeature}, which only registers
+     * this endpoint when the current user can manage the plugin. So this class
+     * does not need its own capability check.
      */
     public function isEnabled(): bool
     {
-        return $this->userCanManage();
+        return true;
     }
 
     /**

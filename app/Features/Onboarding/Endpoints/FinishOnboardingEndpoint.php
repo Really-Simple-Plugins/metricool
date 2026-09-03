@@ -7,7 +7,6 @@ namespace Metricool\Features\Onboarding\Endpoints;
 use Throwable;
 use WP_REST_Server;
 use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Features\Onboarding\OnboardingService;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
@@ -16,7 +15,6 @@ use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 final class FinishOnboardingEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
-    use HasAllowlistControl;
 
     public const ROUTE = 'onboarding/finish_onboarding';
 
@@ -30,11 +28,13 @@ final class FinishOnboardingEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Endpoint is guarded by the {@see OnboardingFeature}, which only registers
+     * this endpoint when the current user can manage the plugin. So this class
+     * does not need its own capability check.
      */
     public function isEnabled(): bool
     {
-        return $this->userCanManage();
+        return true;
     }
 
     /**

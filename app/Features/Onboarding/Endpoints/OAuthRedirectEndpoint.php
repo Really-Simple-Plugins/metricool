@@ -6,14 +6,12 @@ namespace Metricool\Features\Onboarding\Endpoints;
 
 use WP_REST_Server;
 use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Interfaces\SingleEndpointInterface;
 use Metricool\Features\Onboarding\Services\OAuthService;
 
 final class OAuthRedirectEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
-    use HasAllowlistControl;
 
     public const ROUTE = 'onboarding/oauth_redirect';
 
@@ -25,11 +23,13 @@ final class OAuthRedirectEndpoint implements SingleEndpointInterface
     }
 
     /**
-     * @inheritDoc
+     * Endpoint is guarded by the {@see OnboardingFeature}, which only registers
+     * this endpoint when the current user can manage the plugin. So this class
+     * does not need its own capability check.
      */
     public function isEnabled(): bool
     {
-        return $this->userCanManage();
+        return true;
     }
 
     /**
