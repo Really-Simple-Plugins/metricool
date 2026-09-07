@@ -5,7 +5,7 @@ import { queryClient } from "@/main.tsx";
 import { Button, showToast } from "@/components/shared";
 
 const pluginStatuses: Record<string, string> = {
-    installed: __("Installed", "metricool"),
+    settings: __("Go to the settings", "metricool"),
     download: __("Install", "metricool"),
     activate: __("Activate", "metricool"),
     activating: __("Activating...", "metricool"),
@@ -23,6 +23,7 @@ type OtherPlugin = {
     slug: string,
     title: string,
     upgrade_url: string,
+    settings_url: string,
     url: string,
 }
 
@@ -129,22 +130,28 @@ const useOtherPluginsData = () => {
     });
 
     const getOtherPluginAction = (plugin: OtherPlugin, pluginKey: string) => {
+        const label = pluginStatuses[plugin.action];
+
         switch (plugin.action) {
-            case "upgrade-to-premium": {
+            case "upgrade-to-premium":
+            case "settings": {
+                const link = plugin.action === "upgrade-to-premium"
+                    ? plugin.upgrade_url
+                    : plugin.settings_url;
+
                 return (
                     <Button
                         className={"text-sm"}
                         variant={"link"}
-                        link={plugin.upgrade_url}
+                        link={link}
                     >
-                        {pluginStatuses[plugin.action]}
+                        {label}
                     </Button>
                 );
             }
-            case "installed":
             case "downloading":
             case "activating": {
-                return (<span className={"text-sm font-normal"}>{pluginStatuses[plugin.action]}</span>);
+                return (<span className={"text-sm font-normal"}>{label}</span>);
             }
             default: {
                 return (
@@ -157,7 +164,7 @@ const useOtherPluginsData = () => {
                             key: pluginKey,
                         })}
                     >
-                        {pluginStatuses[plugin.action]}
+                        {label}
                     </Button>
                 );
             }
