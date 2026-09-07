@@ -70,7 +70,7 @@ const LineChart = ({
     return (
         <PrimitiveChartContainer
             config={chartConfig}
-            className={cn(className, maxHeightClass)}
+            className={cn("w-full", className, maxHeightClass)}
         >
             <RechartLineChart
                 accessibilityLayer
