@@ -16,6 +16,11 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
     use HasRestAccess;
     use HasAllowlistControl;
 
+    /**
+     * The threshold for displaying inactive plugins. If there are more than
+     * this number of inactive plugins, only those are displayed in
+     * {@see getPluginsToDisplay}
+     */
     private const INACTIVE_PLUGINS_THRESHOLD = 3;
 
     private GeneralConfig $config;
