@@ -23,8 +23,8 @@ import { cn } from "@/support/functions/utils";
  * the line is more than 0 means they don't appear until the animation starts.
  */
 function OpacityShape(props: LineDrawShapeProps) {
-    const hasLineAnimationStarted = props.visibleLength === 0;
-    return <LineDrawShape {...props} strokeOpacity={hasLineAnimationStarted ? 0 : props.strokeOpacity} />;
+    const hasLineAnimationNotStarted = props.visibleLength === 0;
+    return <LineDrawShape {...props} strokeOpacity={hasLineAnimationNotStarted ? 0 : props.strokeOpacity} />;
 }
 
 type ChartConfig = PrimitiveChartConfig & {
