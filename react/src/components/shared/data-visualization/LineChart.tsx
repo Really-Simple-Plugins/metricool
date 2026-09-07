@@ -18,15 +18,13 @@ import {
 import { cn } from "@/support/functions/utils";
 
 /**
- * Custom shape that fades in using opacity during entrance animation,
- * and renders normally otherwise.
- * Needed because the lines flash fully rendered at the start of the animation
- * before the draw animation plays. At 0 opacity they at least don't show.
+ * Custom shape. Needed because the lines flash at the start of rendering before
+ * the draw animation plays. Setting opacity to 0 until the `visibleLength` of
+ * the line is more than 0 means they don't appear until the animation starts.
  */
-function OpacityFadeShape(props: LineDrawShapeProps) {
-    const { animationElapsedTime = 1, isEntrance = false } = props;
-    const opacity = isEntrance ? Math.min(animationElapsedTime / 0.2, 1) : 1;
-    return <LineDrawShape {...props} strokeOpacity={opacity} />;
+function OpacityShape(props: LineDrawShapeProps) {
+    const hasLineAnimationStarted = props.visibleLength === 0;
+    return <LineDrawShape {...props} strokeOpacity={hasLineAnimationStarted ? 0 : props.strokeOpacity} />;
 }
 
 type ChartConfig = PrimitiveChartConfig & {
@@ -103,7 +101,7 @@ const LineChart = ({
                 />
                 {Object.entries(chartConfig).map(([key, data]) => (
                     <RechartLine
-                        shape={OpacityFadeShape}
+                        shape={OpacityShape}
                         dataKey={key}
                         key={key}
                         type={linesSettings?.type ?? "monotone"}
