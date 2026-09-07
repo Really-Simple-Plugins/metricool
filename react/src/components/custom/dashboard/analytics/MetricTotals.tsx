@@ -22,6 +22,7 @@ const MetricTotals = ({ metrics, toggleMetric, chartConfig }: MetricTileContaine
         <>
             {Object.entries(metrics).map(([metricKey, metricData]) => (
                 <MetricTile
+                    key={metricData.label}
                     onClick={() => toggleMetric(metricKey)}
                     metric={numberFormatter.format(metricData.totalAmount)}
                     trend={metricData.trend}
