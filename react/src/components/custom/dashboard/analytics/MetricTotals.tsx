@@ -12,7 +12,17 @@ type MetricTileContainerProps = {
 const MetricTotals = ({ metrics, toggleMetric, chartConfig }: MetricTileContainerProps) => {
     const { metricool } = useGlobalContext();
 
-    const numberFormatter = Intl.NumberFormat(metricool.locale, {
+    /**
+     * Function to localize and format numbers.
+     * Used to ensure numbers are never displayed with more than 2 decimals but aren't
+     * forced to display decimals if there aren't any either.
+     *
+     * `notation: "compact"` is used to shorten larger numbers, e.g. `1,000,000`
+     * becomes `1M`
+     *
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#notation}
+     */
+    const localizedMetricNumberFormatter = Intl.NumberFormat(metricool.locale, {
         notation: "compact",
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
@@ -24,7 +34,7 @@ const MetricTotals = ({ metrics, toggleMetric, chartConfig }: MetricTileContaine
                 <MetricTile
                     key={metricData.label}
                     onClick={() => toggleMetric(metricKey)}
-                    metric={numberFormatter.format(metricData.totalAmount)}
+                    metric={localizedMetricNumberFormatter.format(metricData.totalAmount)}
                     trend={metricData.trend}
                     variant={chartConfig[metricKey].color}
                     inactive={chartConfig[metricKey].hidden}
