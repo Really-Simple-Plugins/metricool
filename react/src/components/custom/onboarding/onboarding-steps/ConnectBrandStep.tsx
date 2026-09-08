@@ -10,7 +10,7 @@ import {
     Select,
     SelectOption,
 } from "@/components/shared";
-import { __, sprintf } from "@wordpress/i18n";
+import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { clsx } from "clsx";
 import { useForm } from "react-hook-form";
@@ -19,9 +19,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
 import DOMPurify from "dompurify";
 import { useAuthenticationData } from "@/hooks/useAuthenticationData";
-import { type Dispatch, type SetStateAction, useCallback, useEffect } from "react";
+import { type Dispatch, type SetStateAction } from "react";
 import { queryClient } from "@/main.tsx";
 import { useConnectedBrandsData } from "@/hooks/useConnectedBrandsData.tsx";
+import { createInterpolateElement } from '@wordpress/element';
 
 type ConnectBrandStepProps = {
     setModalOpen?: Dispatch<SetStateAction<boolean>>,
@@ -60,7 +61,7 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
         ...(!resetSignInSteps && { reloadOnLogout: true })
     });
 
-    const onCancel = useCallback(() => {
+    const onCancel = () => {
         logoutUser();
         // For some reason adding clear() to the onSuccess for the logout mutation
         // reloads the page, so adding it here.
@@ -68,22 +69,15 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
         if (resetSignInSteps) {
             resetSignInSteps();
         }
-    }, [logoutUser, resetSignInSteps]);
+    };
 
-    const linkId = "metricool-link";
-
-    useEffect(() => {
-        const link = document.getElementById(linkId);
-        if (link) {
-            const handleClick = () => {
-                onCancel();
-            };
-            link.addEventListener("click", handleClick);
-            return () => {
-                link.removeEventListener("click", handleClick);
-            };
+    const missingBrandNotice = createInterpolateElement(
+        /* translators: Please include the opening and closing <a> tags in your translation */
+        __("Don’t see the brand you’re looking for? <a>Go to Metricool.com</a> and make sure you’re logged into the correct account.", "metricool",),
+        {
+            a: <a className={"underline"} onClick={onCancel} href={metricool.trusted_urls.base_url} target={"_blank"} rel={"noopener noreferrer"}/>,
         }
-    }, [onCancel]);
+    );
 
     return (
         <FlexContainer direction={"column"} className={"justify-center gap-6! items-center"}>
@@ -101,21 +95,7 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
                     variant={"info"}
                     className={"text-left"}
                 >
-                    <div
-                        dangerouslySetInnerHTML={{
-                            __html: DOMPurify.sanitize(
-                                sprintf(
-                                    /*translators: the two variables are opening and closing anchor tags */
-                                    __(
-                                        "Don’t see the brand you’re looking for? %1$sGo to Metricool.com%2$s and make sure you’re logged into the correct account.",
-                                        "metricool",
-                                    ),
-                                    `<a id="${linkId}" class="underline" href=${metricool.trusted_urls.base_url} target="_blank" rel="noopener noreferrer">`,
-                                    `</a>`
-                                ), { ADD_ATTR: ["target"] }
-                            )
-                        }}
-                    />
+                    <div>{missingBrandNotice}</div>
                 </Alert>
             </FlexContainer>
             {submitError && (
