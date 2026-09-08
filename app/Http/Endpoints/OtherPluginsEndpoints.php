@@ -23,6 +23,12 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
      */
     private const INACTIVE_PLUGINS_THRESHOLD = 3;
 
+    /**
+     * The maximum number of plugins to display in the other plugins section.
+     * Used in {@see getPluginsToDisplay}
+     */
+    private const MAX_VISIBLE_PLUGINS = 4;
+
     private GeneralConfig $config;
     private OtherPluginService $service;
 
@@ -153,6 +159,8 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
             $plugins = $inactivePlugins;
         }
 
-        return $plugins->toArray();
+        return $plugins
+            ->take(self::MAX_VISIBLE_PLUGINS)
+            ->toArray();
     }
 }
