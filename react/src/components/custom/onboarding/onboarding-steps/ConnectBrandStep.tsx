@@ -73,7 +73,7 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
 
     const missingBrandNotice = createInterpolateElement(
         /* translators: Please include the opening and closing <a> tags in your translation */
-        __("Don’t see the brand you’re looking for? <a>Go to Metricool.com</a> and make sure you’re logged into the correct account.", "metricool",),
+        __("Don’t see the brand you’re looking for? <a>Go to Metricool.com</a> and make sure you’re logged into the correct account.", "metricool"),
         {
             a: <a className={"underline"} onClick={onCancel} href={metricool.trusted_urls.base_url} target={"_blank"} rel={"noopener noreferrer"}/>,
         }
