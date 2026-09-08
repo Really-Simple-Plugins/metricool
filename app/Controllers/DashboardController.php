@@ -45,12 +45,6 @@ class DashboardController implements ControllerInterface
         add_action('metricool_plugin_legacy_upgrade', [$this->service, 'enableForcedLogin']);
         add_action('metricool_onboarding_completed', [$this->service, 'disableForcedLogin']);
 
-        // Enable lost connection state when the connection to Metricool was lost
-        add_action('metricool_connection_lost', [$this->service, 'enableLostConnection']);
-
-        // Disable lost connection state when the connection to Metricool was restored
-        add_action('metricool_onboarding_completed', [$this->service, 'disableLostConnection']);
-
         // Redirect on the activation hook, but do it after anything else.
         add_action('metricool_activation', [$this, 'maybeRedirectToDashboard'], 9999);
 

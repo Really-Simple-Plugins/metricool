@@ -10,17 +10,18 @@ class DashboardService
 {
     public const ONBOARDING_COMPLETED_OPTION = 'metricool_onboarding_completed_at';
     public const FORCED_LOGIN_OPTION = 'metricool_force_login';
-    public const LOST_CONNECTION_OPTION = 'metricool_lost_connection';
 
     private EnvironmentConfig $env;
     private MetricoolApi $api;
     private RequestStorage $request;
+    private ConnectionService $connection;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $api, RequestStorage $request)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $api, RequestStorage $request, ConnectionService $connection)
     {
         $this->env = $env;
         $this->api = $api;
         $this->request = $request;
+        $this->connection = $connection;
     }
 
     /**
@@ -61,7 +62,7 @@ class DashboardService
         return [
             'show_welcome_screen' => $this->shouldShowWelcomeScreen(),
             'forced_login' => $this->isForcedLogin(),
-            'lost_connection' => $this->isLostConnection(),
+            'lost_connection' => $this->connection->isLostConnection(),
         ];
     }
 
@@ -127,6 +128,8 @@ class DashboardService
     {
         $timestamp = time();
 
+        $this->connection->disableLostConnection();
+
         do_action('metricool_onboarding_completed', $timestamp);
 
         return update_option(self::ONBOARDING_COMPLETED_OPTION, $timestamp, false);
@@ -157,30 +160,5 @@ class DashboardService
     public function setShowWelcomeScreen(): void
     {
         update_option('metricool_show_welcome_screen', true, false);
-    }
-
-    /**
-     * Enable the lost connection state
-     */
-    public function enableLostConnection(): bool
-    {
-        return update_option(self::LOST_CONNECTION_OPTION, true, false);
-    }
-
-    /**
-     * Disable the lost connection state
-     */
-    public function disableLostConnection(): bool
-    {
-        return delete_option(self::LOST_CONNECTION_OPTION);
-    }
-
-    /**
-     * Check if sign in modal should be shown after the connection to
-     * Metricool was lost
-     */
-    public function isLostConnection(): bool
-    {
-        return (bool) get_option(self::LOST_CONNECTION_OPTION, false);
     }
 }
