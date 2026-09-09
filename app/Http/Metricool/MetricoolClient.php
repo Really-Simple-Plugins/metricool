@@ -532,7 +532,7 @@ class MetricoolClient
         $refreshToken = $this->getRefreshToken();
 
         if (empty($refreshToken)) {
-            $this->connection->disconnect();
+            $this->connection->handleLostConnection();
             throw new RuntimeException('No refresh token available, the user has been logged out.');
         }
 
@@ -554,7 +554,7 @@ class MetricoolClient
                 $options
             );
         } catch (Throwable $e) {
-            $this->connection->disconnect();
+            $this->connection->handleLostConnection();
 
             throw new ApiException(
                 'Failed to refresh authentication token. Please log in again.',

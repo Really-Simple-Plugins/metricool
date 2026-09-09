@@ -18,10 +18,8 @@ class ConnectionService
      * Clears the authentication tokens and userId, but keeps the tracking
      * widget active so the website does not lose data. Enables the lost
      * connection state so the lost connection modal can be shown.
-     *
-     * @uses do_action metricool_connection_lost
      */
-    public function disconnect(): void
+    public function handleLostConnection(): void
     {
         $this->options->wipe(false, [
             TrackingScriptService::OPTION_TRACKING_HASH,
@@ -29,8 +27,6 @@ class ConnectionService
         ]);
 
         $this->enableLostConnection();
-
-        do_action('metricool_connection_lost');
     }
 
     /**
