@@ -64,7 +64,7 @@ const CountriesTab = () => {
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
                 />
             ) : (
-                <FlexContainer direction={"column"} className={"gap-2!"}>
+                <FlexContainer direction={"column"} className={"gap-2! grow"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>
                         <div className={"min-h-46.25"}>
                             <GeoChart
