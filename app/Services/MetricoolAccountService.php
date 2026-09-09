@@ -27,7 +27,7 @@ class MetricoolAccountService
     }
 
     /**
-     * Attempts to fetch account from LeadInfo, return the stale data on error
+     * Attempts to fetch account from Metricool, return the stale data on error
      * @return array Account details from api
      * @uses EVENT::METRICOOL_USER_UPDATED
      */

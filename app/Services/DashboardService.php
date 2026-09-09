@@ -99,7 +99,7 @@ class DashboardService
     }
 
     /**
-     * Check if the current admin screen is the Leadinfo dashboard page
+     * Check if the current admin screen is the Metricool dashboard page
      */
     public function isUserOnDashboard(): bool
     {
