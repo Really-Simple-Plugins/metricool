@@ -46,7 +46,7 @@ const TrafficTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {(!trafficData || trafficData.tableData.length === 0 )? (
+            {(!trafficData || trafficData.tableData.length === 0)? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}
