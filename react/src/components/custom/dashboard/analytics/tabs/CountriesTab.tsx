@@ -55,7 +55,7 @@ const CountriesTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow gap-2!"}>
-            {!countryData ? (
+            {(!countryData || countryData.tableData.length === 0) ? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}

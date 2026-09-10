@@ -27,7 +27,7 @@ const RealtimeTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {!realTimeData || realTimeData.timelineData.length === 0 ? (
+            {(!realTimeData || realTimeData.timelineData.length === 0) ? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}

@@ -43,7 +43,7 @@ const OtherPlugins = () => {
                 )}
             />
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
-                {!otherPluginsData ? (
+                {(!otherPluginsData || Object.entries(otherPluginsData).length === 0 )? (
                     <EmptyDataState
                         error={error}
                         isLoading={isLoading}

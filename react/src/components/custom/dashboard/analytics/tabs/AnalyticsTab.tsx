@@ -173,7 +173,7 @@ const AnalyticsTab = () => {
                 </FlexContainer>
                 <hr className={"-mx-2"}/>
                 <FlexContainer direction={"column"} className={"min-h-72.5 max-h-72.5"}>
-                    {!analyticsData || analyticsData.timelineData.length === 0 ? (
+                    {(!analyticsData || analyticsData.timelineData.length === 0) ? (
                         <FlexContainer direction={"column"} className={"grow justify-center items-center"}>
                             <EmptyDataState
                                 error={error}

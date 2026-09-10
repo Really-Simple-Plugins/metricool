@@ -33,7 +33,7 @@ const ConnectionsSettings = () => {
                         description={__("The accounts that are connected to Metricool", "metricool")}
                     />
                     <FlexContainer direction={"column"}>
-                        {!connectedAccountsData ? (
+                        {(!connectedAccountsData || connectedAccountsData.length === 0) ? (
                             <EmptyDataState
                                 error={error}
                                 isLoading={isLoading}

@@ -38,7 +38,7 @@ const ConnectedAccounts = () => {
         <Block className={"xl:min-h-58 xl:max-h-58"}>
             <BlockHeader title={__("Connected Accounts", "metricool")}/>
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
-                {!connectedAccountsData ? (
+                {(!connectedAccountsData || connectedAccountsData.length === 0) ? (
                     <EmptyDataState
                         error={error}
                         isLoading={isLoading}

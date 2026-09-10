@@ -46,7 +46,7 @@ const TrafficTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {!trafficData ? (
+            {(!trafficData || trafficData.tableData.length === 0 )? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}
@@ -54,7 +54,7 @@ const TrafficTab = () => {
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
                     emptyStateTitle={__("No Traffic data", "metricool")}
-                    emptyStateDescription={__("There appears to be no traffic data available.", "metricool")}
+                    emptyStateDescription={__("There appears to be no Traffic data available right now.", "metricool")}
                 />
             ) : (
                 <FlexContainer direction={"column"}>
