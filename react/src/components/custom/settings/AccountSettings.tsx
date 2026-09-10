@@ -2,12 +2,12 @@ import {
     Block,
     BlockHeader,
     Button,
+    EmptyDataState,
     FieldWrapper,
     FlexContainer,
     FormFooter,
     Icon,
     Input,
-    LoadingAndErrorState,
     SignOut,
     Switch
 } from "@/components/shared";
@@ -35,7 +35,13 @@ const AccountSettings = () => {
     const { metricool, metricoolDynamicUrl } = useGlobalContext();
 
     const {
-        userSettingsDataQuery: { data, isLoading, error: queryError, errorUpdateCount, refetch },
+        userSettingsDataQuery: {
+            data: settingsData,
+            isLoading,
+            error: queryError,
+            errorUpdateCount,
+            refetch
+        },
         userSettingsFormData: {
             handleSubmit,
             formState: { errors: formValidationErrors, isDirty },
@@ -79,13 +85,15 @@ const AccountSettings = () => {
                 </Block>
                 <Block className={"rounded-t-md rounded-b-none"}>
                     <BlockHeader title={__("Monthly summary", "metricool")}/>
-                    {!data ? (
-                        <LoadingAndErrorState
+                    {!settingsData ? (
+                        <EmptyDataState
                             error={queryError}
                             isLoading={isLoading}
                             errorUpdateCount={errorUpdateCount}
                             refetch={refetch}
                             supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                            emptyStateTitle={__("No Settings information", "metricool")}
+                            emptyStateDescription={__("There appears to be no settings information available.", "metricool")}
                         />
                     ) : (
                         <FlexContainer direction={"column"}>

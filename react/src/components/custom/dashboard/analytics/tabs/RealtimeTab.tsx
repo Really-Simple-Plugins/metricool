@@ -1,6 +1,6 @@
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { Button, FlexContainer, Icon, LineChart, LoadingAndErrorState } from "@/components/shared";
+import { Button, FlexContainer, Icon, LineChart, EmptyDataState } from "@/components/shared";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 import { useRealtimeAnalyticsData } from "@/hooks/analytics/useRealtimeAnalyticsData.tsx";
 
@@ -27,13 +27,15 @@ const RealtimeTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {!realTimeData ? (
-                <LoadingAndErrorState
+            {!realTimeData || realTimeData.timelineData.length === 0 ? (
+                <EmptyDataState
                     error={error}
                     isLoading={isLoading}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    emptyStateTitle={__("No Real-time data", "metricool")}
+                    emptyStateDescription={__("There appears to be no Real-time analytics data available right now.", "metricool")}
                 />
             ) : (
                 <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 gap-2! p-2"}>

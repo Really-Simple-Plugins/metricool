@@ -1,8 +1,8 @@
 import {
     Block,
     BlockHeader,
+    EmptyDataState,
     FlexContainer,
-    LoadingAndErrorState,
     TabNavigation,
     Task,
     type TaskProps,
@@ -12,7 +12,6 @@ import { useState } from "react";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useTaskData } from "@/hooks/useTaskData";
 import { useConnectedAccountsData } from "@/hooks/useConnectedAccountsData.tsx";
-// import { queryClient } from "@/main.tsx";
 
 /**
  * The Progress block used in {@link DashboardLayout}.
@@ -31,12 +30,22 @@ const Progress = () => {
     const { metricool, dispatch, dashboardSettings } = useGlobalContext();
 
     const {
-        connectedAccountsQuery: { isSuccess: connectedAccountsLoaded }
+        connectedAccountsQuery: {
+            isSuccess: connectedAccountsLoaded,
+        }
     } = useConnectedAccountsData();
 
     const {
-        taskDataQuery: { data: taskData, isLoading, error, refetch, errorUpdateCount },
-        dismissTaskMutation: { mutate: dismissTask },
+        taskDataQuery: {
+            data: taskData,
+            isLoading,
+            error,
+            refetch,
+            errorUpdateCount,
+        },
+        dismissTaskMutation: {
+            mutate: dismissTask,
+        },
     } = useTaskData({ hasConnectedAccountsDataLoaded: connectedAccountsLoaded });
 
 
@@ -65,12 +74,14 @@ const Progress = () => {
                 )}
             />
             {!taskData ? (
-                <LoadingAndErrorState
+                <EmptyDataState
                     error={error}
-                    isLoading={isLoading}
+                    isLoading={(isLoading || !connectedAccountsLoaded)}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    emptyStateTitle={__("No Progress data", "metricool")}
+                    emptyStateDescription={__("There appears to be no Progress data available.", "metricool")}
                 />
             ) : (
                 <FlexContainer direction={"column"}>

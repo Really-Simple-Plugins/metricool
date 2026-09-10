@@ -2,10 +2,10 @@ import {
     Button,
     type ChartConfig,
     DisabledSelectOption,
+    EmptyDataState,
     FlexContainer,
     Icon,
     LineChart,
-    LoadingAndErrorState,
     Select,
     SelectOption,
 } from "@/components/shared";
@@ -173,18 +173,19 @@ const AnalyticsTab = () => {
                 </FlexContainer>
                 <hr className={"-mx-2"}/>
                 <FlexContainer direction={"column"} className={"min-h-72.5 max-h-72.5"}>
-                    {(isFetching || error) && (
-                        <FlexContainer direction={"column"} className={"grow justify-center items-center bg-white opacity-45"}>
-                            <LoadingAndErrorState
+                    {!analyticsData || analyticsData.timelineData.length === 0 ? (
+                        <FlexContainer direction={"column"} className={"grow justify-center items-center"}>
+                            <EmptyDataState
                                 error={error}
                                 isLoading={isFetching}
                                 errorUpdateCount={errorUpdateCount}
                                 refetch={refetch}
                                 supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                                emptyStateTitle={__("No Analytics data", "metricool")}
+                                emptyStateDescription={__("There appears to be no Analytics data available for the selected time period.", "metricool")}
                             />
                         </FlexContainer>
-                    )}
-                    {analyticsData && (
+                    ) : (
                         <LineChart
                             className={cn(isFetching && "opacity-45")}
                             chartConfig={chartConfig}

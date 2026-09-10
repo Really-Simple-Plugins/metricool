@@ -3,9 +3,9 @@ import {
     type Column,
     DataTable,
     DataTableColumnHeader,
+    EmptyDataState,
     FlexContainer,
     Icon,
-    LoadingAndErrorState,
 } from "@/components/shared";
 import { GeoChart } from "@/components/custom";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -56,12 +56,14 @@ const CountriesTab = () => {
     return (
         <FlexContainer direction={"column"} className={"justify-between grow gap-2!"}>
             {!countryData ? (
-                <LoadingAndErrorState
+                <EmptyDataState
                     error={error}
                     isLoading={isLoading}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    emptyStateTitle={__("No Countries data", "metricool")}
+                    emptyStateDescription={__("There appears to be no Countries data available.", "metricool")}
                 />
             ) : (
                 <FlexContainer direction={"column"} className={"gap-2!"}>

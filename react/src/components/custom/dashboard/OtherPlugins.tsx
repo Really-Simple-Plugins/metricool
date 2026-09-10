@@ -1,4 +1,10 @@
-import { Block, BlockHeader, FlexContainer, ListItem, LoadingAndErrorState, } from "@/components/shared";
+import {
+    Block,
+    BlockHeader,
+    EmptyDataState,
+    FlexContainer,
+    ListItem,
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useOtherPluginsData } from "@/hooks/useOtherPluginsData.tsx";
@@ -17,7 +23,7 @@ const OtherPlugins = () => {
         otherPluginsDataQuery: {
             isLoading,
             error,
-            data: otherPlugins = {},
+            data: otherPluginsData,
             refetch,
             errorUpdateCount
         },
@@ -37,17 +43,19 @@ const OtherPlugins = () => {
                 )}
             />
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
-                {!otherPlugins ? (
-                    <LoadingAndErrorState
+                {!otherPluginsData ? (
+                    <EmptyDataState
                         error={error}
                         isLoading={isLoading}
                         errorUpdateCount={errorUpdateCount}
                         refetch={refetch}
                         supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                        emptyStateTitle={__("No Other Plugins", "metricool")}
+                        emptyStateDescription={__("There appear to be no Other Plugins available.", "metricool")}
                     />
                 ) : (
                     <FlexContainer direction={"column"} className={"gap-2!"}>
-                        {Object.entries(otherPlugins).map(([pluginKey, pluginData]) => (
+                        {Object.entries(otherPluginsData).map(([pluginKey, pluginData]) => (
                             <ListItem
                                 iconProps={{
                                     icon: "circle",

@@ -3,10 +3,10 @@ import {
     Button,
     DialogHeader,
     DialogTitle,
+    EmptyDataState,
     FieldWrapper,
     FlexContainer,
     Icon,
-    LoadingAndErrorState,
     Select,
     SelectOption,
 } from "@/components/shared";
@@ -130,12 +130,14 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
             )}
             <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
                 {!connectedBrands ? (
-                    <LoadingAndErrorState
+                    <EmptyDataState
                         error={error}
                         isLoading={isLoading}
                         errorUpdateCount={errorUpdateCount}
                         refetch={refetch}
                         supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                        emptyStateTitle={__("No connected brands", "metricool")}
+                        emptyStateDescription={__("There appears to be no connected brands available.", "metricool")}
                     />
                 ) : (
                     <FieldWrapper

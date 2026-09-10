@@ -1,4 +1,11 @@
-import { Block, BlockHeader, Button, FlexContainer, Icon, LoadingAndErrorState, } from "@/components/shared";
+import {
+    Block,
+    BlockHeader,
+    Button,
+    EmptyDataState,
+    FlexContainer,
+    Icon,
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -32,12 +39,14 @@ const ConnectedAccounts = () => {
             <BlockHeader title={__("Connected Accounts", "metricool")}/>
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
                 {!connectedAccountsData ? (
-                    <LoadingAndErrorState
+                    <EmptyDataState
                         error={error}
                         isLoading={isLoading}
                         errorUpdateCount={errorUpdateCount}
                         refetch={refetch}
                         supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                        emptyStateTitle={__("No Connected Accounts", "metricool")}
+                        emptyStateDescription={__("There appear to be no Connected Accounts available.", "metricool")}
                     />
                 ) : (
                     <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>

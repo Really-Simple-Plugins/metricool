@@ -1,4 +1,11 @@
-import { Block, BlockHeader, Button, FlexContainer, Icon, LoadingAndErrorState, } from "@/components/shared";
+import {
+    Block,
+    BlockHeader,
+    Button,
+    EmptyDataState,
+    FlexContainer,
+    Icon,
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -27,12 +34,14 @@ const ConnectionsSettings = () => {
                     />
                     <FlexContainer direction={"column"}>
                         {!connectedAccountsData ? (
-                            <LoadingAndErrorState
+                            <EmptyDataState
                                 error={error}
                                 isLoading={isLoading}
                                 errorUpdateCount={errorUpdateCount}
                                 refetch={refetch}
                                 supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                                emptyStateTitle={__("No Connections information", "metricool")}
+                                emptyStateDescription={__("There appears to be no connections information available.", "metricool")}
                             />
                         ) : (
                             <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
@@ -51,7 +60,6 @@ const ConnectionsSettings = () => {
                                 {__("Connected Accounts", "metricool")}
                                 <Icon icon={"external-link"} className={"svg-gradient"}/>
                             </FlexContainer>
-
                         </Button>
                     </FlexContainer>
                 </Block>

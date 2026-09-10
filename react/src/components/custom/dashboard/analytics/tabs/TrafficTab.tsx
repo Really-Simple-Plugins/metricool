@@ -3,9 +3,9 @@ import {
     type Column,
     DataTable,
     DataTableColumnHeader,
+    EmptyDataState,
     FlexContainer,
     Icon,
-    LoadingAndErrorState,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -47,12 +47,14 @@ const TrafficTab = () => {
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
             {!trafficData ? (
-                <LoadingAndErrorState
+                <EmptyDataState
                     error={error}
                     isLoading={isLoading}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    emptyStateTitle={__("No Traffic data", "metricool")}
+                    emptyStateDescription={__("There appears to be no traffic data available.", "metricool")}
                 />
             ) : (
                 <FlexContainer direction={"column"}>
