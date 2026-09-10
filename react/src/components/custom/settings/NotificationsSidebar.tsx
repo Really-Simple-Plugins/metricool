@@ -1,10 +1,4 @@
-import {
-    Block,
-    BlockHeader,
-    EmptyDataState,
-    FlexContainer,
-    Notification
-} from "@/components/shared";
+import { Block, BlockHeader, EmptyDataState, FlexContainer, Notification } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useNotificationData } from "@/hooks/useNotificationData.tsx";
@@ -17,16 +11,15 @@ const NotificationsSidebar = () => {
             data: noticeData,
             isLoading,
             error,
-            isFetched,
             errorUpdateCount,
             refetch
         }
-    } = useNotificationData()
+    } = useNotificationData();
 
     return (
         <Block variant={"transparent"} className={"px-0"}>
             <BlockHeader title={__("Notifications", "metricool")} separator={true}/>
-            {(!noticeData || (isFetched && !noticeData?.visibleNotifications?.length)) ? (
+            {(!noticeData || !noticeData?.visibleNotifications?.length) ? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}
