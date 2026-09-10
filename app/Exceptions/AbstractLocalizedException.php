@@ -20,12 +20,6 @@ abstract class AbstractLocalizedException extends \Exception
     protected const MESSAGE = 'An error occurred';
 
     /**
-     * The links config instance is used to fetch the support ticket link in
-     * the {@see defaultMessage} method.
-     */
-    protected ?EnvironmentConfig $links = null;
-
-    /**
      * The localized user facing message. By default, the global error message
      * set by {@see defaultMessage} is used.
      */
@@ -33,7 +27,7 @@ abstract class AbstractLocalizedException extends \Exception
 
     public function __construct(string $message = '', int $code = 0)
     {
-        parent::__construct(($message ?: self::MESSAGE), $code);
+        parent::__construct(($message ?: static::MESSAGE), $code);
 
         $this->setLocalizedMessage(
             $this->defaultMessage()
