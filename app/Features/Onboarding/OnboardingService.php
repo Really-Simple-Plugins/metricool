@@ -5,6 +5,7 @@ namespace Metricool\Features\Onboarding;
 use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Services\ConnectionService;
 use Metricool\Services\DashboardService;
 use Metricool\Services\MetricoolAccountService;
 use Metricool\Services\TrackingScriptService;
@@ -15,13 +16,15 @@ class OnboardingService
     private TrackingScriptService $tracking;
     private DashboardService $dashboard;
     private MetricoolAccountService $account;
+    private ConnectionService $connection;
 
-    public function __construct(MetricoolApi $api, TrackingScriptService $tracking, DashboardService $dashboard, MetricoolAccountService $account)
+    public function __construct(MetricoolApi $api, TrackingScriptService $tracking, DashboardService $dashboard, MetricoolAccountService $account, ConnectionService $connection)
     {
         $this->api = $api;
         $this->tracking = $tracking;
         $this->dashboard = $dashboard;
         $this->account = $account;
+        $this->connection = $connection;
     }
 
     /**
@@ -45,6 +48,9 @@ class OnboardingService
 
         // Update the metricool user data from the API
         $this->account->fetch();
+
+        // Always make sure the lost connection flag is cleared
+        $this->connection->disableLostConnection();
 
         // When all the necessary information is retrieved, set the onboarding as completed
         return $this->dashboard->setOnboardingCompleted();

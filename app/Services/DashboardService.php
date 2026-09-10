@@ -128,8 +128,6 @@ class DashboardService
     {
         $timestamp = time();
 
-        $this->connection->disableLostConnection();
-
         do_action('metricool_onboarding_completed', $timestamp);
 
         return update_option(self::ONBOARDING_COMPLETED_OPTION, $timestamp, false);
