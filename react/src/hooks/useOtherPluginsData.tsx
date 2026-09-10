@@ -5,7 +5,7 @@ import { queryClient } from "@/main.tsx";
 import { Button, showToast } from "@/components/shared";
 
 const pluginStatuses: Record<string, string> = {
-    settings: __("Go to the settings", "metricool"),
+    settings: __("Settings", "metricool"),
     download: __("Install", "metricool"),
     activate: __("Activate", "metricool"),
     activating: __("Activating...", "metricool"),
