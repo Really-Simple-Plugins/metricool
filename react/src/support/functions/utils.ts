@@ -1,4 +1,4 @@
-import { clsx, type ClassValue } from "clsx";
+import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 /**
@@ -86,3 +86,23 @@ export const generateRecaptchaToken = async (key: string, action: string): Promi
         );
     })
 );
+
+/**
+ * Checks whether an Object or Array is empty.
+ * @param object - the Object / Array to check
+ */
+export const isEmpty = (object: Array<never> | object) => {
+    if (!Array.isArray(object) || !(object.constructor === Object)) {
+        return false;
+    }
+
+    if (object.length === 0) {
+        return true;
+    }
+
+    if (Object.keys(object)?.length === 0) {
+        return ;
+    }
+
+    return false;
+};
