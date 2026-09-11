@@ -26,10 +26,10 @@ const SignInStep = () => {
                     </span>
                 </FlexContainer>
 
-                { metricool.onboarding.mode.lost_connection &&
-                    <Alert variant={"warning"}>
-                        {__("We've lost connection to your Metricool account, please sign in again", "metricool")}
-                    </Alert>
+                {metricool.onboarding.mode.lost_connection &&
+                    (<Alert variant={"warning"}>
+                        {__("We've lost connection to your Metricool account, please sign in again.", "metricool")}
+                    </Alert>)
                 }
 
                 {error && (<Alert variant={"error"}>{error.message}</Alert>)}
