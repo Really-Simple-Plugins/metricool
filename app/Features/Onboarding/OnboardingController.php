@@ -128,7 +128,7 @@ class OnboardingController implements FeatureInterface
             $this->onboarding->finalizeOnboarding($blogId);
         } catch (BrandAccessDeniedException $e) {
             return $this->sendHttpErrorResponse(
-                __('You don’t have sufficient permissions to connect this brand. Please pick another brand or sign in with a different account.', 'metricool'),
+                $e->getLocalizedMessage(),
                 [],
                 403
             );
