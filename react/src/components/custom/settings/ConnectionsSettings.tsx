@@ -10,6 +10,7 @@ import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useConnectedAccountsData } from "@/hooks/useConnectedAccountsData.tsx";
+import { isEmpty } from "@/support/functions/utils.ts";
 
 const ConnectionsSettings = () => {
     const { metricoolDynamicUrl, metricool } = useGlobalContext();
@@ -33,7 +34,7 @@ const ConnectionsSettings = () => {
                         description={__("The accounts that are connected to Metricool", "metricool")}
                     />
                     <FlexContainer direction={"column"}>
-                        {(!connectedAccountsData || connectedAccountsData.length === 0) ? (
+                        {(!connectedAccountsData || isEmpty(connectedAccountsData)) ? (
                             <EmptyDataState
                                 error={error}
                                 isLoading={isLoading}

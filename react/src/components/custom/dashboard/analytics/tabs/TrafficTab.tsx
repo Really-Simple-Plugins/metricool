@@ -10,6 +10,7 @@ import {
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useTrafficAnalyticsData } from "@/hooks/analytics/useTrafficAnalyticsData.tsx";
+import { isEmpty } from "@/support/functions/utils.ts";
 
 type TrafficDataTableColumns = { url: string, pageViews: number, percentage: number };
 
@@ -46,7 +47,7 @@ const TrafficTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {(!trafficData || trafficData.tableData.length === 0)? (
+            {(!trafficData || isEmpty(trafficData))? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}

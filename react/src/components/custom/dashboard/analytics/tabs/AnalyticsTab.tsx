@@ -13,7 +13,7 @@ import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useState } from "react";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
-import { cn } from "@/support/functions/utils";
+import { cn, isEmpty } from "@/support/functions/utils";
 import { useWebAnalyticsData } from "@/hooks/analytics/useWebAnalyticsData.tsx";
 
 export type PeriodFilterOption = {
@@ -173,7 +173,7 @@ const AnalyticsTab = () => {
                 </FlexContainer>
                 <hr className={"-mx-2"}/>
                 <FlexContainer direction={"column"} className={"min-h-72.5 max-h-72.5"}>
-                    {(!analyticsData || analyticsData.timelineData.length === 0) ? (
+                    {(!analyticsData || isEmpty(analyticsData.timelineData)) ? (
                         <FlexContainer direction={"column"} className={"grow justify-center items-center"}>
                             <EmptyDataState
                                 error={error}

@@ -10,6 +10,7 @@ import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useConnectedAccountsData } from "@/hooks/useConnectedAccountsData.tsx";
+import { isEmpty } from "@/support/functions/utils.ts";
 
 /**
  * The ConnectedAccounts block used in {@link DashboardLayout}.
@@ -38,7 +39,7 @@ const ConnectedAccounts = () => {
         <Block className={"xl:min-h-58 xl:max-h-58"}>
             <BlockHeader title={__("Connected Accounts", "metricool")}/>
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
-                {(!connectedAccountsData || connectedAccountsData.length === 0) ? (
+                {(!connectedAccountsData || isEmpty(connectedAccountsData)) ? (
                     <EmptyDataState
                         error={error}
                         isLoading={isLoading}

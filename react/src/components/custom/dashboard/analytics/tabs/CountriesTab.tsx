@@ -11,6 +11,7 @@ import { GeoChart } from "@/components/custom";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 import { useCountriesAnalyticsData } from "@/hooks/analytics/useCountriesAnalyticsData.tsx";
+import { isEmpty } from "@/support/functions/utils.ts";
 
 type CountriesDataTableColumns = { country: string, visitors: number, percentage: number };
 
@@ -55,7 +56,7 @@ const CountriesTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow gap-2!"}>
-            {(!countryData || countryData.tableData.length === 0) ? (
+            {(!countryData || isEmpty(countryData.tableData)) ? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}
