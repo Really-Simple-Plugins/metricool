@@ -36,13 +36,9 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
     const [isPageScrollable, setIsPageScrollable] = useState<boolean>(document.documentElement.scrollHeight > window.innerHeight);
 
     const updateScrollProgress = useCallback(() => {
+        console.log("fired 2")
         setScrollProgressPercent(getScrollProgressPercent());
     }, [setScrollProgressPercent]);
-
-    const scrollProgressCallback = useCallback(() => {
-        console.log("fired");
-        requestAnimationFrame(updateScrollProgress);
-    }, [updateScrollProgress])
 
     useEffect(() => {
         const resizeObserver = new ResizeObserver(() => {
@@ -68,10 +64,12 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
         updateScrollProgress();
 
         if (isPageScrollable) {
-            document.addEventListener("scroll", scrollProgressCallback);
+            // @ts-expect-error lodash defined globally through WP enqueued dependency
+            document.addEventListener("scroll", window.lodash.throttle(updateScrollProgress, 16), false);
         }
-        return () => document.removeEventListener("scroll", scrollProgressCallback);
-    }, [isPageScrollable, scrollProgressCallback]);
+        // @ts-expect-error lodash defined globally through WP enqueued dependency
+        return () => document.removeEventListener("scroll", window.lodash.throttle(updateScrollProgress, 16), false);;
+    }, [isPageScrollable, updateScrollProgress]);
 
     // Form states for Design page
     const settingsStates = [

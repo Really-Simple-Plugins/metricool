@@ -88,10 +88,8 @@ function setScrollPixelCssVar() {
     function callback() {
         document.documentElement.style.setProperty("--scroll-progress-in-pixels", `${window.scrollY}px`);
     }
-
-    document.addEventListener('scroll', function() {
-        requestAnimationFrame(callback);
-    });
+    // @ts-expect-error lodash defined globally through WP enwueud dependency
+    window.addEventListener('scroll', window.lodash.throttle(callback, 16), false);
 }
 
 document.addEventListener("DOMContentLoaded", setScrollPixelCssVar);
