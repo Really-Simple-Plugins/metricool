@@ -1,6 +1,6 @@
 import { FlexContainer } from "@/components/shared/general/FlexContainer.tsx";
 import { Button } from "@/components/shared/forms/Button.tsx";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { __ } from "@wordpress/i18n";
 import { cn, getScrollProgressPercent } from "@/support/functions/utils";
 
@@ -35,9 +35,14 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
     const [isFormFooterSticky, setIsFormFooterSticky] = useState<boolean>(false);
     const [isPageScrollable, setIsPageScrollable] = useState<boolean>(document.documentElement.scrollHeight > window.innerHeight);
 
-    const updateScrollProgress = () => {
+    const updateScrollProgress = useCallback(() => {
         setScrollProgressPercent(getScrollProgressPercent());
-    };
+    }, [setScrollProgressPercent]);
+
+    const scrollProgressCallback = useCallback(() => {
+        console.log("fired");
+        requestAnimationFrame(updateScrollProgress);
+    }, [updateScrollProgress])
 
     useEffect(() => {
         const resizeObserver = new ResizeObserver(() => {
@@ -61,13 +66,12 @@ const FormFooter = ({ formHasUnsavedChanges, formIsSubmitting, formHasErrors = f
 
     useEffect(() => {
         updateScrollProgress();
+
         if (isPageScrollable) {
-            window.addEventListener("scroll", updateScrollProgress, { passive: true });
-        } else {
-            window.removeEventListener("scroll", updateScrollProgress);
+            document.addEventListener("scroll", scrollProgressCallback);
         }
-        return () => window.removeEventListener("scroll", updateScrollProgress);
-    }, [isPageScrollable]);
+        return () => document.removeEventListener("scroll", scrollProgressCallback);
+    }, [isPageScrollable, scrollProgressCallback]);
 
     // Form states for Design page
     const settingsStates = [
