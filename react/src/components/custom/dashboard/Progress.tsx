@@ -93,7 +93,7 @@ const Progress = () => {
                         </span>
                     </div>
                     {/* Task List */}
-                    <div className={"max-h-75 flex flex-col overflow-y-auto gap-4 pr-3"}>
+                    <div className={"max-h-75 flex flex-col overflow-y-auto gap-4 pr-3 py-1"}>
                         {/* using spread operators, the array of tasks to display is built dynamically
                             if All Tasks is selected (activeTab === 0), the completed tasks are added on.
                             This way, no extra filtering needs to be done.

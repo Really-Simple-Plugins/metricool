@@ -22,7 +22,7 @@ const SignOut = ({
                 {__("Currently logged in as", "metricool")}
             </PrimitiveFieldLabel>
             <PrimitiveButtonGroup className={"w-full"}>
-                <Input id={"current-user-email"} disabled value={currentUserEmail}/>
+                <Input id={"current-user-email"} readOnly={true} aria-readonly={true} value={currentUserEmail}/>
                 <Button
                     variant={"primary"}
                     onClick={onSignOut}

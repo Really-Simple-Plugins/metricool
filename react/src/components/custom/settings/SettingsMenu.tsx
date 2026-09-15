@@ -10,10 +10,10 @@ const SettingsMenu = () => {
         <Block className={"md:sticky md:top-12"}>
             <BlockHeader title={__("Settings", "metricool")}/>
             <FlexContainer direction={"column"} className={"gap-3!"}>
-                <Link route={"/settings/account"} className={"text-md text-black no-underline hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none max-w-fit"}>
+                <Link route={"/settings/account"} className={"text-md text-black no-underline hover:underline [&.active]:text-primary [&.active]:focus:text-primary! [&.active]:font-semibold [&.active]:border-none max-w-fit"}>
                     {__("Account Settings", "metricool")}
                 </Link>
-                <Link route={"/settings/connections"} className={"text-md text-black no-underline hover:underline [&.active]:text-primary [&.active]:font-semibold [&.active]:border-none max-w-fit"}>
+                <Link route={"/settings/connections"} className={"text-md text-black no-underline hover:underline [&.active]:text-primary [&.active]:focus:text-primary! [&.active]:font-semibold [&.active]:border-none max-w-fit"}>
                     {__("Connections", "metricool")}
                 </Link>
                 <ListItem
@@ -27,7 +27,7 @@ const SettingsMenu = () => {
                     {__("Affiliation Program", "metricool")}
                 </ListItem>
                 <ListItem
-                    className={cn("text-md cursor-pointer hover:underline max-w-fit", !metricool.account?.is_premium ? "text-upsell font-semibold" : "text-black")}
+                    className={cn("text-md cursor-pointer hover:underline max-w-fit", !metricool.account?.is_premium ? "text-upsell font-semibold focus:text-upsell!" : "text-black")}
                     link={metricoolDynamicUrl.withPath("user-management/users")}
                     {...(!metricool.account?.is_premium ? {
                         iconProps: {
@@ -45,7 +45,7 @@ const SettingsMenu = () => {
                     {__("User Management", "metricool")}
                 </ListItem>
                 <ListItem
-                    className={cn("text-md cursor-pointer hover:underline max-w-fit", !metricool.account?.is_premium ? "text-upsell font-semibold" : "text-black")}
+                    className={cn("text-md cursor-pointer hover:underline max-w-fit", !metricool.account?.is_premium ? "text-upsell font-semibold focus:text-upsell!" : "text-black")}
                     link={metricoolDynamicUrl.withPath("my-tasks/open")}
                     {...(!metricool.account?.is_premium ? {
                         iconProps: {

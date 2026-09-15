@@ -81,7 +81,7 @@ const Task = ({
                     ) : (
                         <RouterLink
                             to={action.route}
-                            className={"text-black hover:text-wordpress-link-hover font-normal underline leading-(--text-md)"}
+                            className={"text-black font-normal underline leading-(--text-md)"}
                         >
                             <span className={"text-nowrap"}>
                                 {action.text}

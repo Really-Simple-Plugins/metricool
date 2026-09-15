@@ -34,7 +34,7 @@ const HeaderTab = ({ route, href, children, className, badge }: HeaderTabProps) 
             })}
             variant={"unstyled"}
             className={cn(
-                "text-md text-black items-center flex gap-1 max-[700px]:py-5.75 focus:outline-hidden relative ease-in-out duration-200 border-b-3 border-b-transparent [&.active]:border-b-primary hover:border-b-3 hover:border-b-primary-light hover:text-black",
+                "text-md text-black items-center flex gap-1 max-[700px]:py-5.75 relative ease-in-out duration-200 border-b-3 border-b-transparent [&.active]:border-b-primary hover:border-b-3 hover:border-b-primary-light hover:text-black",
                 className
             )}
         >

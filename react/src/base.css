@@ -32,7 +32,7 @@
     --color-destructive: var(--destructive);
     --color-border: var(--border);
     --color-input: var(--input);
-    --color-ring: var(--color-wordpress-link-hover);
+    --color-ring: var(--ring);
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
@@ -270,14 +270,6 @@ Base Style Guide
 
     /**
     ======================================
-    Wordpress Colors
-    ======================================
-    **/
-    --color-wordpress-blue: #2271B1;
-    --color-wordpress-link-hover: #135e96;
-
-    /**
-    ======================================
     Shadcn Overwrites
     ======================================
     **/
@@ -304,16 +296,9 @@ Base Style Guide
 App Root global overwrites
 ======================================
 **/
-
-/* Applies a WP style focus to everything within our root */
-#rsp-app-root *:focus-visible[aria-invalid="false"][data-slot="input"] {
-    box-shadow: 0 0 0 2px var(--color-wordpress-blue) !important;
-    outline: 2px solid transparent !important;
-}
-
 /* Applies the sans serif font (set to Inter) to our root */
-#rsp-app-root {
-    @apply font-sans
+:is(#rsp-app-root, div[role="dialog"]) {
+    @apply font-sans;
 }
 
 /**
@@ -321,6 +306,7 @@ App Root global overwrites
 WP style overwrites
 ======================================
 **/
+/* Removing WP's default padding-left so it doesn't interfere with our centering */
 #wpcontent {
     padding-left: 0 !important;
 }
@@ -339,6 +325,27 @@ defined styles to inherit, to be used for h1 in Block Header Titles */
     font-weight: inherit !important;
     margin: inherit !important;
     color: inherit !important;
+}
+
+/* Applying our own focus styling to all a, button and input tags. */
+:is(#rsp-app-root, div[role="dialog"]) :is(a:is(:focus, :focus-visible), button:is(:focus, :focus-visible), input:is(:focus, :focus-visible)) {
+    @apply ring-[3px] ring-ring/50;
+    color: initial;
+}
+
+/* Removing Wordpress' default margins on paragraphs. */
+:is(#rsp-app-root, div[role="dialog"]) p {
+    @apply m-0;
+}
+
+/* Overwriting WP's default input styling with our own. */
+:is(#rsp-app-root, div[role="dialog"]) :is(input[type=color],input[type=date],input[type=datetime-local],input[type=datetime],input[type=email],input[type=month],input[type=number],input[type=password],input[type=search],input[type=tel],input[type=text],input[type=time],input[type=url],input[type=week],select,textarea) {
+    @apply rounded-base border border-input bg-white text-black p-0 px-2 py-1;
+}
+
+/* Overwriting WP's readonly background color with our own. */
+:is(#rsp-app-root, div[role="dialog"]) :is(input.readonly,input[readonly],textarea.readonly,textarea[readonly]) {
+    @apply read-only:bg-neutral-100! has-[>[data-read-only=true]]:bg-neutral-100;
 }
 
 /**
@@ -417,6 +424,7 @@ Requires the svg defs with id="fa-gradient" to be added to the DOM, e.g.:
 that use flexbox and would misplace a full element due to gaps etc*/
 .required-asterisk {
     &::after {
+        display: ruby;
         content: " \002A"; /* ascii code for the asterisk character */
         color: red;
         font-weight: bold;
@@ -425,11 +433,16 @@ that use flexbox and would misplace a full element due to gaps etc*/
 
 /* Needed to render the fullscreen dialog properly no matter the browser's scroll bar.
 `--removed-body-scroll-bar-size` is set and maintained by the RemoveScroll package*/
-#rsp-app-root {
+:is(#rsp-app-root, div[role="dialog"]) {
     width: calc(100% + var(--removed-body-scroll-bar-size));
 }
 
 /* Same as above, needed for the fullscreen dialog */
 body[data-scroll-locked] {
     margin-right: 0 !important;
+}
+
+/* On some versions of Google Recaptcha, the badge needs to be manually hidden */
+.grecaptcha-badge {
+    visibility: hidden;
 }

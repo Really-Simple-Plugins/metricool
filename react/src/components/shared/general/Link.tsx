@@ -45,7 +45,7 @@ const Link = ({
             "h-7.5 rounded-none text-md cursor-pointer",
             variant
                 ? cn(buttonVariants({ variant, size }))
-                : "p-0 border-none text-black hover:text-wordpress-link-hover bg-transparent hover:bg-transparent font-normal leading-4 underline h-fit!",
+                : "p-0 border-none text-black bg-transparent hover:bg-transparent font-normal leading-4 underline h-fit!",
             className,
         );
     }

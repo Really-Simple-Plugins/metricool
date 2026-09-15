@@ -9,7 +9,7 @@ import {
 import { cn } from "@/support/functions/utils";
 import * as React from "react";
 
-const inputClasses = "data-[slot=input]:rounded-base has-[>[data-slot=input-group-control]]:rounded-base data-[slot=input]:mx-0! px-2 shadow-none flex bg-white text-md md:text-md *:data-[slot=input-group-control]:text-md md:*:data-[slot=input-group-control]:text-md font-semibold text-black min-h-10 data-[slot=input]:min-h-10! data-[slot=input]:aria-invalid:focus-visible:ring-rsp-error-dark/20 data-[slot=input]:focus-visible:aria-invalid:ring-3 data-[slot=input]:aria-invalid:border-rsp-error-dark data-[slot=input]:read-only:bg-neutral-100!";
+const inputClasses = "mx-0! px-2 flex text-md md:text-md *:data-[slot=input-group-control]:text-md md:*:data-[slot=input-group-control]:text-md font-semibold min-h-10 min-h-10! aria-invalid:focus-visible:ring-rsp-error-dark/20 focus-visible:aria-invalid:ring-3 aria-invalid:border-rsp-error-dark";
 
 /**
  *
@@ -19,7 +19,7 @@ const InputGroup = ({ className, children }: React.ComponentProps<"div">) => {
     return (
         <PrimitiveInputGroup
             className={cn(
-                "has-disabled:opacity-50 has-[>[data-read-only=true]]:bg-neutral-100",
+                "has-disabled:opacity-50",
                 inputClasses,
                 className,
             )}>
@@ -55,7 +55,7 @@ const Input = ({ className, type, children, ...props }: React.ComponentProps<"in
                 inputClasses,
                 className,
             )}
-            type={type}
+            type={type ?? "text"}
             {...props}
         >
             {children}
