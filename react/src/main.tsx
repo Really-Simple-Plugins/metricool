@@ -84,16 +84,6 @@ declare module "@tanstack/react-router" {
     }
 }
 
-function setScrollPixelCssVar() {
-    function callback() {
-        document.documentElement.style.setProperty("--scroll-progress-in-pixels", `${window.scrollY}px`);
-    }
-    // @ts-expect-error lodash defined globally through WP enwueud dependency
-    window.addEventListener('scroll', window.lodash.throttle(callback, 16), false);
-}
-
-document.addEventListener("DOMContentLoaded", setScrollPixelCssVar);
-
 // Wait for DOMContentLoaded to render the app
 // to allow WordPress to load properly first
 document.addEventListener("DOMContentLoaded", () => {
