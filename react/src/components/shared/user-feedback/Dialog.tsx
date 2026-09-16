@@ -95,7 +95,7 @@ const Dialog = ({
     useEffect(() => {
         window.addEventListener("scroll", onScroll, { passive: true });
 
-        return () => window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
     }, [onScroll]);
 
     return (
