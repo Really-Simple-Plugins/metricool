@@ -11,7 +11,7 @@ const MetricTileVariantStyling = {
 };
 
 const MetricTileVariants = cva(
-    "flex flex-col px-3 py-2 rounded-sm",
+    "flex flex-col px-3 py-2 rounded-base",
     {
         variants: {
             variant: MetricTileVariantStyling,

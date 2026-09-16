@@ -156,7 +156,7 @@ const DataTable = <TData, >({ data, columns, isLoading, hideNoResultsRowIfDataEm
                 className={cn(
                     "overflow-hidden",
                     {
-                        "rounded-sm border border-neutral-100": tableSettings?.showBorder,
+                        "rounded-base border border-neutral-100": tableSettings?.showBorder,
                     }
                 )}
             >

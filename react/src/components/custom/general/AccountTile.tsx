@@ -14,7 +14,7 @@ const AccountTile = ({
     isConnected,
 }: ConnectedAccount) => {
     const wrapperClasses = cn(
-        "flex flex-row rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2",
+        "flex flex-row rounded-base border-1 w-full min-h-[48px] px-2 items-center gap-2",
         isConnected ? "border-neutral-200" : `${unconnectedClasses} cursor-pointer transition-all duration-300 ease-in-out`,
     );
 
