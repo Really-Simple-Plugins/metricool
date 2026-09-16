@@ -169,7 +169,7 @@ class DashboardController implements ControllerInterface
                         wp_enqueue_script(
                             'metricool-main-script',
                             $this->env->getUrl('plugin.react_url') . '/build/' . $value['file'],
-                            ['lodash'],
+                            [],
                             null,
                             false,
                         );
