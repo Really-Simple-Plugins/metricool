@@ -26,7 +26,7 @@ const ScrollProgressBar = () => {
         if (componentRef.current) {
             componentRef.current.style.transform = `scaleX(${clampedNormalisedProgressPercentage})`;
         }
-    }
+    };
 
     const onScroll = useCallback(() => {
         currentScrollYValue.current = window.scrollY;
@@ -38,9 +38,9 @@ const ScrollProgressBar = () => {
     }, []);
 
     useEffect(() => {
-        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener("scroll", onScroll, { passive: true });
 
-        return () => window.removeEventListener('scroll', onScroll);
+        return () => window.removeEventListener("scroll", onScroll);
     }, [onScroll]);
 
     return (
@@ -59,7 +59,7 @@ const ScrollProgressBar = () => {
  *
  * @version 1.0.0
  */
-const SettingsFooter = ({ children } : React.ComponentProps<"div">) => {
+const SettingsFooter = ({ children }: React.ComponentProps<"div">) => {
     const [isFormFooterSticky, setIsFormFooterSticky] = useState<boolean>(false);
     const [isPageScrollable, setIsPageScrollable] = useState<boolean>(document.documentElement.scrollHeight > window.innerHeight);
 
@@ -94,7 +94,7 @@ const SettingsFooter = ({ children } : React.ComponentProps<"div">) => {
             )}
         >
             {isPageScrollable && (
-                <ScrollProgressBar />
+                <ScrollProgressBar/>
             )}
             {children}
         </div>
