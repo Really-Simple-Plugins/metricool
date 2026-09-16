@@ -4,10 +4,11 @@ import {
     Button,
     FieldWrapper,
     FlexContainer,
-    FormFooter,
+    FormFooterState,
     Icon,
     Input,
     LoadingAndErrorState,
+    SettingsFooter,
     SignOut,
     Switch
 } from "@/components/shared";
@@ -141,7 +142,9 @@ const AccountSettings = () => {
                     )}
                 </Block>
             </FlexContainer>
-            <FormFooter formHasUnsavedChanges={isDirty} formIsSubmitting={isPending} formHasErrors={Object.keys(formValidationErrors).length > 0}/>
+            <SettingsFooter>
+                <FormFooterState formHasUnsavedChanges={isDirty} formIsSubmitting={isPending} formHasErrors={Object.keys(formValidationErrors).length > 0}/>
+            </SettingsFooter>
         </form>
     );
 };

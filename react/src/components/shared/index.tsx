@@ -16,7 +16,8 @@ export { SingleAccordion } from "@/components/shared/user-feedback/Accordion.tsx
 export { FieldWrapper } from "@/components/shared/forms/FieldWrapper.tsx";
 export { Alert } from "@/components/shared/user-feedback/Alert.tsx";
 export { FetchingErrorAlert } from "@/components/shared/user-feedback/FetchingErrorAlert.tsx";
-export { FormFooter } from "@/components/shared/forms/FormFooter.tsx";
+export { SettingsFooter } from "@/components/shared/settings/SettingsFooter";
+export { FormFooterState } from "@/components/shared/forms/FormFooterState";
 export { TabNavigation } from "@/components/shared/general/TabNavigation.tsx";
 export { ErrorBoundary } from "@/components/shared/user-feedback/ErrorBoundary.tsx";
 export { Header, HeaderTab } from "@/components/shared/general/Header.tsx";
