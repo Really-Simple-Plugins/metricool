@@ -1,8 +1,8 @@
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
-import { Icon } from "@/components/shared/user-feedback/Icon.tsx"
+import { Icon } from "@/components/shared/user-feedback/Icon"
 
-import { cn } from "@/support/functions/utils.ts"
+import { cn } from "@/support/functions/utils"
 
 function Dialog({
   ...props

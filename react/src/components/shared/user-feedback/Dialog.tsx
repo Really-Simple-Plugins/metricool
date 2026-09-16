@@ -6,13 +6,15 @@ import {
     DialogPortal as PrimitiveDialogPortal,
     DialogTitle as PrimitiveDialogTitle,
     DialogTrigger as PrimitiveDialogTrigger,
-} from "@/components/shared/primitives/dialog.tsx";
+} from "@/components/shared/primitives/dialog";
 import { RemoveScroll } from "react-remove-scroll";
-import { cn } from "@/support/functions/utils.ts";
+import { cn } from "@/support/functions/utils";
 import * as React from "react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { Close as RadixDialogClose, Content as RadixDialogContent } from "@radix-ui/react-dialog";
-import { Icon } from "@/components/shared/user-feedback/Icon.tsx";
+import { Icon } from "@/components/shared/user-feedback/Icon";
+import { type VariantProps } from "class-variance-authority";
+import { dialogVariants, calculatedWidthClass, rightPaddingClass } from "@/support/helpers/Variants";
 
 /**
  * Custom overlay component.
@@ -25,16 +27,21 @@ import { Icon } from "@/components/shared/user-feedback/Icon.tsx";
  *
  * @version 1.0.0
  */
-const Overlay = ({ className, ...props }: React.ComponentProps<"div">) => {
+const Overlay = React.forwardRef<HTMLDivElement, React.ComponentProps<"div">>(function Overlay({ className, ...props }, ref) {
     return (
         <div
             data-slot={"dialog-overlay"}
-            className={cn("data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 absolute inset-0 z-50 bg-black/50 min-h-screen", className)}
+            ref={ref}
+            className={cn("data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 absolute inset-0 z-50 bg-black/50 min-h-screen", rightPaddingClass, calculatedWidthClass, className)}
             {...props}
         >
         </div>
     );
-};
+});
+
+type DialogProps = {
+    renderRadixDialogOverlayForce?: boolean,
+} & VariantProps<typeof dialogVariants>
 
 /**
  * Our custom extension of shadcn's Dialog component.
@@ -54,10 +61,9 @@ const Dialog = ({
     children,
     renderRadixDialogOverlayForce,
     showCloseButton = false,
+    variant,
     ...props
-}: React.ComponentProps<typeof PrimitiveDialogContent> & Omit<React.ComponentProps<typeof PrimitiveDialog>, "modal"> & {
-    renderRadixDialogOverlayForce?: boolean,
-}) => {
+}: React.ComponentProps<typeof PrimitiveDialogContent> & Omit<React.ComponentProps<typeof PrimitiveDialog>, "modal"> & DialogProps) => {
     const RENDER_DIALOG_OVERLAY = renderRadixDialogOverlayForce ?? false;
     const container = document.getElementById("wpbody") ?? undefined;
     const appContainer = document.getElementById("rsp-app-root") ?? undefined;
@@ -75,8 +81,22 @@ const Dialog = ({
         return () => {
             appContainer?.classList.remove("pointer-events-none");
             wpFooter?.classList.remove("pointer-events-none");
-        }
+        };
     }, [appContainer, wpFooter, open]);
+
+    const setScrollPixelProgressCssVar = () => {
+        document.documentElement.style.setProperty("--scroll-progress-in-pixels", `${window.scrollY}px`);
+    };
+
+    const onScroll = useCallback(() => {
+        requestAnimationFrame(setScrollPixelProgressCssVar);
+    }, []);
+
+    useEffect(() => {
+        window.addEventListener("scroll", onScroll, { passive: true });
+
+        return () => window.addEventListener("scroll", onScroll, { passive: true });
+    }, [onScroll]);
 
     return (
         <PrimitiveDialog open={open} onOpenChange={onOpenChange} modal={RENDER_DIALOG_OVERLAY}>
@@ -85,18 +105,19 @@ const Dialog = ({
                 <RemoveScroll>
                     <RadixDialogContent
                         data-slot={"dialog-content"}
-                        className={cn(
-                            "font-sans selection:bg-primary selection:text-primary-foreground",
-                            "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 absolute top-[calc(50vh+var(--scroll-progress-in-pixels))] left-[50%] z-50 grid w-full max-sm:max-w-[calc(100%-2rem)] sm:min-w-[600px] sm:max-w-[600px] min-h-[400px] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-xs border p-6 shadow-lg duration-200",
-                            className
-                        )}
+                        className={cn(dialogVariants({ variant, className }))}
+                        onOpenAutoFocus={(event: Event) => {
+                            event.preventDefault();
+                        }}
+                        data-state={open ? "open" : "closed"}
                         {...props}
                     >
                         {children}
                         {showCloseButton && (
                             <RadixDialogClose
                                 data-slot={"dialog-close"}
-                                className={"focus:ring-ring data-[state=open]:bg-accent data-[state=open]:text-muted-foreground absolute top-4 right-4 rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:cursor-pointer"}
+                                data-state={open ? "open" : "closed"}
+                                className={"focus:ring-ring data-[state=open]:text-muted-foreground absolute top-4 right-[calc(var(--spacing)*4+var(--removed-body-scroll-bar-size))] rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:cursor-pointer"}
                             >
                                 <Icon icon={"close"} className={"text-black size-8"}/>
                                 <span className={"sr-only"}>Close</span>
