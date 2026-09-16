@@ -2,6 +2,7 @@ import { Icon } from "@/components/shared/user-feedback/Icon";
 import {
     Alert as PrimitiveAlert,
     AlertDescription as PrimitiveAlertDescription,
+    AlertTitle as PrimitiveAlertTitle,
 } from "@/components/shared/primitives/alert";
 import { type VariantProps } from "class-variance-authority";
 import { cn } from "@/support/functions/utils";
@@ -11,6 +12,7 @@ type AlertVariantsProps = VariantProps<typeof alertVariants>;
 
 type AlertProps = {
     action?: React.ReactNode,
+    title?: string,
 };
 
 /**
@@ -26,6 +28,7 @@ const Alert = ({
     children,
     variant,
     className,
+    title,
     ...props
 }: React.ComponentProps<"div"> & AlertProps & AlertVariantsProps) => {
 
@@ -37,10 +40,23 @@ const Alert = ({
             <div data-slot={"alert-icon"}>
                 <Icon icon={"info"}/>
             </div>
-            <PrimitiveAlertDescription className={"text-md font-semibold leading-4 text-left"}>
+            {title && (
+                <PrimitiveAlertTitle className={"text-left"}>
+                    {title}
+                </PrimitiveAlertTitle>
+            )}
+            <PrimitiveAlertDescription
+                className={cn(
+                    "text-md leading-4 text-left",
+                    {
+                        "font-semibold": !title,
+                        "font-normal": title,
+                    }
+                )}
+            >
                 {children}
                 {action && (
-                    <div>
+                    <div className={"font-semibold"}>
                         {action}
                     </div>
                 )}

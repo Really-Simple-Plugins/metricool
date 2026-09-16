@@ -329,7 +329,7 @@ defined styles to inherit, to be used for h1 in Block Header Titles */
 
 /* Applying our own focus styling to all a, button and input tags. */
 :is(#rsp-app-root, div[role="dialog"]) :is(a:is(:focus, :focus-visible), button:is(:focus, :focus-visible), input:is(:focus, :focus-visible)) {
-    @apply ring-[3px] ring-ring/50;
+    @apply ring-[3px] ring-ring transition-all duration-200 ease-in-out;
     color: initial;
 }
 
@@ -442,7 +442,8 @@ body[data-scroll-locked] {
     margin-right: 0 !important;
 }
 
-/* On some versions of Google Recaptcha, the badge needs to be manually hidden */
+/* On some versions of Google Recaptcha, the badge needs to be manually hidden
+   (moved form tailwind.css to keep centralised)*/
 .grecaptcha-badge {
     visibility: hidden;
 }

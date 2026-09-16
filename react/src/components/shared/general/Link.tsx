@@ -1,6 +1,11 @@
 import { Link as RouterLink, type LinkProps as TanstackRouterLinkProps } from "@tanstack/react-router";
 import type { VariantProps } from "class-variance-authority";
-import { buttonVariants, PrimaryGradientGhostVariantWrapper } from "@/support/helpers/Variants";
+import {
+    baseLinkClasses,
+    buttonVariants,
+    defaultLinkStyling,
+    PrimaryGradientGhostVariantWrapper
+} from "@/support/helpers/Variants";
 import { cn } from "@/support/functions/utils";
 
 type BaseLinkProps =
@@ -38,14 +43,14 @@ const Link = ({
     let classes = cn("cursor-pointer", className);
 
     /**
-     * This makes it impossible to specifically style a Link as the "unstyled" Button variant
+     * This makes it impossible to specifically style a Link as the "unstyled" Button variant, but needed to create a default styling
      */
     if (!(variant === "unstyled")) {
         classes = cn(
-            "h-7.5 rounded-none text-md cursor-pointer",
+            baseLinkClasses,
             variant
                 ? cn(buttonVariants({ variant, size }))
-                : "p-0 border-none text-black bg-transparent hover:bg-transparent font-normal leading-4 underline h-fit!",
+                : defaultLinkStyling,
             className,
         );
     }

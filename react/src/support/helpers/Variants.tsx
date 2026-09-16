@@ -190,6 +190,10 @@ const toggleVariants = cva(
  * BUTTON
  * ======================================
  */
+
+const baseLinkClasses = "h-7.5 rounded-none text-md cursor-pointer";
+const defaultLinkStyling = "p-0 border-none text-black bg-transparent hover:bg-transparent font-normal leading-4 underline h-fit!";
+
 const buttonVariantStyling = {
     "primary": "bg-primary text-white! border-primary hover:bg-primary-light hover:text-primary! hover:border-primary-light",
     "primary-ghost": "bg-transparent text-primary! border-solid border-primary hover:bg-primary hover:border-primary hover:text-white! font-bold",
@@ -205,6 +209,7 @@ const buttonVariantStyling = {
     "black": "bg-black border-black text-white! hover:bg-black hover:text-white! hover:invert",
     "black-ghost": "bg-transparent text-black! border-black border hover:bg-black hover:text-white!",
     "unstyled": "p-0 border-none rounded-none font-normal text-md min-h-fit min-w-fit",
+    "link": cn(baseLinkClasses, defaultLinkStyling),
     "toggle": cn(toggleVariantStyling.variant.primary, "max-w-fit border-none"),
     "badge": cn(badgeVariantStyling.basis, badgeVariantStyling.variant.primary, "text-sm hover:bg-primary hover:text-primary-light max-w-fit border-none active:bg-primary-dark active:text-primary-light"),
 };
@@ -277,6 +282,8 @@ export {
     badgeVariants,
     blockVariants,
     buttonVariants,
+    baseLinkClasses,
+    defaultLinkStyling,
     dialogVariants,
     rightPaddingClass,
     calculatedWidthClass,

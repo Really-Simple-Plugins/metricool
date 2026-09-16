@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { FlexContainer } from "@/components/shared/general/FlexContainer";
 import { cn } from "@/support/functions/utils";
-import { Link } from "@/components/shared/general/Link";
+import { Button } from "@/components/shared/forms/Button";
 
 type TabNavigationProps = {
     tabs: { title: string, component?: React.ReactElement }[],
@@ -15,7 +15,8 @@ const TabNavigation = ({ tabs, activeTab, onTabClick, separator = false }: TabNa
         <FlexContainer direction={"row"} className={"w-auto leading-none text-md gap-2!"}>
             {tabs.map((tab, index) => (
                 <>
-                    <Link
+                    <Button
+                        variant={"link"}
                         onClick={() => onTabClick(index)}
                         className={cn(
                             "no-underline hover:underline hover:text-black",
@@ -23,7 +24,7 @@ const TabNavigation = ({ tabs, activeTab, onTabClick, separator = false }: TabNa
                         )}
                     >
                         {tab.title}
-                    </Link>
+                    </Button>
                     {separator && (index !== tabs.length - 1) && (<span>|</span>)}
                 </>
             ))}
