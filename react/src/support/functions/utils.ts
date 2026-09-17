@@ -91,12 +91,12 @@ export const generateRecaptchaToken = async (key: string, action: string): Promi
  * Checks whether an Object or Array is empty.
  * @param object - the Object / Array to check
  */
-export const isEmpty = (object: Array<never> | object) => {
-    if (!Array.isArray(object) || !(object.constructor === Object)) {
+export const isEmpty = (object: Array<never> | Object) => {
+    if (!Array.isArray(object) && !(object.constructor === Object)) {
         return false;
     }
 
-    if (object.length === 0) {
+    if (Array.isArray(object) && object.length === 0) {
         return true;
     }
 
