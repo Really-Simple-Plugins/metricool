@@ -101,7 +101,7 @@ export const isEmpty = (object: Array<never> | object) => {
     }
 
     if (Object.keys(object)?.length === 0) {
-        return ;
+        return true;
     }
 
     return false;
