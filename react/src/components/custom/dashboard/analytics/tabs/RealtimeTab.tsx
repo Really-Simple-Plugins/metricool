@@ -39,7 +39,7 @@ const RealtimeTab = () => {
                 <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 gap-2! p-2"}>
                     <FlexContainer direction={"row"} className={"justify-between"}>
                         <div className={"text-md font-semibold"}>{__("Last 30 Minutes", "metricool")}</div>
-                        <FlexContainer direction={"row"} className={"gap-2!"}>
+                        <FlexContainer direction={"row"} className={"gap-2! min-h-14"}>
                             <MetricTile metric={realTimeData.totals.pageViews.totalAmount} variant={"tertiary"}>
                                 {__("Page Views", "metricool")}
                             </MetricTile>

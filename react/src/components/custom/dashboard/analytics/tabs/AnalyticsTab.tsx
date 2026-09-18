@@ -154,9 +154,9 @@ const AnalyticsTab = () => {
     });
 
     return (
-        <FlexContainer direction={"column"} className={"justify-between grow"}>
+        <FlexContainer direction={"column"} className={"justify-between grow gap-0!"}>
             <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 gap-2! p-2"}>
-                <FlexContainer direction={"row"} className={"w-full min-h-12.5 justify-end gap-2!"}>
+                <FlexContainer direction={"row"} className={"w-full min-h-14 justify-end gap-2!"}>
                     {analyticsData && Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
                         <MetricTile
                             onClick={() => toggleMetric(metricKey)}
