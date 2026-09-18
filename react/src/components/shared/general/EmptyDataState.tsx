@@ -27,26 +27,35 @@ const EmptyDataState = ({
     emptyStateDescription,
     customEmptyState,
 }: EmptyDataStateProps) => {
+
+    if (isLoading) {
+        return (
+            <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
+                <Icon icon={"loading"} className={"size-5"}/>
+            </FlexContainer>
+        );
+    }
+
+    if (error) {
+        return (
+            <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={supportTicketLink}/>
+        );
+    }
+
+    if (customEmptyState) {
+        return (
+            <>
+                {customEmptyState}
+            </>
+        );
+    }
+
     return (
-        <>
-            {isLoading ? (
-                <FlexContainer direction={"row"} className={"justify-center items-center w-full grow"}>
-                    <Icon icon={"loading"} className={"size-5"}/>
-                </FlexContainer>
-            ) : error ? (
-                <FetchingErrorAlert errorUpdateCount={errorUpdateCount} refetch={refetch} supportTicketLink={supportTicketLink}/>
-            ) : customEmptyState ? (
-                <>
-                    {customEmptyState}
-                </>
-            ) : (
-                <FlexContainer direction={"row"} className={"justify-center items-end w-full grow"}>
-                    <Alert variant={"warning"} title={emptyStateTitle ?? __("No data found", "metricool")}>
-                        {emptyStateDescription ?? __("There appears to be no data available", "metricool")}
-                    </Alert>
-                </FlexContainer>
-            )}
-        </>
+        <FlexContainer direction={"row"} className={"justify-center items-end w-full grow"}>
+            <Alert variant={"warning"} title={emptyStateTitle ?? __("No data found", "metricool")}>
+                {emptyStateDescription ?? __("There appears to be no data available", "metricool")}
+            </Alert>
+        </FlexContainer>
     );
 };
 
