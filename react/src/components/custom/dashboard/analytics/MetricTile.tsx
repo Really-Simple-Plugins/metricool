@@ -11,7 +11,7 @@ const MetricTileVariantStyling = {
 };
 
 const MetricTileVariants = cva(
-    "flex flex-col px-3 py-2 rounded-base",
+    "flex flex-col px-3 py-2 h-fit w-fit rounded-base",
     {
         variants: {
             variant: MetricTileVariantStyling,
@@ -48,7 +48,6 @@ const MetricTile = ({
                  (inactive || disabled) && "opacity-35 transition-all ease-in-out duration-300",
              )}
              variant={"unstyled"}
-             size={"icon"}
              onClick={onClick}
         >
             <FlexContainer direction={"row"} className={clsx("text-white text-[16px] items-center gap-1.5! justify-center")}>
