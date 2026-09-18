@@ -16,6 +16,7 @@ const TabNavigation = ({ tabs, activeTab, onTabClick, separator = false }: TabNa
             {tabs.map((tab, index) => (
                 <>
                     <Button
+                        key={index}
                         variant={"link"}
                         onClick={() => onTabClick(index)}
                         className={cn(
