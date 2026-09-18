@@ -203,7 +203,7 @@ const buttonVariantStyling = {
     "secondary-ghost": "bg-transparent text-secondary! border-solid border-secondary hover:bg-secondary hover:border-secondary hover:text-white! font-bold",
     "tertiary": "bg-tertiary border-tertiary hover:bg-tertiary-light hover:text-tertiary! hover:border-tertiary-light",
     "tertiary-ghost": "bg-transparent text-tertiary! border-solid border-tertiary hover:bg-tertiary-light hover:border-tertiary-light hover:text-tertiary-dark! font-bold",
-    "icon": "border-none p-0 has-[>svg]:p-0 m-0 bg-transparent hover:bg-transparent text-gray-600! hover:text-gray-800!",
+    "icon": "border-none p-0 has-[>svg]:p-0 m-0 bg-transparent hover:bg-transparent text-gray-600 hover:text-gray-800",
     "upsell": "bg-upsell border-upsell text-black! hover:bg-upsell hover:text-black!",
     "upsell-ghost": "bg-white border-neutral-200 text-black! hover:bg-white hover:text-black!",
     "black": "bg-black border-black text-white! hover:bg-black hover:text-white! hover:invert",
