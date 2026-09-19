@@ -231,14 +231,12 @@ const AnalyticsTab = () => {
                                 >
                                     <Link
                                         href={metricoolDynamicUrl.withPath("user-settings/plan")}
-                                        className={"no-underline! font-semibold hover:text-black"}
+                                        className={"no-underline! font-semibold hover:text-black gap-2! items-center"}
                                     >
-                                        <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                                                    <span className={"flex size-3.5 items-center justify-center"}>
-                                                        <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
-                                                    </span>
-                                            {filterOption.label}
-                                        </FlexContainer>
+                                        <span className={"flex size-3.5 items-center justify-center"}>
+                                            <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
+                                        </span>
+                                        {filterOption.label}
                                     </Link>
                                 </DisabledSelectOption>
                             ) : (
@@ -253,24 +251,26 @@ const AnalyticsTab = () => {
                     </Select>
                     <Link
                         variant={metricool.account?.is_premium ? "black-ghost" : "upsell"}
-                        className={cn(metricool.account?.is_premium && "border-neutral-200")}
+                        className={cn(
+                            "gap-2! items-center",
+                            {
+                                "border-neutral-200": metricool.account?.is_premium,
+                            }
+                        )}
                         size={"sm"}
                         href={metricoolDynamicUrl.withPath("evolution/reports")}
                     >
-                        <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                            <Icon icon={"file"}/>
-                            {__("Report", "metricool")}
-                        </FlexContainer>
+                        <Icon icon={"file"}/>
+                        {__("Report", "metricool")}
                     </Link>
                 </FlexContainer>
                 <Link
                     variant={"primary-gradient-ghost"}
                     href={metricoolDynamicUrl.withPath("evolution/web")}
+                    className={"gap-2! items-center"}
                 >
-                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                        {__("View Analytics", "metricool")}
-                        <Icon icon={"external-link"} className={"svg-gradient"}/>
-                    </FlexContainer>
+                    {__("View Analytics", "metricool")}
+                    <Icon icon={"external-link"} className={"svg-gradient"}/>
                 </Link>
             </FlexContainer>
         </FlexContainer>
