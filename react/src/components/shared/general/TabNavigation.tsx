@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from "react";
+import { type Dispatch, Fragment, type SetStateAction } from "react";
 import { FlexContainer } from "@/components/shared/general/FlexContainer";
 import { cn } from "@/support/functions/utils";
 import { Button } from "@/components/shared/forms/Button";
@@ -14,9 +14,8 @@ const TabNavigation = ({ tabs, activeTab, onTabClick, separator = false }: TabNa
     return (
         <FlexContainer direction={"row"} className={"w-auto leading-none text-md gap-2!"}>
             {tabs.map((tab, index) => (
-                <>
+                <Fragment key={`tab-${index}`}>
                     <Button
-                        key={index}
                         variant={"link"}
                         onClick={() => onTabClick(index)}
                         className={cn(
@@ -27,7 +26,7 @@ const TabNavigation = ({ tabs, activeTab, onTabClick, separator = false }: TabNa
                         {tab.title}
                     </Button>
                     {separator && (index !== tabs.length - 1) && (<span>|</span>)}
-                </>
+                </Fragment>
             ))}
         </FlexContainer>
     );
