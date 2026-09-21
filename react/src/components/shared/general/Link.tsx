@@ -74,13 +74,9 @@ const Link = ({
         )
     }
 
-    /**
-     * Tanstack Link's `href` is currently broken, using `to` instead.
-     * @see {@link https://github.com/TanStack/router/issues/4901#issuecomment-4976734641|GitHubIssue}
-     */
     return (
         <RouterLink
-            to={route ?? href}
+            to={route}
             className={classes}
             target={target}
             {...props}
