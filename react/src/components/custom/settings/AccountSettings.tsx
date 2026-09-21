@@ -4,10 +4,11 @@ import {
     Button,
     FieldWrapper,
     FlexContainer,
-    FormFooter,
+    FormFooterState,
     Icon,
     Input,
     LoadingAndErrorState,
+    SettingsFooter,
     SignOut,
     Switch
 } from "@/components/shared";
@@ -22,7 +23,7 @@ import { useUserSettingsData } from "@/hooks/useUserSettingsData.tsx";
  *
  * Is a `<form>` component which contains {@link Block}(s). This way the form's
  * onSubmit attribute can be used and a submit callback function doesn't have
- * to be passed down to the button in the {@link FormFooter}. No other button
+ * to be passed down to the button in the {@link SettingsFooter}. No other button
  * with type "submit" should be added anywhere in the subtree of this component.
  *
  * Retrieves all Query, Mutation and Form data from {@link useUserSettingsData}.
@@ -141,7 +142,9 @@ const AccountSettings = () => {
                     )}
                 </Block>
             </FlexContainer>
-            <FormFooter formHasUnsavedChanges={isDirty} formIsSubmitting={isPending} formHasErrors={Object.keys(formValidationErrors).length > 0}/>
+            <SettingsFooter>
+                <FormFooterState formHasUnsavedChanges={isDirty} formIsSubmitting={isPending} formHasErrors={Object.keys(formValidationErrors).length > 0}/>
+            </SettingsFooter>
         </form>
     );
 };
