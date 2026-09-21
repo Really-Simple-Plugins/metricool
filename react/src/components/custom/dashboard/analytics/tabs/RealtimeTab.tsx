@@ -26,7 +26,7 @@ const RealtimeTab = () => {
     };
 
     return (
-        <FlexContainer direction={"column"} className={"justify-between grow"}>
+        <FlexContainer direction={"column"} className={"justify-between grow gap-0!"}>
             {!realTimeData ? (
                 <LoadingAndErrorState
                     error={error}
