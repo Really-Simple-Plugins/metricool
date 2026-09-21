@@ -327,25 +327,28 @@ defined styles to inherit, to be used for h1 in Block Header Titles */
     color: inherit !important;
 }
 
-/* Applying our own focus styling to all a, button and input tags. */
-:is(#rsp-app-root, div[role="dialog"]) :is(a:is(:focus, :focus-visible), button:is(:focus, :focus-visible), input:is(:focus, :focus-visible)) {
-    @apply ring-[3px] ring-ring transition-all duration-200 ease-in-out;
-    color: initial;
-}
+/* Selecting only within our own app root and Dialogs */
+:is(#rsp-app-root, div[role="dialog"]) {
+    /* Applying our own focus styling to all a, button and input tags. */
+    :is(a:is(:focus, :focus-visible), button:is(:focus, :focus-visible), input:is(:focus, :focus-visible)) {
+        @apply ring-[3px] ring-ring transition-all duration-200 ease-in-out;
+        color: initial;
+    }
 
-/* Removing Wordpress' default margins on paragraphs. */
-:is(#rsp-app-root, div[role="dialog"]) p {
-    @apply m-0;
-}
+    /* Removing Wordpress' default margins on paragraphs. */
+    p {
+        @apply m-0;
+    }
 
-/* Overwriting WP's default input styling with our own. */
-:is(#rsp-app-root, div[role="dialog"]) :is(input[type=color],input[type=date],input[type=datetime-local],input[type=datetime],input[type=email],input[type=month],input[type=number],input[type=password],input[type=search],input[type=tel],input[type=text],input[type=time],input[type=url],input[type=week],select,textarea) {
-    @apply rounded-base border border-input bg-white text-black p-0 px-2 py-1;
-}
+    /* Overwriting WP's default input styling with our own. */
+    :is(input[type=color],input[type=date],input[type=datetime-local],input[type=datetime],input[type=email],input[type=month],input[type=number],input[type=password],input[type=search],input[type=tel],input[type=text],input[type=time],input[type=url],input[type=week],select,textarea) {
+        @apply rounded-base border border-input bg-white text-black p-0 px-2 py-1;
+    }
 
-/* Overwriting WP's readonly background color with our own. */
-:is(#rsp-app-root, div[role="dialog"]) :is(input.readonly,input[readonly],textarea.readonly,textarea[readonly]) {
-    @apply read-only:bg-neutral-100! has-[>[data-read-only=true]]:bg-neutral-100;
+    /* Overwriting WP's readonly background color with our own. */
+    :is(input.readonly,input[readonly],textarea.readonly,textarea[readonly]) {
+        @apply read-only:bg-neutral-100! has-[>[data-read-only=true]]:bg-neutral-100;
+    }
 }
 
 /**
