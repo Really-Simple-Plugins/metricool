@@ -1,6 +1,11 @@
 import { Link as RouterLink, type LinkProps as TanstackRouterLinkProps } from "@tanstack/react-router";
 import type { VariantProps } from "class-variance-authority";
-import { buttonVariants, PrimaryGradientGhostVariantWrapper } from "@/support/helpers/Variants";
+import {
+    baseLinkClasses,
+    buttonVariants,
+    defaultLinkStyling,
+    PrimaryGradientGhostVariantWrapper
+} from "@/support/helpers/Variants";
 import { cn } from "@/support/functions/utils";
 
 type BaseLinkProps =
@@ -38,14 +43,14 @@ const Link = ({
     let classes = cn("cursor-pointer", className);
 
     /**
-     * This makes it impossible to specifically style a Link as the "unstyled" Button variant
+     * This makes it impossible to specifically style a Link as the "unstyled" Button variant, but needed to create a default styling
      */
     if (!(variant === "unstyled")) {
         classes = cn(
-            "h-7.5 rounded-none text-md cursor-pointer",
+            baseLinkClasses,
             variant
                 ? cn(buttonVariants({ variant, size }))
-                : "p-0 border-none text-black hover:text-wordpress-link-hover bg-transparent hover:bg-transparent font-normal leading-4 underline h-fit!",
+                : defaultLinkStyling,
             className,
         );
     }
@@ -69,13 +74,9 @@ const Link = ({
         )
     }
 
-    /**
-     * Tanstack Link's `href` is currently broken, using `to` instead.
-     * @see {@link https://github.com/TanStack/router/issues/4901#issuecomment-4976734641|GitHubIssue}
-     */
     return (
         <RouterLink
-            to={route ?? href}
+            to={route}
             className={classes}
             target={target}
             {...props}
