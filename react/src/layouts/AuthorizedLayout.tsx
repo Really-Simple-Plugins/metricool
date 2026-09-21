@@ -23,21 +23,19 @@ const AuthorizedLayout = ({ children }: React.ComponentProps<"div">) => {
                     (<Link
                         variant={"black"}
                         href={metricool.metricool_help_url}
+                        className={"gap-2! items-center"}
                     >
-                        <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                            <Icon icon={"faq"} className={"text-white"}/>
-                            {__("Help Center", "metricool")}
-                        </FlexContainer>
+                        <Icon icon={"faq"} className={"text-white"}/>
+                        {__("Help Center", "metricool")}
                     </Link>),
                     (!metricool.account?.is_premium && (
                         <Link
                             variant={"primary-gradient"}
                             href={metricoolDynamicUrl.withPath("user-settings/plan")}
+                            className={"gap-2! items-center"}
                         >
-                            <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                                <Icon icon={"sparkle"} className={"text-secondary"}/>
-                                {__("Upgrade", "metricool")}
-                            </FlexContainer>
+                            <Icon icon={"sparkle"} className={"text-secondary"}/>
+                            {__("Upgrade", "metricool")}
                         </Link>
                         )
                     )

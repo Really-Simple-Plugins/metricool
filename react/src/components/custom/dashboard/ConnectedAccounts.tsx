@@ -49,11 +49,10 @@ const ConnectedAccounts = () => {
                 <Link
                     variant={"primary-gradient-ghost"}
                     href={metricoolDynamicUrl.withPath("evolution/settings/connections")}
+                    className={"gap-2! items-center"}
                 >
-                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                        {__("Connected Accounts", "metricool")}
-                        <Icon icon={"external-link"} className={"svg-gradient"}/>
-                    </FlexContainer>
+                    {__("Connected Accounts", "metricool")}
+                    <Icon icon={"external-link"} className={"svg-gradient"}/>
                 </Link>
             </FlexContainer>
         </Block>
