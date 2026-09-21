@@ -23,7 +23,7 @@ import { useUserSettingsData } from "@/hooks/useUserSettingsData.tsx";
  *
  * Is a `<form>` component which contains {@link Block}(s). This way the form's
  * onSubmit attribute can be used and a submit callback function doesn't have
- * to be passed down to the button in the {@link FormFooter}. No other button
+ * to be passed down to the button in the {@link SettingsFooter}. No other button
  * with type "submit" should be added anywhere in the subtree of this component.
  *
  * Retrieves all Query, Mutation and Form data from {@link useUserSettingsData}.
