@@ -55,7 +55,6 @@ const RealtimeTab = () => {
                     <LineChart
                         chartSettings={{
                             xAxisKey: lineChartXAxisDataKey,
-                            general: { height: 290 },
                         }}
                         maxHeightClass={"max-h-72.5"}
                         chartConfig={chartConfig}
