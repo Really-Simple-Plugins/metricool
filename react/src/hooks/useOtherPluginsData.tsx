@@ -2,7 +2,7 @@ import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { __ } from "@wordpress/i18n";
 import { queryClient } from "@/main.tsx";
-import { Link, showToast } from "@/components/shared";
+import { Button, Link, showToast } from "@/components/shared";
 
 const pluginStatuses: Record<string, string> = {
     installed: __("Installed", "metricool"),
@@ -147,7 +147,8 @@ const useOtherPluginsData = () => {
             }
             default: {
                 return (
-                    <Link
+                    <Button
+                        variant={"link"}
                         className={"text-sm"}
                         onClick={() => pluginActionMutation.mutate({
                             slug: plugin.slug,
@@ -156,7 +157,7 @@ const useOtherPluginsData = () => {
                         })}
                     >
                         {pluginStatuses[plugin.action]}
-                    </Link>
+                    </Button>
                 );
             }
 
