@@ -1,4 +1,4 @@
-import { cva } from "class-variance-authority";
+import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/support/functions/utils";
 
 /**
@@ -245,14 +245,22 @@ const buttonVariants = cva(
 const ButtonVariantChildrenWrapper = ({
     children,
     className,
+    variant,
     ...props
-}: React.ComponentProps<"span">) => (
-    <span
-        className={cn("inline-flex items-center justify-center gap-2", className)}
-        {...props}
-    >
-        {children}
-    </span>
+}: React.ComponentProps<"span"> & VariantProps<typeof buttonVariants>) => (
+    <>
+        {variant === "primary-gradient-ghost" ? (
+            <span
+                className={cn("inline-flex items-center justify-center gap-2", className)}
+                {...props}
+            >
+                {children}
+            </span>
+
+        ) : (
+            children
+        )}
+    </>
 );
 
 export {

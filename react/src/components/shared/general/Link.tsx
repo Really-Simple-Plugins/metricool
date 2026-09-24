@@ -62,7 +62,7 @@ const Link = ({
                 rel={"noopener noreferrer"}
                 onClick={onClick}
             >
-                <ButtonVariantChildrenWrapper>
+                <ButtonVariantChildrenWrapper variant={variant}>
                     {children}
                 </ButtonVariantChildrenWrapper>
             </a>
@@ -77,7 +77,7 @@ const Link = ({
             onClick={onClick}
             {...props}
         >
-            <ButtonVariantChildrenWrapper>
+            <ButtonVariantChildrenWrapper variant={variant}>
                 {children}
             </ButtonVariantChildrenWrapper>
         </RouterLink>

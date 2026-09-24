@@ -61,7 +61,7 @@ const Button = ({
             type={type !== "trigger" ? type : "button"}
             {...props}
         >
-            <ButtonVariantChildrenWrapper>
+            <ButtonVariantChildrenWrapper variant={variant}>
                 {children}
             </ButtonVariantChildrenWrapper>
         </PrimitiveButton>
