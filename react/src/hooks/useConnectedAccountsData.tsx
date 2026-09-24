@@ -32,7 +32,7 @@ const useConnectedAccountsData = ({ useLimitedDashboardList }: UseConnectedAccou
 
     const connectedAccountsQuery = useQuery({
         queryKey: ["connected", "accounts"],
-        queryFn: () => httpClient.setRoute("connected_networks").get(),
+        queryFn: () => httpClient.get("connected_networks"),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (response): ConnectedAccount[] => {
             const fullAccountsList: ConnectedAccount[] = [

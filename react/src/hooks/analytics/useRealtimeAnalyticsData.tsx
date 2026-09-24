@@ -21,7 +21,7 @@ const useRealtimeAnalyticsData = () => {
 
     const realtimeDataQuery = useQuery({
         queryKey: ["analytics", "realtime"],
-        queryFn: () => httpClient.setRoute("realtime").get(),
+        queryFn: () => httpClient.get("realtime"),
         staleTime: 1000 * 60, // 1 minute
         refetchInterval: 1000 * 60, // 1 minute
         select: (response): { totals: Record<string, MetricData>, timelineData: TimelineData } => response.data,

@@ -38,7 +38,7 @@ const useWebAnalyticsData = ({ selectedAnalyticsPeriod = defaultPeriodFilter.opt
 
     const webAnalyticsDataQuery = useQuery({
         queryKey: ["analytics", selectedAnalyticsPeriod],
-        queryFn: () => httpClient.setRoute("analytics").setFilters({ period: selectedAnalyticsPeriod }).get(),
+        queryFn: () => httpClient.get("analytics", { period: selectedAnalyticsPeriod }),
         staleTime: 1000 * 60 * 60 * 12, // 12 hours
         gcTime: 1000 * 60 * 60 * 12, // 12 hours
         select: (response): { totals: Record<string, MetricData>, timelineData: TimelineData } => response.data,
