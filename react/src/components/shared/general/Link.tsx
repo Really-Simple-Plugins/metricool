@@ -2,29 +2,21 @@ import { Link as RouterLink, type LinkProps as TanstackRouterLinkProps } from "@
 import type { VariantProps } from "class-variance-authority";
 import {
     baseLinkClasses,
+    ButtonVariantChildrenWrapper,
     buttonVariants,
-    defaultLinkStyling,
-    ButtonVariantChildrenWrapper
+    defaultLinkStyling
 } from "@/support/helpers/Variants";
 import { cn } from "@/support/functions/utils";
 import type { RequiredProperty } from "@/types/utility/RequiredProperty";
 
-type BaseLinkProps =
-    RequiredProperty<Pick<React.ComponentProps<"a">, "href" | "target" | "onClick" | "className">, "href">
-    & {
-    route?: never,
-}
-
-type RouterLinkProps =
-    Omit<React.ComponentProps<typeof RouterLink>, "to" | "children">
-    & {
-    href?: never,
-    route: RequiredProperty<TanstackRouterLinkProps, "to">["to"],
-}
+export type RouteOrHref = (
+    | { route?: never, href: string }
+    | { route: RequiredProperty<TanstackRouterLinkProps, "to">["to"], href?: never }
+);
 
 export type LinkProps =
-    Pick<React.ComponentProps<"a">, "children">
-    & (BaseLinkProps | RouterLinkProps);
+    Pick<React.ComponentProps<"a">, "children" | "onClick" | "className" | "target">
+    & RouteOrHref;
 
 /**
  *

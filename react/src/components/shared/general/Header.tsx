@@ -1,4 +1,4 @@
-import { Link, type LinkProps } from "@/components/shared/general/Link";
+import { Link, type RouteOrHref } from "@/components/shared/general/Link";
 import { Icon } from "@/components/shared/user-feedback/Icon";
 import { FlexContainer } from "@/components/shared/general/FlexContainer";
 import { cn } from "@/support/functions/utils";
@@ -9,19 +9,11 @@ type HeaderTabProps =
     React.ComponentProps<"div">
     & RouteOrHref
     & {
-    badge?: {
-        label: string | number,
-        classes?: string,
-    }
-};
-
-type RouteOrHref = ({
-    route: LinkProps["route"],
-    href?: never
-} | {
-    href: string,
-    route?: never
-})
+        badge?: {
+            label: string | number,
+            classes?: string,
+        }
+    };
 
 const HeaderTab = ({ route, href, children, className, badge }: HeaderTabProps) => {
     return (
