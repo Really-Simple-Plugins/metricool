@@ -10,7 +10,7 @@ import {
 import { RemoveScroll } from "react-remove-scroll";
 import { cn } from "@/support/functions/utils";
 import * as React from "react";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { Close as RadixDialogClose, Content as RadixDialogContent } from "@radix-ui/react-dialog";
 import { Icon } from "@/components/shared/user-feedback/Icon";
 import { type VariantProps } from "class-variance-authority";
@@ -73,6 +73,7 @@ const Dialog = ({
         if (open) {
             appContainer?.classList.add("pointer-events-none");
             wpFooter?.classList.add("pointer-events-none");
+            document.documentElement.style.setProperty("--scroll-progress-in-pixels", `${window.scrollY}px`);
         } else {
             appContainer?.classList.remove("pointer-events-none");
             wpFooter?.classList.remove("pointer-events-none");
@@ -83,20 +84,6 @@ const Dialog = ({
             wpFooter?.classList.remove("pointer-events-none");
         };
     }, [appContainer, wpFooter, open]);
-
-    const setScrollPixelProgressCssVar = () => {
-        document.documentElement.style.setProperty("--scroll-progress-in-pixels", `${window.scrollY}px`);
-    };
-
-    const onScroll = useCallback(() => {
-        requestAnimationFrame(setScrollPixelProgressCssVar);
-    }, []);
-
-    useEffect(() => {
-        window.addEventListener("scroll", onScroll, { passive: true });
-
-        return () => window.removeEventListener("scroll", onScroll);
-    }, [onScroll]);
 
     return (
         <PrimitiveDialog open={open} onOpenChange={onOpenChange} modal={RENDER_DIALOG_OVERLAY}>

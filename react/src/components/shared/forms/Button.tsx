@@ -1,7 +1,8 @@
 import { Button as PrimitiveButton } from "@/components/shared/primitives/button";
 import { type VariantProps } from "class-variance-authority";
 import { cn } from "@/support/functions/utils";
-import { buttonVariants, PrimaryGradientGhostVariantWrapper } from "@/support/helpers/Variants";
+import { buttonVariants, ButtonVariantChildrenWrapper } from "@/support/helpers/Variants";
+import type { RequiredProperty } from "@/types/utility/RequiredProperty";
 
 type ButtonVariantsProps = VariantProps<typeof buttonVariants>;
 
@@ -26,8 +27,7 @@ type ActionProps = ({
 
 type ButtonProps =
     Omit<React.ComponentProps<"button">, "type"> &
-    Required<Pick<ButtonVariantsProps, "variant">> &
-    ButtonVariantsProps &
+    RequiredProperty<ButtonVariantsProps, "variant"> &
     ActionProps;
 
 /**
@@ -61,12 +61,9 @@ const Button = ({
             type={type !== "trigger" ? type : "button"}
             {...props}
         >
-            {variant === "primary-gradient-ghost" ?
-                <PrimaryGradientGhostVariantWrapper>
-                    {children}
-                </PrimaryGradientGhostVariantWrapper>
-                : children
-            }
+            <ButtonVariantChildrenWrapper>
+                {children}
+            </ButtonVariantChildrenWrapper>
         </PrimitiveButton>
     );
 };

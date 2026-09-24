@@ -98,7 +98,7 @@ const dialogVariantStyling = {
 };
 
 const dialogVariants = cva(
-    "font-sans selection:bg-primary selection:text-primary-foreground bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 absolute z-50 grid gap-4 p-6 duration-200",
+    "selection:bg-primary selection:text-primary-foreground bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 absolute z-50 grid gap-4 p-6 duration-200",
     {
         variants: {
             variant: dialogVariantStyling
@@ -214,10 +214,11 @@ const buttonVariantStyling = {
     "badge": cn(badgeVariantStyling.basis, badgeVariantStyling.variant.primary, "text-sm hover:bg-primary hover:text-primary-light max-w-fit border-none active:bg-primary-dark active:text-primary-light"),
 };
 
+/* Moved here from button.tsx, the shadcn primitive */
 const defaultPrimitiveButtonClasses = "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
 
 const buttonVariants = cva(
-    [defaultPrimitiveButtonClasses, "px-3 py-0 border-2 font-semibold text-md cursor-pointer size-fit leading-(--text-md) no-underline!"],
+    [defaultPrimitiveButtonClasses, "px-3 py-0 border-2 font-semibold text-md cursor-pointer size-fit leading-(--text-md)"],
     {
         variants: {
             variant: buttonVariantStyling,
@@ -241,7 +242,11 @@ const buttonVariants = cva(
 /**
  * Additional span is required for gradient text color to work
  */
-const PrimaryGradientGhostVariantWrapper = ({ children, className, ...props }: React.ComponentProps<"span">) => (
+const ButtonVariantChildrenWrapper = ({
+    children,
+    className,
+    ...props
+}: React.ComponentProps<"span">) => (
     <span
         className={cn("inline-flex items-center justify-center gap-2", className)}
         {...props}
@@ -249,33 +254,6 @@ const PrimaryGradientGhostVariantWrapper = ({ children, className, ...props }: R
         {children}
     </span>
 );
-
-
-/**
- * ======================================
- * UTILITY FUNCTION
- * isCustomVariant
- * ======================================
- */
-const isCustomVariant = (variant: string, component: string) => {
-    switch (component) {
-        case "alert": {
-            return (variant in alertVariantStyling);
-        }
-        case "button": {
-            return (variant in buttonVariantStyling);
-        }
-        case "notification": {
-            return (variant in notificationVariantStyling);
-        }
-        case "toggle": {
-            return (variant in toggleVariantStyling.variant);
-        }
-        default: {
-            throw new Error("Invalid variant");
-        }
-    }
-};
 
 export {
     alertVariants,
@@ -290,7 +268,6 @@ export {
     headerVariants,
     notificationVariants,
     toggleVariants,
-    isCustomVariant,
     defaultPrimitiveButtonClasses,
-    PrimaryGradientGhostVariantWrapper,
+    ButtonVariantChildrenWrapper,
 };

@@ -66,7 +66,7 @@ export const generateRecaptchaToken = async (key: string, action: string): Promi
     new Promise((resolve, reject) => {
         // @ts-expect-error grecaptcha globally defined through script
         if (typeof grecaptcha === "undefined") {
-            return reject("'grecaptcha' is not defined");
+            return reject(new Error("'grecaptcha' is not defined"));
         }
         // @ts-expect-error grecaptcha globally defined through script
         grecaptcha.enterprise.ready(
@@ -115,8 +115,8 @@ export const setTranslations = (jsonTranslations: string[], textDomain: string) 
  * Checks whether an Object or Array is empty.
  * @param object - the Object / Array to check
  */
-export const isEmpty = (object: Array<never> | Object) => {
-    if (!Array.isArray(object) && !(object.constructor === Object)) {
+export const isEmpty = (object: Array<never> | object) => {
+    if (!object || (!Array.isArray(object) && !(object.constructor === Object))) {
         return false;
     }
 

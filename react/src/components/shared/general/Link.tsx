@@ -4,12 +4,13 @@ import {
     baseLinkClasses,
     buttonVariants,
     defaultLinkStyling,
-    PrimaryGradientGhostVariantWrapper
+    ButtonVariantChildrenWrapper
 } from "@/support/helpers/Variants";
 import { cn } from "@/support/functions/utils";
+import type { RequiredProperty } from "@/types/utility/RequiredProperty";
 
 type BaseLinkProps =
-    Pick<React.ComponentProps<"a">, "href" | "target" | "onClick" | "className">
+    RequiredProperty<Pick<React.ComponentProps<"a">, "href" | "target" | "onClick" | "className">, "href">
     & {
     route?: never,
 }
@@ -18,7 +19,7 @@ type RouterLinkProps =
     Omit<React.ComponentProps<typeof RouterLink>, "to" | "children">
     & {
     href?: never,
-    route: TanstackRouterLinkProps["to"],
+    route: RequiredProperty<TanstackRouterLinkProps, "to">["to"],
 }
 
 export type LinkProps =
@@ -43,13 +44,18 @@ const Link = ({
     let classes = cn("cursor-pointer", className);
 
     /**
-     * This makes it impossible to specifically style a Link as the "unstyled" Button variant, but needed to create a default styling
+     * `unstyled` is one of the possible buttonVariants. When passed to this Link
+     * component, it's used to skip overwriting the `classes`, so the only classes
+     * a <Link variant={"unstyled"}/> receives is "cursor-pointer" and any other
+     * classes passed directly.
+     * This does make it impossible to specifically style a Link as the "unstyled"
+     * buttonVariant.
      */
-    if (!(variant === "unstyled")) {
+    if (variant !== "unstyled") {
         classes = cn(
             baseLinkClasses,
             variant
-                ? cn(buttonVariants({ variant, size }))
+                ? cn(buttonVariants({ variant, size }), "no-underline!")
                 : defaultLinkStyling,
             className,
         );
@@ -64,14 +70,11 @@ const Link = ({
                 rel={"noopener noreferrer"}
                 onClick={onClick}
             >
-                {variant === "primary-gradient-ghost" ?
-                    <PrimaryGradientGhostVariantWrapper>
-                        {children}
-                    </PrimaryGradientGhostVariantWrapper>
-                    : children
-                }
+                <ButtonVariantChildrenWrapper>
+                    {children}
+                </ButtonVariantChildrenWrapper>
             </a>
-        )
+        );
     }
 
     return (
@@ -79,14 +82,12 @@ const Link = ({
             to={route}
             className={classes}
             target={target}
+            onClick={onClick}
             {...props}
         >
-            {variant === "primary-gradient-ghost" ?
-                <PrimaryGradientGhostVariantWrapper>
-                    {children}
-                </PrimaryGradientGhostVariantWrapper>
-                : children
-            }
+            <ButtonVariantChildrenWrapper>
+                {children}
+            </ButtonVariantChildrenWrapper>
         </RouterLink>
     );
 };
