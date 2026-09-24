@@ -58,11 +58,14 @@ const TrafficTab = () => {
                     emptyStateDescription={__("There appears to be no Traffic data available right now.", "metricool")}
                 />
             ) : (
-                <FlexContainer direction={"column"}>
+                <FlexContainer direction={"column"} className={"grow"}>
                     <DataTable
                         data={trafficData.tableData}
                         columns={columns}
-                        tableSettings={{ pageSize: 8 }}
+                        tableSettings={{
+                            pageSize: 8,
+                            roundedTopCornersTableHeader: true
+                        }}
                     />
                 </FlexContainer>
             )}

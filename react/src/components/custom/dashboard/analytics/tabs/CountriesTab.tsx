@@ -67,7 +67,7 @@ const CountriesTab = () => {
                     emptyStateDescription={__("There appears to be no Countries data available.", "metricool")}
                 />
             ) : (
-                <FlexContainer direction={"column"} className={"gap-2!"}>
+                <FlexContainer direction={"column"} className={"gap-2! grow"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>
                         <div className={"min-h-46.25"}>
                             <GeoChart
@@ -79,7 +79,10 @@ const CountriesTab = () => {
                     <DataTable
                         columns={columns}
                         data={countryData.tableData}
-                        tableSettings={{ pageSize: 3 }}
+                        tableSettings={{
+                            pageSize: 3,
+                            roundedTopCornersTableHeader: true,
+                        }}
                     />
                 </FlexContainer>
             )}

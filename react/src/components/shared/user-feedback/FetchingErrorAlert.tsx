@@ -40,7 +40,7 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                 )}
             >
                 <div>
-                    {__("There was an error fetching this data.", "metricool")} 
+                    {__("There was an error fetching this data.", "metricool")}
                 </div>
                 {errorUpdateCount > 1 && (
                     <>

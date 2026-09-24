@@ -64,7 +64,7 @@ const DataTableColumnHeader = <TData, TValue>({
         <FlexContainer
             direction={"row"}
             className={cn(
-                "items-center justify-between font-bold h-9",
+                "items-center justify-between font-bold h-9 px-2",
                 className,
                 {
                     "cursor-pointer": isColumnSortable
