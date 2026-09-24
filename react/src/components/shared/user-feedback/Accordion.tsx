@@ -3,8 +3,8 @@ import {
     AccordionContent as PrimitiveAccordionContent,
     AccordionItem as PrimitiveAccordionItem,
     AccordionTrigger as PrimitiveAccordionTrigger,
-} from "@/components/shared/primitives/accordion.tsx";
-import { cn } from "@/support/functions/utils.ts";
+} from "@/components/shared/primitives/accordion";
+import { cn } from "@/support/functions/utils";
 
 type AccordionProps = {
     title: string,

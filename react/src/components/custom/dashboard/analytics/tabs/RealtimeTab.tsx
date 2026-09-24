@@ -1,6 +1,6 @@
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { Button, FlexContainer, Icon, LineChart, LoadingAndErrorState } from "@/components/shared";
+import { FlexContainer, Icon, LineChart, Link, LoadingAndErrorState } from "@/components/shared";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 import { useRealtimeAnalyticsData } from "@/hooks/analytics/useRealtimeAnalyticsData.tsx";
 
@@ -26,7 +26,7 @@ const RealtimeTab = () => {
     };
 
     return (
-        <FlexContainer direction={"column"} className={"justify-between grow"}>
+        <FlexContainer direction={"column"} className={"justify-between grow gap-0!"}>
             {!realTimeData ? (
                 <LoadingAndErrorState
                     error={error}
@@ -39,7 +39,7 @@ const RealtimeTab = () => {
                 <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 gap-2! p-2"}>
                     <FlexContainer direction={"row"} className={"justify-between"}>
                         <div className={"text-md font-semibold"}>{__("Last 30 Minutes", "metricool")}</div>
-                        <FlexContainer direction={"row"} className={"gap-2!"}>
+                        <FlexContainer direction={"row"} className={"gap-2! min-h-14"}>
                             <MetricTile metric={realTimeData.totals.pageViews.totalAmount} variant={"tertiary"}>
                                 {__("Page Views", "metricool")}
                             </MetricTile>
@@ -61,15 +61,14 @@ const RealtimeTab = () => {
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>
-                <Button
+                <Link
                     variant={"primary-gradient-ghost"}
-                    link={metricoolDynamicUrl.withPath("evolution/web")}
+                    href={metricoolDynamicUrl.withPath("evolution/web")}
+                    className={"gap-2! items-center"}
                 >
-                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                        {__("View Analytics", "metricool")}
-                        <Icon icon={"external-link"} className={"svg-gradient"}/>
-                    </FlexContainer>
-                </Button>
+                    {__("View Analytics", "metricool")}
+                    <Icon icon={"external-link"} className={"svg-gradient"}/>
+                </Link>
             </FlexContainer>
         </FlexContainer>
     );

@@ -1,28 +1,10 @@
-import { Alert as PrimitiveAlert, alertVariants as PrimitiveAlertVariants } from "@/components/shared/primitives/alert.tsx";
-import { cva, type VariantProps } from "class-variance-authority";
-import { SingleAccordion } from "@/components/shared/user-feedback/Accordion.tsx";
-import { cn } from "@/support/functions/utils.ts";
+import { Alert as PrimitiveAlert } from "@/components/shared/primitives/alert";
+import { type VariantProps } from "class-variance-authority";
+import { SingleAccordion } from "@/components/shared/user-feedback/Accordion";
+import { cn } from "@/support/functions/utils";
+import { notificationVariants } from "@/support/helpers/Variants";
 
-const NotificationVariantStyling = {
-    "info": "border-rsp-info-light bg-rsp-info-light",
-    "warning": "border-rsp-error-light bg-rsp-error-light",
-};
-
-const NotificationVariants = cva(
-    "grid-cols-1 p-4 shadow-lg",
-    {
-        variants: {
-            variant: NotificationVariantStyling,
-        },
-        defaultVariants: {
-            variant: "info",
-        },
-    }
-);
-
-type NotificationVariantsProps =
-    | VariantProps<typeof PrimitiveAlertVariants>
-    | VariantProps<typeof NotificationVariants>;
+type NotificationVariantsProps = VariantProps<typeof notificationVariants>;
 
 type NotificationProps = {
     title: string,
@@ -35,6 +17,10 @@ type NotificationProps = {
  * @uses {@link PrimitiveAlert} from primitives
  * @link https://ui.shadcn.com/docs/components/radix/alert
  *
+ *
+ * Note: original variants from shadcn's {@link PrimitiveAlert} can no longer be
+ * passed to this component.
+ *
  * @see {@link SingleAccordion} - Implements a single accordion
  *
  * @version 1.0.0
@@ -46,12 +32,10 @@ const Notification = ({
     children,
     ...props
 }: NotificationProps & React.ComponentProps<"div"> & NotificationVariantsProps) => {
+
     return (
         <PrimitiveAlert
-            // @ts-expect-error tsc can't verify type narrowing on variant
-            className={cn(variant ? variant in NotificationVariantStyling ? NotificationVariants({ variant }) : PrimitiveAlertVariants({ variant }) : "",
-                className,
-            )}
+            className={cn(notificationVariants({ variant, className }))}
             {...props}
         >
             <SingleAccordion title={title}>

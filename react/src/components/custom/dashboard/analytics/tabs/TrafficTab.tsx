@@ -1,10 +1,10 @@
 import {
-    Button,
     type Column,
     DataTable,
     DataTableColumnHeader,
     FlexContainer,
     Icon,
+    Link,
     LoadingAndErrorState,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
@@ -64,15 +64,14 @@ const TrafficTab = () => {
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>
-                <Button
+                <Link
                     variant={"primary-gradient-ghost"}
-                    link={metricoolDynamicUrl.withPath("evolution/web")}
+                    href={metricoolDynamicUrl.withPath("evolution/web")}
+                    className={"gap-2! items-center"}
                 >
-                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                        {__("View Analytics", "metricool")}
-                        <Icon icon={"external-link"} className={"svg-gradient"}/>
-                    </FlexContainer>
-                </Button>
+                    {__("View Analytics", "metricool")}
+                    <Icon icon={"external-link"} className={"svg-gradient"}/>
+                </Link>
             </FlexContainer>
         </FlexContainer>
     );

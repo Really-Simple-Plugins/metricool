@@ -2,7 +2,7 @@ import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { __ } from "@wordpress/i18n";
 import { queryClient } from "@/main.tsx";
-import { Button, showToast } from "@/components/shared";
+import { Link, showToast } from "@/components/shared";
 
 const pluginStatuses: Record<string, string> = {
     installed: __("Installed", "metricool"),
@@ -132,13 +132,12 @@ const useOtherPluginsData = () => {
         switch (plugin.action) {
             case "upgrade-to-premium": {
                 return (
-                    <Button
+                    <Link
                         className={"text-sm"}
-                        variant={"link"}
-                        link={plugin.upgrade_url}
+                        href={plugin.upgrade_url}
                     >
                         {pluginStatuses[plugin.action]}
-                    </Button>
+                    </Link>
                 );
             }
             case "installed":
@@ -148,9 +147,8 @@ const useOtherPluginsData = () => {
             }
             default: {
                 return (
-                    <Button
+                    <Link
                         className={"text-sm"}
-                        variant={"link"}
                         onClick={() => pluginActionMutation.mutate({
                             slug: plugin.slug,
                             action: plugin.action,
@@ -158,7 +156,7 @@ const useOtherPluginsData = () => {
                         })}
                     >
                         {pluginStatuses[plugin.action]}
-                    </Button>
+                    </Link>
                 );
             }
 

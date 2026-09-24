@@ -1,6 +1,6 @@
 import { __, sprintf } from "@wordpress/i18n";
-import { Button } from "@/components/shared/forms/Button.tsx";
-import { showToast } from "@/components/shared/user-feedback/Toast.tsx";
+import { Button } from "@/components/shared/forms/Button";
+import { showToast } from "@/components/shared/user-feedback/Toast";
 
 type ErrorBoundaryProps = {
     error: Error,

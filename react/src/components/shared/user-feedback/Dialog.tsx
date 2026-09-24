@@ -117,9 +117,9 @@ const Dialog = ({
                             <RadixDialogClose
                                 data-slot={"dialog-close"}
                                 data-state={open ? "open" : "closed"}
-                                className={"focus:ring-ring data-[state=open]:text-muted-foreground absolute top-4 right-[calc(var(--spacing)*4+var(--removed-body-scroll-bar-size))] rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:cursor-pointer"}
+                                className={"data-[state=open]:text-muted-foreground absolute top-4 right-[calc(var(--spacing)*4+var(--removed-body-scroll-bar-size))] rounded-xs opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:cursor-pointer"}
                             >
-                                <Icon icon={"close"} className={"text-black size-8"}/>
+                                <Icon icon={"close"} className={"text-black! size-8"}/>
                                 <span className={"sr-only"}>Close</span>
                             </RadixDialogClose>
                         )}

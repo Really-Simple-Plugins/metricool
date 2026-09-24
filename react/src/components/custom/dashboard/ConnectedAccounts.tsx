@@ -1,4 +1,4 @@
-import { Block, BlockHeader, Button, FlexContainer, Icon, LoadingAndErrorState, } from "@/components/shared";
+import { Block, BlockHeader, FlexContainer, Icon, Link, LoadingAndErrorState, } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
@@ -46,15 +46,14 @@ const ConnectedAccounts = () => {
                         ))}
                     </div>
                 )}
-                <Button
+                <Link
                     variant={"primary-gradient-ghost"}
-                    link={metricoolDynamicUrl.withPath("evolution/settings/connections")}
+                    href={metricoolDynamicUrl.withPath("evolution/settings/connections")}
+                    className={"gap-2! items-center"}
                 >
-                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                        {__("Connected Accounts", "metricool")}
-                        <Icon icon={"external-link"} className={"svg-gradient"}/>
-                    </FlexContainer>
-                </Button>
+                    {__("Connected Accounts", "metricool")}
+                    <Icon icon={"external-link"} className={"svg-gradient"}/>
+                </Link>
             </FlexContainer>
         </Block>
     );

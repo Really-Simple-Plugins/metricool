@@ -190,26 +190,31 @@ const toggleVariants = cva(
  * BUTTON
  * ======================================
  */
+
+const baseLinkClasses = "h-7.5 rounded-none text-md cursor-pointer";
+const defaultLinkStyling = "p-0 border-none text-black bg-transparent hover:bg-transparent font-normal leading-4 underline h-fit!";
+
 const buttonVariantStyling = {
-    "primary": "bg-primary border-primary hover:bg-primary-light hover:text-primary hover:border-primary-light",
-    "primary-ghost": "bg-transparent text-primary border-solid border-primary hover:bg-primary hover:border-primary hover:text-white font-bold",
-    "primary-gradient": "bg-(image:--gradient-brand) border-transparent bg-origin-border text-white hover:text-white hover:brightness-115",
+    "primary": "bg-primary text-white! border-primary hover:bg-primary-light hover:text-primary! hover:border-primary-light",
+    "primary-ghost": "bg-transparent text-primary! border-solid border-primary hover:bg-primary hover:border-primary hover:text-white! font-bold",
+    "primary-gradient": "bg-(image:--gradient-brand) border-transparent bg-origin-border text-white! hover:text-white! hover:brightness-115",
     "primary-gradient-ghost": "gradient-button-ghost hover:brightness-115 leading-loose font-bold",
-    "secondary": "bg-secondary-dark border-secondary-dark hover:bg-secondary-light hover:text-secondary hover:border-secondary-light",
-    "secondary-ghost": "bg-transparent text-secondary border-solid border-secondary hover:bg-secondary hover:border-secondary hover:text-white font-bold",
-    "tertiary": "bg-tertiary border-tertiary hover:bg-tertiary-light hover:text-tertiary hover:border-tertiary-light",
-    "tertiary-ghost": "bg-transparent text-tertiary border-solid border-tertiary hover:bg-tertiary-light hover:border-tertiary-light hover:text-tertiary-dark font-bold",
+    "secondary": "bg-secondary-dark border-secondary-dark hover:bg-secondary-light hover:text-secondary! hover:border-secondary-light",
+    "secondary-ghost": "bg-transparent text-secondary! border-solid border-secondary hover:bg-secondary hover:border-secondary hover:text-white! font-bold",
+    "tertiary": "bg-tertiary border-tertiary hover:bg-tertiary-light hover:text-tertiary! hover:border-tertiary-light",
+    "tertiary-ghost": "bg-transparent text-tertiary! border-solid border-tertiary hover:bg-tertiary-light hover:border-tertiary-light hover:text-tertiary-dark! font-bold",
     "icon": "border-none p-0 has-[>svg]:p-0 m-0 bg-transparent hover:bg-transparent text-gray-600 hover:text-gray-800",
-    "upsell": "bg-upsell border-upsell text-black hover:bg-upsell hover:text-black",
-    "upsell-ghost": "bg-white border-neutral-200 text-black hover:bg-white hover:text-black",
-    "black": "bg-black border-black text-white hover:bg-black hover:text-white hover:invert",
-    "black-ghost": "bg-transparent text-black border-black border hover:bg-black hover:text-white",
+    "upsell": "bg-upsell border-upsell text-black! hover:bg-upsell hover:text-black!",
+    "upsell-ghost": "bg-white border-neutral-200 text-black! hover:bg-white hover:text-black!",
+    "black": "bg-black border-black text-white! hover:bg-black hover:text-white! hover:invert",
+    "black-ghost": "bg-transparent text-black! border-black border hover:bg-black hover:text-white!",
     "unstyled": "p-0 border-none rounded-none font-normal text-md min-h-fit min-w-fit",
+    "link": cn(baseLinkClasses, defaultLinkStyling),
     "toggle": cn(toggleVariantStyling.variant.primary, "max-w-fit border-none"),
     "badge": cn(badgeVariantStyling.basis, badgeVariantStyling.variant.primary, "text-sm hover:bg-primary hover:text-primary-light max-w-fit border-none active:bg-primary-dark active:text-primary-light"),
 };
 
-const defaultPrimitiveButtonClasses = "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
+const defaultPrimitiveButtonClasses = "inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4";
 
 const buttonVariants = cva(
     [defaultPrimitiveButtonClasses, "px-3 py-0 border-2 font-semibold text-md cursor-pointer size-fit leading-(--text-md) no-underline!"],
@@ -277,6 +282,8 @@ export {
     badgeVariants,
     blockVariants,
     buttonVariants,
+    baseLinkClasses,
+    defaultLinkStyling,
     dialogVariants,
     rightPaddingClass,
     calculatedWidthClass,

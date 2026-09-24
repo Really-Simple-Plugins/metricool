@@ -1,9 +1,10 @@
-import { Link } from "@tanstack/react-router";
+import { Link as RouterLink } from "@tanstack/react-router";
 import { TaskStatusBadge } from "@/components/shared/dashboard/TaskStatusBadge";
 import { Button } from "@/components/shared/forms/Button";
 import { FlexContainer } from "@/components/shared/general/FlexContainer";
 import { Icon } from "@/components/shared/user-feedback/Icon";
 import { cn } from "@/support/functions/utils";
+import { Link } from "@/components/shared/general/Link";
 
 export type TaskProps = {
     id: string,
@@ -69,28 +70,26 @@ const Task = ({
             <FlexContainer direction={"row"} className={"items-center"}>
                 {action && (
                     action.link ? (
-                        <Button
-                            variant={"link"}
-                            size={"link"}
-                            link={action.link}
+                        <Link
+                            href={action.link}
                             target={action.target ?? "_self"}
                         >
                             <span className={"text-nowrap"}>
                                 {action.text}
                             </span>
-                        </Button>
+                        </Link>
                     ) : (
-                        <Link
+                        <RouterLink
                             to={action.route}
-                            className={"text-black hover:text-wordpress-link-hover font-normal underline leading-(--text-md)"}
+                            className={"text-black font-normal underline leading-(--text-md)"}
                         >
                             <span className={"text-nowrap"}>
                                 {action.text}
                             </span>
-                        </Link>
+                        </RouterLink>
                     )
                 )}
-                <div className={"w-4 h-4"}>
+                <FlexContainer direction={"row"} className={"w-4 h-4 items-center justify-center"}>
                     {taskIsDismissable && (
                         <Button
                             variant={"icon"}
@@ -100,7 +99,7 @@ const Task = ({
                             <Icon icon={"close"}/>
                         </Button>
                     )}
-                </div>
+                </FlexContainer>
             </FlexContainer>
         </FlexContainer>
     );

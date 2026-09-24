@@ -1,39 +1,17 @@
-import {
-    Toggle as PrimitiveToggle,
-    toggleVariants as PrimitiveToggleVariants
-} from "@/components/shared/primitives/toggle";
-import { cva, type VariantProps } from "class-variance-authority";
+import { Toggle as PrimitiveToggle } from "@/components/shared/primitives/toggle";
+import { type VariantProps } from "class-variance-authority";
 import { cn } from "@/support/functions/utils";
-import { BadgeVariantStyling } from "@/components/shared/user-feedback/Badge";
+import { toggleVariants } from "@/support/helpers/Variants";
 
-const ToggleVariantStyling = {
-    variant: {
-        primary: cn(BadgeVariantStyling.basis, BadgeVariantStyling.variant.primary, "text-sm hover:bg-primary hover:text-primary-light data-[state=on]:bg-primary-dark data-[state=on]:text-primary-light"),
-    },
-    size: {
-        default: cn(BadgeVariantStyling.size.default, "h-6"),
-    }
-};
+export type ToggleVariantsProps = VariantProps<typeof toggleVariants>;
 
-const ToggleVariants = cva(
-    "max-w-fit cursor-pointer",
-    {
-        variants: {
-            variant: ToggleVariantStyling.variant,
-            size: ToggleVariantStyling.size,
-        },
-        defaultVariants: {
-            variant: "primary",
-            size: "default",
-        },
-    }
-);
-
-export type ToggleVariantsProps =
-    | VariantProps<typeof PrimitiveToggleVariants>
-    | VariantProps<typeof ToggleVariants>;
-
-
+/**
+ *
+ * Note: original variants from shadcn's {@link PrimitiveToggle} can no longer be
+ * passed to this component.
+ *
+ * @version: 1.0.0
+ */
 const Toggle = ({
     pressed,
     onPressedChange,
@@ -43,10 +21,7 @@ const Toggle = ({
 }: ToggleVariantsProps & Omit<React.ComponentProps<typeof PrimitiveToggle>, "variant">) => {
     return (
         <PrimitiveToggle
-            // @ts-expect-error tsc can't verify type narrowing on variant
-            className={cn(variant ? variant in ToggleVariantStyling.variant ? ToggleVariants({ variant }) : PrimitiveToggleVariants({ variant }) : "",
-                className,
-            )}
+            className={cn(toggleVariants({ variant, className }))}
             pressed={pressed}
             onPressedChange={onPressedChange}
         >
@@ -55,4 +30,4 @@ const Toggle = ({
     );
 };
 
-export { Toggle, ToggleVariantStyling };
+export { Toggle };
