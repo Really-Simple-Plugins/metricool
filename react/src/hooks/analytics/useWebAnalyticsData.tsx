@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { periodFilterOptions, defaultPeriodFilter } from "@/components/custom";
 
-type MetricData = {
+export type MetricData = {
     label: string,
     totalAmount: number,
     trend: "stable" | "up" | "down",

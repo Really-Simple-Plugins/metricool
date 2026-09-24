@@ -12,15 +12,21 @@ import {
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useState } from "react";
-import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 import { cn, isEmpty } from "@/support/functions/utils";
 import { useWebAnalyticsData } from "@/hooks/analytics/useWebAnalyticsData.tsx";
+import { MetricTotals } from "@/components/custom/dashboard/analytics/MetricTotals.tsx";
 
 export type PeriodFilterOption = {
     label: string,
     option: string,
     isUpsell: boolean,
     xAxisInterval: number,
+}
+
+export type AnalyticsChartConfig = Omit<ChartConfig, "color"> & {
+    [x: string]: {
+        color?: "primary" | "secondary" | "tertiary" | "light-green" | "primary-dark"
+    }
 }
 
 export const periodFilterOptions: Record<string, PeriodFilterOption> = {
@@ -81,14 +87,8 @@ const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activeP
 const AnalyticsTab = () => {
     const { metricool, dispatch, dashboardSettings, metricoolDynamicUrl } = useGlobalContext();
 
-    const numberFormatter = Intl.NumberFormat(metricool.locale, {
-        notation: "compact",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    });
-
     const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.activePeriodFilter));
-    const [chartConfig, setChartConfig] = useState<ChartConfig>({
+    const [chartConfig, setChartConfig] = useState<AnalyticsChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
             color: "tertiary",
@@ -157,19 +157,13 @@ const AnalyticsTab = () => {
         <FlexContainer direction={"column"} className={"justify-between grow gap-0!"}>
             <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 gap-2! p-2"}>
                 <FlexContainer direction={"row"} className={"w-full min-h-14 justify-end gap-2!"}>
-                    {analyticsData && Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
-                        <MetricTile
-                            onClick={() => toggleMetric(metricKey)}
-                            metric={numberFormatter.format(metricData.totalAmount)}
-                            trend={metricData.trend}
-                            // @ts-expect-error tsc can't verify color is a valid variant
-                            variant={chartConfig[metricKey].color}
-                            inactive={chartConfig[metricKey].hidden}
-                            disabled={metricData.totalAmount === 0}
-                        >
-                            {chartConfig[metricKey].label}
-                        </MetricTile>
-                    ))}
+                    {analyticsData && (
+                        <MetricTotals
+                            metrics={analyticsData.totals}
+                            chartConfig={chartConfig}
+                            toggleMetric={toggleMetric}
+                        />
+                    )}
                 </FlexContainer>
                 <hr className={"-mx-2"}/>
                 <FlexContainer direction={"column"} className={"min-h-72.5 max-h-72.5"}>

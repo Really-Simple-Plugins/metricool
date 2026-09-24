@@ -1,16 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
-
-type MetricData = {
-    label: string,
-    totalAmount: number,
-}
+import type { MetricData } from "@/hooks/analytics/useWebAnalyticsData.tsx";
 
 type TimelineData = {
     timestamp: number,
-    pageViews: number,
     label: string,
-}[]
+    pageViews: number,
+}[];
 
 /**
  * Hook to retrieve Realtime Analytics data.
@@ -24,7 +20,7 @@ const useRealtimeAnalyticsData = () => {
         queryFn: () => httpClient.get("realtime"),
         staleTime: 1000 * 60, // 1 minute
         refetchInterval: 1000 * 60, // 1 minute
-        select: (response): { totals: Record<string, MetricData>, timelineData: TimelineData } => response.data,
+        select: (response): { totals: Record<string, Omit<MetricData, "trend">>, timelineData: TimelineData } => response.data,
     });
 
     return {
