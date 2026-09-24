@@ -32,7 +32,7 @@ export { Header, HeaderTab } from "@/components/shared/general/Header";
 export { Task, type TaskProps } from "@/components/shared/dashboard/Task";
 export { TaskStatusBadge } from "@/components/shared/dashboard/TaskStatusBadge";
 export { ListItem } from "@/components/shared/data-visualization/ListItem";
-export { LoadingAndErrorState } from "@/components/shared/general/LoadingAndErrorState";
+export { EmptyDataState } from "@/components/shared/general/EmptyDataState";
 export { Toggle } from "@/components/shared/forms/Toggle";
 export { SignOut } from "@/components/shared/settings/SignOut";
 export { Link } from "@/components/shared/general/Link";

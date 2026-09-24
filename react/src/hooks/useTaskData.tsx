@@ -14,7 +14,7 @@ type UseTaskDataProps = {
  *
  * Contains a {@link useMutation} which dismisses a task based on ID.
  */
-const useTaskData = ({hasConnectedAccountsDataLoaded}: UseTaskDataProps) => {
+const useTaskData = ({ hasConnectedAccountsDataLoaded }: UseTaskDataProps) => {
     const { httpClient } = useGlobalContext();
 
     // The 'enabled' option ensures the connected accounts call, which updates the
@@ -67,7 +67,7 @@ const useTaskData = ({hasConnectedAccountsDataLoaded}: UseTaskDataProps) => {
     return {
         taskDataQuery: taskDataQuery,
         dismissTaskMutation: dismissTaskMutation,
-    }
+    };
 };
 
 export { useTaskData };

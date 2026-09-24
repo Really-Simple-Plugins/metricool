@@ -2,15 +2,16 @@ import {
     type Column,
     DataTable,
     DataTableColumnHeader,
+    EmptyDataState,
     FlexContainer,
     Icon,
     Link,
-    LoadingAndErrorState,
 } from "@/components/shared";
 import { GeoChart } from "@/components/custom";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 import { useCountriesAnalyticsData } from "@/hooks/analytics/useCountriesAnalyticsData.tsx";
+import { isEmpty } from "@/support/functions/utils.ts";
 
 type CountriesDataTableColumns = { country: string, visitors: number, percentage: number };
 
@@ -55,13 +56,15 @@ const CountriesTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow gap-2!"}>
-            {!countryData ? (
-                <LoadingAndErrorState
+            {(!countryData || isEmpty(countryData.tableData)) ? (
+                <EmptyDataState
                     error={error}
                     isLoading={isLoading}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    emptyStateTitle={__("No Countries data", "metricool")}
+                    emptyStateDescription={__("There appears to be no Countries data available.", "metricool")}
                 />
             ) : (
                 <FlexContainer direction={"column"} className={"gap-2!"}>

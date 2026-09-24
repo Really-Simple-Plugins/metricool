@@ -2,7 +2,7 @@ import { FlexContainer } from "@/components/shared/general/FlexContainer";
 import { Alert } from "@/components/shared/user-feedback/Alert";
 import { __, sprintf } from "@wordpress/i18n";
 import DOMPurify from "dompurify";
-import { Button } from "@/components/shared/forms/Button";
+import { Link } from "@/components/shared/general/Link";
 
 type FetchingErrorFeedbackNoticeProps = {
     errorUpdateCount: number,
@@ -22,21 +22,19 @@ const FetchingErrorAlert = ({ errorUpdateCount, refetch, supportTicketLink }: Fe
                 action={(
                     <>
                         {errorUpdateCount <= 1 ? (
-                            <Button
-                                variant={"link"}
+                            <Link
                                 className={"text-rss-blue font-semibold whitespace-nowrap"}
                                 onClick={() => refetch()}
                             >
                                 {__("Try again", "metricool")}
-                            </Button>
+                            </Link>
                         ) : (
-                            <Button
-                                variant={"link"}
+                            <Link
                                 className="text-rss-blue font-semibold whitespace-nowrap"
                                 onClick={() => window.location.reload()}
                             >
                                 {__("Refresh page", "metricool")}
-                            </Button>)
+                            </Link>)
                         }
                     </>
                 )}

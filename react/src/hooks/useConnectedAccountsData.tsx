@@ -27,7 +27,7 @@ type UseConnectedAccountsDataProps = {
  * objects with only the 4 accounts we need to show on the dashboard.
  *
  */
-const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccountsDataProps = {}) => {
+const useConnectedAccountsData = ({ useLimitedDashboardList }: UseConnectedAccountsDataProps = {}) => {
     const { httpClient, metricool } = useGlobalContext();
 
     const connectedAccountsQuery = useQuery({

@@ -1,8 +1,16 @@
-import { Block, BlockHeader, FlexContainer, Icon, Link, LoadingAndErrorState, } from "@/components/shared";
+import {
+    Block,
+    BlockHeader,
+    EmptyDataState,
+    FlexContainer,
+    Icon,
+    Link,
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useConnectedAccountsData } from "@/hooks/useConnectedAccountsData.tsx";
+import { isEmpty } from "@/support/functions/utils.ts";
 
 const ConnectionsSettings = () => {
     const { metricoolDynamicUrl, metricool } = useGlobalContext();
@@ -26,13 +34,15 @@ const ConnectionsSettings = () => {
                         description={__("The accounts that are connected to Metricool", "metricool")}
                     />
                     <FlexContainer direction={"column"}>
-                        {!connectedAccountsData ? (
-                            <LoadingAndErrorState
+                        {(!connectedAccountsData || isEmpty(connectedAccountsData)) ? (
+                            <EmptyDataState
                                 error={error}
                                 isLoading={isLoading}
                                 errorUpdateCount={errorUpdateCount}
                                 refetch={refetch}
                                 supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                                emptyStateTitle={__("No Connections information", "metricool")}
+                                emptyStateDescription={__("There appears to be no connections information available.", "metricool")}
                             />
                         ) : (
                             <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>

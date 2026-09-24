@@ -2,14 +2,15 @@ import {
     type Column,
     DataTable,
     DataTableColumnHeader,
+    EmptyDataState,
     FlexContainer,
     Icon,
     Link,
-    LoadingAndErrorState,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useTrafficAnalyticsData } from "@/hooks/analytics/useTrafficAnalyticsData.tsx";
+import { isEmpty } from "@/support/functions/utils.ts";
 
 type TrafficDataTableColumns = { url: string, pageViews: number, percentage: number };
 
@@ -46,13 +47,15 @@ const TrafficTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {!trafficData ? (
-                <LoadingAndErrorState
+            {(!trafficData || isEmpty(trafficData))? (
+                <EmptyDataState
                     error={error}
                     isLoading={isLoading}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    emptyStateTitle={__("No Traffic data", "metricool")}
+                    emptyStateDescription={__("There appears to be no Traffic data available right now.", "metricool")}
                 />
             ) : (
                 <FlexContainer direction={"column"}>
