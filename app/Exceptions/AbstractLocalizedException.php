@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Metricool\Exceptions;
 
+use Exception;
 use Metricool\Bootstrap\App;
 use Metricool\Support\Utility\SanitizeUtility;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
@@ -11,7 +12,7 @@ use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 /**
  * Base class for exceptions that expose a localized message for the client.
  */
-abstract class AbstractLocalizedException extends \Exception
+abstract class AbstractLocalizedException extends Exception
 {
     /**
      * The default exception message. Should not be used to display to the user.
