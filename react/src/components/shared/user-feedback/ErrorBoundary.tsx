@@ -13,12 +13,12 @@ type ErrorBoundaryProps = {
     supportTicketLink: string,
 };
 const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
-    let baseError = new Error(__("Something went wrong.", "metricool"));
+    let baseError = error as Error;
 
     const isSuppliedObjectInstanceOfError = error instanceof Error;
 
-    if (isSuppliedObjectInstanceOfError) {
-        baseError = error;
+    if (!isSuppliedObjectInstanceOfError) {
+        baseError = new Error(`${__("Something went wrong.", "metricool")} ${String(error)}`);
     }
 
     return (
