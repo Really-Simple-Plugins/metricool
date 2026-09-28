@@ -22,10 +22,11 @@ import { useAuthenticationData } from "@/hooks/useAuthenticationData.tsx";
  */
 export const OnboardingLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
-    const [signInModalOpen, setSignInModalOpen] = useState<boolean>((metricool.onboarding.mode.forced_login || (metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected)));
+    const { mode, state } = metricool.onboarding;
+    const [signInModalOpen, setSignInModalOpen] = useState<boolean>((mode.forced_login || mode.lost_connection || (state.authenticated && !state.blog_id_selected)));
     const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
     const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
-    const [activeSignInStep, setActiveSignInStep] = useState<number>((!metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected) ? 0 : 1);
+    const [activeSignInStep, setActiveSignInStep] = useState<number>((!state.authenticated && !state.blog_id_selected) ? 0 : 1);
 
     const beforeSignUpCallback = () => {
         setActiveOnboardingStep(0);
@@ -152,8 +153,8 @@ export const OnboardingLayout = () => {
             <Dialog
                 id={"sign-in-modal"}
                 open={signInModalOpen}
-                onOpenChange={(metricool.onboarding.mode.forced_login) ? undefined : setSignInModalOpen}
-                showCloseButton={!(metricool.onboarding.mode.forced_login)}
+                onOpenChange={(mode.forced_login) ? undefined : setSignInModalOpen}
+                showCloseButton={!(mode.forced_login)}
                 className={"flex flex-col gap-6 justify-center items-center"}
             >
                 {signInSteps[activeSignInStep]}
