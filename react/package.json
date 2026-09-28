@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "registry:init": "npx shadcn@latest add @RSPDS/base-styles @RSPDS/utils @RSPDS/npmrc-config @RSPDS/index",
     "registry:add": "func() { npx shadcn@latest add \"$@\" && cd ../scripts && ./text-domain.sh && cd ..; }; func",
-    "registry:add-all": "node ./src/RegistryImport.ts && func() { cd ../scripts && ./text-domain.sh && cd ..; }; func"
+    "registry:add-all": "node scripts/RegistryImport.ts && func() { cd ../scripts && ./text-domain.sh && cd ..; }; func"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
