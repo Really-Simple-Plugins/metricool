@@ -119,7 +119,14 @@ interface DataTableProps<TData> {
  *
  * @version 1.0.0
  */
-const DataTable = <TData, >({ data, columns, isLoading, hideNoResultsRowIfDataEmpty, initialSorting, tableSettings }: DataTableProps<TData>) => {
+const DataTable = <TData, >({
+    data,
+    columns,
+    isLoading,
+    hideNoResultsRowIfDataEmpty,
+    initialSorting,
+    tableSettings
+}: DataTableProps<TData>) => {
     const [sorting, setSorting] = useState<SortingState>(initialSorting ?? []);
     const table = useReactTable({
         data,
@@ -132,6 +139,7 @@ const DataTable = <TData, >({ data, columns, isLoading, hideNoResultsRowIfDataEm
         enableSorting: !tableSettings?.disableSorting,
         defaultColumn: {
             size: 0,
+            maxSize: 0,
         },
         state: {
             sorting,
@@ -188,6 +196,7 @@ const DataTable = <TData, >({ data, columns, isLoading, hideNoResultsRowIfDataEm
                                         <PrimitiveTableHead
                                             key={header.id}
                                             style={{
+                                                maxWidth: columnWidth(header.column.columnDef.maxSize),
                                                 width: columnWidth(header.column.columnDef.size)
                                             }}
                                         >
@@ -217,7 +226,8 @@ const DataTable = <TData, >({ data, columns, isLoading, hideNoResultsRowIfDataEm
                                                 key={cell.id}
                                                 className={"text-ellipsis overflow-hidden"}
                                                 style={{
-                                                    width: columnWidth(cell.column.columnDef.size),
+                                                    maxWidth: columnWidth(cell.column.columnDef.maxSize),
+                                                    width: columnWidth(cell.column.columnDef.size)
                                                 }}
                                             >
                                                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
