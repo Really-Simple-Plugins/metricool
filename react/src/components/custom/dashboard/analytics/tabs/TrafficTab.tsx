@@ -47,7 +47,7 @@ const TrafficTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow gap-2!"}>
-            {(!trafficData || isEmpty(trafficData.tableData))? (
+            {(!trafficData || isEmpty(trafficData.tableData)) ? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}
