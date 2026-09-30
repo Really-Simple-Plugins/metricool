@@ -46,8 +46,8 @@ const TrafficTab = () => {
     } = useTrafficAnalyticsData();
 
     return (
-        <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {(!trafficData || isEmpty(trafficData))? (
+        <FlexContainer direction={"column"} className={"justify-between grow gap-2!"}>
+            {(!trafficData || isEmpty(trafficData.tableData)) ? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}
@@ -58,7 +58,7 @@ const TrafficTab = () => {
                     emptyStateDescription={__("There appears to be no Traffic data available right now.", "metricool")}
                 />
             ) : (
-                <FlexContainer direction={"column"} className={"grow"}>
+                <FlexContainer direction={"column"} className={"gap-2! grow"}>
                     <DataTable
                         data={trafficData.tableData}
                         columns={columns}
