@@ -10,7 +10,7 @@ import {
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useTrafficAnalyticsData } from "@/hooks/analytics/useTrafficAnalyticsData.tsx";
-import { isEmptyObject } from "@/support/functions/utils.ts";
+import { isEmptyArray } from "@/support/functions/utils.ts";
 
 type TrafficDataTableColumns = { url: string, pageViews: number, percentage: number };
 
@@ -46,8 +46,8 @@ const TrafficTab = () => {
     } = useTrafficAnalyticsData();
 
     return (
-        <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {(!trafficData || isEmptyObject(trafficData))? (
+        <FlexContainer direction={"column"} className={"justify-between grow gap-2!"}>
+            {(!trafficData || isEmptyArray(trafficData.tableData)) ? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}
@@ -58,7 +58,7 @@ const TrafficTab = () => {
                     emptyStateDescription={__("There appears to be no Traffic data available right now.", "metricool")}
                 />
             ) : (
-                <FlexContainer direction={"column"} className={"grow"}>
+                <FlexContainer direction={"column"} className={"gap-2! grow"}>
                     <DataTable
                         data={trafficData.tableData}
                         columns={columns}
