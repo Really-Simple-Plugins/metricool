@@ -112,19 +112,31 @@ export const setTranslations = (jsonTranslations: string[], textDomain: string) 
 };
 
 /**
- * Checks whether an Object or Array is empty.
- * @param object - the Object / Array to check
+ * Checks whether an Object is empty.
+ * @param object - the Object to check
  */
-export const isEmpty = (object: Array<never> | object) => {
-    if (!object || (!Array.isArray(object) && !(object.constructor === Object))) {
+export const isEmptyObject = (object: Record<keyof any, unknown>) => {
+    if (!object || !(object.constructor === Object)) {
         return false;
     }
 
-    if (Array.isArray(object) && object.length === 0) {
+    if (Object.keys(object).length === 0) {
         return true;
     }
 
-    if (Object.keys(object)?.length === 0) {
+    return false;
+};
+
+/**
+ * Checks whether an Array is empty.
+ * @param array - the Array to check
+ */
+export function isEmptyArray(array: Array<unknown>) {
+    if (!array || (!Array.isArray(array))) {
+        return false;
+    }
+
+    if (array.length === 0) {
         return true;
     }
 
