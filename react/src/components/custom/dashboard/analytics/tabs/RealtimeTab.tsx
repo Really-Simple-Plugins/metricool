@@ -3,7 +3,7 @@ import { __ } from "@wordpress/i18n";
 import { FlexContainer, Icon, LineChart, Link, EmptyDataState } from "@/components/shared";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 import { useRealtimeAnalyticsData } from "@/hooks/analytics/useRealtimeAnalyticsData.tsx";
-import { isEmpty } from "@/support/functions/utils.ts";
+import { isEmptyArray } from "@/support/functions/utils.ts";
 
 const RealtimeTab = () => {
     const { metricoolDynamicUrl, metricool } = useGlobalContext();
@@ -28,7 +28,7 @@ const RealtimeTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow gap-0!"}>
-            {(!realTimeData || isEmpty(realTimeData.timelineData)) ? (
+            {(!realTimeData || isEmptyArray(realTimeData.timelineData)) ? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}

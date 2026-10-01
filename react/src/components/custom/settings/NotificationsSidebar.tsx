@@ -2,7 +2,7 @@ import { Block, BlockHeader, EmptyDataState, FlexContainer, Notification } from 
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useNotificationData } from "@/hooks/useNotificationData.tsx";
-import { isEmpty } from "@/support/functions/utils.ts";
+import { isEmptyArray } from "@/support/functions/utils.ts";
 
 const NotificationsSidebar = () => {
     const { metricool } = useGlobalContext();
@@ -20,7 +20,7 @@ const NotificationsSidebar = () => {
     return (
         <Block variant={"transparent"} className={"px-0"}>
             <BlockHeader title={__("Notifications", "metricool")} separator={true}/>
-            {(!noticeData || isEmpty(noticeData?.visibleNotifications)) ? (
+            {(!noticeData || isEmptyArray(noticeData.visibleNotifications)) ? (
                 <EmptyDataState
                     error={error}
                     isLoading={isLoading}

@@ -8,7 +8,7 @@ import {
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useOtherPluginsData } from "@/hooks/useOtherPluginsData.tsx";
-import { isEmpty } from "@/support/functions/utils.ts";
+import { isEmptyObject } from "@/support/functions/utils.ts";
 
 /**
  * The OtherPlugins block used in {@link DashboardLayout}.
@@ -44,7 +44,7 @@ const OtherPlugins = () => {
                 )}
             />
             <FlexContainer direction={"column"} className={"w-full h-full justify-between"}>
-                {(!otherPluginsData || isEmpty(otherPluginsData) )? (
+                {(!otherPluginsData || isEmptyObject(otherPluginsData)) ? (
                     <EmptyDataState
                         error={error}
                         isLoading={isLoading}

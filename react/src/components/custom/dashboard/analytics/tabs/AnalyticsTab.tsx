@@ -12,7 +12,7 @@ import {
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useState } from "react";
-import { cn, isEmpty } from "@/support/functions/utils";
+import { cn, isEmptyArray } from "@/support/functions/utils";
 import { useWebAnalyticsData } from "@/hooks/analytics/useWebAnalyticsData.tsx";
 import { MetricTotals } from "@/components/custom/dashboard/analytics/MetricTotals.tsx";
 
@@ -167,7 +167,7 @@ const AnalyticsTab = () => {
                 </FlexContainer>
                 <hr className={"-mx-2"}/>
                 <FlexContainer direction={"column"} className={"min-h-72.5 max-h-72.5"}>
-                    {(!analyticsData || isEmpty(analyticsData.timelineData)) ? (
+                    {(!analyticsData || isEmptyArray(analyticsData.timelineData)) ? (
                         <FlexContainer direction={"column"} className={"grow justify-center items-center"}>
                             <EmptyDataState
                                 error={error}
