@@ -131,7 +131,7 @@ export const isEmptyObject = (object: Record<keyof any, unknown>) => {
  * Checks whether an Array is empty.
  * @param array - the Array to check
  */
-export function isEmptyArray(array: Array<unknown>) {
+export const isEmptyArray = (array: Array<unknown>) => {
     if (!array || (!Array.isArray(array))) {
         return false;
     }
