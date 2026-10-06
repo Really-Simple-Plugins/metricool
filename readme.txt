@@ -106,6 +106,9 @@ You can skip the onboarding and login with your existing login credentials.
 
 == Changelog ==
 
+= 2.1.1 - 2026-10-06 =
+* Fixed: Trunk folder is no longer included in the plugin
+
 = 2.1.0 - 2026-08-06 =
 * Fixed: Website tracking is no longer removed when the connection with Metricool cannot be renewed.
 * Fixed: Notices in the WordPress admin can now be dismissed reliably.
