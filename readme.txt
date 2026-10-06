@@ -5,7 +5,7 @@ Tags: instagram, facebook, analytics, meta, social
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,9 @@ You can skip the onboarding and login with your existing login credentials.
 
 
 == Changelog ==
+
+= 2.1.1 - 2026-10-06 =
+* Fixed: Trunk folder is no longer included in the plugin
 
 = 2.1.0 - 2026-08-06 =
 * Fixed: Website tracking is no longer removed when the connection with Metricool cannot be renewed.
