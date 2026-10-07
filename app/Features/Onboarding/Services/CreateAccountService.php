@@ -41,8 +41,8 @@ class CreateAccountService
     {
         // First, check if the password is valid
         if (!$this->isValidPassword($password)) {
-            $exception = new CreateAccountException('Password is not valid', 422);
-            $exception->setLocalizedMessage(__('Password is not valid', 'metricool'));
+            $exception = new CreateAccountException('Password is not valid.', 422);
+            $exception->setLocalizedMessage(__('Password is not valid.', 'metricool'));
             throw $exception;
         }
 
