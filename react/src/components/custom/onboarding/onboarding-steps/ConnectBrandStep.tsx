@@ -22,7 +22,7 @@ import { useAuthenticationData } from "@/hooks/useAuthenticationData";
 import { type Dispatch, type SetStateAction } from "react";
 import { queryClient } from "@/main.tsx";
 import { useConnectedBrandsData } from "@/hooks/useConnectedBrandsData.tsx";
-import { createInterpolateElement } from '@wordpress/element';
+import { createInterpolateElement } from "@wordpress/element";
 
 type ConnectBrandStepProps = {
     setModalOpen?: Dispatch<SetStateAction<boolean>>,
