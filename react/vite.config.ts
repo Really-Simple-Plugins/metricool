@@ -22,28 +22,33 @@ import path from "path";
 const wordpressImportsToGlobals = () => ({
     name: 'wordpress-imports-to-globals',
     transform(code: string, id: string) {
-        let copyOfCode = code.slice(0);
         const isOwnPluginFile = id.includes("react/src");
-        if (isOwnPluginFile) {
-            const arrayOfImportStatements = copyOfCode.match(/import(.*);/g);
-            const arrayOfWordpressImports = arrayOfImportStatements?.filter((importStatement) => importStatement.includes("@wordpress"));
-            arrayOfWordpressImports?.forEach((wpImport) => {
+        if (!isOwnPluginFile) {
+            return code;
+        }
+
+        let copyOfCode = code;
+            const importDeclarations = copyOfCode.match(/import(.*);/g);
+            const wordpressImports = importDeclarations?.filter((importStatement) => importStatement.includes("@wordpress"));
+            wordpressImports?.forEach((wpImport) => {
                 const allImportedFunctionsAsString = wpImport.match(/{(.*)}/);
                 const fullPackageName = wpImport.match(/@(.*)"/);
-                if (allImportedFunctionsAsString && fullPackageName) {
-                    const splitPackageDomainFromSubPackage = fullPackageName[1].split("/");
-                    const subPackage = splitPackageDomainFromSubPackage[splitPackageDomainFromSubPackage.length - 1];
-                    const arrayOfImportedFunctions = allImportedFunctionsAsString[1].split(",");
-                    arrayOfImportedFunctions.forEach((importedFunction) => {
-                        const globalReplaceString = `wp.${subPackage}.${importedFunction.trim()}`;
-                        /* Removing the initial import statement by replacing it with an empty string.
-                        * Then replacing each invocation of the imported function with the global.
-                        * Including the opening `(` in the lookup so the __ part of comments like @__PURE__ aren't replaced. */
-                        copyOfCode = copyOfCode.replace(wpImport, "").replaceAll(`${importedFunction.trim()}(`, `${globalReplaceString}(`);
-                    })
+
+                if (!allImportedFunctionsAsString || !fullPackageName) {
+                    throw new Error(`The @wordpress import was not properly formatted. Change the declaration to 'import { X } from '@wordpress/X"'`)
                 }
+
+                const subPackage = fullPackageName[1].split("/").pop();
+                const importedFunctions = allImportedFunctionsAsString[1].split(",");
+                importedFunctions.forEach((importedFunction) => {
+                    const globalReplaceString = `wp.${subPackage}.${importedFunction.trim()}`;
+                    /* Removing the initial import statement by replacing it with an empty string.
+                    * Then replacing each invocation of the imported function with the global.
+                    * Including the opening `(` in the lookup so the __ part of comments like @__PURE__ aren't replaced. */
+                    copyOfCode = copyOfCode.replace(wpImport, "").replaceAll(`${importedFunction.trim()}(`, `${globalReplaceString}(`);
+                })
+
             });
-        }
         return copyOfCode
     }
 });
