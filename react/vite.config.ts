@@ -67,9 +67,6 @@ export default defineConfig({
             compress: {
                 passes: 2,
             },
-            mangle: {
-                reserved: ["__", "_n", "_nx", "_x"],
-            },
         }
     },
     base: "./",
