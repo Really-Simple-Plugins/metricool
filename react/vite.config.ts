@@ -5,6 +5,20 @@ import { tanstackRouter } from "@tanstack/router-vite-plugin";
 import { devtools } from "@tanstack/devtools-vite";
 import path from "path";
 
+/**
+ * Custom vite plugin.
+ * Replaces all imports of @wordpress packages in our React files with the
+ * globally defined 'wp' object.
+ * e.g. 'import { __ } from "@wordpress/i18n"' is removed from the top of the
+ * file, and all invocations of '__()' in the file are replaced by 'wp.i18n.__()'
+ *
+ * This way we keep type safety and IntelliSense during the dev process, but don't
+ * have to bundle the packages.
+ * This means all WordPress packages are devDependencies in 'package.lock' and each
+ * package needs to be included in the dependencies array of the enqueued script
+ * in the DashboardController, to ensure WordPress includes them in the global
+ * 'wp' object.
+ */
 const wordpressImportsToGlobals = () => ({
     name: 'wordpress-imports-to-globals',
     transform(code: string, id: string) {
