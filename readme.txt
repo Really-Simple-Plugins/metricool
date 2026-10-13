@@ -5,7 +5,7 @@ Tags: instagram, facebook, analytics, meta, social
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.1.1
+Stable tag: 2.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,8 +106,11 @@ You can skip the onboarding and login with your existing login credentials.
 
 == Changelog ==
 
+= 2.1.2 - 2026-10-13 =
+* Fixed: A fatal error triggered under certain conditions caused by a conflict with other plugins that bundle the Composer autoloader.
+
 = 2.1.1 - 2026-10-06 =
-* Fixed: Trunk folder is no longer included in the plugin
+* Fixed: Trunk folder is no longer included in the plugin.
 
 = 2.1.0 - 2026-08-06 =
 * Fixed: Website tracking is no longer removed when the connection with Metricool cannot be renewed.
@@ -119,9 +122,9 @@ You can skip the onboarding and login with your existing login credentials.
 * Changed: Dependencies are now scoped, preventing conflicts with other plugins that ship the same libraries.
 
 = 2.0.2 - 2026-06-17 =
-* Fixed: An issue when trying to connect to a brand
-* Fixed: An issue when using Redis Object Cache
-* Improved: Error handling for better user experience
+* Fixed: An issue when trying to connect to a brand.
+* Fixed: An issue when using Redis Object Cache.
+* Improved: Error handling for better user experience.
 
 = 2.0.1 - 2026-06-15 =
 * Fixed: Improved error handling to prevent unexpected plugin failures.
