@@ -22,7 +22,7 @@ const MetricTotals = ({ metrics, toggleMetric, chartConfig }: MetricTileContaine
      *
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat/NumberFormat#notation}
      */
-    const localizedMetricNumberFormatter = Intl.NumberFormat(metricool.locale, {
+    const localizedNumberFormatter = Intl.NumberFormat(metricool.locale, {
         notation: "compact",
         minimumFractionDigits: 0,
         maximumFractionDigits: 2,
@@ -34,7 +34,7 @@ const MetricTotals = ({ metrics, toggleMetric, chartConfig }: MetricTileContaine
                 <MetricTile
                     key={metricData.label}
                     onClick={() => toggleMetric(metricKey)}
-                    metric={localizedMetricNumberFormatter.format(metricData.totalAmount)}
+                    metric={localizedNumberFormatter.format(metricData.totalAmount)}
                     trend={metricData.trend}
                     variant={chartConfig[metricKey].color}
                     inactive={chartConfig[metricKey].hidden}
