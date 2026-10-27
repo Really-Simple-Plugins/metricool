@@ -46,7 +46,7 @@ const SettingsMenu = () => {
                 </ListItem>
                 <ListItem
                     className={cn("text-md cursor-pointer hover:underline max-w-fit", !metricool.account?.is_premium ? "text-upsell font-semibold focus:text-upsell!" : "text-black")}
-                    link={metricoolDynamicUrl.withPath("my-tasks/open")}
+                    link={metricoolDynamicUrl.withPath("my-tasks")}
                     {...(!metricool.account?.is_premium ? {
                         iconProps: {
                             icon: "upsell",
