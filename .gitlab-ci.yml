@@ -183,7 +183,11 @@ package:
   needs: []
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
+      allow_failure: true
     - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: manual
+      allow_failure: true
   before_script:
     # OS deps for packaging (Debian bookworm ships PHP 8.2)
     - apt-get update -qq
