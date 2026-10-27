@@ -215,7 +215,8 @@ package:
 
     # Copy only the files that ship with the plugin
     - >
-      rsync -a ./ "/tmp/metricool/"
+      rsync -a ./ "$CI_PROJECT_DIR/metricool/"
+      --exclude="/metricool"
       --exclude=".git*"
       --exclude="*.dist"
       --exclude=.agents
@@ -224,10 +225,9 @@ package:
       --exclude=composer-scoped.lock
       --include="/react/build/***"
       --exclude="/react/*"
-    - (cd /tmp && zip -rq "$CI_PROJECT_DIR/metricool-$CI_COMMIT_REF_SLUG.zip" "metricool")
   artifacts:
     name: "metricool-$CI_COMMIT_REF_SLUG"
     expose_as: "Release"
     paths:
-      - release/
+      - metricool/
     expire_in: 30 days
