@@ -190,6 +190,11 @@ package:
       when: manual
       allow_failure: true
   before_script:
+    - |
+      if [ -z "${NPMRC_FA_AUTH_TOKEN:-}" ]; then
+        echo "ERROR: NPMRC_FA_AUTH_TOKEN CI/CD variable is not set."
+        exit 1
+      fi
     # OS deps for packaging (Debian bookworm ships PHP 8.2)
     - apt-get update -qq
     - apt-get install -yqq --no-install-recommends unzip zip rsync php-cli php-zip php-xml php-mbstring php-curl > /dev/null
@@ -210,7 +215,7 @@ package:
 
     # Copy only the files that ship with the plugin
     - >
-      rsync -a ./ "/tmp/$CI_PROJECT_NAME/"
+      rsync -a ./ "/tmp/metricool/"
       --exclude=".git*"
       --exclude="*.dist"
       --exclude=.agents
@@ -219,11 +224,9 @@ package:
       --exclude=composer-scoped.lock
       --include="/react/build/***"
       --exclude="/react/*"
-    - mkdir -p release
-    # Create zip into release directory
-    - (cd /tmp && zip -rq "$CI_PROJECT_DIR/release/$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG.zip" "$CI_PROJECT_NAME")
+      - (cd /tmp && zip -rq "$CI_PROJECT_DIR/metricool-$CI_COMMIT_REF_SLUG.zip" "metricool")
   artifacts:
-    name: "$CI_PROJECT_NAME-$CI_COMMIT_REF_SLUG"
+    name: "metricool-$CI_COMMIT_REF_SLUG"
     expose_as: "Release"
     paths:
       - release/
