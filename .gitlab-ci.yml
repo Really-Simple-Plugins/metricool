@@ -224,7 +224,7 @@ package:
       --exclude=composer-scoped.lock
       --include="/react/build/***"
       --exclude="/react/*"
-      - (cd /tmp && zip -rq "$CI_PROJECT_DIR/metricool-$CI_COMMIT_REF_SLUG.zip" "metricool")
+    - (cd /tmp && zip -rq "$CI_PROJECT_DIR/metricool-$CI_COMMIT_REF_SLUG.zip" "metricool")
   artifacts:
     name: "metricool-$CI_COMMIT_REF_SLUG"
     expose_as: "Release"
