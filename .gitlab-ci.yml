@@ -177,6 +177,7 @@ phpstan:reviewdog:
   variables:
     REVIEWDOG_GITLAB_API_SERVER: "$CI_SERVER_URL/api/v4"
     REVIEWDOG_GITLAB_API_TOKEN: "$MR_REVIEW_GITLAB_API_TOKEN"
+
 package:
   stage: package
   image: node:22-bookworm
@@ -201,6 +202,7 @@ package:
     - rm -f composer-setup.php installer.sig
   script:
     # Build plugin
+    - sed "s/NPMRC_FA_AUTH_TOKEN/${NPMRC_FA_AUTH_TOKEN}/g" react/.npmrc.config > react/.npmrc
     - (cd react && npm ci && npm run build)
     - composer install --no-interaction --no-progress --prefer-dist
     - test -f vendor/_scoped/scoper-autoload.php
