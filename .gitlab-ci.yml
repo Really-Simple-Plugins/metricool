@@ -225,6 +225,10 @@ package:
       --exclude=composer-scoped.lock
       --include="/react/build/***"
       --exclude="/react/*"
+
+    # Generate POT file
+    - TEXT_DOMAIN=$(sed -n 's/^.*Text Domain:[[:space:]]*//p' "metricool.php" | head -n 1 | tr -d '\r')
+    - wp i18n make-pot "$CI_PROJECT_DIR/metricool/" "$CI_PROJECT_DIR/metricool/assets/languages/$TEXT_DOMAIN.pot" --allow-root
   artifacts:
     name: "metricool-$CI_COMMIT_REF_SLUG"
     expose_as: "Release"
