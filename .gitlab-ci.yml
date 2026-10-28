@@ -205,6 +205,10 @@ package:
     - php -r "if (hash_file('SHA384', 'composer-setup.php') !== trim(file_get_contents('installer.sig'))) { echo 'Invalid composer installer'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
     - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
     - rm -f composer-setup.php installer.sig
+
+    # WP-CLI
+    - curl -sSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp
+    - chmod +x /usr/local/bin/wp
   script:
     # Build plugin
     - sed "s/NPMRC_FA_AUTH_TOKEN/${NPMRC_FA_AUTH_TOKEN}/g" react/.npmrc.config > react/.npmrc
