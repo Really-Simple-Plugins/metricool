@@ -116,10 +116,9 @@ You can skip the onboarding and login with your existing login credentials.
 * Added: A settings link for plugins already installed from the Other Plugins overview.
 * Added: Compatibility with the upcoming Real-Time Collaboration feature in the WordPress editor.
 * Added: kellydekker is added as contributor.
-* Changed: Focus styles on buttons and links now match the new WordPress 7 admin colours.
-* Changed: Data tables now use all available height on the screen.
-* Changed: The link to sign in with a different account is now shown inside the brand connection message.
-* Changed: Improved how plugin features are loaded.
+* Changed: Focus styles on buttons and links have been updated.
+* Changed: Data tables now use all available height within their block.
+* Changed: Improved scroll-based event performance.
 
 = 2.1.2 - 2026-10-13 =
 * Fixed: A fatal error triggered under certain conditions caused by a conflict with other plugins that bundle the Composer autoloader.
