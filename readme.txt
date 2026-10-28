@@ -1,11 +1,11 @@
 === Metricool - Social media and site statistics ===
-Contributors: reallysimpleplugins, wimbraam, rvvelthuijsen, kelvink, juan.pablo.tejela, lucadipaola, marcoscacabelos, mredondometricool
+Contributors: reallysimpleplugins, wimbraam, rvvelthuijsen, kelvink, juan.pablo.tejela, lucadipaola, marcoscacabelos, mredondometricool, kellydekker
 Donate link: https://metricool.com
 Tags: instagram, facebook, analytics, meta, social
 Requires at least: 6.6
-Tested up to: 7.1
+Tested up to: 7.1.3
 Requires PHP: 7.4
-Stable tag: 2.1.2
+Stable tag: 2.2.0-rc1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,21 @@ You can skip the onboarding and login with your existing login credentials.
 
 
 == Changelog ==
+
+= 2.2.0 - 2026-10-28 =
+* Fixed: The Other Plugins overview no longer hides plugins, so the list is never left empty.
+* Fixed: Clearer error message when the security check during sign-up or sign-in fails to load.
+* Fixed: Line charts on the dashboard are animated again.
+* Fixed: Metric tiles with no data can no longer be clicked in the analytics dashboard.
+* Added: A sign-in window that appears when the connection to your Metricool account is lost.
+* Added: A message when there is no data to show yet, instead of an empty block.
+* Added: A settings link for plugins already installed from the Other Plugins overview.
+* Added: Compatibility with the upcoming Real-Time Collaboration feature in the WordPress editor.
+* Added: kellydekker is added as contributor.
+* Changed: Focus styles on buttons and links now match the new WordPress 7 admin colours.
+* Changed: Data tables now use all available height on the screen.
+* Changed: The link to sign in with a different account is now shown inside the brand connection message.
+* Changed: Improved how plugin features are loaded.
 
 = 2.1.2 - 2026-10-13 =
 * Fixed: A fatal error triggered under certain conditions caused by a conflict with other plugins that bundle the Composer autoloader.
