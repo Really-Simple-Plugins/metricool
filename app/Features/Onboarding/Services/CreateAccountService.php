@@ -9,14 +9,12 @@ use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Http\RSPAL\RspalApiClient;
 use Metricool\Services\DashboardService;
-use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Throwable;
 
 class CreateAccountService
 {
     private RspalApiClient $rspal;
     private MetricoolApi $api;
-    private EnvironmentConfig $env;
     private OnboardingService $onboarding;
     private OAuthService $oauth;
     private DashboardService $dashboard;
@@ -24,14 +22,12 @@ class CreateAccountService
     public function __construct(
         RspalApiClient $rspal,
         MetricoolApi $api,
-        EnvironmentConfig $env,
         OnboardingService $onboarding,
         OAuthService $oauth,
         DashboardService $dashboard
     ) {
         $this->rspal = $rspal;
         $this->api = $api;
-        $this->env = $env;
         $this->onboarding = $onboarding;
         $this->oauth = $oauth;
         $this->dashboard = $dashboard;
@@ -43,16 +39,11 @@ class CreateAccountService
      */
     public function createAccount(string $captcha, string $email, string $password, bool $newsletters): bool
     {
-        $globalError = sprintf(
-            /* translators: %1$s is opening link and %2$s is closing link */
-            __('Something went wrong. Please try again or %1$sleave a support message%2$s.', 'metricool'),
-            '<a href="' . $this->env->get('frontend.trusted_urls.new_support_ticket') . '" target="_blank">',
-            '</a>',
-        );
-
         // First, check if the password is valid
         if (!$this->isValidPassword($password)) {
-            throw new CreateAccountException(esc_html__('Password is not valid.', 'metricool'), 'Password is not valid', 422);
+            $exception = new CreateAccountException('Password is not valid.', 422);
+            $exception->setLocalizedMessage(__('Password is not valid.', 'metricool'));
+            throw $exception;
         }
 
         // Attempt to create the account
@@ -64,13 +55,13 @@ class CreateAccountService
                 'RSPAL-RecaptchaV3Token' => $captcha
             ]);
         } catch (RestDataException $e) {
-            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), $e->getResponseCode());
+            throw new CreateAccountException(esc_html($e->getMessage()), $e->getResponseCode());
         }
 
         // Parse the user ID from the access token
         $userId = $this->oauth->parseUserIdFromAccessToken($signupResponse->data->accessToken);
         if (empty($userId)) {
-            throw new CreateAccountException(wp_kses_post($globalError), 'Failed to parse user ID from access token', 500);
+            throw new CreateAccountException('Failed to parse user ID from access token', 500);
         }
 
         // Authenticate the Metricool API Client
@@ -87,15 +78,14 @@ class CreateAccountService
                 ->updatePassword('', $password);
         } catch (ApiException $e) {
             $this->api->logout();
-
-            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), 500);
+            throw new CreateAccountException(esc_html($e->getMessage()), 500);
         }
 
         // Attempt to automatically set the blog information, complete the onboarding process on success
         try {
             $this->onboarding->finalizeOnboarding($this->findConnectedBrandId());
         } catch (Throwable $e) {
-            throw new CreateAccountException(wp_kses_post($globalError), esc_html($e->getMessage()), $e->getCode());
+            throw new CreateAccountException(esc_html($e->getMessage()), $e->getCode());
         }
 
         $this->dashboard->setShowWelcomeScreen();
