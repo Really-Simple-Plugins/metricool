@@ -80,7 +80,7 @@ final class CreateAccountEndpoint implements SingleEndpointInterface
                 rest_sanitize_boolean($validated['marketing'] ?? false)
             );
         } catch (CreateAccountException $e) {
-            return $this->sendHttpErrorResponse($e->getMessage(), ['reason' => $e->getReason()], $e->getCode());
+            return $this->sendHttpErrorResponse($e->getLocalizedMessage(), ['reason' => $e->getReason()], $e->getCode());
         }
 
         return $this->sendHttpResponse($this->onboarding->onboardedState());
