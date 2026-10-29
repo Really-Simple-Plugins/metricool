@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace Metricool\Http\Endpoints;
 
 use Exception;
-use Metricool\Http\Endpoints\Responses\RealtimeResponse;
+use Metricool\Traits\HasRestAccess;
+use Metricool\Services\RealtimeService;
+use Metricool\Services\DashboardService;
+use Metricool\Traits\HasAllowlistControl;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Services\DashboardService;
-use Metricool\Services\RealtimeService;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Http\Endpoints\Responses\RealtimeResponse;
 
 class RealtimeEndpoint implements SingleEndpointInterface
 {
@@ -42,7 +42,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
     /**
      * Only enable this endpoint when onboarding is completed
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->dashboard->isOnboardingCompleted();
     }
@@ -54,7 +54,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getRealtimeData'],
             'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
@@ -65,7 +65,7 @@ class RealtimeEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/realtime
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getRealtimeData(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
             $response = $this->buildResponse($request);

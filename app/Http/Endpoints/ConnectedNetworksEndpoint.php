@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Vendor\GuzzleHttp\Exception\GuzzleException;
-use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
-use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasRestAccess;
 use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Vendor\GuzzleHttp\Exception\GuzzleException;
+use Metricool\Http\Endpoints\Responses\ConnectedNetworksResponse;
 
 class ConnectedNetworksEndpoint implements SingleEndpointInterface
 {
@@ -39,7 +39,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     /**
      * Only enable this endpoint when onboarding is completed
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->dashboard->isOnboardingCompleted();
     }
@@ -51,7 +51,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getConnectedNetworks'],
             'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
@@ -61,7 +61,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/connected_networks
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getConnectedNetworks(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
             $response = $this->buildResponse($request);

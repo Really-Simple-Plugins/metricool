@@ -2,13 +2,13 @@
 
 namespace Metricool\Features\Onboarding;
 
-use Metricool\Http\Metricool\Exceptions\ApiException;
-use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
-use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Services\ConnectionService;
 use Metricool\Services\DashboardService;
-use Metricool\Services\MetricoolAccountService;
 use Metricool\Services\TrackingScriptService;
+use Metricool\Services\MetricoolAccountService;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Http\Metricool\Exceptions\ApiException;
+use Metricool\Features\Onboarding\Exceptions\BrandAccessDeniedException;
 
 class OnboardingService
 {
@@ -25,6 +25,20 @@ class OnboardingService
         $this->dashboard = $dashboard;
         $this->account = $account;
         $this->connection = $connection;
+    }
+
+    /**
+     * Returns the current state of the onboarding
+     */
+    public function onboardedState(): array
+    {
+        return [
+            'onboarding' => [
+                'state' => $this->dashboard->state(),
+                'mode' => $this->dashboard->mode(),
+            ],
+            'account' => $this->account->accountData(),
+        ];
     }
 
     /**

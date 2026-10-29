@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
+use Metricool\Traits\HasRestAccess;
+use Metricool\Services\DashboardService;
+use Metricool\Services\AnalyticsService;
+use Metricool\Traits\HasAllowlistControl;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Services\AnalyticsService;
-use Metricool\Services\DashboardService;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Http\Endpoints\Responses\AnalyticsResponse;
 
 class AnalyticsEndpoint implements SingleEndpointInterface
 {
@@ -41,7 +41,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     /**
      * Only enable this endpoint when onboarding is completed
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->dashboard->isOnboardingCompleted();
     }
@@ -53,7 +53,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getAnalytics'],
             'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
@@ -65,7 +65,7 @@ class AnalyticsEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/analytics?filters[start]=20250618&filters[end]=20250718&metrics[]=pageViews&metrics[]=visits
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getAnalytics(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
             $response = $this->buildResponse($request);

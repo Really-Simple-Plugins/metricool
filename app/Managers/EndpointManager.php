@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Metricool\Managers;
 
+use Throwable;
 use Metricool\Bootstrap\App;
+use Metricool\Traits\HasNonces;
+use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
 use Metricool\Exceptions\RestDataException;
 use Metricool\Interfaces\MiddlewareInterface;
 use Metricool\Interfaces\MultiEndpointInterface;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 use Metricool\Support\Helpers\Storages\MiddlewareConfig;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasNonces;
-use Metricool\Traits\HasRestAccess;
-use Throwable;
+use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
 final class EndpointManager extends AbstractManager
 {
@@ -33,6 +33,14 @@ final class EndpointManager extends AbstractManager
         $this->env = $env;
         $this->aliases = $middleware->get('aliases', []);
         $this->defaultMiddleware = $middleware->get('default_middleware', []);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function type(): string
+    {
+        return 'endpoints';
     }
 
     /**
@@ -62,10 +70,9 @@ final class EndpointManager extends AbstractManager
     /**
      * @inheritDoc
      */
-    public function afterRegister(): void
+    protected function afterRegister(): void
     {
         $this->registerWordPressRestRoutes();
-        do_action('metricool_endpoints_loaded');
     }
 
     /**
@@ -74,7 +81,7 @@ final class EndpointManager extends AbstractManager
      */
     private function registerSingleEndpointRoute(SingleEndpointInterface $endpoint): void
     {
-        if ($endpoint->enabled() === false) {
+        if ($endpoint->isEnabled() === false) {
             return;
         }
 
@@ -87,7 +94,7 @@ final class EndpointManager extends AbstractManager
      */
     private function registerMultiEndpointRoute(MultiEndpointInterface $endpoint): void
     {
-        if ($endpoint->enabled() === false) {
+        if ($endpoint->isEnabled() === false) {
             return;
         }
 
@@ -98,10 +105,9 @@ final class EndpointManager extends AbstractManager
     }
 
     /**
-     * This method provides a way to register custom REST routes via the
-     * metricool_rest_routes filter. A controller or feature should be
-     * instantiated before this manager is called and the controller should
-     * hook into the metricool_rest_routes filter to add its own routes.
+     * All routes that endpoint classes registered in memory are registered in
+     * WordPress at the right time. Arguments an endpoint may return from its
+     * registerRoute(s) methods:
      *
      *      public function registerArguments(): array
      *      {
@@ -119,15 +125,12 @@ final class EndpointManager extends AbstractManager
      *          ];
      *      }
      *
-     * @uses apply_filters metricool_rest_routes
      * @throws \InvalidArgumentException
      * @throws \ReflectionException
      */
     public function registerWordPressRestRoutes(): void
     {
-        $routes = $this->getPluginRestRoutes();
-
-        foreach ($routes as $route => $data) {
+        foreach ($this->routes as $route => $data) {
             $methods = ($data['methods'] ?? 'GET');
             $callback = ($data['callback'] ?? null);
             $permissionCallback = ($data['permission_callback'] ?? $this->defaultPermissionCallback());
@@ -169,30 +172,6 @@ final class EndpointManager extends AbstractManager
         return function (): bool {
             return $this->userCanManage();
         };
-    }
-
-    /**
-     * Get the plugins REST routes
-     * @uses apply_filters metricool_rest_routes
-     */
-    private function getPluginRestRoutes(): array
-    {
-        /**
-         * Filter: metricool_rest_routes
-         * Can be used to add or modify the REST routes
-         *
-         * @param array $routes
-         * @return array
-         * @example [
-         *      'route' => [ // key is the route name
-         *          'methods' => 'GET', // required
-         *          'callback' => 'callback_function', // required
-         *          'permission_callback' => 'permission_callback_function', // optional to override the default permission callback
-         *          'version' => 'v1' // optional to override the default version
-         *      ]
-         * ]
-         */
-        return apply_filters('metricool_rest_routes', $this->routes);
     }
 
     /**

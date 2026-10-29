@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Interfaces\MultiEndpointInterface;
-use Metricool\Services\OtherPluginService;
-use Metricool\Support\Helpers\Collection;
-use Metricool\Support\Helpers\Storages\GeneralConfig;
-use Metricool\Traits\HasAllowlistControl;
 use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Support\Helpers\Collection;
+use Metricool\Services\OtherPluginService;
+use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Support\Helpers\Storages\GeneralConfig;
 
 class OtherPluginsEndpoints implements MultiEndpointInterface
 {
@@ -58,7 +58,7 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return true;
     }

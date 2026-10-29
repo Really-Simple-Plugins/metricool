@@ -2,21 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Features\UserSettings;
+namespace Metricool\Features\UserSettings\Endpoints;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
-
+use Metricool\Traits\HasRestAccess;
+use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Features\UserSettings\UserSettingsService;
+use Metricool\Features\UserSettings\UserSettingsResponse;
 use Metricool\Features\UserSettings\Exceptions\StorageSubmitException;
 use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
 
-class UserSettingsEndpoint
+final class UserSettingsEndpoints implements MultiEndpointInterface
 {
     use HasRestAccess;
-    use HasAllowlistControl;
 
     private UserSettingsService $service;
 
@@ -25,32 +22,37 @@ class UserSettingsEndpoint
         $this->service = $service;
     }
 
-    public function register(): void
+    /**
+     * Endpoints are guarded by the {@see UserSettingsFeature}, which only
+     * registers these endpoints when the current user can manage the plugin.
+     * So this class does not need its own capability check.
+     */
+    public function isEnabled(): bool
     {
-        add_filter('metricool_rest_routes', [$this, 'addRoutes']);
+        return true;
     }
 
     /**
-     * Add the task routes to the REST API.
+     * @inheritDoc
      */
-    public function addRoutes(array $routes): array
+    public function registerRoutes(): array
     {
         $routeParameters = [
             'methods' => \WP_REST_Server::READABLE . ', ' . \WP_REST_Server::EDITABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'handleUserSettings'],
         ];
 
-        $routes['user_settings'] = $routeParameters;
-        $routes['user_settings/(?P<section>[^/]+)'] = $routeParameters;
-
-        return $routes;
+        return [
+            'user_settings' => $routeParameters,
+            'user_settings/(?P<section>[^/]+)' => $routeParameters,
+        ];
     }
 
     /**
      * Handle the REST API request, routing to the appropriate method to the
      * correct method. Only allows GET, POST, PUT, and PATCH.
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function handleUserSettings(\WP_REST_Request $request): \WP_REST_Response
     {
         switch ($request->get_method()) {
             case \WP_REST_Server::READABLE:

@@ -2,20 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Features\TaskManagement;
-
-if (!defined('ABSPATH')) {
-    exit;
-}
+namespace Metricool\Features\TaskManagement\Endpoints;
 
 use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
+use Metricool\Interfaces\MultiEndpointInterface;
+use Metricool\Features\TaskManagement\TaskManagementService;
 use Metricool\Features\TaskManagement\Exceptions\DismissRequiredTaskException;
 
-class TaskManagementEndpoints
+final class TaskManagementEndpoints implements MultiEndpointInterface
 {
     use HasRestAccess;
-    use HasAllowlistControl;
 
     private TaskManagementService $service;
 
@@ -24,31 +20,37 @@ class TaskManagementEndpoints
         $this->service = $service;
     }
 
-    public function register(): void
+    /**
+     * Endpoints are guarded by the {@see TaskManagementFeature}, which only
+     * registers these endpoints when the current user can manage the plugin.
+     * So this class does not need its own capability check.
+     */
+    public function isEnabled(): bool
     {
-        add_filter('metricool_rest_routes', [$this, 'addTaskRoutes']);
+        return true;
     }
 
     /**
-     * Add the task routes to the REST API.
+     * @inheritDoc
      */
-    public function addTaskRoutes(array $routes): array
+    public function registerRoutes(): array
     {
-        $routes['get_tasks'] = [
-            'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'getTasksCallback'],
+        return [
+            'get_tasks' => [
+                'methods' => \WP_REST_Server::READABLE,
+                'callback' => [$this, 'getTasksCallback'],
+            ],
+            'dismiss_task' => [
+                'methods' => \WP_REST_Server::CREATABLE,
+                'callback' => [$this, 'dismissTaskCallback'],
+            ],
         ];
-
-        $routes['dismiss_task'] = [
-            'methods' => \WP_REST_Server::CREATABLE,
-            'callback' => [$this, 'dismissTaskCallback'],
-        ];
-
-        return $routes;
     }
 
     /**
      * Return current tasks as a WP_REST_Response.
+     *
+     *     GET /wp-json/metricool/v1/get_tasks
      */
     public function getTasksCallback(\WP_REST_Request $request): \WP_REST_Response
     {
@@ -63,6 +65,8 @@ class TaskManagementEndpoints
 
     /**
      * Dismiss a task by taskId.
+     *
+     *     POST /wp-json/metricool/v1/dismiss_task
      */
     public function dismissTaskCallback(\WP_REST_Request $request): \WP_REST_Response
     {

@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
+use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
 
 class ConnectedBrandsEndpoint implements SingleEndpointInterface
 {
@@ -26,7 +26,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return true;
     }
@@ -46,7 +46,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getConnectedBrands'],
             'middleware' => ['metricool:auth'],
         ];
     }
@@ -56,7 +56,7 @@ class ConnectedBrandsEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/connected_brands
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getConnectedBrands(\WP_REST_Request $request): \WP_REST_Response
     {
         try {
             $response = $this->metricoolApi->brands()->all();
