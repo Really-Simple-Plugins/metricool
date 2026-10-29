@@ -1,15 +1,16 @@
 import {
-    Button,
     type Column,
     DataTable,
     DataTableColumnHeader,
+    EmptyDataState,
     FlexContainer,
     Icon,
-    LoadingAndErrorState,
+    Link,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useTrafficAnalyticsData } from "@/hooks/analytics/useTrafficAnalyticsData.tsx";
+import { isEmptyArray } from "@/support/functions/utils.ts";
 
 type TrafficDataTableColumns = { url: string, pageViews: number, percentage: number };
 
@@ -45,34 +46,38 @@ const TrafficTab = () => {
     } = useTrafficAnalyticsData();
 
     return (
-        <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {!trafficData ? (
-                <LoadingAndErrorState
+        <FlexContainer direction={"column"} className={"justify-between grow gap-2!"}>
+            {(!trafficData || isEmptyArray(trafficData.tableData)) ? (
+                <EmptyDataState
                     error={error}
                     isLoading={isLoading}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    emptyStateTitle={__("No Traffic data", "metricool")}
+                    emptyStateDescription={__("There appears to be no Traffic data available right now.", "metricool")}
                 />
             ) : (
-                <FlexContainer direction={"column"}>
+                <FlexContainer direction={"column"} className={"gap-2! grow"}>
                     <DataTable
                         data={trafficData.tableData}
                         columns={columns}
-                        tableSettings={{ pageSize: 8 }}
+                        tableSettings={{
+                            pageSize: 8,
+                            roundedTopCornersTableHeader: true
+                        }}
                     />
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>
-                <Button
+                <Link
                     variant={"primary-gradient-ghost"}
-                    link={metricoolDynamicUrl.withPath("evolution/web")}
+                    href={metricoolDynamicUrl.withPath("evolution/web")}
+                    className={"gap-2! items-center"}
                 >
-                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                        {__("View Analytics", "metricool")}
-                        <Icon icon={"external-link"} className={"svg-gradient"}/>
-                    </FlexContainer>
-                </Button>
+                    {__("View Analytics", "metricool")}
+                    <Icon icon={"external-link"} className={"svg-gradient"}/>
+                </Link>
             </FlexContainer>
         </FlexContainer>
     );

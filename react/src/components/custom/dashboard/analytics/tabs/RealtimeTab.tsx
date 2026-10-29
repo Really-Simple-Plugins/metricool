@@ -1,8 +1,9 @@
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
-import { Button, FlexContainer, Icon, LineChart, LoadingAndErrorState } from "@/components/shared";
+import { FlexContainer, Icon, LineChart, Link, EmptyDataState } from "@/components/shared";
 import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
 import { useRealtimeAnalyticsData } from "@/hooks/analytics/useRealtimeAnalyticsData.tsx";
+import { isEmptyArray } from "@/support/functions/utils.ts";
 
 const RealtimeTab = () => {
     const { metricoolDynamicUrl, metricool } = useGlobalContext();
@@ -26,25 +27,37 @@ const RealtimeTab = () => {
     };
 
     return (
-        <FlexContainer direction={"column"} className={"justify-between grow"}>
-            {!realTimeData ? (
-                <LoadingAndErrorState
+        <FlexContainer direction={"column"} className={"justify-between grow gap-0!"}>
+            {(!realTimeData || isEmptyArray(realTimeData.timelineData)) ? (
+                <EmptyDataState
                     error={error}
                     isLoading={isLoading}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    emptyStateTitle={__("No Real-time data", "metricool")}
+                    emptyStateDescription={__("There appears to be no Real-time analytics data available right now.", "metricool")}
                 />
             ) : (
                 <FlexContainer direction={"column"} className={"rounded-md bg-gray-50 gap-2! p-2"}>
                     <FlexContainer direction={"row"} className={"justify-between"}>
                         <div className={"text-md font-semibold"}>{__("Last 30 Minutes", "metricool")}</div>
-                        <FlexContainer direction={"row"} className={"gap-2!"}>
-                            <MetricTile metric={realTimeData.totals.pageViews.totalAmount} variant={"tertiary"}>
-                                {__("Page Views", "metricool")}
+                        <FlexContainer direction={"row"} className={"gap-2! min-h-14"}>
+                            <MetricTile
+                                disabled={true}
+                                metric={realTimeData.totals.pageViews.totalAmount}
+                                variant={"tertiary"}
+                                className={"opacity-100!"}
+                            >
+                                {realTimeData.totals.pageViews.label}
                             </MetricTile>
-                            <MetricTile metric={realTimeData.totals.visitors.totalAmount} variant={"primary"}>
-                                {__("Visitors", "metricool")}
+                            <MetricTile
+                                disabled={true}
+                                metric={realTimeData.totals.visitors.totalAmount}
+                                variant={"primary"}
+                                className={"opacity-100!"}
+                            >
+                                {realTimeData.totals.visitors.label}
                             </MetricTile>
                         </FlexContainer>
                     </FlexContainer>
@@ -52,7 +65,6 @@ const RealtimeTab = () => {
                     <LineChart
                         chartSettings={{
                             xAxisKey: lineChartXAxisDataKey,
-                            general: { height: 290 },
                         }}
                         maxHeightClass={"max-h-72.5"}
                         chartConfig={chartConfig}
@@ -61,15 +73,14 @@ const RealtimeTab = () => {
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>
-                <Button
+                <Link
                     variant={"primary-gradient-ghost"}
-                    link={metricoolDynamicUrl.withPath("evolution/web")}
+                    href={metricoolDynamicUrl.withPath("evolution/web")}
+                    className={"gap-2! items-center"}
                 >
-                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                        {__("View Analytics", "metricool")}
-                        <Icon icon={"external-link"} className={"svg-gradient"}/>
-                    </FlexContainer>
-                </Button>
+                    {__("View Analytics", "metricool")}
+                    <Icon icon={"external-link"} className={"svg-gradient"}/>
+                </Link>
             </FlexContainer>
         </FlexContainer>
     );

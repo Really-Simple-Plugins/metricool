@@ -13,7 +13,7 @@ const ScrollProgressBar = () => {
     const framePending = useRef(false);
     const minimalProgress = 0.05;
 
-    const updateScrollProgress = () => {
+    const updateScrollProgress = useCallback(() => {
         framePending.current = false;
 
         const totalPossibleScrollValueInPixels = document.documentElement.scrollHeight - window.innerHeight;
@@ -26,7 +26,7 @@ const ScrollProgressBar = () => {
         if (componentRef.current) {
             componentRef.current.style.transform = `scaleX(${clampedNormalisedProgressPercentage})`;
         }
-    };
+    }, [framePending, componentRef]);
 
     const onScroll = useCallback(() => {
         currentScrollYValue.current = window.scrollY;
@@ -35,9 +35,11 @@ const ScrollProgressBar = () => {
             framePending.current = true;
             requestAnimationFrame(updateScrollProgress);
         }
-    }, []);
+    }, [updateScrollProgress]);
 
     useEffect(() => {
+        onScroll();
+
         window.addEventListener("scroll", onScroll, { passive: true });
 
         return () => window.removeEventListener("scroll", onScroll);
@@ -47,7 +49,7 @@ const ScrollProgressBar = () => {
         <div className={"h-1 w-full bg-neutral-200"}>
             <div
                 ref={componentRef}
-                className={"h-full bg-blue-500 origin-left transition-all ease-in duration-[50]"}
+                className={"h-full bg-blue-500 origin-left"}
                 style={{ transform: `scaleX(${minimalProgress})` }}
             >
             </div>

@@ -1,9 +1,20 @@
-import { Link } from "@tanstack/react-router";
 import { TaskStatusBadge } from "@/components/shared/dashboard/TaskStatusBadge";
 import { Button } from "@/components/shared/forms/Button";
 import { FlexContainer } from "@/components/shared/general/FlexContainer";
 import { Icon } from "@/components/shared/user-feedback/Icon";
 import { cn } from "@/support/functions/utils";
+import { Link } from "@/components/shared/general/Link";
+import type { LinkProps as TanstackRouterLinkProps } from "@tanstack/react-router";
+import type { RequiredProperty } from "@/types/utility/RequiredProperty";
+
+type TaskAction = {
+    text: string,
+    target?: string,
+    modal?: { id: string },
+} & (
+    | { route: RequiredProperty<TanstackRouterLinkProps, "to">["to"], link?: never }
+    | { route?: never, link: string }
+);
 
 export type TaskProps = {
     id: string,
@@ -14,15 +25,7 @@ export type TaskProps = {
     premium: boolean;
     special_feature: boolean,
     priority: number,
-    action?: {
-        text: string,
-        route?: string,
-        link?: string,
-        target?: string,
-        modal?: {
-            id: string,
-        },
-    },
+    action?: TaskAction,
 };
 
 const Task = ({
@@ -68,29 +71,20 @@ const Task = ({
             </FlexContainer>
             <FlexContainer direction={"row"} className={"items-center"}>
                 {action && (
-                    action.link ? (
-                        <Button
-                            variant={"link"}
-                            size={"link"}
-                            link={action.link}
-                            target={action.target ?? "_self"}
-                        >
-                            <span className={"text-nowrap"}>
-                                {action.text}
-                            </span>
-                        </Button>
-                    ) : (
-                        <Link
-                            to={action.route}
-                            className={"text-black hover:text-wordpress-link-hover font-normal underline leading-(--text-md)"}
-                        >
-                            <span className={"text-nowrap"}>
-                                {action.text}
-                            </span>
-                        </Link>
-                    )
+                    <Link
+                        {...(
+                            action.route
+                                ? { route: action.route }
+                                : { href: action.link }
+                        )}
+                        target={action.target ?? "_self"}
+                    >
+                        <span className={"text-nowrap"}>
+                            {action.text}
+                        </span>
+                    </Link>
                 )}
-                <div className={"w-4 h-4"}>
+                <FlexContainer direction={"row"} className={"w-4 h-4 items-center justify-center"}>
                     {taskIsDismissable && (
                         <Button
                             variant={"icon"}
@@ -100,7 +94,7 @@ const Task = ({
                             <Icon icon={"close"}/>
                         </Button>
                     )}
-                </div>
+                </FlexContainer>
             </FlexContainer>
         </FlexContainer>
     );

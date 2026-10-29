@@ -10,7 +10,7 @@ import {
 import { RemoveScroll } from "react-remove-scroll";
 import { cn } from "@/support/functions/utils";
 import * as React from "react";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import { Close as RadixDialogClose, Content as RadixDialogContent } from "@radix-ui/react-dialog";
 import { Icon } from "@/components/shared/user-feedback/Icon";
 import { type VariantProps } from "class-variance-authority";
@@ -73,6 +73,7 @@ const Dialog = ({
         if (open) {
             appContainer?.classList.add("pointer-events-none");
             wpFooter?.classList.add("pointer-events-none");
+            document.documentElement.style.setProperty("--scroll-progress-in-pixels", `${window.scrollY}px`);
         } else {
             appContainer?.classList.remove("pointer-events-none");
             wpFooter?.classList.remove("pointer-events-none");
@@ -83,20 +84,6 @@ const Dialog = ({
             wpFooter?.classList.remove("pointer-events-none");
         };
     }, [appContainer, wpFooter, open]);
-
-    const setScrollPixelProgressCssVar = () => {
-        document.documentElement.style.setProperty("--scroll-progress-in-pixels", `${window.scrollY}px`);
-    };
-
-    const onScroll = useCallback(() => {
-        requestAnimationFrame(setScrollPixelProgressCssVar);
-    }, []);
-
-    useEffect(() => {
-        window.addEventListener("scroll", onScroll, { passive: true });
-
-        return () => window.removeEventListener("scroll", onScroll);
-    }, [onScroll]);
 
     return (
         <PrimitiveDialog open={open} onOpenChange={onOpenChange} modal={RENDER_DIALOG_OVERLAY}>
@@ -117,9 +104,9 @@ const Dialog = ({
                             <RadixDialogClose
                                 data-slot={"dialog-close"}
                                 data-state={open ? "open" : "closed"}
-                                className={"focus:ring-ring data-[state=open]:text-muted-foreground absolute top-4 right-[calc(var(--spacing)*4+var(--removed-body-scroll-bar-size))] rounded-xs opacity-70 transition-opacity hover:opacity-100 focus:ring-2 focus:ring-offset-2 focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:cursor-pointer"}
+                                className={"data-[state=open]:text-muted-foreground absolute top-4 right-[calc(var(--spacing)*4+var(--removed-body-scroll-bar-size))] rounded-xs opacity-70 transition-opacity hover:opacity-100 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 hover:cursor-pointer"}
                             >
-                                <Icon icon={"close"} className={"text-black size-8"}/>
+                                <Icon icon={"close"} className={"text-black! size-8"}/>
                                 <span className={"sr-only"}>Close</span>
                             </RadixDialogClose>
                         )}

@@ -3,9 +3,10 @@ import {
     CardDescription as PrimitiveCardDescription,
     CardHeader as PrimitiveCardHeader,
     CardTitle as PrimitiveCardTitle
-} from "@/components/shared/primitives/card.tsx";
-import { cva, type VariantProps } from "class-variance-authority";
-import { cn } from "@/support/functions/utils.ts";
+} from "@/components/shared/primitives/card";
+import { type VariantProps } from "class-variance-authority";
+import { cn } from "@/support/functions/utils";
+import { blockVariants } from "@/support/helpers/Variants";
 
 /**
  * Custom extension of shadcn's {@link PrimitiveCardTitle} component.
@@ -71,7 +72,16 @@ const BlockHeader = ({
     separator
 }: React.ComponentProps<"div"> & BlockHeaderProps) => {
     return (
-        <PrimitiveCardHeader className={cn(className, "p-0 !gap-[0.375rem] w-full", separator && "border-b-1 border-b-neutral-300")}>
+        <PrimitiveCardHeader
+            className={cn(
+                className,
+                "p-0 pb-0.5 gap-1! w-full",
+                {
+                    // purposefully using border-b-1, not border-b, as the latter applies additional unwanted styling from the primitive
+                    "border-b-1 border-b-neutral-300": separator
+                }
+            )}
+        >
             <div className={cn("flex flex-row justify-between items-center w-full")}>
                 <BlockHeaderTitle>{title}</BlockHeaderTitle>
                 {action && action}
@@ -80,20 +90,6 @@ const BlockHeader = ({
         </PrimitiveCardHeader>
     );
 };
-
-const BlockVariants = cva(
-    "w-full p-4 gap-[10px] shadow-lg",
-    {
-        variants: {
-            variant: {
-                "default": "border-none",
-                "transparent": "bg-transparent shadow-none border-none"
-            },
-        },
-        defaultVariants: {
-            variant: "default",
-        },
-    });
 
 /**
  * Custom extension of shadcn's {@link PrimitiveCard} component.
@@ -111,9 +107,12 @@ const Block = ({
     variant,
     children,
     ...props
-}: React.ComponentProps<"div"> & VariantProps<typeof BlockVariants>) => {
+}: React.ComponentProps<"div"> & VariantProps<typeof blockVariants>) => {
     return (
-        <PrimitiveCard className={cn(BlockVariants({ variant }), className)} {...props}>
+        <PrimitiveCard
+            className={cn(blockVariants({ variant, className }))}
+            {...props}
+        >
             {children}
         </PrimitiveCard>
     );

@@ -4,13 +4,14 @@ import { showToast } from "@/components/shared";
 import { z } from "zod";
 import { generateRecaptchaToken } from "@/support/functions/utils.ts";
 import OnboardingSchema from "@/support/form-schemas/OnboardingSchema.ts";
+import { __, sprintf } from "@wordpress/i18n";
 
 type AuthenticationDataProps = {
     reloadOnLogout?: boolean,
     logoutCallback?: () => void,
     signUpCallbacks?: {
         beforeSignUpCallback: () => void,
-        onSignUpSuccessCallback: (onboarding: MetricoolData["onboarding"], account: Pick<Required<MetricoolData>, "account">["account"] ) => void,
+        onSignUpSuccessCallback: (onboarding: MetricoolData["onboarding"], account: Pick<Required<MetricoolData>, "account">["account"]) => void,
         onSignUpErrorCallback: () => void,
     }
 }
@@ -28,15 +29,26 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
             signUpCallbacks?.beforeSignUpCallback();
         },
         mutationFn: async (formValues: Omit<z.infer<typeof OnboardingSchema>, "brand">) => {
-            const token = await generateRecaptchaToken(metricool.google_recaptcha_key, "signup");
+            let token;
+            try {
+                token = await generateRecaptchaToken(metricool.google_recaptcha_key, "signup");
+            } catch (error) {
+                console.error(error);
+                throw new Error(sprintf(
+                    /* translators: %1$s is opening link and %2$s is closing link */
+                    __("Something went wrong. Please try again or %1$sleave a support message%2$s.", "metricool"),
+                    `<a href="${metricool.trusted_urls.new_support_ticket}" target="_blank">`,
+                    "</a>",
+                ));
+            }
 
-            return await httpClient.setRoute("onboarding/create_account").setPayload({
+            return await httpClient.post("onboarding/create_account", {
                 email: formValues.credentials.email,
                 password: formValues.credentials.password,
                 marketing: formValues.marketing,
                 captcha: token,
                 terms: formValues.terms,
-            }).post();
+            });
         },
         onSuccess: async (response) => {
             signUpCallbacks?.onSignUpSuccessCallback(response.data.onboarding, response.data.account);
@@ -49,9 +61,9 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
 
     const finishOnboardingMutation = useMutation({
         mutationFn: async (formValues: z.infer<typeof OnboardingSchema.shape.brand>) => {
-            return httpClient.setRoute("onboarding/finish_onboarding").setPayload({
+            return httpClient.post("onboarding/finish_onboarding", {
                 blogId: formValues.id,
-            }).post();
+            });
         },
         onSuccess: (response) => {
             dispatch({
@@ -66,7 +78,7 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
 
     const signInRedirectUrlMutation = useMutation({
         mutationFn: async () => {
-            return httpClient.setRoute("onboarding/oauth_redirect").get();
+            return httpClient.get("onboarding/oauth_redirect");
         },
         onSuccess: (response) => {
             window.location = response.data.redirect_url;
@@ -78,7 +90,7 @@ const useAuthenticationData = ({ reloadOnLogout, logoutCallback, signUpCallbacks
 
     const logoutMutation = useMutation({
         mutationFn: async () => {
-            return httpClient.setRoute("logout").post();
+            return httpClient.post("logout");
         },
         onSuccess: (response) => {
             if (logoutCallback) {

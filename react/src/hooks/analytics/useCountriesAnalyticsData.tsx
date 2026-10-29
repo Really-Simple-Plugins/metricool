@@ -11,7 +11,7 @@ const useCountriesAnalyticsData = () => {
 
     const countriesDataQuery = useQuery({
         queryKey: ["analytics", "countries"],
-        queryFn: () => httpClient.setRoute("distribution/countries").get(),
+        queryFn: () => httpClient.get("distribution/countries"),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (response): { tableData: CountriesDataTableColumns[], chartData: string[][] } => {
             return response.data;

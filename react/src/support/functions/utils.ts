@@ -66,7 +66,7 @@ export const generateRecaptchaToken = async (key: string, action: string): Promi
     new Promise((resolve, reject) => {
         // @ts-expect-error grecaptcha globally defined through script
         if (typeof grecaptcha === "undefined") {
-            return reject("'grecaptcha' is not defined");
+            return reject(new Error("'grecaptcha' is not defined"));
         }
         // @ts-expect-error grecaptcha globally defined through script
         grecaptcha.enterprise.ready(
@@ -109,4 +109,36 @@ export const setTranslations = (jsonTranslations: string[], textDomain: string) 
             console.error(error);
         }
     });
+};
+
+/**
+ * Checks whether an Object is empty.
+ * @param object - the Object to check
+ */
+export const isEmptyObject = (object: Record<keyof any, unknown>) => {
+    if (!object || !(object.constructor === Object)) {
+        return false;
+    }
+
+    if (Object.keys(object).length === 0) {
+        return true;
+    }
+
+    return false;
+};
+
+/**
+ * Checks whether an Array is empty.
+ * @param array - the Array to check
+ */
+export const isEmptyArray = (array: Array<unknown>) => {
+    if (!array || (!Array.isArray(array))) {
+        return false;
+    }
+
+    if (array.length === 0) {
+        return true;
+    }
+
+    return false;
 };
