@@ -11,7 +11,7 @@ const MetricTileVariantStyling = {
 };
 
 const MetricTileVariants = cva(
-    "flex flex-col px-3 py-2 rounded-sm",
+    "flex flex-col px-3 py-2 h-fit w-fit rounded-base",
     {
         variants: {
             variant: MetricTileVariantStyling,
@@ -22,12 +22,15 @@ const MetricTileVariants = cva(
     }
 );
 
-type MetricTileProps = {
-    trend?: "up" | "down" | "stable",
-    metric: string | number,
-    inactive?: boolean,
-    disabled?: boolean,
-}
+export type MetricTileProps =
+    React.ComponentProps<"button"> &
+    VariantProps<typeof MetricTileVariants> &
+    {
+        trend?: "up" | "down" | "stable",
+        metric: string | number,
+        inactive?: boolean,
+        disabled?: boolean,
+    };
 
 const MetricTile = ({
     variant,
@@ -38,7 +41,7 @@ const MetricTile = ({
     inactive,
     disabled,
     onClick,
-}: React.ComponentProps<"button"> & MetricTileProps & VariantProps<typeof MetricTileVariants>) => {
+}: MetricTileProps) => {
     return (
         <Button
              className={clsx(
@@ -48,8 +51,8 @@ const MetricTile = ({
                  (inactive || disabled) && "opacity-35 transition-all ease-in-out duration-300",
              )}
              variant={"unstyled"}
-             size={"icon"}
              onClick={onClick}
+             disabled={disabled}
         >
             <FlexContainer direction={"row"} className={clsx("text-white text-[16px] items-center gap-1.5! justify-center")}>
                 {metric}

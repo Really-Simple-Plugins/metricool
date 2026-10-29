@@ -1,26 +1,32 @@
 import {
-    Button,
     type ChartConfig,
     DisabledSelectOption,
+    EmptyDataState,
     FlexContainer,
     Icon,
     LineChart,
-    LoadingAndErrorState,
+    Link,
     Select,
     SelectOption,
 } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useState } from "react";
-import { MetricTile } from "@/components/custom/dashboard/analytics/MetricTile.tsx";
-import { cn } from "@/support/functions/utils";
+import { cn, isEmptyArray } from "@/support/functions/utils";
 import { useWebAnalyticsData } from "@/hooks/analytics/useWebAnalyticsData.tsx";
+import { MetricTotals } from "@/components/custom/dashboard/analytics/MetricTotals.tsx";
 
 export type PeriodFilterOption = {
     label: string,
     option: string,
     isUpsell: boolean,
     xAxisInterval: number,
+}
+
+export type AnalyticsChartConfig = Omit<ChartConfig, "color"> & {
+    [x: string]: {
+        color?: "primary" | "secondary" | "tertiary" | "light-green" | "primary-dark"
+    }
 }
 
 export const periodFilterOptions: Record<string, PeriodFilterOption> = {
@@ -81,14 +87,8 @@ const getCurrentPeriodFilter = (defaultPeriodFilter: PeriodFilterOption, activeP
 const AnalyticsTab = () => {
     const { metricool, dispatch, dashboardSettings, metricoolDynamicUrl } = useGlobalContext();
 
-    const numberFormatter = Intl.NumberFormat(metricool.locale, {
-        notation: "compact",
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 2,
-    });
-
     const [periodFilter, setPeriodFilter] = useState(getCurrentPeriodFilter(defaultPeriodFilter, dashboardSettings.activePeriodFilter));
-    const [chartConfig, setChartConfig] = useState<ChartConfig>({
+    const [chartConfig, setChartConfig] = useState<AnalyticsChartConfig>({
         pageViews: {
             label: __("Page Views", "metricool"),
             color: "tertiary",
@@ -154,43 +154,37 @@ const AnalyticsTab = () => {
     });
 
     return (
-        <FlexContainer direction={"column"} className={"justify-between grow"}>
+        <FlexContainer direction={"column"} className={"justify-between grow gap-0!"}>
             <FlexContainer direction={"column"} className={"relative rounded-md bg-gray-50 gap-2! p-2"}>
-                <FlexContainer direction={"row"} className={"w-full min-h-12.5 justify-end gap-2!"}>
-                    {analyticsData && Object.entries(analyticsData.totals).map(([metricKey, metricData]) => (
-                        <MetricTile
-                            onClick={() => toggleMetric(metricKey)}
-                            metric={numberFormatter.format(metricData.totalAmount)}
-                            trend={metricData.trend}
-                            // @ts-expect-error tsc can't verify color is a valid variant
-                            variant={chartConfig[metricKey].color}
-                            inactive={chartConfig[metricKey].hidden}
-                            disabled={metricData.totalAmount === 0}
-                        >
-                            {chartConfig[metricKey].label}
-                        </MetricTile>
-                    ))}
+                <FlexContainer direction={"row"} className={"w-full min-h-14 justify-end gap-2!"}>
+                    {analyticsData && (
+                        <MetricTotals
+                            metrics={analyticsData.totals}
+                            chartConfig={chartConfig}
+                            toggleMetric={toggleMetric}
+                        />
+                    )}
                 </FlexContainer>
                 <hr className={"-mx-2"}/>
                 <FlexContainer direction={"column"} className={"min-h-72.5 max-h-72.5"}>
-                    {(isFetching || error) && (
-                        <FlexContainer direction={"column"} className={"grow justify-center items-center bg-white opacity-45"}>
-                            <LoadingAndErrorState
+                    {(!analyticsData || isEmptyArray(analyticsData.timelineData)) ? (
+                        <FlexContainer direction={"column"} className={"grow justify-center items-center"}>
+                            <EmptyDataState
                                 error={error}
                                 isLoading={isFetching}
                                 errorUpdateCount={errorUpdateCount}
                                 refetch={refetch}
                                 supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                                emptyStateTitle={__("No Analytics data", "metricool")}
+                                emptyStateDescription={__("There appears to be no Analytics data available for the selected time period.", "metricool")}
                             />
                         </FlexContainer>
-                    )}
-                    {analyticsData && (
+                    ) : (
                         <LineChart
                             className={cn(isFetching && "opacity-45")}
                             chartConfig={chartConfig}
                             chartSettings={{
                                 xAxisKey: lineChartXAxisDataKey,
-                                general: { height: 290 },
                                 xAxis: { interval: xAxisInterval },
                             }}
                             maxHeightClass={"max-h-72.5"}
@@ -229,18 +223,15 @@ const AnalyticsTab = () => {
                                 <DisabledSelectOption
                                     className={"bg-secondary-light hover:bg-upsell focus:bg-upsell"}
                                 >
-                                    <Button
-                                        variant={"link"}
-                                        link={metricoolDynamicUrl.withPath("user-settings/plan")}
-                                        className={"no-underline! font-semibold hover:text-black"}
+                                    <Link
+                                        href={metricoolDynamicUrl.withPath("user-settings/plan")}
+                                        className={"no-underline! font-semibold hover:text-black gap-2! items-center"}
                                     >
-                                        <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                                                    <span className={"flex size-3.5 items-center justify-center"}>
-                                                        <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
-                                                    </span>
-                                            {filterOption.label}
-                                        </FlexContainer>
-                                    </Button>
+                                        <span className={"flex size-3.5 items-center justify-center"}>
+                                            <Icon icon={"upsell"} className={"bg-upsell rounded-full text-black size-2.5 p-0.5"}/>
+                                        </span>
+                                        {filterOption.label}
+                                    </Link>
                                 </DisabledSelectOption>
                             ) : (
                                 <SelectOption
@@ -252,27 +243,29 @@ const AnalyticsTab = () => {
                             )
                         )}
                     </Select>
-                    <Button
+                    <Link
                         variant={metricool.account?.is_premium ? "black-ghost" : "upsell"}
-                        className={cn(metricool.account?.is_premium && "border-neutral-200")}
+                        className={cn(
+                            "gap-2! items-center",
+                            {
+                                "border-neutral-200": metricool.account?.is_premium,
+                            }
+                        )}
                         size={"sm"}
-                        link={metricoolDynamicUrl.withPath("evolution/reports")}
+                        href={metricoolDynamicUrl.withPath("evolution/reports")}
                     >
-                        <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                            <Icon icon={"file"}/>
-                            {__("Report", "metricool")}
-                        </FlexContainer>
-                    </Button>
+                        <Icon icon={"file"}/>
+                        {__("Report", "metricool")}
+                    </Link>
                 </FlexContainer>
-                <Button
+                <Link
                     variant={"primary-gradient-ghost"}
-                    link={metricoolDynamicUrl.withPath("evolution/web")}
+                    href={metricoolDynamicUrl.withPath("evolution/web")}
+                    className={"gap-2! items-center"}
                 >
-                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                        {__("View Analytics", "metricool")}
-                        <Icon icon={"external-link"} className={"svg-gradient"}/>
-                    </FlexContainer>
-                </Button>
+                    {__("View Analytics", "metricool")}
+                    <Icon icon={"external-link"} className={"svg-gradient"}/>
+                </Link>
             </FlexContainer>
         </FlexContainer>
     );

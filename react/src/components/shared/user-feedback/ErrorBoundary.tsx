@@ -1,17 +1,28 @@
 import { __, sprintf } from "@wordpress/i18n";
-import { Button } from "@/components/shared/forms/Button.tsx";
-import { showToast } from "@/components/shared/user-feedback/Toast.tsx";
+import { Button } from "@/components/shared/forms/Button";
+import { showToast } from "@/components/shared/user-feedback/Toast";
+
+const copyError = (error: Error) => {
+    navigator.clipboard.writeText(
+        `${error.message && error.message?.toString()}\n${error.stack && "Stack trace: " + error.stack}`,
+    ).then(() => showToast.success(__("Error was copied", "metricool")));
+};
 
 type ErrorBoundaryProps = {
-    error: Error,
+    error: Error | unknown,
     supportTicketLink: string,
 };
 const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
+    let baseError = error as Error;
 
-    const copyError = () => {
-        navigator.clipboard.writeText(
-            `${error.message && error.message.toString()}\n${error.stack && "Stack trace: " + error.stack}`,
-        ).then(() => showToast.success(__("Error was copied", "metricool")));
+    if (!(error instanceof Error)) {
+        let message: string = __("Something went wrong.", "metricool");
+
+        if (typeof error === "string") {
+            message = error;
+        }
+
+        baseError = new Error(message);
     }
 
     return (
@@ -21,22 +32,22 @@ const ErrorBoundary = ({ error, supportTicketLink }: ErrorBoundaryProps) => {
             </h3>
             <div className={"mb-6 rounded-sm border bg-gray-50 p-4"}>
                 <p className={"mb-2 text-base text-black"}>
-                    {error.message}
+                    {baseError.message}
                 </p>
-                {error.stack && (
+                {baseError.stack && (
                     <>
                         <p className={"max-h-48 overflow-x-scroll text-xs text-black"}>
                             Stack trace:
                         </p>
                         <p className={"max-h-48 overflow-x-scroll text-xs text-black"}>
-                            {error.stack}
+                            {baseError.stack}
                         </p>
                     </>
                 )}
                 <Button
                     variant={"primary"}
                     className={"mt-4 active:bg-rsp-success active:text-rsp-success-dark active:border-rsp-success-dark transition-colors duration-400 ease-in-out"}
-                    onClick={copyError}
+                    onClick={() => copyError(baseError)}
                 >
                     {__("Copy Error", "metricool")}
                 </Button>

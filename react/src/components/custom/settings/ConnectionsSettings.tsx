@@ -1,8 +1,16 @@
-import { Block, BlockHeader, Button, FlexContainer, Icon, LoadingAndErrorState, } from "@/components/shared";
+import {
+    Block,
+    BlockHeader,
+    EmptyDataState,
+    FlexContainer,
+    Icon,
+    Link,
+} from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { AccountTile } from "@/components/custom/general/AccountTile.tsx";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useConnectedAccountsData } from "@/hooks/useConnectedAccountsData.tsx";
+import { isEmptyArray } from "@/support/functions/utils.ts";
 
 const ConnectionsSettings = () => {
     const { metricoolDynamicUrl, metricool } = useGlobalContext();
@@ -26,13 +34,15 @@ const ConnectionsSettings = () => {
                         description={__("The accounts that are connected to Metricool", "metricool")}
                     />
                     <FlexContainer direction={"column"}>
-                        {!connectedAccountsData ? (
-                            <LoadingAndErrorState
+                        {(!connectedAccountsData || isEmptyArray(connectedAccountsData)) ? (
+                            <EmptyDataState
                                 error={error}
                                 isLoading={isLoading}
                                 errorUpdateCount={errorUpdateCount}
                                 refetch={refetch}
                                 supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                                emptyStateTitle={__("No Connections information", "metricool")}
+                                emptyStateDescription={__("There appears to be no connections information available.", "metricool")}
                             />
                         ) : (
                             <div className={"grid grid-cols-1 xl:grid-cols-2 gap-2"}>
@@ -43,16 +53,14 @@ const ConnectionsSettings = () => {
                         )}
                     </FlexContainer>
                     <FlexContainer direction={"row"} className={"justify-end"}>
-                        <Button
+                        <Link
                             variant={"primary-gradient-ghost"}
-                            link={metricoolDynamicUrl.withPath("evolution/settings/connections")}
+                            href={metricoolDynamicUrl.withPath("evolution/settings/connections")}
+                            className={"gap-2! items-center"}
                         >
-                            <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                                {__("Connected Accounts", "metricool")}
-                                <Icon icon={"external-link"} className={"svg-gradient"}/>
-                            </FlexContainer>
-
-                        </Button>
+                            {__("Connected Accounts", "metricool")}
+                            <Icon icon={"external-link"} className={"svg-gradient"}/>
+                        </Link>
                     </FlexContainer>
                 </Block>
             </FlexContainer>

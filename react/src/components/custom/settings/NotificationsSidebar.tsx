@@ -1,33 +1,39 @@
-import {
-    Block,
-    BlockHeader,
-    FlexContainer,
-    LoadingAndErrorState,
-    Notification
-} from "@/components/shared";
+import { Block, BlockHeader, EmptyDataState, FlexContainer, Notification } from "@/components/shared";
 import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useNotificationData } from "@/hooks/useNotificationData.tsx";
+import { isEmptyArray } from "@/support/functions/utils.ts";
 
 const NotificationsSidebar = () => {
     const { metricool } = useGlobalContext();
 
     const {
-        notificationsDataQuery: { data: noticeData, isLoading, error, isFetched, errorUpdateCount, refetch }
-    } = useNotificationData()
+        notificationsDataQuery: {
+            data: noticeData,
+            isLoading,
+            error,
+            errorUpdateCount,
+            refetch
+        }
+    } = useNotificationData();
 
     return (
         <Block variant={"transparent"} className={"px-0"}>
             <BlockHeader title={__("Notifications", "metricool")} separator={true}/>
-            {!noticeData ? (
-                <LoadingAndErrorState
+            {(!noticeData || isEmptyArray(noticeData.visibleNotifications)) ? (
+                <EmptyDataState
                     error={error}
                     isLoading={isLoading}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    customEmptyState={(
+                        <div className={"text-gray-400 italic"}>
+                            {__("You currently have no notifications.", "metricool")}
+                        </div>
+                    )}
                 />
-            ) : noticeData.visibleNotifications && noticeData.visibleNotifications?.length > 0 && (
+            ) : (noticeData.visibleNotifications && noticeData.visibleNotifications?.length > 0) && (
                 noticeData.visibleNotifications.map((notice) => (
                     <Notification key={notice.id} title={notice.title} variant={notice.type}>
                         <FlexContainer direction={"column"} className={"gap-2!"}>
@@ -42,11 +48,6 @@ const NotificationsSidebar = () => {
                         </FlexContainer>
                     </Notification>
                 ))
-            )}
-            {isFetched && noticeData?.visibleNotifications?.length === 0 && (
-                <div className={"text-gray-400 italic"}>
-                    {__("You currently have no notifications.", "metricool")}
-                </div>
             )}
         </Block>
     );

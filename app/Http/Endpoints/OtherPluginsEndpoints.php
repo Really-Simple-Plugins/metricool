@@ -16,6 +16,19 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
     use HasRestAccess;
     use HasAllowlistControl;
 
+    /**
+     * The threshold for displaying inactive plugins. If there are more than
+     * this number of inactive plugins, only those are displayed in
+     * {@see getPluginsToDisplay}
+     */
+    private const INACTIVE_PLUGINS_THRESHOLD = 3;
+
+    /**
+     * The maximum number of plugins to display in the other plugins section.
+     * Used in {@see getPluginsToDisplay}
+     */
+    private const MAX_VISIBLE_PLUGINS = 4;
+
     private GeneralConfig $config;
     private OtherPluginService $service;
 
@@ -57,7 +70,9 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
      */
     public function getOtherPluginsData(\WP_REST_Request $request): \WP_REST_Response
     {
-        $plugins = $this->buildOtherPluginData();
+        $pluginData = $this->buildOtherPluginData();
+        $plugins = $this->getPluginsToDisplay($pluginData);
+
         return $this->sendHttpResponse([
             'plugins' => $plugins
         ]);
@@ -79,8 +94,7 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
         $slug = $storage->getString('slug', 'really-simple-ssl');
         $action = $storage->getString('action', 'download');
 
-        $plugins = $this->buildOtherPluginData($slug);
-        $plugin = reset($plugins);
+        $plugin = $this->buildOtherPluginData($slug)->first();
 
         if (empty($plugin)) {
             return $this->sendHttpErrorResponse(__('Plugin not found', 'metricool'));
@@ -107,12 +121,11 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
     }
 
     /**
-     * Get other plugins from the other config and manipulate the array
-     * with the Installer class.
+     * Get other plugins data from the plugins config.
      * @param string $targetPluginSlug Can be used to filter the plugins array
      * for a specific plugin entry based on the slug key.
      */
-    public function buildOtherPluginData(string $targetPluginSlug = ''): array
+    public function buildOtherPluginData(string $targetPluginSlug = ''): Collection
     {
         $plugins = new Collection($this->config->get('plugins'));
 
@@ -122,7 +135,7 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
             });
         }
 
-        $plugins = $plugins->map(function ($plugin) {
+        return $plugins->map(function ($plugin) {
             $this->service->setPluginConfig($plugin);
 
             $plugin['url'] = $this->service->getPluginUrl();
@@ -131,9 +144,23 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
 
             return $plugin;
         });
+    }
 
-        return $plugins->where('active', '==', false)
-            ->take(3)
+    /**
+     * Select plugins to display based on the active status. If there are more
+     * than {@see INACTIVE_PLUGINS_THRESHOLD} inactive plugins, only those are displayed.
+     * Otherwise, a mix of active and inactive plugins is displayed.
+     */
+    public function getPluginsToDisplay(Collection $plugins): array
+    {
+        $inactivePlugins = $plugins->where('active', '==', false);
+
+        if ($inactivePlugins->count() >= self::INACTIVE_PLUGINS_THRESHOLD) {
+            $plugins = $inactivePlugins;
+        }
+
+        return $plugins
+            ->take(self::MAX_VISIBLE_PLUGINS)
             ->toArray();
     }
 }

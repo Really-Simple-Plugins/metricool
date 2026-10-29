@@ -1,4 +1,4 @@
-import { Icon } from "@/components/shared/user-feedback/Icon.tsx"
+import { Icon } from "@/components/shared/user-feedback/Icon"
 import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
 

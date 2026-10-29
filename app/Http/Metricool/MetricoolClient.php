@@ -8,8 +8,8 @@ use InvalidArgumentException;
 use Metricool\Vendor\Carbon\Carbon;
 use Metricool\Vendor\GuzzleHttp\Client;
 use Metricool\Vendor\GuzzleHttp\Psr7\Request;
+use Metricool\Services\ConnectionService;
 use Metricool\Services\OptionsService;
-use Metricool\Services\TrackingScriptService;
 use Metricool\Vendor\Psr\Http\Message\ResponseInterface;
 use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
@@ -38,6 +38,7 @@ class MetricoolClient
 
     private EnvironmentConfig $env;
     private OptionsService $options;
+    private ConnectionService $connection;
 
     private string $apiUrl;
     protected array $middleWares = [];
@@ -46,10 +47,11 @@ class MetricoolClient
     /**
      * Create a new Metricool API client wrapper.
      */
-    public function __construct(EnvironmentConfig $env, OptionsService $options)
+    public function __construct(EnvironmentConfig $env, OptionsService $options, ConnectionService $connection)
     {
         $this->env = $env;
         $this->options = $options;
+        $this->connection = $connection;
         $this->apiUrl = $env->get('metricool.base_api_domain');
         $this->client = $this->client();
     }
@@ -255,18 +257,6 @@ class MetricoolClient
     public function logout(): void
     {
         $this->options->wipe();
-    }
-
-    /**
-     * Clear the authentication tokens and userId, but keep the tracking
-     * widget active so the website does not lose data.
-     */
-    public function logoutPreservingTracking(): void
-    {
-        $this->options->wipe(false, [
-            TrackingScriptService::OPTION_TRACKING_HASH,
-            TrackingScriptService::OPTION_TRACKING_ACTIVE,
-        ]);
     }
 
     /**
@@ -542,7 +532,7 @@ class MetricoolClient
         $refreshToken = $this->getRefreshToken();
 
         if (empty($refreshToken)) {
-            $this->logoutPreservingTracking();
+            $this->connection->handleLostConnection();
             throw new RuntimeException('No refresh token available, the user has been logged out.');
         }
 
@@ -564,7 +554,7 @@ class MetricoolClient
                 $options
             );
         } catch (Throwable $e) {
-            $this->logoutPreservingTracking();
+            $this->connection->handleLostConnection();
 
             throw new ApiException(
                 'Failed to refresh authentication token. Please log in again.',
