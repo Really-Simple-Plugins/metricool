@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Interfaces\SingleEndpointInterface;
-use Metricool\Support\Validation\Validator;
-use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
 use Throwable;
+use Metricool\Traits\HasRestAccess;
+use Metricool\Traits\HasAllowlistControl;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Support\Validation\Validator;
+use Metricool\Interfaces\SingleEndpointInterface;
 
 class CredentialsEndpoint implements SingleEndpointInterface
 {
@@ -36,7 +36,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return true;
     }
@@ -48,7 +48,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::EDITABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'updateCredentials'],
             'middleware' => ['metricool:auth'],
         ];
     }
@@ -62,7 +62,7 @@ class CredentialsEndpoint implements SingleEndpointInterface
      *       "newPassword": "new-password"
      *     }
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function updateCredentials(\WP_REST_Request $request): \WP_REST_Response
     {
         $validated = Validator::validate($request->get_params(), [
             'password' => 'required|string',

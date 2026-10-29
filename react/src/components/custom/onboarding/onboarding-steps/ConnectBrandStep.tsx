@@ -3,14 +3,14 @@ import {
     Button,
     DialogHeader,
     DialogTitle,
+    EmptyDataState,
     FieldWrapper,
     FlexContainer,
     Icon,
-    LoadingAndErrorState,
     Select,
     SelectOption,
 } from "@/components/shared";
-import { __, sprintf } from "@wordpress/i18n";
+import { __ } from "@wordpress/i18n";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { clsx } from "clsx";
 import { useForm } from "react-hook-form";
@@ -22,6 +22,7 @@ import { useAuthenticationData } from "@/hooks/useAuthenticationData";
 import { type Dispatch, type SetStateAction } from "react";
 import { queryClient } from "@/main.tsx";
 import { useConnectedBrandsData } from "@/hooks/useConnectedBrandsData.tsx";
+import { createInterpolateElement } from "@wordpress/element";
 
 type ConnectBrandStepProps = {
     setModalOpen?: Dispatch<SetStateAction<boolean>>,
@@ -70,20 +71,13 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
         }
     };
 
-    /**
-     * Because we use `dangerouslySetInnerHTML` for the `Alert` content, we
-     * cannot directly pass an `onclick` to the `<a>` tag defined in the `sprintf`.
-     * It simply has no reference to any functions defined in React code.
-     * Therefor we set an onClick on its `<div>` parent, which only calls the
-     * `logoutUser` function if the click happened while the mouse was over the
-     * `<a>` tag.
-     */
-    const logoutUserWrapper = (event: React.MouseEvent<HTMLDivElement>) => {
-        //casting to HTMLElement to keep TS happy
-        if ((event.target as HTMLElement).tagName === "A") {
-            onCancel();
+    const missingBrandNotice = createInterpolateElement(
+        /* translators: Please include the opening and closing <a> tags in your translation */
+        __("Don’t see the brand you’re looking for? <a>Go to Metricool.com</a> and make sure you’re logged into the correct account.", "metricool"),
+        {
+            a: <a className={"underline"} onClick={onCancel} href={metricool.trusted_urls.base_url} target={"_blank"} rel={"noopener noreferrer"}/>,
         }
-    };
+    );
 
     return (
         <FlexContainer direction={"column"} className={"justify-center gap-6! items-center"}>
@@ -101,22 +95,7 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
                     variant={"info"}
                     className={"text-left"}
                 >
-                    <div
-                        onClick={logoutUserWrapper}
-                        dangerouslySetInnerHTML={{
-                            __html: DOMPurify.sanitize(
-                                sprintf(
-                                    /*translators: the two variables are opening and closing anchor tags */
-                                    __(
-                                        "Don’t see the brand you’re looking for? %1$sGo to Metricool.com%2$s and make sure you’re logged into the correct account.",
-                                        "metricool",
-                                    ),
-                                    `<a class="underline" href=${metricool.trusted_urls.base_url} target="_blank" rel="noopener noreferrer">`,
-                                    `</a>`
-                                ), { ADD_ATTR: ["target"] }
-                            )
-                        }}
-                    />
+                    <div>{missingBrandNotice}</div>
                 </Alert>
             </FlexContainer>
             {submitError && (
@@ -130,12 +109,14 @@ const ConnectBrandStep = ({ setModalOpen, resetSignInSteps }: ConnectBrandStepPr
             )}
             <form onSubmit={handleSubmit((values) => onSubmit(values))} className={"flex flex-col items-center justify-center gap-6 w-full"}>
                 {!connectedBrands ? (
-                    <LoadingAndErrorState
+                    <EmptyDataState
                         error={error}
                         isLoading={isLoading}
                         errorUpdateCount={errorUpdateCount}
                         refetch={refetch}
                         supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                        emptyStateTitle={__("No connected brands", "metricool")}
+                        emptyStateDescription={__("There appears to be no connected brands available.", "metricool")}
                     />
                 ) : (
                     <FieldWrapper

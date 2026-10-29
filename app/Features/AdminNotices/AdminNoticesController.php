@@ -8,27 +8,23 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use Metricool\Interfaces\FeatureInterface;
+use Metricool\Interfaces\ControllerInterface;
 use Metricool\Support\Helpers\Storages\EnvironmentConfig;
 
-class AdminNoticesController implements FeatureInterface
+class AdminNoticesController implements ControllerInterface
 {
     private EnvironmentConfig $env;
-    private AdminNoticesEndpoints $endpoints;
     private AdminNoticesRepository $repository;
 
-    public function __construct(EnvironmentConfig $env, AdminNoticesEndpoints $endpoints, AdminNoticesRepository $repository)
+    public function __construct(EnvironmentConfig $env, AdminNoticesRepository $repository)
     {
         $this->env = $env;
-        $this->endpoints = $endpoints;
         $this->repository = $repository;
     }
 
     public function register(): void
     {
         add_action('admin_init', [$this, 'renderNotices']);
-
-        $this->endpoints->register();
     }
 
     /**

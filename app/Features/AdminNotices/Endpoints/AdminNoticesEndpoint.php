@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Metricool\Features\AdminNotices;
+namespace Metricool\Features\AdminNotices\Endpoints;
 
-if (!defined('ABSPATH')) {
-    exit;
-}
-
-use Metricool\Support\Helpers\Storage;
+use WP_REST_Server;
 use Metricool\Traits\HasRestAccess;
-use Metricool\Traits\HasAllowlistControl;
+use Metricool\Support\Helpers\Storage;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Features\AdminNotices\AbstractAdminNotice;
+use Metricool\Features\AdminNotices\AdminNoticesRepository;
 
-class AdminNoticesEndpoints
+final class AdminNoticesEndpoint implements SingleEndpointInterface
 {
     use HasRestAccess;
-    use HasAllowlistControl;
+
+    public const ROUTE = '/admin-notices/(?P<notice_id>[\w-]+)';
 
     private AdminNoticesRepository $repository;
 
@@ -24,15 +24,31 @@ class AdminNoticesEndpoints
         $this->repository = $repository;
     }
 
-    public function register(): void
+    /**
+     * Endpoint is guarded by the {@see AdminNoticesFeature}, which only
+     * registers this endpoint when the current user can manage the plugin.
+     * So this class does not need its own capability check.
+     */
+    public function isEnabled(): bool
     {
-        add_filter('metricool_rest_routes', [$this, 'addRestRoutes']);
+        return true;
     }
 
-    public function addRestRoutes(array $routes): array
+    /**
+     * @inheritDoc
+     */
+    public function registerRoute(): string
     {
-        $routes['/admin-notices/(?P<notice_id>[\w-]+)'] = [
-            'methods' => 'POST',
+        return self::ROUTE;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerArguments(): array
+    {
+        return [
+            'methods' => WP_REST_Server::CREATABLE,
             'callback' => [$this, 'handleNoticeAction'],
             'args' => [
                 'notice_id' => [
@@ -47,10 +63,13 @@ class AdminNoticesEndpoints
                 ],
             ],
         ];
-
-        return $routes;
     }
 
+    /**
+     * Handle an action for an admin notice.
+     *
+     *     POST /wp-json/metricool/v1/admin-notices/{notice_id}
+     */
     public function handleNoticeAction(\WP_REST_Request $wpRestRequest): \WP_REST_Response
     {
         $request = new Storage(

@@ -9,8 +9,9 @@ if (!defined('ABSPATH')) {
 }
 
 use Metricool\Support\Helpers\Event;
+use Metricool\Interfaces\ListenerInterface;
 
-class NotificationListener
+class NotificationListener implements ListenerInterface
 {
     private NotificationsService $service;
 
@@ -19,6 +20,9 @@ class NotificationListener
         $this->service = $service;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function listen(): void
     {
         add_action('metricool_event_' . Event::CONNECTED_SOCIAL_NETWORKS_DATA_LOADED, [$this, 'handleConnectedSocialNetworks']);

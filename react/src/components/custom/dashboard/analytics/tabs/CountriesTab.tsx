@@ -1,16 +1,17 @@
 import {
-    Button,
     type Column,
     DataTable,
     DataTableColumnHeader,
+    EmptyDataState,
     FlexContainer,
     Icon,
-    LoadingAndErrorState,
+    Link,
 } from "@/components/shared";
 import { GeoChart } from "@/components/custom";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { __ } from "@wordpress/i18n";
 import { useCountriesAnalyticsData } from "@/hooks/analytics/useCountriesAnalyticsData.tsx";
+import { isEmptyArray } from "@/support/functions/utils.ts";
 
 type CountriesDataTableColumns = { country: string, visitors: number, percentage: number };
 
@@ -55,16 +56,18 @@ const CountriesTab = () => {
 
     return (
         <FlexContainer direction={"column"} className={"justify-between grow gap-2!"}>
-            {!countryData ? (
-                <LoadingAndErrorState
+            {(!countryData || isEmptyArray(countryData.tableData)) ? (
+                <EmptyDataState
                     error={error}
                     isLoading={isLoading}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    emptyStateTitle={__("No Countries data", "metricool")}
+                    emptyStateDescription={__("There appears to be no Countries data available.", "metricool")}
                 />
             ) : (
-                <FlexContainer direction={"column"} className={"gap-2!"}>
+                <FlexContainer direction={"column"} className={"gap-2! grow"}>
                     <FlexContainer direction={"column"} className={"rounded-md overflow-hidden"}>
                         <div className={"min-h-46.25"}>
                             <GeoChart
@@ -76,20 +79,22 @@ const CountriesTab = () => {
                     <DataTable
                         columns={columns}
                         data={countryData.tableData}
-                        tableSettings={{ pageSize: 3 }}
+                        tableSettings={{
+                            pageSize: 3,
+                            roundedTopCornersTableHeader: true,
+                        }}
                     />
                 </FlexContainer>
             )}
             <FlexContainer direction={"row"} className={"w-full justify-end items-center"}>
-                <Button
+                <Link
                     variant={"primary-gradient-ghost"}
-                    link={metricoolDynamicUrl.withPath("evolution/web")}
+                    href={metricoolDynamicUrl.withPath("evolution/web")}
+                    className={"gap-2! items-center"}
                 >
-                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
-                        {__("View Analytics", "metricool")}
-                        <Icon icon={"external-link"} className={"svg-gradient"}/>
-                    </FlexContainer>
-                </Button>
+                    {__("View Analytics", "metricool")}
+                    <Icon icon={"external-link"} className={"svg-gradient"}/>
+                </Link>
             </FlexContainer>
         </FlexContainer>
     );

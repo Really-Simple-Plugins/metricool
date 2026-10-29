@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Http\Endpoints\Responses\DistributionResponse;
-use Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse;
-use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
-use Metricool\Http\Metricool\DTOs\DistributionDTO;
-use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasRestAccess;
 use Metricool\Services\DashboardService;
 use Metricool\Support\Helpers\Collection;
-use Metricool\Support\Validation\Validator;
 use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Support\Validation\Validator;
+use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Http\Metricool\DTOs\DistributionDTO;
+use Metricool\Http\Endpoints\Responses\DistributionResponse;
+use Metricool\Http\Endpoints\Responses\Statistics\RefererResponse;
+use Metricool\Http\Endpoints\Responses\Statistics\CountriesResponse;
 
 class DistributionEndpoint implements SingleEndpointInterface
 {
@@ -48,7 +48,7 @@ class DistributionEndpoint implements SingleEndpointInterface
     /**
      * Only enable this endpoint when onboarding is completed
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return $this->dashboard->isOnboardingCompleted();
     }
@@ -60,7 +60,7 @@ class DistributionEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::READABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'getDistribution'],
             'middleware' => ['metricool:auth', 'metricool:blog_id'],
         ];
     }
@@ -72,7 +72,7 @@ class DistributionEndpoint implements SingleEndpointInterface
      *
      *     GET /wp-json/metricool/v1/distribution/countries?filters[start]=20250618&filters[end]=20250718&filters[country]=nl
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function getDistribution(\WP_REST_Request $request): \WP_REST_Response
     {
         $validated = Validator::validate($request->get_params(), [
             'metric' => 'required|string|in:countries,referers',

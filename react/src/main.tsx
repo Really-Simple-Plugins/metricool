@@ -1,7 +1,13 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { createHashHistory, createRouter, Navigate, RouterProvider } from "@tanstack/react-router";
+import {
+    createHashHistory,
+    createRouter,
+    type ErrorComponentProps,
+    Navigate,
+    RouterProvider
+} from "@tanstack/react-router";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/router-devtools";
@@ -31,7 +37,7 @@ const METRICOOL_SUPPORT_TICKET_LINK = window.metricool.values.trusted_urls.new_s
 const router = createRouter({
     routeTree,
     defaultNotFoundComponent: () => <Navigate to={"/"} replace={true}/>,
-    defaultErrorComponent: ({ error }: { error: Error }) => {
+    defaultErrorComponent: ({ error }: ErrorComponentProps) => {
         return (
             <>
                 <ErrorBoundary
@@ -83,12 +89,6 @@ declare module "@tanstack/react-router" {
         router: typeof router;
     }
 }
-
-// Event listener to keep track of scroll progress as a CSS variable,
-// which can be used in Tailwind classes
-window.addEventListener("scroll", () => {
-    document.documentElement.style.setProperty("--scroll-progress-in-pixels", `${window.scrollY}px`);
-}, { passive: true });
 
 // Wait for DOMContentLoaded to render the app
 // to allow WordPress to load properly first

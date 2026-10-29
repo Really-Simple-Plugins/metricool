@@ -8,14 +8,13 @@ if (!defined('ABSPATH')) {
 return [
     'plugin' => [
         'name' => 'Metricool',
-        'version' => '2.1.0',
+        'version' => '2.1.2',
         'pro' => true,
         'path' => dirname(__DIR__),
         'base_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . plugin_basename(dirname(__DIR__)) . '.php',
         'assets_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR,
         'lang_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'languages' . DIRECTORY_SEPARATOR,
         'view_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
-        'feature_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Features' . DIRECTORY_SEPARATOR,
         'migrations_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'migrations' . DIRECTORY_SEPARATOR,
         'react_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . 'react',
         'dir' => plugin_basename(dirname(__DIR__)),

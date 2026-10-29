@@ -1,9 +1,15 @@
 import { Input as PrimitiveInput } from "@/components/shared/primitives/input";
-import { InputGroup as PrimitiveInputGroup } from "@/components/shared/primitives/input-group";
+import {
+    InputGroup as PrimitiveInputGroup,
+    InputGroupAddon as PrimitiveInputGroupAddon,
+    InputGroupButton as PrimitiveInputGroupButton,
+    InputGroupInput as PrimitiveInputGroupInput,
+    InputGroupText as PrimitiveInputGroupText,
+} from "@/components/shared/primitives/input-group";
 import { cn } from "@/support/functions/utils";
 import * as React from "react";
 
-const inputClasses = "data-[slot=input]:rounded-xs has-[>[data-slot=input-group-control]]:rounded-xs px-2 shadow-none flex bg-white text-md md:text-md *:data-[slot=input-group-control]:text-md md:*:data-[slot=input-group-control]:text-md font-semibold text-black data-[slot=input]:!min-h-10 data-[slot=input]:aria-invalid:focus-visible:ring-rsp-error-dark/20 data-[slot=input]:focus-visible:aria-invalid:ring-3 data-[slot=input]:aria-invalid:border-rsp-error-dark";
+const inputClasses = "mx-0! px-2 flex text-md md:text-md *:data-[slot=input-group-control]:text-md md:*:data-[slot=input-group-control]:text-md font-semibold min-h-10 min-h-10! aria-invalid:focus-visible:ring-rsp-error-dark/20 focus-visible:aria-invalid:ring-3 aria-invalid:border-rsp-error-dark";
 
 /**
  *
@@ -11,12 +17,29 @@ const inputClasses = "data-[slot=input]:rounded-xs has-[>[data-slot=input-group-
  */
 const InputGroup = ({ className, children }: React.ComponentProps<"div">) => {
     return (
-        <PrimitiveInputGroup className={cn(
-            inputClasses,
-            className,
-        )}>
+        <PrimitiveInputGroup
+            className={cn(
+                "has-disabled:opacity-50",
+                inputClasses,
+                className,
+            )}>
             {children}
         </PrimitiveInputGroup>
+    );
+};
+
+/**
+ *
+ * @version 1.0.0
+ */
+const InputGroupInput = ({ className, ...props }: React.ComponentProps<"input">) => {
+    return (
+        <PrimitiveInputGroupInput
+            className={cn("pl-0 disabled:opacity-100! placeholder:font-normal placeholder:text-md", className)}
+            {...props}
+        >
+
+        </PrimitiveInputGroupInput>
     );
 };
 
@@ -28,10 +51,11 @@ const Input = ({ className, type, children, ...props }: React.ComponentProps<"in
     return (
         <PrimitiveInput
             className={cn(
+                "placeholder:font-normal placeholder:text-md",
                 inputClasses,
                 className,
             )}
-            type={type}
+            type={type ?? "text"}
             {...props}
         >
             {children}
@@ -39,4 +63,11 @@ const Input = ({ className, type, children, ...props }: React.ComponentProps<"in
     );
 };
 
-export { Input, InputGroup };
+export {
+    Input,
+    InputGroup,
+    InputGroupInput,
+    PrimitiveInputGroupText as InputGroupText,
+    PrimitiveInputGroupButton as InputGroupButton,
+    PrimitiveInputGroupAddon as InputGroupAddon
+};

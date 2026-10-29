@@ -23,7 +23,7 @@ const useUserSettingsData = () => {
 
     const userSettingsDataQuery = useQuery({
         queryKey: ["user_settings"],
-        queryFn: () => httpClient.setRoute("user_settings").get(),
+        queryFn: () => httpClient.get("user_settings"),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (response): z.infer<typeof UserSettingsSchema> => ({
             sendToAlternativeEmail: response.data.sendToAlternativeEmail,
@@ -42,10 +42,10 @@ const useUserSettingsData = () => {
 
     const updateUserSettingsDataMutation = useMutation({
         mutationFn: async ({ sendToAlternativeEmail, alternativeEmail }: z.infer<typeof UserSettingsSchema>) => {
-            return httpClient.setRoute("user_settings").setPayload({
+            return httpClient.post("user_settings", {
                 "sendToAlternativeEmail": sendToAlternativeEmail,
                 "alternativeEmail": alternativeEmail,
-            }).post();
+            });
         },
         onSuccess: (response) => {
             queryClient.setQueryData(["user_settings"], { ...response });

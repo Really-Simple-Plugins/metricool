@@ -33,7 +33,7 @@ const useNotificationData = () => {
 
     const notificationsDataQuery = useQuery({
         queryKey: ["notices"],
-        queryFn: () => httpClient.setRoute("get_notices").get(),
+        queryFn: () => httpClient.get("get_notices"),
         staleTime: Infinity, // never stale unless manually invalidated
         gcTime: Infinity, // data is never garbage collected
         select: (response): Record<string, Notice[]> => {

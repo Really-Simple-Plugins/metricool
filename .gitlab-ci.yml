@@ -1,6 +1,7 @@
 stages:
   - lint
   - quality
+  - package
 
 # Setup PHP + Composer template
 .setup_php:
@@ -176,3 +177,65 @@ phpstan:reviewdog:
   variables:
     REVIEWDOG_GITLAB_API_SERVER: "$CI_SERVER_URL/api/v4"
     REVIEWDOG_GITLAB_API_TOKEN: "$MR_REVIEW_GITLAB_API_TOKEN"
+
+package:
+  stage: package
+  image: node:22-bookworm
+  needs: []
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: manual
+      allow_failure: true
+    - if: '$CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+      when: manual
+      allow_failure: true
+  before_script:
+    - |
+      if [ -z "${NPMRC_FA_AUTH_TOKEN:-}" ]; then
+        echo "ERROR: NPMRC_FA_AUTH_TOKEN CI/CD variable is not set."
+        exit 1
+      fi
+    # OS deps for packaging (Debian bookworm ships PHP 8.2)
+    - apt-get update -qq
+    - apt-get install -yqq --no-install-recommends unzip zip rsync php-cli php-zip php-xml php-mbstring php-curl > /dev/null
+
+    # Composer (verified install)
+    - curl -sSL https://composer.github.io/installer.sig -o installer.sig
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php -r "if (hash_file('SHA384', 'composer-setup.php') !== trim(file_get_contents('installer.sig'))) { echo 'Invalid composer installer'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
+    - php composer-setup.php --install-dir=/usr/local/bin --filename=composer
+    - rm -f composer-setup.php installer.sig
+
+    # WP-CLI
+    - curl -sSL https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar -o /usr/local/bin/wp
+    - chmod +x /usr/local/bin/wp
+  script:
+    # Build plugin
+    - sed "s/NPMRC_FA_AUTH_TOKEN/${NPMRC_FA_AUTH_TOKEN}/g" react/.npmrc.config > react/.npmrc
+    - (cd react && npm ci && npm run build)
+    - composer install --no-interaction --no-progress --prefer-dist
+    - test -f vendor/_scoped/scoper-autoload.php
+    - composer install --no-interaction --no-progress --prefer-dist --no-dev --optimize-autoloader
+
+    # Copy only the files that ship with the plugin
+    - >
+      rsync -a ./ "$CI_PROJECT_DIR/metricool/"
+      --exclude="/metricool"
+      --exclude=".git*"
+      --exclude="*.dist"
+      --exclude=.agents
+      --exclude=README.md
+      --exclude=composer.lock
+      --exclude=composer-scoped.lock
+      --include="/react/build/***"
+      --exclude="/react/*"
+
+    # Generate POT file
+    - TEXT_DOMAIN=$(sed -n 's/^.*Text Domain:[[:space:]]*//p' "metricool.php" | head -n 1 | tr -d '\r')
+    - wp i18n make-pot "$CI_PROJECT_DIR/metricool/" "$CI_PROJECT_DIR/metricool/assets/languages/$TEXT_DOMAIN.pot" --allow-root
+  artifacts:
+    name: "metricool-$CI_COMMIT_REF_SLUG"
+    expose_as: "Release"
+    paths:
+      - metricool/
+    expire_in: 30 days

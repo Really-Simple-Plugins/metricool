@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Metricool\Interfaces;
 
 /**
- * This interface can be used instead of {@see SingleEndpointInterface} to register
- * multiple routes at once. This is useful when a single route has multiple
- * endpoints.
+ * This interface can be used instead of {@see SingleEndpointInterface} to
+ * register multiple routes at once. This is useful when a single route has
+ * multiple endpoints.
  */
 interface MultiEndpointInterface
 {
@@ -16,8 +16,7 @@ interface MultiEndpointInterface
      * and the value is an array of arguments to pass to the register_rest_route
      * function: {@see EndpointManager::registerWordPressRestRoutes}.
      *
-     * Arguments you can use are documented with filter: metricool_rest_routes
-     * in method: {@see EndpointManager::getPluginRoutes}
+     * Arguments you can use are documented here: {@see register_rest_route}
      */
     public function registerRoutes(): array;
 
@@ -26,5 +25,5 @@ interface MultiEndpointInterface
      * otherwise. Endpoint will not be registered if this method returns false:
      * {@see EndpointManager::registerEndpoints}
      */
-    public function enabled(): bool;
+    public function isEnabled(): bool;
 }

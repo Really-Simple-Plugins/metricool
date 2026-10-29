@@ -13,8 +13,7 @@ interface SingleEndpointInterface
     public function registerRoute(): string;
 
     /**
-     * Arguments you can use are documented wih filter: metricool_rest_routes
-     * in method: {@see EndpointManager::getPluginRoutes}
+     * Arguments you can use are documented here: {@see register_rest_route}
      */
     public function registerArguments(): array;
 
@@ -23,5 +22,5 @@ interface SingleEndpointInterface
      * otherwise. Endpoint will not be registered if this method returns false:
      * {@see EndpointManager::registerEndpoints}
      */
-    public function enabled(): bool;
+    public function isEnabled(): bool;
 }

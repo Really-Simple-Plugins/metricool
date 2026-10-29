@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Metricool\Http\Endpoints;
 
-use Metricool\Http\Metricool\MetricoolApi;
-use Metricool\Interfaces\SingleEndpointInterface;
+use Metricool\Traits\HasRestAccess;
 use Metricool\Services\DashboardService;
 use Metricool\Traits\HasAllowlistControl;
-use Metricool\Traits\HasRestAccess;
+use Metricool\Http\Metricool\MetricoolApi;
+use Metricool\Interfaces\SingleEndpointInterface;
 
 class LogoutEndpoint implements SingleEndpointInterface
 {
@@ -37,7 +37,7 @@ class LogoutEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function enabled(): bool
+    public function isEnabled(): bool
     {
         return true;
     }
@@ -49,7 +49,7 @@ class LogoutEndpoint implements SingleEndpointInterface
     {
         return [
             'methods' => \WP_REST_Server::EDITABLE,
-            'callback' => [$this, 'callback'],
+            'callback' => [$this, 'logout'],
             'middleware' => ['metricool:auth'],
         ];
     }
@@ -59,7 +59,7 @@ class LogoutEndpoint implements SingleEndpointInterface
      *
      *     POST /wp-json/metricool/v1/logout
      */
-    public function callback(\WP_REST_Request $request): \WP_REST_Response
+    public function logout(\WP_REST_Request $request): \WP_REST_Response
     {
         $this->metricoolApi->logout();
 

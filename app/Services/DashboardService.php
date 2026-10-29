@@ -14,12 +14,14 @@ class DashboardService
     private EnvironmentConfig $env;
     private MetricoolApi $api;
     private RequestStorage $request;
+    private ConnectionService $connection;
 
-    public function __construct(EnvironmentConfig $env, MetricoolApi $api, RequestStorage $request)
+    public function __construct(EnvironmentConfig $env, MetricoolApi $api, RequestStorage $request, ConnectionService $connection)
     {
         $this->env = $env;
         $this->api = $api;
         $this->request = $request;
+        $this->connection = $connection;
     }
 
     /**
@@ -51,6 +53,8 @@ class DashboardService
      *         'show_welcome_screen' => true,
      *         // force the user to log in with a forced login screen
      *         'forced_login' => true
+     *         // the lost connection modal should be shown
+     *         'lost_connection' => true
      *     ]
      */
     public function mode(): array
@@ -58,6 +62,7 @@ class DashboardService
         return [
             'show_welcome_screen' => $this->shouldShowWelcomeScreen(),
             'forced_login' => $this->isForcedLogin(),
+            'lost_connection' => $this->connection->isLostConnection(),
         ];
     }
 
@@ -94,7 +99,7 @@ class DashboardService
     }
 
     /**
-     * Check if the current admin screen is the Leadinfo dashboard page
+     * Check if the current admin screen is the Metricool dashboard page
      */
     public function isUserOnDashboard(): bool
     {
