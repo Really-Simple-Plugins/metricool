@@ -58,7 +58,7 @@ class OtherPluginsEndpoints implements MultiEndpointInterface
     /**
      * @inheritDoc
      */
-    public function isEnabled(): bool
+    public function enabled(): bool
     {
         return true;
     }

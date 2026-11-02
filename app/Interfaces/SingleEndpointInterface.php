@@ -22,5 +22,5 @@ interface SingleEndpointInterface
      * otherwise. Endpoint will not be registered if this method returns false:
      * {@see EndpointManager::registerEndpoints}
      */
-    public function isEnabled(): bool;
+    public function enabled(): bool;
 }

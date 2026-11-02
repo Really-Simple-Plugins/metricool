@@ -81,7 +81,7 @@ final class EndpointManager extends AbstractManager
      */
     private function registerSingleEndpointRoute(SingleEndpointInterface $endpoint): void
     {
-        if ($endpoint->isEnabled() === false) {
+        if ($endpoint->enabled() === false) {
             return;
         }
 
@@ -94,7 +94,7 @@ final class EndpointManager extends AbstractManager
      */
     private function registerMultiEndpointRoute(MultiEndpointInterface $endpoint): void
     {
-        if ($endpoint->isEnabled() === false) {
+        if ($endpoint->enabled() === false) {
             return;
         }
 

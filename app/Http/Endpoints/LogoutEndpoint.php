@@ -37,7 +37,7 @@ class LogoutEndpoint implements SingleEndpointInterface
     /**
      * @inheritDoc
      */
-    public function isEnabled(): bool
+    public function enabled(): bool
     {
         return true;
     }
