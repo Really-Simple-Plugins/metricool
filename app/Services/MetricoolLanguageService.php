@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace Metricool\Services;
 
+use Metricool\Support\Helpers\Collection;
 use Metricool\Support\Helpers\Storages\LanguagesConfig;
 
 class MetricoolLanguageService
 {
-    private LanguagesConfig $languages;
-
+    private Collection $languages;
     private string $fallbackLanguage = 'en';
 
     public function __construct(LanguagesConfig $languages)
     {
-        $this->languages = $languages;
+        $this->languages = new Collection($languages->all());
     }
 
     /**
@@ -52,14 +52,6 @@ class MetricoolLanguageService
      */
     private function isAcceptedLanguage(string $language): bool
     {
-        return in_array($language, $this->getAcceptedLanguages());
-    }
-
-    /**
-     * Return all accepted languages for the API.
-     */
-    private function getAcceptedLanguages(): array
-    {
-        return array_column($this->languages->all(), 'value');
+        return $this->languages->where('value', $language)->count() > 0;
     }
 }
