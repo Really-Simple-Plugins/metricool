@@ -25,7 +25,7 @@ final class TaskManagementEndpoints implements MultiEndpointInterface
      * registers these endpoints when the current user can manage the plugin.
      * So this class does not need its own capability check.
      */
-    public function isEnabled(): bool
+    public function enabled(): bool
     {
         return true;
     }

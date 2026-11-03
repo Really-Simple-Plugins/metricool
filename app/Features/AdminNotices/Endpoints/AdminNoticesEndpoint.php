@@ -29,7 +29,7 @@ final class AdminNoticesEndpoint implements SingleEndpointInterface
      * registers this endpoint when the current user can manage the plugin.
      * So this class does not need its own capability check.
      */
-    public function isEnabled(): bool
+    public function enabled(): bool
     {
         return true;
     }

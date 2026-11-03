@@ -39,7 +39,7 @@ class ConnectedNetworksEndpoint implements SingleEndpointInterface
     /**
      * Only enable this endpoint when onboarding is completed
      */
-    public function isEnabled(): bool
+    public function enabled(): bool
     {
         return $this->dashboard->isOnboardingCompleted();
     }

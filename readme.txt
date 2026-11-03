@@ -1,5 +1,5 @@
 === Metricool - Social media and site statistics ===
-Contributors: reallysimpleplugins, wimbraam, rvvelthuijsen, kelvink, juan.pablo.tejela, lucadipaola, marcoscacabelos, mredondometricool
+Contributors: reallysimpleplugins, wimbraam, rvvelthuijsen, kelvink, juan.pablo.tejela, lucadipaola, marcoscacabelos, mredondometricool, kellydekker
 Donate link: https://metricool.com
 Tags: instagram, facebook, analytics, meta, social
 Requires at least: 6.6
@@ -105,6 +105,20 @@ You can skip the onboarding and login with your existing login credentials.
 
 
 == Changelog ==
+
+= 2.2.0 - 2026-10-28 =
+* Fixed: The Other Plugins overview no longer hides plugins, so the list is never left empty.
+* Fixed: Clearer error message when the security check during sign-up or sign-in fails to load.
+* Fixed: Line charts on the dashboard are animated again.
+* Fixed: Metric tiles with no data can no longer be clicked in the analytics dashboard.
+* Added: A sign-in window that appears when the connection to your Metricool account is lost.
+* Added: A message when there is no data to show yet, instead of an empty block.
+* Added: A settings link for plugins already installed from the Other Plugins overview.
+* Added: Compatibility with the upcoming Real-Time Collaboration feature in the WordPress editor.
+* Added: kellydekker is added as contributor.
+* Changed: Focus styles on buttons and links have been updated.
+* Changed: Data tables now use all available height within their block.
+* Changed: Improved scroll-based event performance.
 
 = 2.1.2 - 2026-10-13 =
 * Fixed: A fatal error triggered under certain conditions caused by a conflict with other plugins that bundle the Composer autoloader.
