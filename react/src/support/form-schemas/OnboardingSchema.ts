@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { __ } from "@wordpress/i18n";
 
+
 const OnboardingSchema = z.object({
     brand: z.object({
         id: z.string(),
@@ -28,7 +29,7 @@ const OnboardingSchema = z.object({
             .refine((password) => /[0-9]/.test(password), {
                 error: () => __("Password must contain at least one number", "metricool"),
             })
-            .refine((password) => /[!?@#$%^&*]/.test(password), {
+            .refine((password) => /[!"#$%&'()*+,\-./:;<=>?@\][\\^_`{|}~]/.test(password), {
                 error: () => __("Password must contain at least one special character", "metricool"),
             })
         ,
