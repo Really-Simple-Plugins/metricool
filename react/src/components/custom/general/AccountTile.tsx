@@ -1,4 +1,4 @@
-import { Button, FlexContainer, Icon } from "@/components/shared";
+import { FlexContainer, Icon, Link } from "@/components/shared";
 import { cn } from "@/support/functions/utils.ts";
 import { type ConnectedAccount } from "@/hooks/useConnectedAccountsData.tsx";
 
@@ -14,7 +14,7 @@ const AccountTile = ({
     isConnected,
 }: ConnectedAccount) => {
     const wrapperClasses = cn(
-        "flex flex-row rounded-sm border-1 w-full min-h-[48px] px-2 items-center gap-2",
+        "flex flex-row rounded-base border-1 w-full min-h-[48px] px-2 items-center gap-2",
         isConnected ? "border-neutral-200" : `${unconnectedClasses} cursor-pointer transition-all duration-300 ease-in-out`,
     );
 
@@ -26,7 +26,7 @@ const AccountTile = ({
             href={link}
             target={"_blank"}
         >
-            <FlexContainer direction={"row"} className={"min-w-[25px] items-center justify-center"}>
+            <FlexContainer direction={"row"} className={"min-w-6.25 items-center justify-center"}>
                 <Icon
                     data-content
                     icon={icon}
@@ -37,7 +37,7 @@ const AccountTile = ({
                 />
             </FlexContainer>
             <FlexContainer direction={"row"} className={"justify-between items-center grow"}>
-                <FlexContainer direction={"column"} className={cn("text-sm justify-center !gap-0")}>
+                <FlexContainer direction={"column"} className={cn("text-sm justify-center gap-0!")}>
                     {isConnected ? (
                         <>
                             <span className={"text-gray-500"}>{label}</span>
@@ -51,13 +51,13 @@ const AccountTile = ({
                 </FlexContainer>
                 <FlexContainer direction={"row"}>
                     {isConnected && (
-                        <Button
+                        <Link
                             size={"icon"}
                             variant={"icon"}
-                            link={link}
+                            href={link}
                         >
                             <Icon icon={"settings"}/>
-                        </Button>
+                        </Link>
                     )}
                     {upsell && (
                         <Icon icon={"upsell"} className={"size-2.5 p-0.5 bg-upsell rounded-full text-black"}/>

@@ -7,85 +7,58 @@ type HttpClientSettings = {
     METRICOOL_API_URL: string;
 }
 
+type HttpMethod = "GET" | "PUT" | "POST" | "DELETE";
+
+type GenericRecord<T> = Record<string, T>;
+
 /**
  * HttpClient class to handle HTTP requests.
  */
 class HttpClient {
-    private route: string | null = null;
-
     private httpClientSettings: HttpClientSettings;
 
-    private headers: Record<string, Record<string, string>>;
-
-    private originalHeaders: Record<string, Record<string, string>>;
-
-    private payload: Record<string, unknown>;
+    private readonly defaultHeaders: Record<string, string>;
 
     /**
-     * Constructor to initialize the HttpClient with the right settings and optionally a route.
-     * @param settings - Object with NONCE, X_WP_NONCE, and MC_API_URL
-     * @param route - The API route to be used.
+     * Constructor to initialize the HttpClient with the right settings.
+     * @param settings - Object with NONCE, X_WP_NONCE, and METRICOOL_API_URL
      */
-    constructor(settings: HttpClientSettings, route?: string,) {
+    constructor(settings: HttpClientSettings) {
         this.httpClientSettings = {
             NONCE: settings.NONCE,
             METRICOOL_API_URL: settings.METRICOOL_API_URL,
             X_WP_NONCE: settings.X_WP_NONCE
         };
 
-        this.headers = {
-            get: {
-                "X-WP-NONCE": settings.X_WP_NONCE,
-            },
-            post: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-WP-NONCE": settings.X_WP_NONCE,
-            },
+        this.defaultHeaders = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "X-WP-NONCE": settings.X_WP_NONCE,
         };
-
-        this.originalHeaders = this.headers;
-
-        this.payload = {
-            "nonce": settings.NONCE,
-        };
-
-        if (route) {
-            this.route = settings.METRICOOL_API_URL + route;
-        }
     }
 
     /**
      * Performs a GET request.
+     * @param route - The route to send the request to.
+     * @param params - Search Parameters to be set - optional.
+     * @param headers - Headers to be sent - optional.
      * @returns The response data in JSON format.
      * @throws Error if the response is not ok or route is not set.
      */
-    async get() {
-        if (!this.route) {
-            throw new Error(__("Route is not set", "metricool"));
-        }
-
-        return await this.request(this.route, "GET");
+    async get<T>(route: string, params?: GenericRecord<T>, headers?: Record<string, string>) {
+        return this.request(this.buildRoute(route, params), "GET", undefined, headers);
     }
 
     /**
      * Performs a POST request.
-     * @param body - The body of the POST request.
+     * @param route - The route to send the request to.
+     * @param payload - The body of the POST request.
+     * @param headers - Headers to be sent - optional.
      * @returns The response data in JSON format.
      * @throws Error if the response is not ok or route/payload is not set.
      */
-    async post(body?: { [key: string | number]: string | number }) {
-        const payload = body ?? this.payload;
-
-        if (!payload) {
-            throw new Error(__("Payload is not set", "metricool"));
-        }
-
-        if (!this.route) {
-            throw new Error(__("Route is not set", "metricool"));
-        }
-
-        return await this.request(this.route, "POST", payload);
+    async post(route: string, payload: Record<string, unknown> = {}, headers?: Record<string, string>) {
+        return await this.request(this.buildRoute(route), "POST", payload, headers);
     }
 
     /**
@@ -93,19 +66,17 @@ class HttpClient {
      * @param route - The route for the request.
      * @param method - The request method.
      * @param payload - The payload to be sent - optional.
+     * @param headers - Headers to be sent - optional.
      * @returns The response data in JSON format.
      * @throws Error if the response is not ok.
      */
-    private async request(route: string, method: "GET" | "PUT" | "POST" | "DELETE", payload?: object) {
-        this.resetRoute();
-        this.resetPayload();
-
-        const headers = this.getHeaders(method);
-        this.resetHeaders();
-
+    private async request(route: string, method: HttpMethod, payload?: object, headers?: Record<string, string>,) {
         const response = await fetch(route, {
             method: method,
-            headers: headers,
+            headers: {
+                ...this.defaultHeaders,
+                ...headers,
+            },
             ...(payload && {
                 body: JSON.stringify({
                     ...payload,
@@ -115,13 +86,7 @@ class HttpClient {
         });
 
         if (!response.ok) {
-            
-            if(response.status == 401) {
-                // todo: gracefully log the user out when this happens
-                window.location.reload();
-            }
-
-            const errorData = await response.json();
+            const errorData = await response.json().catch(() => response.statusText);
             return this.handleError(errorData);
         }
         return response.json();
@@ -130,104 +95,17 @@ class HttpClient {
     /**
      * Sets the route URL.
      * @param route - The API route to be used.
+     * @param params - query parameters - optional
      * @returns The HttpClient instance.
      */
-    public setRoute(route: string) {
-        this.route = this.httpClientSettings.METRICOOL_API_URL + route;
-        return this;
-    }
-
-    /**
-     * Sets custom headers for requests.
-     * @param headers - The headers to be set.
-     * @param method - The HTTP method ("GET", "PUT", "POST", "DELETE").
-     * @returns The HttpClient instance.
-     */
-    public setHeaders(headers: Record<string, string>, method: "GET" | "PUT" | "POST" | "DELETE") {
-        if (method === "GET") {
-            this.headers.get = {
-                ...this.headers.get,
-                ...headers,
-            };
-            return this;
+    private buildRoute<T>(route: string, params?: GenericRecord<T>) {
+        const url = new URL(this.httpClientSettings.METRICOOL_API_URL + route);
+        if (params) {
+            Object.entries(params).forEach(([key, value]) => {
+                url.searchParams.set(key, String(value));
+            });
         }
-
-        this.headers.post = {
-            ...this.headers.post,
-            ...headers,
-        };
-        return this;
-    }
-
-    /**
-     * Retrieves the right headers based on the method passed.
-     * @param method - The HTTP method, "GET" | "PUT" | "POST" | "DELETE"
-     * @private
-     */
-    private getHeaders(method: "GET" | "PUT" | "POST" | "DELETE") {
-        if (method === "GET") {
-            return this.headers.get;
-        }
-        return this.headers.post;
-    }
-
-    /**
-     * Sets additional payload data.
-     * @param payload - The payload data to be set.
-     * @returns The HttpClient instance.
-     */
-    public setPayload(payload: Record<string, unknown>) {
-        this.payload = {
-            ...this.payload,
-            ...payload,
-        };
-        return this;
-    }
-
-    /**
-     * Sets optional filters.
-     * @param filters - Object with filters to be set.
-     * @returns The HttpClient instance.
-     */
-    public setFilters(filters: Record<string, string>) {
-        if (!this.route || this.route === this.httpClientSettings.METRICOOL_API_URL) {
-            throw new Error(__("Route not set. Please use setRoute before using setFilters.", "metricool"));
-        }
-        const metricoolApiUrl = new URL(this.route);
-        Object.entries(filters).forEach(([filterKey, filterValue]) => {
-            metricoolApiUrl.searchParams.set(`filters[${filterKey}]`, filterValue);
-        });
-        this.route = metricoolApiUrl.toString();
-        return this;
-    }
-
-    /**
-     * Reset payload data to default value.
-     * Needs to be called after every request, as the client instance can
-     * be used for multiple request.
-     */
-    private resetPayload() {
-        this.payload = {
-            "nonce": this.httpClientSettings.NONCE,
-        };
-    }
-
-    /**
-     * Reset route back to null.
-     * Needs to be called after every request, as one client instance can
-     * be used for multiple different endpoints.
-     */
-    private resetRoute() {
-        this.route = null;
-    }
-
-    /**
-     * Reset headers back to {@link this.originalHeaders}.
-     * Needs to be called after every request, as one client instance can
-     * be used for multiple different endpoints.
-     */
-    private resetHeaders() {
-        this.headers = this.originalHeaders;
+        return url.toString();
     }
 
     /**

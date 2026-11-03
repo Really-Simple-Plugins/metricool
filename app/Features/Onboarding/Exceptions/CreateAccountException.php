@@ -2,13 +2,17 @@
 
 namespace Metricool\Features\Onboarding\Exceptions;
 
-class CreateAccountException extends \RuntimeException
+use Metricool\Exceptions\AbstractLocalizedException;
+
+class CreateAccountException extends AbstractLocalizedException
 {
     public ?string $reason;
 
-    public function __construct(string $message, ?string $reason = null, int $code = 500)
+    protected const MESSAGE = 'Account creation failed';
+
+    public function __construct(?string $reason = null, int $code = 500)
     {
-        parent::__construct($message, $code);
+        parent::__construct('', $code);
 
         $this->reason = $reason;
     }

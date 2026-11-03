@@ -27,12 +27,12 @@ type UseConnectedAccountsDataProps = {
  * objects with only the 4 accounts we need to show on the dashboard.
  *
  */
-const useConnectedAccountsData = ({useLimitedDashboardList}: UseConnectedAccountsDataProps = {}) => {
+const useConnectedAccountsData = ({ useLimitedDashboardList }: UseConnectedAccountsDataProps = {}) => {
     const { httpClient, metricool } = useGlobalContext();
 
     const connectedAccountsQuery = useQuery({
         queryKey: ["connected", "accounts"],
-        queryFn: () => httpClient.setRoute("connected_networks").get(),
+        queryFn: () => httpClient.get("connected_networks"),
         staleTime: 1000 * 60 * 5, // 5 minutes
         select: (response): ConnectedAccount[] => {
             const fullAccountsList: ConnectedAccount[] = [

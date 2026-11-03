@@ -24,7 +24,7 @@ class UpgradeController implements ControllerInterface
 
     public function register(): void
     {
-        add_action('metricool_controllers_loaded', [$this, 'checkForUpgrades']);
+        add_action('metricool_plugin_controllers_loaded', [$this, 'checkForUpgrades']);
     }
 
     /**
@@ -34,7 +34,7 @@ class UpgradeController implements ControllerInterface
      * prevent the option from being deleted when a user logs out. As if
      * it is a private Metricool option.
      *
-     * @hooked metricool_controllers_loaded to make sure Controllers can hook
+     * @hooked metricool_plugin_controllers_loaded to make sure Controllers can hook
      * into metricool_plugin_version_upgrade. Even this one.
      *
      * @uses do_action metricool_plugin_version_upgrade Only hook into this

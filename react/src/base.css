@@ -32,7 +32,7 @@
     --color-destructive: var(--destructive);
     --color-border: var(--border);
     --color-input: var(--input);
-    --color-ring: var(--color-wordpress-link-hover);
+    --color-ring: var(--ring);
     --color-chart-1: var(--chart-1);
     --color-chart-2: var(--chart-2);
     --color-chart-3: var(--chart-3);
@@ -254,6 +254,7 @@ Base Style Guide
     --color-tiktok: #010101;
     --color-youtube: #f03;
     --color-x: #0f141a;
+    --color-whatsapp: #52BE60;
 
     /**
     ======================================
@@ -269,11 +270,10 @@ Base Style Guide
 
     /**
     ======================================
-    Wordpress Colors
+    Shadcn Overwrites
     ======================================
     **/
-    --color-wordpress-blue: #2271B1;
-    --color-wordpress-link-hover: #135e96;
+    --color-accent: var(--color-primary-light);
 
     /**
     ======================================
@@ -282,6 +282,13 @@ Base Style Guide
     **/
     --breakpoint-2xl: clamp(300px, 100% - 20px * 2, 1600px);
     --container-8xl: 125rem;
+
+    /**
+    ======================================
+    Additional Custom Vars
+    ======================================
+    **/
+    --radius-base: 4px;
 }
 
 /**
@@ -289,16 +296,9 @@ Base Style Guide
 App Root global overwrites
 ======================================
 **/
-
-/* Applies a WP style focus to everything within our root */
-#rsp-app-root *:focus-visible[aria-invalid="false"] {
-    box-shadow: 0 0 0 2px var(--color-wordpress-blue) !important;
-    outline: 2px solid transparent !important;
-}
-
 /* Applies the sans serif font (set to Inter) to our root */
-#rsp-app-root {
-    @apply font-sans
+:is(#rsp-app-root, div[role="dialog"]) {
+    @apply font-sans;
 }
 
 /**
@@ -306,6 +306,7 @@ App Root global overwrites
 WP style overwrites
 ======================================
 **/
+/* Removing WP's default padding-left so it doesn't interfere with our centering */
 #wpcontent {
     padding-left: 0 !important;
 }
@@ -326,6 +327,47 @@ defined styles to inherit, to be used for h1 in Block Header Titles */
     color: inherit !important;
 }
 
+/* Selecting only within our own app root and Dialogs */
+:is(#rsp-app-root, div[role="dialog"]) {
+    /* Applying our own focus styling to all a, button and input tags. */
+    :is(a:is(:focus, :focus-visible), button:is(:focus, :focus-visible), input:is(:focus, :focus-visible)) {
+        @apply ring-[3px] ring-ring transition-all duration-200 ease-in-out;
+        color: initial;
+    }
+
+    /* Removing Wordpress' default margins on paragraphs. */
+    p {
+        @apply m-0;
+    }
+
+    /* Overwriting WP's default input styling with our own. */
+    :is(
+        input[type="color"],
+        input[type="date"],
+        input[type="datetime-local"],
+        input[type="datetime"],
+        input[type="email"],
+        input[type="month"],
+        input[type="number"],
+        input[type="password"],
+        input[type="search"],
+        input[type="tel"],
+        input[type="text"],
+        input[type="time"],
+        input[type="url"],
+        input[type="week"],
+        select,
+        textarea
+    ) {
+        @apply rounded-base border border-input bg-white text-black p-0 px-2 py-1;
+    }
+
+    /* Overwriting WP's readonly background color with our own. */
+    :is(input.readonly,input[readonly],textarea.readonly,textarea[readonly]) {
+        @apply read-only:bg-neutral-100! has-[>[data-read-only=true]]:bg-neutral-100;
+    }
+}
+
 /**
 ======================================
 Special Utility Classes
@@ -344,7 +386,7 @@ Special Utility Classes
         @apply w-full h-full;
         @apply absolute;
         @apply bg-transparent! text-transparent;
-        @apply rounded-xs content-['']!;
+        @apply rounded-base content-['']!;
         @apply border-2;
         background: var(--gradient-brand);
         box-sizing: content-box;
@@ -402,8 +444,26 @@ Requires the svg defs with id="fa-gradient" to be added to the DOM, e.g.:
 that use flexbox and would misplace a full element due to gaps etc*/
 .required-asterisk {
     &::after {
+        display: ruby;
         content: " \002A"; /* ascii code for the asterisk character */
         color: red;
         font-weight: bold;
     }
+}
+
+/* Needed to render the fullscreen dialog properly no matter the browser's scroll bar.
+`--removed-body-scroll-bar-size` is set and maintained by the RemoveScroll package*/
+:is(#rsp-app-root, div[role="dialog"]) {
+    width: calc(100% + var(--removed-body-scroll-bar-size));
+}
+
+/* Same as above, needed for the fullscreen dialog */
+body[data-scroll-locked] {
+    margin-right: 0 !important;
+}
+
+/* On some versions of Google Recaptcha, the badge needs to be manually hidden
+   (moved form tailwind.css to keep centralised)*/
+.grecaptcha-badge {
+    visibility: hidden;
 }

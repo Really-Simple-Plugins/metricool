@@ -8,37 +8,21 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-use Metricool\Interfaces\FeatureInterface;
+use Metricool\Interfaces\ControllerInterface;
 use Metricool\Interfaces\TaskInterface;
-use Metricool\Services\DashboardService;
-use Metricool\Traits\HasAllowlistControl;
 
-class TaskManagementController implements FeatureInterface
+class TaskManagementController implements ControllerInterface
 {
-    use HasAllowlistControl;
-
-    private TaskManagementEndpoints $endpoints;
     private TaskManagementService $service;
-    private TaskManagementListener $listener;
-    private DashboardService $dashboard;
 
-    public function __construct(TaskManagementService $service, TaskManagementEndpoints $endpoints, TaskManagementListener $listener, DashboardService $dashboard)
+    public function __construct(TaskManagementService $service)
     {
         $this->service = $service;
-        $this->endpoints = $endpoints;
-        $this->listener = $listener;
-        $this->dashboard = $dashboard;
     }
 
     public function register(): void
     {
-        $this->endpoints->register();
-
-        if ($this->userCanManage() && $this->dashboard->isOnboardingCompleted()) {
-            $this->listener->listen();
-            $this->initiateTasks();
-        }
-
+        $this->initiateTasks();
         add_action('metricool_plugin_version_upgrade', [$this, 'upgradeTasks']);
     }
 

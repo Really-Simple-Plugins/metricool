@@ -75,13 +75,13 @@ const OnboardingForm = ({ onSubmit, isSignUpPending }: OnboardingFormProps) => {
                     )}
                 />
             </FlexContainer>
-            <FlexContainer direction={"column"} className={"!gap-1"}>
+            <FlexContainer direction={"column"} className={"gap-1!"}>
                 <Button
                     variant={"primary-gradient"}
                     type={"submit"}
                     disabled={(!(dirtyFields.credentials?.email && dirtyFields.credentials?.password) || isSignUpPending)}
                 >
-                    <FlexContainer direction={"row"} className={"!gap-2 items-center"}>
+                    <FlexContainer direction={"row"} className={"gap-2! items-center"}>
                         {__("Create your free account", "metricool")}
                         <Icon icon={"arrow-right"}/>
                     </FlexContainer>
@@ -92,7 +92,7 @@ const OnboardingForm = ({ onSubmit, isSignUpPending }: OnboardingFormProps) => {
                     control={control}
                     name={"terms"}
                     flexDirection={"row-reverse"}
-                    className={"!gap-3 justify-end"}
+                    className={"gap-3! justify-end"}
                     render={(props) => (
                         <Switch
                             {...props}
@@ -122,7 +122,7 @@ const OnboardingForm = ({ onSubmit, isSignUpPending }: OnboardingFormProps) => {
                 />
                 <FieldWrapper
                     flexDirection={"row-reverse"}
-                    className={"!gap-3 justify-end"}
+                    className={"gap-3! justify-end"}
                     label={__("I wish to receive communications about news and/or promotions from Metricool Software.", "metricool")}
                     control={control}
                     name={"marketing"}

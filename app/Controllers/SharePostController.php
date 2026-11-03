@@ -170,9 +170,10 @@ class SharePostController implements ControllerInterface
     }
 
     /**
-     * Adds the Metricool meta box to the post edit screen. Works for both
-     * Gutenberg and classic editor. Also adds the meta box for public
-     * post-types for which the column is not shown by default.
+     * Adds the Metricool meta box to the post edit screen for all public post
+     * types, including those where the column is not shown by default.
+     * Works for both Gutenberg and classic editor, and is also compatible with
+     * the Real-Time Collaboration feature of the Gutenberg editor.
      */
     public function addShareMetaBox(): void
     {
@@ -183,6 +184,8 @@ class SharePostController implements ControllerInterface
                 [$this, 'renderShareMetaBox'],
                 $postType,
                 'side',
+                'default',
+                ['__rtc_compatible_meta_box' => true],
             );
         }
     }

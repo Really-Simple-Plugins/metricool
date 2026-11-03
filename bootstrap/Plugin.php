@@ -13,6 +13,7 @@ use Metricool\Controllers;
 use Metricool\Managers\FeatureManager;
 use Metricool\Managers\ProviderManager;
 use Metricool\Managers\EndpointManager;
+use Metricool\Managers\ListenerManager;
 use Metricool\Managers\ControllerManager;
 
 class Plugin
@@ -21,6 +22,7 @@ class Plugin
     private ProviderManager $providerManager;
     private EndpointManager $endpointManager;
     private ControllerManager $controllerManager;
+    private ListenerManager $listenerManager;
 
     /**
      * Plugin constructor
@@ -33,6 +35,7 @@ class Plugin
         $this->providerManager = $app->make(ProviderManager::class);
         $this->endpointManager = $app->make(EndpointManager::class);
         $this->controllerManager = $app->make(ControllerManager::class);
+        $this->listenerManager = $app->make(ListenerManager::class);
     }
 
     /**
@@ -46,9 +49,10 @@ class Plugin
         register_uninstall_hook($pluginBaseFile, 'Metricool\Bootstrap\Plugin::uninstall');
 
         add_action('plugins_loaded', [$this, 'loadPluginTextDomain']);
-        add_action('plugins_loaded', [$this, 'registerProviders']); // Provide functionality to the plugin
-        add_action('metricool_providers_loaded', [$this->featureManager, 'registerFeatures']); // Makes sure features exist when Controllers need them
-        add_action('metricool_features_loaded', [$this, 'registerControllers']); // Control the functionality of the plugin
+        add_action('plugins_loaded', [$this, 'registerProviders']);
+        add_action('metricool_plugin_providers_loaded', [$this, 'registerFeatures']);
+        add_action('metricool_plugin_features_loaded', [$this, 'registerControllers']);
+        add_action('metricool_plugin_controllers_loaded', [$this, 'registerListeners']);
         add_action('rest_api_init', [$this, 'registerEndpoints']);
         add_action('admin_init', [$this, 'fireActivationHook']);
     }
@@ -123,8 +127,7 @@ class Plugin
      * Register Plugin providers. First step in the booting process of the
      * plugin. Is hooked into plugins_loaded to make sure we only boot the
      * plugin after all other plugins are loaded. This plugin depends on the
-     * providerManager to fire the metricool_providers_loaded action.
-     * @uses do_action metricool_providers_loaded
+     * providerManager to fire the metricool_plugin_providers_loaded action.
      */
     public function registerProviders(): void
     {
@@ -132,9 +135,23 @@ class Plugin
     }
 
     /**
-     * Register Controllers. Hooked into metricool_features_loaded to make sure
-     * features are available to the Controllers.
-     * @uses do_action metricool_controllers_loaded
+     * Register plugin features after providers are loaded. Features boot
+     * their own controllers, listeners and endpoints.
+     */
+    public function registerFeatures(): void
+    {
+        $this->featureManager->register([
+            \Metricool\Features\Onboarding\OnboardingFeature::class,
+            \Metricool\Features\TaskManagement\TaskManagementFeature::class,
+            \Metricool\Features\Notifications\NotificationsFeature::class,
+            \Metricool\Features\AdminNotices\AdminNoticesFeature::class,
+            \Metricool\Features\UserSettings\UserSettingsFeature::class,
+        ]);
+    }
+
+    /**
+     * Register Controllers. Hooked into metricool_plugin_features_loaded to
+     * make sure features are available to the Controllers.
      */
     public function registerControllers(): void
     {
@@ -150,9 +167,16 @@ class Plugin
     }
 
     /**
+     * Register plugin listeners after controllers are loaded.
+     */
+    public function registerListeners(): void
+    {
+        $this->listenerManager->register([]);
+    }
+
+    /**
      * Register the plugins REST API endpoint instances. Hooked into
      * rest_api_init to make sure the REST API is available.
-     * @uses do_action metricool_endpoints_loaded
      */
     public function registerEndpoints(): void
     {
