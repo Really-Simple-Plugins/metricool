@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { __ } from "@wordpress/i18n";
 
-
 const OnboardingSchema = z.object({
     brand: z.object({
         id: z.string(),
