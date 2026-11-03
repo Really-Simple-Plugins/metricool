@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { periodFilterOptions, defaultPeriodFilter } from "@/components/custom";
 
-type MetricData = {
+export type MetricData = {
     label: string,
     totalAmount: number,
     trend: "stable" | "up" | "down",
@@ -38,7 +38,7 @@ const useWebAnalyticsData = ({ selectedAnalyticsPeriod = defaultPeriodFilter.opt
 
     const webAnalyticsDataQuery = useQuery({
         queryKey: ["analytics", selectedAnalyticsPeriod],
-        queryFn: () => httpClient.setRoute("analytics").setFilters({ period: selectedAnalyticsPeriod }).get(),
+        queryFn: () => httpClient.get("analytics", { period: selectedAnalyticsPeriod }),
         staleTime: 1000 * 60 * 60 * 12, // 12 hours
         gcTime: 1000 * 60 * 60 * 12, // 12 hours
         select: (response): { totals: Record<string, MetricData>, timelineData: TimelineData } => response.data,

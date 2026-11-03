@@ -11,8 +11,9 @@ if (!defined('ABSPATH')) {
 use Metricool\Features\TaskManagement\Tasks\HistoricalDataTask;
 use Metricool\Services\MetricoolAccountService;
 use Metricool\Support\Helpers\Event;
+use Metricool\Interfaces\ListenerInterface;
 
-class TaskManagementListener
+class TaskManagementListener implements ListenerInterface
 {
     private TaskManagementService $service;
     private MetricoolAccountService $account;
@@ -23,6 +24,9 @@ class TaskManagementListener
         $this->account = $account;
     }
 
+    /**
+     * @inheritDoc
+     */
     public function listen(): void
     {
         add_action('metricool_event_' . Event::POST_SCHEDULED, [$this, 'handlePostScheduled']);

@@ -1,29 +1,7 @@
 import { Badge as PrimitiveBadge } from "@/components/shared/primitives/badge";
 import { cn } from "@/support/functions/utils";
-import { cva, type VariantProps } from "class-variance-authority";
-
-const BadgeVariantStyling = {
-    basis: "rounded-full text-[9px] font-semibold",
-    variant: {
-        primary: "bg-primary-light text-primary",
-        gradient: "bg-(image:--gradient-brand) border-transparent bg-origin-border text-white",
-    },
-    size: {
-        default: "h-5 px-2 py-1",
-    },
-};
-
-const BadgeVariants = cva(
-    BadgeVariantStyling.basis, {
-    variants: {
-        variant: BadgeVariantStyling.variant,
-        size: BadgeVariantStyling.size,
-    },
-    defaultVariants: {
-        variant: "primary",
-        size: "default",
-    }
-});
+import { type VariantProps } from "class-variance-authority";
+import { badgeVariants } from "@/support/helpers/Variants";
 
 /**
  * Custom extension of shadcn's {@link PrimitiveBadge} component.
@@ -43,13 +21,11 @@ const Badge = ({
     children,
     variant,
     ...props
-}: Omit<React.ComponentProps<typeof PrimitiveBadge>, "variant"> & VariantProps<typeof BadgeVariants>) => {
+}: Omit<React.ComponentProps<typeof PrimitiveBadge>, "variant"> & VariantProps<typeof badgeVariants>) => {
+
     return (
         <PrimitiveBadge
-            className={cn(
-                BadgeVariants({ variant }),
-                className
-            )}
+            className={cn(badgeVariants({ variant, className }))}
             {...props}
         >
             {children}
@@ -57,4 +33,4 @@ const Badge = ({
     );
 };
 
-export { Badge, BadgeVariantStyling };
+export { Badge };

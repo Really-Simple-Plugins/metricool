@@ -1,13 +1,14 @@
 import {
     Block,
     BlockHeader,
-    Button,
+    EmptyDataState,
     FieldWrapper,
     FlexContainer,
-    FormFooter,
+    FormFooterState,
     Icon,
     Input,
-    LoadingAndErrorState,
+    Link,
+    SettingsFooter,
     SignOut,
     Switch
 } from "@/components/shared";
@@ -22,7 +23,7 @@ import { useUserSettingsData } from "@/hooks/useUserSettingsData.tsx";
  *
  * Is a `<form>` component which contains {@link Block}(s). This way the form's
  * onSubmit attribute can be used and a submit callback function doesn't have
- * to be passed down to the button in the {@link FormFooter}. No other button
+ * to be passed down to the button in the {@link SettingsFooter}. No other button
  * with type "submit" should be added anywhere in the subtree of this component.
  *
  * Retrieves all Query, Mutation and Form data from {@link useUserSettingsData}.
@@ -35,7 +36,13 @@ const AccountSettings = () => {
     const { metricool, metricoolDynamicUrl } = useGlobalContext();
 
     const {
-        userSettingsDataQuery: { data, isLoading, error: queryError, errorUpdateCount, refetch },
+        userSettingsDataQuery: {
+            data: settingsData,
+            isLoading,
+            error: queryError,
+            errorUpdateCount,
+            refetch
+        },
         userSettingsFormData: {
             handleSubmit,
             formState: { errors: formValidationErrors, isDirty },
@@ -72,20 +79,25 @@ const AccountSettings = () => {
                 <Block className={"rounded-md"}>
                     <BlockHeader title={__("Account settings", "metricool")}/>
                     <SignOut onSignOut={() => logoutUser()} currentUserEmail={metricool.account?.user.mail ?? ""}/>
-                    <Button variant={"primary-ghost"} className={"font-bold"} link={metricoolDynamicUrl.withPath("user-settings/access")}>
+                    <Link
+                        variant={"primary-ghost"}
+                        href={metricoolDynamicUrl.withPath("user-settings/access")}
+                    >
                         {__("Change Password", "metricool")}
                         <Icon icon={"external-link"}/>
-                    </Button>
+                    </Link>
                 </Block>
                 <Block className={"rounded-t-md rounded-b-none"}>
                     <BlockHeader title={__("Monthly summary", "metricool")}/>
-                    {!data ? (
-                        <LoadingAndErrorState
+                    {!settingsData ? (
+                        <EmptyDataState
                             error={queryError}
                             isLoading={isLoading}
                             errorUpdateCount={errorUpdateCount}
                             refetch={refetch}
                             supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                            emptyStateTitle={__("No Settings information", "metricool")}
+                            emptyStateDescription={__("There appears to be no settings information available.", "metricool")}
                         />
                     ) : (
                         <FlexContainer direction={"column"}>
@@ -141,7 +153,9 @@ const AccountSettings = () => {
                     )}
                 </Block>
             </FlexContainer>
-            <FormFooter formHasUnsavedChanges={isDirty} formIsSubmitting={isPending} formHasErrors={Object.keys(formValidationErrors).length > 0}/>
+            <SettingsFooter>
+                <FormFooterState formHasUnsavedChanges={isDirty} formIsSubmitting={isPending} formHasErrors={Object.keys(formValidationErrors).length > 0}/>
+            </SettingsFooter>
         </form>
     );
 };

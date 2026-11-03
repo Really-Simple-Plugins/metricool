@@ -1,8 +1,8 @@
 import {
     Block,
     BlockHeader,
+    EmptyDataState,
     FlexContainer,
-    LoadingAndErrorState,
     TabNavigation,
     Task,
     type TaskProps,
@@ -12,7 +12,6 @@ import { useState } from "react";
 import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useTaskData } from "@/hooks/useTaskData";
 import { useConnectedAccountsData } from "@/hooks/useConnectedAccountsData.tsx";
-// import { queryClient } from "@/main.tsx";
 
 /**
  * The Progress block used in {@link DashboardLayout}.
@@ -31,12 +30,22 @@ const Progress = () => {
     const { metricool, dispatch, dashboardSettings } = useGlobalContext();
 
     const {
-        connectedAccountsQuery: { isSuccess: connectedAccountsLoaded }
+        connectedAccountsQuery: {
+            isSuccess: connectedAccountsLoaded,
+        }
     } = useConnectedAccountsData();
 
     const {
-        taskDataQuery: { data: taskData, isLoading, error, refetch, errorUpdateCount },
-        dismissTaskMutation: { mutate: dismissTask },
+        taskDataQuery: {
+            data: taskData,
+            isLoading,
+            error,
+            refetch,
+            errorUpdateCount,
+        },
+        dismissTaskMutation: {
+            mutate: dismissTask,
+        },
     } = useTaskData({ hasConnectedAccountsDataLoaded: connectedAccountsLoaded });
 
 
@@ -57,7 +66,7 @@ const Progress = () => {
     };
 
     return (
-        <Block className={"min-h-[500px] max-h-[500px]"}>
+        <Block className={"min-h-125 max-h-125"}>
             <BlockHeader
                 title={__("Progress", "metricool")}
                 action={taskData && (
@@ -65,18 +74,20 @@ const Progress = () => {
                 )}
             />
             {!taskData ? (
-                <LoadingAndErrorState
+                <EmptyDataState
                     error={error}
-                    isLoading={isLoading}
+                    isLoading={(isLoading || !connectedAccountsLoaded)}
                     errorUpdateCount={errorUpdateCount}
                     refetch={refetch}
                     supportTicketLink={metricool.trusted_urls.new_support_ticket}
+                    emptyStateTitle={__("No Progress data", "metricool")}
+                    emptyStateDescription={__("There appears to be no Progress data available.", "metricool")}
                 />
             ) : (
                 <FlexContainer direction={"column"}>
                     <div className={"w-full bg-neutral-200 rounded-md h-5"}>
                         <div
-                            className={"bg-[image:var(--gradient-brand)] h-5 rounded-md transition-all duration-300"}
+                            className={"bg-(image:--gradient-brand) h-5 rounded-md transition-all duration-300"}
                             style={{ width: `${taskData.completionPercentage}%` }}
                         />
                     </div>
@@ -93,7 +104,7 @@ const Progress = () => {
                         </span>
                     </div>
                     {/* Task List */}
-                    <div className={"max-h-[300px] flex flex-col overflow-y-auto gap-4 pr-3"}>
+                    <div className={"max-h-75 flex flex-col overflow-y-auto gap-4 pr-3 py-1"}>
                         {/* using spread operators, the array of tasks to display is built dynamically
                             if All Tasks is selected (activeTab === 0), the completed tasks are added on.
                             This way, no extra filtering needs to be done.

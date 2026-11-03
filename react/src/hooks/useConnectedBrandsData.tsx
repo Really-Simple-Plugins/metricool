@@ -12,7 +12,7 @@ const useConnectedBrandsData = () => {
 
     const connectedBrandsQuery = useQuery({
         queryKey: ["connected_brands"],
-        queryFn: () => httpClient.setRoute("connected_brands").get(),
+        queryFn: () => httpClient.get("connected_brands"),
         staleTime: Infinity,
         select: (response): z.infer<typeof OnboardingSchema.shape.brand>[] => response.data,
     });

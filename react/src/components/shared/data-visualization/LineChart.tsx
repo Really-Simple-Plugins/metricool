@@ -6,6 +6,8 @@ import {
     type XAxisProps as RechartXAxisProps,
     YAxis as RechartYAxis,
     type YAxisProps as RechartYAxisProps,
+    LineDrawShape,
+    type LineDrawShapeProps,
 } from "recharts";
 import {
     type ChartConfig as PrimitiveChartConfig,
@@ -14,6 +16,16 @@ import {
     ChartTooltipContent as PrimitiveChartTooltipContent,
 } from "@/components/shared/primitives/chart";
 import { cn } from "@/support/functions/utils";
+
+/**
+ * Custom shape. Needed because the lines flash at the start of rendering before
+ * the draw animation plays. Setting opacity to 0 until the `visibleLength` of
+ * the line is more than 0 means they don't appear until the animation starts.
+ */
+function OpacityShape(props: LineDrawShapeProps) {
+    const hasLineAnimationNotStarted = props.visibleLength === 0;
+    return <LineDrawShape {...props} strokeOpacity={hasLineAnimationNotStarted ? 0 : props.strokeOpacity} />;
+}
 
 type ChartConfig = PrimitiveChartConfig & {
     [k in string]: {
@@ -27,7 +39,6 @@ type LineChartProps = {
     chartSettings: {
         xAxisKey: string,
         general?: {
-            height?: number,
             displayTooltip?: boolean,
             hideTooltipLabel?: boolean,
             margin?: {
@@ -57,8 +68,7 @@ const LineChart = ({
     return (
         <PrimitiveChartContainer
             config={chartConfig}
-            className={cn(className, maxHeightClass)}
-            {...(chartSettings?.general?.height && { height: chartSettings.general.height })}
+            className={cn("w-full", className, maxHeightClass)}
         >
             <RechartLineChart
                 accessibilityLayer
@@ -91,13 +101,15 @@ const LineChart = ({
                 />
                 {Object.entries(chartConfig).map(([key, data]) => (
                     <RechartLine
-                        isAnimationActive={false}
+                        shape={OpacityShape}
                         dataKey={key}
+                        key={key}
                         type={linesSettings?.type ?? "monotone"}
                         stroke={data.color?.startsWith("#") ? data.color : `var(--color-${data.color})`}
                         strokeWidth={linesSettings?.strokeWidth ?? 1}
                         hide={data.hidden}
                         dot={false}
+                        connectNulls={true}
                     />
                 ))}
             </RechartLineChart>

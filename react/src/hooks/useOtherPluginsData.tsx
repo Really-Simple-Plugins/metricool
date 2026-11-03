@@ -2,10 +2,10 @@ import { useGlobalContext } from "@/context/GlobalContext.tsx";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { __ } from "@wordpress/i18n";
 import { queryClient } from "@/main.tsx";
-import { Button, showToast } from "@/components/shared";
+import { Button, Link, showToast } from "@/components/shared";
 
 const pluginStatuses: Record<string, string> = {
-    installed: __("Installed", "metricool"),
+    settings: __("Settings", "metricool"),
     download: __("Install", "metricool"),
     activate: __("Activate", "metricool"),
     activating: __("Activating...", "metricool"),
@@ -23,6 +23,7 @@ type OtherPlugin = {
     slug: string,
     title: string,
     upgrade_url: string,
+    settings_url: string,
     url: string,
 }
 
@@ -46,7 +47,7 @@ const useOtherPluginsData = () => {
 
     const otherPluginsDataQuery = useQuery({
         queryKey: ["other_plugins_data"],
-        queryFn: () => httpClient.setRoute("other_plugins_data").get(),
+        queryFn: () => httpClient.get("other_plugins_data"),
         staleTime: Infinity, // never stale unless manually invalidated
         gcTime: Infinity, // data is never garbage collected
         select: (response): Record<string, OtherPlugin> => {
@@ -94,10 +95,10 @@ const useOtherPluginsData = () => {
             }
         },
         mutationFn: async ({ slug, action }: PluginActionArguments) => {
-            return httpClient.setRoute("do_plugin_action").setPayload({
+            return httpClient.post("do_plugin_action", {
                 "slug": slug,
                 "action": action,
-            }).post();
+            });
         },
         onSuccess: (response, variables) => {
             const currentOtherPluginsData: {
@@ -129,35 +130,40 @@ const useOtherPluginsData = () => {
     });
 
     const getOtherPluginAction = (plugin: OtherPlugin, pluginKey: string) => {
+        const label = pluginStatuses[plugin.action];
+
         switch (plugin.action) {
-            case "upgrade-to-premium": {
+            case "upgrade-to-premium":
+            case "settings": {
+                const link = plugin.action === "upgrade-to-premium"
+                    ? plugin.upgrade_url
+                    : plugin.settings_url;
+
                 return (
-                    <Button
+                    <Link
                         className={"text-sm"}
-                        variant={"link"}
-                        link={plugin.upgrade_url}
+                        href={link}
                     >
-                        {pluginStatuses[plugin.action]}
-                    </Button>
+                        {label}
+                    </Link>
                 );
             }
-            case "installed":
             case "downloading":
             case "activating": {
-                return (<span className={"text-sm font-normal"}>{pluginStatuses[plugin.action]}</span>);
+                return (<span className={"text-sm font-normal"}>{label}</span>);
             }
             default: {
                 return (
                     <Button
-                        className={"text-sm"}
                         variant={"link"}
+                        className={"text-sm"}
                         onClick={() => pluginActionMutation.mutate({
                             slug: plugin.slug,
                             action: plugin.action,
                             key: pluginKey,
                         })}
                     >
-                        {pluginStatuses[plugin.action]}
+                        {label}
                     </Button>
                 );
             }

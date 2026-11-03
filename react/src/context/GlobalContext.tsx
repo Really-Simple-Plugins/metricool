@@ -46,6 +46,7 @@ export type MetricoolData = {
         mode: {
             show_welcome_screen: boolean,
             forced_login: boolean,
+            lost_connection: boolean,
         }
     }
     support: string,

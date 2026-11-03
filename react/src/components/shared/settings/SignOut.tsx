@@ -8,11 +8,13 @@ import { __ } from "@wordpress/i18n";
 type SignOutProps = {
     onSignOut: () => void,
     currentUserEmail: string,
+    isPending?: boolean,
 };
 
 const SignOut = ({
     onSignOut,
     currentUserEmail,
+    isPending = false,
 }: SignOutProps) => {
     return (
         <>
@@ -20,14 +22,15 @@ const SignOut = ({
                 {__("Currently logged in as", "metricool")}
             </PrimitiveFieldLabel>
             <PrimitiveButtonGroup className={"w-full"}>
-                <Input id={"current-user-email"} disabled value={currentUserEmail}/>
+                <Input id={"current-user-email"} readOnly={true} aria-readonly={true} value={currentUserEmail}/>
                 <Button
                     variant={"primary"}
                     onClick={onSignOut}
                     size={"lg"}
+                    disabled={isPending}
                 >
                     {__("Log Out", "metricool")}
-                    <Icon icon={"sign-out"}/>
+                    <Icon icon={isPending ? "loading" : "sign-out"}/>
                 </Button>
             </PrimitiveButtonGroup>
         </>

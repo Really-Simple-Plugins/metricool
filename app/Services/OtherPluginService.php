@@ -62,7 +62,7 @@ class OtherPluginService
     public function getAvailablePluginAction(): string
     {
         if ($this->premiumPluginIsInstalled()) {
-            return 'installed';
+            return 'settings';
         }
 
         if ($this->pluginIsDownloadable()) {
@@ -77,7 +77,7 @@ class OtherPluginService
             return 'upgrade-to-premium';
         }
 
-        return 'installed';
+        return 'settings';
     }
 
     /**

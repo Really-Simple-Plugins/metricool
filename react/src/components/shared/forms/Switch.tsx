@@ -1,6 +1,6 @@
-import { Switch as PrimitiveSwitch } from "@/components/shared/primitives/switch.tsx";
+import { Switch as PrimitiveSwitch } from "@/components/shared/primitives/switch";
 import * as React from "react";
-import { cn } from "@/support/functions/utils.ts";
+import { cn } from "@/support/functions/utils";
 
 /**
  *

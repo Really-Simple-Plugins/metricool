@@ -6,7 +6,7 @@ const LoadingStep = () => {
     const { metricool } = useGlobalContext();
     return (
         <FlexContainer direction={"column"} className={"justify-center items-center"}>
-            <DialogHeader className={"!gap-8 justify-center items-center"}>
+            <DialogHeader className={"gap-8! justify-center items-center"}>
                 <img src={`${metricool.assets_url}img/onboarding-loading.svg`} alt={__("Metricool logo with cog icon", "metricool")}/>
                 <DialogTitle className={"font-bold font-nunito m-0 text-2xl loading-ellipses"}>
                     {__("Creating Awesomeness", "metricool")}

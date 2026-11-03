@@ -8,7 +8,10 @@ use Metricool\Features\UserSettings\Exceptions\StorageSubmitException;
 use Metricool\Features\UserSettings\Exceptions\ValidationFailedExceptions;
 use Metricool\Features\UserSettings\Exceptions\ValidatorFailedException;
 use Metricool\Features\UserSettings\Fields\Field;
+use Metricool\Features\UserSettings\Factories\FieldsFactory;
 use Metricool\Support\Helpers\Collection;
+use Metricool\Support\Helpers\Storages\UserSettingsConfig;
+use Metricool\Features\UserSettings\Exceptions\StorageNotFoundException;
 
 /**
  * This service is responsible for storing and retrieving user settings.
@@ -28,9 +31,29 @@ class UserSettingsService
      */
     private array $uniqueFieldStorages = [];
 
-    public function __construct(Collection $fields)
+    /**
+     * @throws StorageNotFoundException When the config file is not correctly
+     * set up.
+     */
+    public function __construct(UserSettingsConfig $config)
     {
-        $this->fields = $fields;
+        $this->fields = $this->getFieldsFromConfig($config);
+    }
+
+    /**
+     * Retrieve the fields from the configuration file and convert them into
+     * Field instances.
+     *
+     * @throws StorageNotFoundException When the config file is not correctly
+     * set up.
+     */
+    private function getFieldsFromConfig(UserSettingsConfig $config): Collection
+    {
+        $factory = new FieldsFactory(
+            $config->all(),
+        );
+
+        return $factory->createFromConfig();
     }
 
     public function getSettings(): Collection
@@ -116,8 +139,9 @@ class UserSettingsService
      * single exception if any storage submission fails.
      *
      * @throws StorageSubmitException when any storage submission fails - is
-     * caught in {@see UserSettingsEndpoint} and the message we return here is
-     * only shown to the user has WP_DEBUG set to true.
+     * caught in {@see \Metricool\Features\UserSettings\Endpoints\UserSettingsEndpoints}
+     * and the message we return here is only shown to the user has WP_DEBUG set
+     * to true.
      */
     private function saveValidatedSettings(): void
     {

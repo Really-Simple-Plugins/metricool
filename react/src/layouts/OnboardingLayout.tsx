@@ -22,10 +22,11 @@ import { useAuthenticationData } from "@/hooks/useAuthenticationData.tsx";
  */
 export const OnboardingLayout = () => {
     const { metricool, dispatch } = useGlobalContext();
-    const [signInModalOpen, setSignInModalOpen] = useState<boolean>((metricool.onboarding.mode.forced_login || (metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected)));
+    const { mode, state } = metricool.onboarding;
+    const [signInModalOpen, setSignInModalOpen] = useState<boolean>((mode.forced_login || mode.lost_connection || (state.authenticated && !state.blog_id_selected)));
     const [onboardingModalOpen, setOnboardingModalOpen] = useState<boolean>(false);
     const [activeOnboardingStep, setActiveOnboardingStep] = useState<number>(0);
-    const [activeSignInStep, setActiveSignInStep] = useState<number>((!metricool.onboarding.state.authenticated && !metricool.onboarding.state.blog_id_selected) ? 0 : 1);
+    const [activeSignInStep, setActiveSignInStep] = useState<number>((!state.authenticated && !state.blog_id_selected) ? 0 : 1);
 
     const beforeSignUpCallback = () => {
         setActiveOnboardingStep(0);
@@ -104,7 +105,7 @@ export const OnboardingLayout = () => {
     }, []);
 
     return (
-        <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 !gap-0 max-w-[125rem] mx-auto"}>
+        <FlexContainer direction={"column"} className={"w-full h-full px-20 py-12 gap-0! max-w-8xl mx-auto"}>
             {/* HeadContent adds the scripts defined in head in __root.tsx to the document's <head>. Only for recaptcha script, so only implemented here. */}
             <HeadContent/>
             <Header
@@ -112,7 +113,7 @@ export const OnboardingLayout = () => {
                 logo={(
                     <FlexContainer direction={"row"} className={"text-base font-bold font-nunito items-center"}>
                         <img src={`${metricool.assets_url}img/mc-logo.svg`} alt={__("Metricool logo icon", "metricool")}/>
-                        <img src={`${metricool.assets_url}img/logo.svg`} className={"h-[30px]"} alt={__("Metricool logo", "metricool")}/>
+                        <img src={`${metricool.assets_url}img/logo.svg`} className={"h-7.5"} alt={__("Metricool logo", "metricool")}/>
                         {__("The digital Swiss Army Knife for social media marketers", "metricool")}
                     </FlexContainer>
                 )}
@@ -124,7 +125,7 @@ export const OnboardingLayout = () => {
                     (
                         <Button
                             variant={"primary-gradient-ghost"}
-                            className={"p-0 after:!bg-white after:!border-none !border-none font-[600]"}
+                            className={"p-0 after:bg-white! after:border-none! border-none! font-[600]"}
                             onClick={() => setSignInModalOpen(true)}
                         >
                             {__("Sign in here", "metricool")}
@@ -132,8 +133,8 @@ export const OnboardingLayout = () => {
                     )
                 ]}
             />
-            <div className={"w-full h-[2px] bg-[image:var(--gradient-brand-secondary)]"}></div>
-            <FlexContainer direction={"row"} className={"w-full !gap-0 justify-between"}>
+            <div className={"w-full h-0.5 bg-(image:--gradient-brand-secondary)"}></div>
+            <FlexContainer direction={"row"} className={"w-full gap-0! justify-between"}>
                 <FlexContainer direction={"column"} className={"min-w-[45%] max-w-[45%]"}>
                     <h1 className={"font-bold font-nunito text-[1.75rem] leading-8"}>{__("Join more than 2 million professionals, agencies and brands that use Metricool as their one-stop shop for social media and online ad management.", "metricool")}</h1>
                     {signUpError && (
@@ -152,8 +153,8 @@ export const OnboardingLayout = () => {
             <Dialog
                 id={"sign-in-modal"}
                 open={signInModalOpen}
-                onOpenChange={(metricool.onboarding.mode.forced_login) ? undefined : setSignInModalOpen}
-                showCloseButton={!(metricool.onboarding.mode.forced_login)}
+                onOpenChange={(mode.forced_login) ? undefined : setSignInModalOpen}
+                showCloseButton={!(mode.forced_login)}
                 className={"flex flex-col gap-6 justify-center items-center"}
             >
                 {signInSteps[activeSignInStep]}

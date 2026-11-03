@@ -21,7 +21,7 @@ import { NotificationsSidebar, SettingsMenu } from "@/components/custom";
  */
 export const SettingsLayout = ({ children }: React.ComponentProps<"div">) => {
     return (
-        <FlexContainer direction={"column"} className={"px-4 w-full items-start md:flex-row max-w-[125rem]"}>
+        <FlexContainer direction={"column"} className={"px-4 w-full items-start md:flex-row max-w-8xl"}>
             <SettingsMenu/>
             {children}
             <NotificationsSidebar/>
