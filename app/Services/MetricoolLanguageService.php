@@ -31,20 +31,16 @@ class MetricoolLanguageService
      */
     public function getUserLanguage(): string
     {
-        $locale = strtolower(get_user_locale());
-        $parts = explode('_', $locale);
-        $language = $parts[0];
-        $region = $parts[1] ?? null;
-
-        if ($region !== null && $this->isAcceptedLanguage($region)) {
-            return $region;
+        $localeCodes = explode('_', strtolower(get_user_locale()));
+        // Reverse the array so that the region code is checked first
+        $localeCodes = array_reverse($localeCodes);
+        foreach ($localeCodes as $code) {
+            if ($this->isAcceptedLanguage($code)) {
+                return $code;
+            }
         }
 
-        if (!$this->isAcceptedLanguage($language)) {
-            return $this->fallbackLanguage;
-        }
-
-        return $language;
+        return $this->fallbackLanguage;
     }
 
     /**
