@@ -37,7 +37,7 @@ const OnboardingForm = ({ onSubmit, isSignUpPending, onSignInClick }: Onboarding
                 password: "",
             },
             terms: false,
-            marketing: true,
+            marketing: false,
         },
     });
 
