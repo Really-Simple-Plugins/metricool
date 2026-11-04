@@ -140,9 +140,9 @@ const OnboardingForm = ({ onSubmit, isSignUpPending, onSignInClick }: Onboarding
             <hr className={"sm:max-w-5/6"}/>
 
             <FlexContainer direction={"row"} className={"items-center gap-2"}>
-                <div className={"text-md text-black font-semibold"}>
+                <p className={"text-md text-black font-semibold"}>
                     {__("Already a Metricooler?", "metricool")}
-                </div>
+                </p>
 
                 <Button
                     variant={"link"}
