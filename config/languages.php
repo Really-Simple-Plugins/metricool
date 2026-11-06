@@ -45,4 +45,8 @@ return [
         'label' => __('Czech', 'metricool'),
         'value' => 'cs',
     ],
+    [
+        'label' => __('Turkish', 'metricool'),
+        'value' => 'tr',
+    ],
 ];
