@@ -109,7 +109,7 @@ You can skip the onboarding and login with your existing login credentials.
 = 2.2.1 - 2026-11-09 =
 * Added: Toast notifications now inform signed-in users when an action succeeds or fails.
 * Added: Support for more special characters in passwords when creating an account.
-* Added: Account confirmation e-mails are now available in all languages currently supported by the Metricool platform (en, es, es, fr, pt-PT, pt-BR, de, it, da, nl, tr, cs).
+* Added: Account confirmation e-mails are now available in all languages currently supported by the Metricool platform (en, es, fr, pt-PT, pt-BR, de, it, da, nl, tr, cs).
 * Changed: The sign-in link now appears below the create account form for improved visibility.
 * Changed: The marketing consent checkbox in the account setup is now unchecked by default.
 
