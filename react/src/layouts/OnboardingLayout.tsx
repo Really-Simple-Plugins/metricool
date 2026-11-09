@@ -1,5 +1,5 @@
 import { __ } from "@wordpress/i18n";
-import { Alert, Button, Dialog, FlexContainer, Header } from "@/components/shared";
+import { Alert, Dialog, FlexContainer, Header } from "@/components/shared";
 import { type MetricoolData, useGlobalContext } from "@/context/GlobalContext.tsx";
 import { ConnectBrandStep, LoadingStep, OnboardingForm, SignInStep } from "@/components/custom";
 import { useEffect, useState } from "react";
@@ -117,21 +117,7 @@ export const OnboardingLayout = () => {
                         {__("The digital Swiss Army Knife for social media marketers", "metricool")}
                     </FlexContainer>
                 )}
-                actions={[
-                    (
-                        <div className={"text-md font-[600]"}>
-                            {__("Already a Metricooler?", "metricool")}
-                        </div>),
-                    (
-                        <Button
-                            variant={"primary-gradient-ghost"}
-                            className={"p-0 after:bg-white! after:border-none! border-none! font-[600]"}
-                            onClick={() => setSignInModalOpen(true)}
-                        >
-                            {__("Sign in here", "metricool")}
-                        </Button>
-                    )
-                ]}
+                actions={[]}
             />
             <div className={"w-full h-0.5 bg-(image:--gradient-brand-secondary)"}></div>
             <FlexContainer direction={"row"} className={"w-full gap-0! justify-between"}>
@@ -146,7 +132,11 @@ export const OnboardingLayout = () => {
                             />
                         </Alert>
                     )}
-                    <OnboardingForm onSubmit={(values) => onSignUp(values)} isSignUpPending={isSignUpPending}/>
+                    <OnboardingForm
+                        onSubmit={(values) => onSignUp(values)}
+                        isSignUpPending={isSignUpPending}
+                        onSignInClick={() => setSignInModalOpen(true)}
+                    />
                 </FlexContainer>
                 <img src={`${metricool.assets_url}img/mc-onboarding-image.webp`} className={"max-w-[55%] h-fit"} alt={__("Laptop and phone displaying the Metricool app", "metricool")}/>
             </FlexContainer>

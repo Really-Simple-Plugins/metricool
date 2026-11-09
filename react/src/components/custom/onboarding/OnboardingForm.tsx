@@ -12,6 +12,7 @@ const onboardingFormSchema = OnboardingSchema.omit({ brand: true });
 type OnboardingFormProps = {
     onSubmit: (values: z.infer<typeof onboardingFormSchema>) => void,
     isSignUpPending: boolean,
+    onSignInClick: () => void,
 };
 
 /**
@@ -22,7 +23,7 @@ type OnboardingFormProps = {
  * Contains a {@link useForm} which implements the {@link OnboardingSchema}
  *
  */
-const OnboardingForm = ({ onSubmit, isSignUpPending }: OnboardingFormProps) => {
+const OnboardingForm = ({ onSubmit, isSignUpPending, onSignInClick }: OnboardingFormProps) => {
     const { metricool } = useGlobalContext();
     const {
         handleSubmit,
@@ -36,7 +37,7 @@ const OnboardingForm = ({ onSubmit, isSignUpPending }: OnboardingFormProps) => {
                 password: "",
             },
             terms: false,
-            marketing: true,
+            marketing: false,
         },
     });
 
@@ -92,7 +93,7 @@ const OnboardingForm = ({ onSubmit, isSignUpPending }: OnboardingFormProps) => {
                     control={control}
                     name={"terms"}
                     flexDirection={"row-reverse"}
-                    className={"gap-3! justify-end"}
+                    className={"gap-3! justify-end sm:max-w-5/6"}
                     render={(props) => (
                         <Switch
                             {...props}
@@ -112,7 +113,7 @@ const OnboardingForm = ({ onSubmit, isSignUpPending }: OnboardingFormProps) => {
                                         sprintf(
                                             /*translators: the two variables are opening and closing anchor tags */
                                             __("I have read and accept the %1$sLegal Terms%2$s by Metricool.", "metricool"),
-                                            `<a href=${metricool.trusted_urls.legal_terms} target="_blank" class="underline">`,
+                                            `<a href=${metricool.trusted_urls.legal_terms} target="_blank" class="underline text-rss-blue hover:text-rss-blue">`,
                                             `</a>`),
                                         { ADD_ATTR: ["target"] }
                                     )
@@ -122,7 +123,7 @@ const OnboardingForm = ({ onSubmit, isSignUpPending }: OnboardingFormProps) => {
                 />
                 <FieldWrapper
                     flexDirection={"row-reverse"}
-                    className={"gap-3! justify-end"}
+                    className={"gap-3! justify-end sm:max-w-5/6"}
                     label={__("I wish to receive communications about news and/or promotions from Metricool Software.", "metricool")}
                     control={control}
                     name={"marketing"}
@@ -134,6 +135,22 @@ const OnboardingForm = ({ onSubmit, isSignUpPending }: OnboardingFormProps) => {
                         />
                     )}
                 />
+            </FlexContainer>
+
+            <hr className={"sm:max-w-5/6"}/>
+
+            <FlexContainer direction={"row"} className={"items-center gap-2"}>
+                <p className={"text-md text-black font-semibold"}>
+                    {__("Already a Metricooler?", "metricool")}
+                </p>
+
+                <Button
+                    variant={"link"}
+                    className={"font-semibold text-rss-blue"}
+                    onClick={onSignInClick}
+                >
+                    {__("Sign in here", "metricool")}
+                </Button>
             </FlexContainer>
         </form>
     );
