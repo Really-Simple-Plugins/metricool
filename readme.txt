@@ -5,7 +5,7 @@ Tags: instagram, facebook, analytics, meta, social
 Requires at least: 6.6
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.1.2
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -105,6 +105,13 @@ You can skip the onboarding and login with your existing login credentials.
 
 
 == Changelog ==
+
+= 2.2.1 - 2026-11-09 =
+* Added: Toast notifications now inform signed-in users when an action succeeds or fails.
+* Added: Support for more special characters in passwords when creating an account.
+* Added: Account confirmation e-mails are now available in all languages currently supported by the Metricool platform (en, es, fr, pt-PT, pt-BR, de, it, da, nl, tr, cs).
+* Changed: The sign-in link now appears below the create account form for improved visibility.
+* Changed: The marketing consent checkbox in the account setup is now unchecked by default.
 
 = 2.2.0 - 2026-10-28 =
 * Fixed: The Other Plugins overview no longer hides plugins, so the list is never left empty.
