@@ -12,7 +12,7 @@ const ToastContainer = ({ ...props }: React.ComponentProps<typeof PrimitiveToast
             toastOptions={{
                 classNames: {
                     toast: "group toast p-3! w-fit! flex! min-w-70! mb-0! gap-2!",
-                    closeButton: "group toast p-o! h-fit! w-fit! border-none! relative! transform-none! rounded-none! [&>svg]:m-0! order-3",
+                    closeButton: "group toast p-o! h-fit! w-fit! border-none! relative! transform-none! rounded-none! [&>svg]:m-0! order-3 hover:bg-transparent! hover:[&>svg]:opacity-100",
                     icon: "h-fit! w-5! m-0! order-1",
                     content: "order-2 grow",
                     title: "min-h-5",

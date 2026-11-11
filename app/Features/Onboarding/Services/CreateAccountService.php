@@ -9,6 +9,7 @@ use Metricool\Http\Metricool\Exceptions\ApiException;
 use Metricool\Http\Metricool\MetricoolApi;
 use Metricool\Http\RSPAL\RspalApiClient;
 use Metricool\Services\DashboardService;
+use Metricool\Services\MetricoolLanguageService;
 use Throwable;
 
 class CreateAccountService
@@ -18,19 +19,22 @@ class CreateAccountService
     private OnboardingService $onboarding;
     private OAuthService $oauth;
     private DashboardService $dashboard;
+    private MetricoolLanguageService $languages;
 
     public function __construct(
         RspalApiClient $rspal,
         MetricoolApi $api,
         OnboardingService $onboarding,
         OAuthService $oauth,
-        DashboardService $dashboard
+        DashboardService $dashboard,
+        MetricoolLanguageService $languages
     ) {
         $this->rspal = $rspal;
         $this->api = $api;
         $this->onboarding = $onboarding;
         $this->oauth = $oauth;
         $this->dashboard = $dashboard;
+        $this->languages = $languages;
     }
 
     /**
@@ -51,6 +55,7 @@ class CreateAccountService
             $signupResponse = $this->rspal->signUp([
                 'username' => $email,
                 'newsletters' => $newsletters,
+                'language' => $this->languages->getUserLanguage(),
             ], [
                 'RSPAL-RecaptchaV3Token' => $captcha
             ]);
@@ -92,7 +97,6 @@ class CreateAccountService
 
         return true;
     }
-
 
     /**
      * Get the blogId from the API. This is needed to connect the brand and complete the onboarding process.

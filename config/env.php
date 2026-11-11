@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 return [
     'plugin' => [
         'name' => 'Metricool',
-        'version' => '2.2.0-rc2',
+        'version' => '2.2.1',
         'pro' => true,
         'path' => dirname(__DIR__),
         'base_path' => dirname(__DIR__) . DIRECTORY_SEPARATOR . plugin_basename(dirname(__DIR__)) . '.php',
@@ -29,8 +29,8 @@ return [
         'review_url' => 'https://wordpress.org/support/plugin/metricool/reviews/#new-post',
     ],
     'metricool' => [
-        'rsp_auth_url' => 'https://metricool.rsp-auth.com',
-        'base_api_domain' => 'https://app.metricool.com/api',
+        'rsp_auth_url' => defined('METRICOOL_RSP_AUTH_URL') ? METRICOOL_RSP_AUTH_URL : 'https://metricool.rsp-auth.com',
+        'base_api_domain' => defined('METRICOOL_BASE_API_DOMAIN') ? METRICOOL_BASE_API_DOMAIN : 'https://app.metricool.com/api',
         'base_url' => 'https://app.metricool.com/',
         'help_url' => 'https://help.metricool.com',
         'upgrade_premium_url' => 'https://app.metricool.com/user-settings/plan',
